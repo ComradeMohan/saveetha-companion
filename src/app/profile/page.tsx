@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, User, Mail, Hash, Phone } from 'lucide-react';
+import { Loader2, User, Mail, Hash, Phone, CheckCircle2 } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 
@@ -16,6 +16,7 @@ interface UserProfile {
   email: string;
   regNo: string;
   phone: string;
+  isVerified: boolean;
 }
 
 export default function ProfilePage() {
@@ -37,6 +38,7 @@ export default function ProfilePage() {
                 email: data.email || user.email || 'N/A',
                 regNo: data.regNo || 'N/A',
                 phone: data.phone || 'N/A',
+                isVerified: user.emailVerified,
             });
           }
         } catch (error) {
@@ -78,7 +80,10 @@ export default function ProfilePage() {
                                     </Avatar>
                                     <div>
                                         <h2 className="text-2xl font-bold">{profile.name}</h2>
-                                        <p className="text-muted-foreground">{profile.email}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-muted-foreground">{profile.email}</p>
+                                            {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">

@@ -15,6 +15,7 @@ import {
   Contact,
   LogOut,
   User,
+  CheckCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -106,9 +107,12 @@ function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.displayName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
-            </p>
+            <div className="flex items-center gap-1">
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}
+              </p>
+              {user.emailVerified && <CheckCircle2 className="h-3 w-3 text-green-500" />}
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
