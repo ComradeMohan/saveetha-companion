@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, PlusCircle, Calculator } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const gradePoints: { [key: string]: number } = {
   'S': 10,
@@ -61,7 +62,7 @@ export default function CgpaCalculator() {
   }, [courses]);
 
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-6 w-6 text-primary" />
@@ -69,53 +70,55 @@ export default function CgpaCalculator() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground">
+        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground px-1">
           <span>Grade</span>
           <span>Credit Hours</span>
-          <span></span>
+          <span />
         </div>
-        <div className="max-h-60 overflow-y-auto pr-2 space-y-2">
-          {courses.map((course, index) => (
-            <div key={course.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
-              <Select onValueChange={(value) => handleCourseChange(course.id, 'grade', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Grade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(gradePoints).map(grade => (
-                    <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input
-                type="number"
-                placeholder="e.g., 3"
-                value={course.credits}
-                onChange={(e) => handleCourseChange(course.id, 'credits', e.target.value)}
-                min="0"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeCourse(course.id)}
-                disabled={courses.length === 1}
-                aria-label="Remove course"
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
-          ))}
-        </div>
+        <ScrollArea className="h-60 pr-4">
+          <div className="space-y-2">
+            {courses.map((course, index) => (
+              <div key={course.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
+                <Select onValueChange={(value) => handleCourseChange(course.id, 'grade', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Grade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(gradePoints).map(grade => (
+                      <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="number"
+                  placeholder="e.g., 3"
+                  value={course.credits}
+                  onChange={(e) => handleCourseChange(course.id, 'credits', e.target.value)}
+                  min="0"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeCourse(course.id)}
+                  disabled={courses.length === 1}
+                  aria-label="Remove course"
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
         <Button variant="outline" size="sm" onClick={addCourse}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Add Course
         </Button>
       </CardContent>
-      <CardFooter className="flex justify-between items-center bg-secondary/50 p-4 rounded-b-lg">
+      <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-0">
         <div className="text-sm">
           <span className="font-semibold">Total Credits:</span> {totalCredits}
         </div>
-        <div className="text-right">
+        <div className="text-center sm:text-right">
           <span className="text-sm font-semibold">Your CGPA</span>
           <p className="text-3xl font-bold text-primary">{cgpa}</p>
         </div>

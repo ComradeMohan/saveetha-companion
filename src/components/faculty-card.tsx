@@ -11,7 +11,7 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
     .join('');
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-xl transition-all duration-300">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-12 w-12">
             <AvatarImage src={`https://placehold.co/100x100.png?text=${initials}`} alt={faculty.name} data-ai-hint="person portrait" />
@@ -24,15 +24,15 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <BookOpen className="h-4 w-4" />
+          <BookOpen className="h-4 w-4 flex-shrink-0" />
           <span>{faculty.department}</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Phone className="h-4 w-4" />
+          <Phone className="h-4 w-4 flex-shrink-0" />
           <span>{faculty.phone}</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Building className="h-4 w-4" />
+          <Building className="h-4 w-4 flex-shrink-0" />
           <span>Room: {faculty.room}</span>
         </div>
         <div className="flex flex-wrap gap-2 pt-2">

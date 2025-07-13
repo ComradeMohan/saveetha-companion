@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,27 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail } from 'lucide-react';
+import { Mail, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
 });
+
+function SubmitButton() {
+    const { isSubmitting } = useFormState();
+    return (
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                </>
+            ) : "Send Message" }
+        </Button>
+    )
+}
 
 export default function ContactForm() {
   const { toast } = useToast();
@@ -35,7 +49,9 @@ export default function ContactForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
     console.log(values); // In a real app, you'd send this to a server
     toast({
       title: 'Message Sent!',
@@ -52,7 +68,7 @@ export default function ContactForm() {
                 Send us a message for any queries or customization requests.
             </p>
         </div>
-        <Card className="shadow-lg">
+        <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Mail className="h-6 w-6 text-primary" /> Send Us a Message
@@ -107,7 +123,7 @@ export default function ContactForm() {
                             </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full">Send Message</Button>
+                        <SubmitButton />
                     </form>
                 </Form>
             </CardContent>

@@ -13,7 +13,7 @@ import { Skeleton } from './ui/skeleton';
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending} className="w-full sm:w-auto">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -40,8 +40,8 @@ export default function ConceptMapFinder() {
 
     setLoading(true);
     setSearched(true);
+    setResults([]);
     const searchResults = await conceptMapFinder({ query });
-    // Simulate real search by using placeholders
     const placeholderResults = searchResults.map(r => ({
       ...r,
       url: `https://placehold.co/600x400.png`
@@ -59,7 +59,7 @@ export default function ConceptMapFinder() {
         </p>
       </div>
 
-      <form action={handleSearch} className="flex gap-2 mb-8">
+      <form action={handleSearch} className="flex flex-col sm:flex-row gap-2 mb-8">
         <Input
           name="query"
           placeholder="Search for subjects or topics like 'Data Structures'..."
@@ -70,7 +70,7 @@ export default function ConceptMapFinder() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {loading && Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className="animate-pulse">
             <CardHeader>
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-full mt-2" />
@@ -88,7 +88,7 @@ export default function ConceptMapFinder() {
           </div>
         )}
         {!loading && results.map((map, index) => (
-          <Card key={index} className="overflow-hidden">
+          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in">
             <CardHeader>
               <CardTitle>{map.title}</CardTitle>
               <CardDescription>{map.description}</CardDescription>
@@ -99,7 +99,7 @@ export default function ConceptMapFinder() {
                 alt={map.title}
                 width={600}
                 height={400}
-                className="rounded-md object-cover"
+                className="rounded-md object-cover aspect-[3/2]"
                 data-ai-hint="concept map diagram"
               />
             </CardContent>

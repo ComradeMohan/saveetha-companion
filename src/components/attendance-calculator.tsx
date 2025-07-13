@@ -27,19 +27,14 @@ export default function AttendanceCalculator() {
 
     if(isNaN(total) || isNaN(attended) || percentage >= 75) return "You're safe!";
     
-    // x = classes to attend
-    // (attended + x) / (total + x) = 0.75
-    // attended + x = 0.75 * total + 0.75x
-    // 0.25x = 0.75 * total - attended
-    // x = (0.75 * total - attended) / 0.25
     const needed = Math.ceil((0.75 * total - attended) / 0.25);
     if(needed <= 0) return "You're safe!";
 
-    return `You need to attend the next ${needed} classes continuously.`;
+    return `You need to attend the next ${needed} class${needed > 1 ? 'es' : ''} continuously.`;
   }, [totalClasses, attendedClasses, percentage]);
 
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Percent className="h-6 w-6 text-primary" />
@@ -83,7 +78,7 @@ export default function AttendanceCalculator() {
             <span className="text-sm font-semibold">Your Attendance</span>
             <p className="text-3xl font-bold text-primary">{percentage.toFixed(1)}%</p>
         </div>
-        <p className="text-sm text-muted-foreground text-center">{neededFor75}</p>
+        <p className="text-sm text-muted-foreground text-center h-5">{neededFor75}</p>
       </CardFooter>
     </Card>
   );
