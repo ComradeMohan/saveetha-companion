@@ -25,7 +25,7 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 
-const ADMIN_EMAIL = 'madiremohan0400.sse@saveetha.com';
+const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 
 interface UserProfileData {
   name: string;
