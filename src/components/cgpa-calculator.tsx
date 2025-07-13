@@ -8,11 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Trash2, PlusCircle, Calculator } from 'lucide-react';
 
 const gradePoints: { [key: string]: number } = {
-  'O': 10,
-  'A+': 9,
-  'A': 8,
-  'B': 7,
-  'C': 6,
+  'S': 10,
+  'A': 9,
+  'B': 8,
+  'C': 7,
+  'D': 6,
+  'E': 5,
   'RA': 0,
 };
 
