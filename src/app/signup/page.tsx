@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function SignUpPage() {
   const [name, setName] = useState('');
@@ -25,13 +27,17 @@ export default function SignUpPage() {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    if (!authLoading && user) {
-        if(user.displayName) {
-             router.push('/');
-        } else {
-            router.push('/complete-profile');
+    const checkUser = async () => {
+        if (!authLoading && user) {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists() && userDoc.data().regNo) {
+                 router.push('/');
+            } else {
+                router.push('/complete-profile');
+            }
         }
     }
+    checkUser();
   }, [user, authLoading, router]);
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
@@ -58,13 +64,13 @@ export default function SignUpPage() {
   };
   
   const handleGoogleSignIn = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       await signInWithGoogle();
-      // The redirect will be handled by the useEffect hook
+      // The redirect will be handled by the useEffect or signInWithGoogle function
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
+       // Toast is already handled in useAuth hook
       setLoading(false);
     }
   };

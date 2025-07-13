@@ -18,15 +18,20 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useToast } from './use-toast';
+import { useRouter } from 'next/navigation';
 
-interface UserProfile {
+interface UserProfileData {
   name: string;
   regNo: string;
   phone: string;
   email: string;
+}
+
+interface SignUpProfile extends UserProfileData {
   password?: string;
 }
 interface CompleteUserProfile {
@@ -38,7 +43,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signUpWithEmailAndPassword: (profile: UserProfile) => Promise<any>;
+  signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   logout: () => Promise<void>;
@@ -50,10 +55,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Check if user profile is complete in Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+           // If displayName is not on auth object, update it
+          if (!user.displayName && userDoc.data()?.name) {
+            await updateProfile(user, { displayName: userDoc.data()?.name });
+          }
+          setUser({ ...user }); // Trigger re-render with updated user
+        } else {
+          // New Google sign-in user, needs to complete profile
+          setUser(user); // Keep user object but it's incomplete
+        }
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -63,13 +85,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-      'hd': 'saveetha.com' // Restrict to a specific G Suite domain
+      'hd': 'saveetha.com'
     });
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // New user, create partial profile, will be completed later
+        await setDoc(userDocRef, {
+          email: user.email,
+          name: user.displayName,
+        });
+        router.push('/complete-profile');
+      } else {
+        router.push('/');
+      }
+
     } catch (error: any) {
-        // Handle specific error for wrong domain
-        if (error.code === 'auth/operation-not-supported-in-this-environment' || error.message.includes('hd parameter')) {
+        if (error.code === 'auth/operation-not-supported-in-this-environment' || error.message.includes('hd parameter') || error.code === 'auth/popup-closed-by-user') {
             toast({
                 title: "Login Error",
                 description: "Please use your @saveetha.com Google account.",
@@ -82,41 +119,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 variant: "destructive"
             });
         }
-        // Rethrow to be caught by the component
         throw error;
     }
   };
   
-  const signUpWithEmailAndPassword = async (profile: UserProfile) => {
+  const signUpWithEmailAndPassword = async (profile: SignUpProfile) => {
     const userCredential = await createUserWithEmailAndPassword(auth, profile.email, profile.password!);
-    await updateProfile(userCredential.user, {
+    const user = userCredential.user;
+    
+    await updateProfile(user, {
         displayName: profile.name,
-        // We can't store custom fields like regNo and phone directly in the user profile object.
-        // This would typically be stored in a Firestore/RTDB collection.
-        // For this example, we'll just log it.
     });
-    console.log("RegNo:", profile.regNo, "Phone:", profile.phone);
+    
+    // Store user info in Firestore
+    const userDocRef = doc(db, 'users', user.uid);
+    await setDoc(userDocRef, {
+        name: profile.name,
+        email: profile.email,
+        regNo: profile.regNo,
+        phone: profile.phone
+    });
+
+    setUser(user);
     return userCredential;
   }
   
   const completeUserProfile = async (profile: CompleteUserProfile) => {
       if (!auth.currentUser) throw new Error("No user is signed in.");
       
-      // In a real app, you would save this to Firestore or Realtime Database
-      // associated with the user's UID.
-      console.log("Updating profile with:", profile);
+      const user = auth.currentUser;
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      // Update Firestore document with new details
+      await setDoc(userDocRef, {
+        regNo: profile.regNo,
+        phone: profile.phone,
+      }, { merge: true });
 
-      // We are using displayName to check if profile is complete.
-      // We will set a dummy name here for now, but in real app, it would come from Google or sign up.
-      // Since Google sign-in already provides displayName, this logic primarily serves to mark the profile as "complete" for our app's logic.
-      const displayName = auth.currentUser.displayName || "New User";
-
-      await updateProfile(auth.currentUser, {
-          displayName: displayName
-      });
+      // If user has no displayName (e.g., from initial Google sign up), set it.
+      if (!user.displayName) {
+        // This is a bit of a placeholder, ideally name is captured on a form
+        // but for now we mark it to signify completion.
+         const userDoc = await getDoc(userDocRef);
+         const name = userDoc.data()?.name || "New User";
+         await updateProfile(user, { displayName: name });
+      }
       
       // Manually update the user state to reflect the change immediately
-      setUser(auth.currentUser);
+      setUser({ ...user });
   }
 
   const loginWithEmailAndPassword = (email:string, password:string) => {

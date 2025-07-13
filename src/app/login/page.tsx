@@ -11,9 +11,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn } from 'lucide-react';
 import Link from 'next/link';
-import { getRedirectResult } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import React from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -24,34 +24,37 @@ export default function LoginPage() {
   const { toast } = useToast();
 
    React.useEffect(() => {
-    if (!authLoading && user) {
-        if(user.displayName) {
-             router.push('/');
-        } else {
-            router.push('/complete-profile');
+    const checkUser = async () => {
+        if (!authLoading && user) {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists() && userDoc.data().regNo) {
+                 router.push('/');
+            } else {
+                router.push('/complete-profile');
+            }
         }
     }
+    checkUser();
   }, [user, authLoading, router]);
 
   const handleGoogleSignIn = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       await signInWithGoogle();
-      // The redirect will be handled by the useEffect hook
+      // The redirect is handled by the useEffect or the signInWithGoogle function
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
+      // Toast is already handled in useAuth hook
       setLoading(false);
     }
   };
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      setLoading(true);
       await loginWithEmailAndPassword(email, password);
-      router.push('/');
-      toast({ title: 'Signed in successfully!' });
+      // The redirect will be handled by the useEffect hook
     } catch (error) {
       console.error('Email Sign-In Error:', error);
       toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
