@@ -1,4 +1,6 @@
+
 export type Faculty = {
+  id?: string;
   name: string;
   designation: string;
   department: string;
@@ -7,6 +9,8 @@ export type Faculty = {
   room: string;
 };
 
+// This data is now for placeholder/reference purposes
+// The app will fetch data from Firestore instead.
 export const facultyData: Faculty[] = [
   {
     name: 'D. Sheela',
@@ -31,45 +35,5 @@ export const facultyData: Faculty[] = [
     subjects: ['Network Security', 'Ethical Hacking'],
     phone: '+91-9876543212',
     room: 'C-305',
-  },
-  {
-    name: 'Dr. A Prabhu Chakkravarthy',
-    designation: 'Assistant Professor',
-    department: 'Information Security',
-    subjects: ['Digital Forensics', 'Malware Analysis'],
-    phone: '+91-9876543213',
-    room: 'C-306',
-  },
-  {
-    name: 'Dr. A Shrivindhya',
-    designation: 'Professor',
-    department: 'Big Data and Network Security',
-    subjects: ['Big Data Analytics', 'Secure Coding', 'Network Security'],
-    phone: '+91-9876543214',
-    room: 'D-110',
-  },
-  {
-    name: 'Dr. Anithaaashri',
-    designation: 'Associate Professor',
-    department: 'Cloud Computing',
-    subjects: ['Cloud Architecture', 'Virtualization'],
-    phone: '+91-9876543215',
-    room: 'E-201',
-  },
-  {
-    name: 'DR Arumugam S S',
-    designation: 'Professor',
-    department: 'Information Security',
-    subjects: ['Information Theory', 'Coding', 'Security Protocols'],
-    phone: '+91-9876543216',
-    room: 'C-308',
-  },
-  {
-    name: 'Dr. Beenarani',
-    designation: 'Assistant Professor',
-    department: 'Networking',
-    subjects: ['Computer Networks', 'Wireless Communication'],
-    phone: '+91-9876543217',
-    room: 'F-105',
   },
 ];

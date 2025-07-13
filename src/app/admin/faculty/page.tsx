@@ -1,15 +1,47 @@
 
 'use client';
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { facultyData, type Faculty } from "@/lib/faculty-data";
-import { PlusCircle, MoreHorizontal } from "lucide-react";
+import type { Faculty } from "@/lib/faculty-data";
+import { PlusCircle, MoreHorizontal, Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminFacultyPage() {
+    const [facultyData, setFacultyData] = useState<Faculty[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        const q = query(collection(db, 'faculty'), orderBy('name'));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const data: Faculty[] = [];
+            querySnapshot.forEach((doc) => {
+                data.push({ id: doc.id, ...doc.data() } as Faculty);
+            });
+            setFacultyData(data);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching faculty data:", error);
+            toast({
+                title: "Error",
+                description: "Could not fetch faculty data.",
+                variant: "destructive"
+            });
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [toast]);
+
+
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between">
@@ -19,9 +51,7 @@ export default function AdminFacultyPage() {
                         Here you can add, edit, or remove faculty members from the directory.
                     </p>
                 </div>
-                <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add Faculty
-                </Button>
+                <AddFacultyDialog />
             </div>
 
             <Card>
@@ -43,36 +73,50 @@ export default function AdminFacultyPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {facultyData.map((faculty) => (
-                                <TableRow key={faculty.name}>
-                                    <TableCell className="font-medium">
-                                        <div className="font-medium">{faculty.name}</div>
-                                        <div className="text-sm text-muted-foreground">{faculty.designation}</div>
-                                    </TableCell>
-                                    <TableCell>{faculty.department}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-wrap gap-1">
-                                            {faculty.subjects.map(s => <Badge variant="outline" key={s}>{s}</Badge>)}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{faculty.room}</TableCell>
-                                    <TableCell>
-                                         <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Toggle menu</span>
-                                            </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="h-24 text-center">
+                                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : facultyData.length > 0 ? (
+                                facultyData.map((faculty) => (
+                                    <TableRow key={faculty.id}>
+                                        <TableCell className="font-medium">
+                                            <div className="font-medium">{faculty.name}</div>
+                                            <div className="text-sm text-muted-foreground">{faculty.designation}</div>
+                                        </TableCell>
+                                        <TableCell>{faculty.department}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1">
+                                                {faculty.subjects.map(s => <Badge variant="outline" key={s}>{s}</Badge>)}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{faculty.room}</TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <span className="sr-only">Toggle menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                                                    <DropdownMenuItem disabled>Delete</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="h-24 text-center">
+                                        No faculty found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
