@@ -106,10 +106,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
     } catch (error: any) {
-        if (error.code === 'auth/operation-not-supported-in-this-environment' || error.message.includes('hd parameter') || error.code === 'auth/popup-closed-by-user') {
+        if (error.code === 'auth/popup-closed-by-user') {
+             toast({
+                title: "Login Canceled",
+                description: "You closed the sign-in window. Please try again.",
+                variant: "destructive"
+            });
+        }
+        else if (error.code === 'auth/operation-not-supported-in-this-environment' || error.message.includes('hd parameter')) {
             toast({
                 title: "Login Error",
-                description: "Please use your @saveetha.com Google account.",
+                description: "Please use your @saveetha.com Google account to sign in.",
                 variant: "destructive"
             });
         } else {
