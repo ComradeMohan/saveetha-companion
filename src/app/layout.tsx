@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: 'Saveetha Companion',
@@ -23,8 +24,10 @@ export default function RootLayout({
         ></link>
       </head>
       <body className="font-body antialiased bg-gradient-to-br from-purple-50 via-white to-blue-50 text-foreground">
-        {children}
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );
