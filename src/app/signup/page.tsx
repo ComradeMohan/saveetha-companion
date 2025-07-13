@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,20 +11,43 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 export default function SignUpPage() {
+  const [name, setName] = useState('');
+  const [regNo, setRegNo] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUpWithEmailAndPassword, signInWithGoogle } = useAuth();
+  const { signUpWithEmailAndPassword, signInWithGoogle, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
+  React.useEffect(() => {
+    if (!authLoading && user) {
+        if(user.displayName) {
+             router.push('/');
+        } else {
+            router.push('/complete-profile');
+        }
+    }
+  }, [user, authLoading, router]);
+
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email.endsWith('@saveetha.com')) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please use an email ending with @saveetha.com',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      await signUpWithEmailAndPassword(email, password);
+      await signUpWithEmailAndPassword({ name, regNo, phone, email, password });
       router.push('/');
       toast({ title: 'Account created successfully!' });
     } catch (error) {
@@ -37,8 +61,7 @@ export default function SignUpPage() {
     try {
       setLoading(true);
       await signInWithGoogle();
-      router.push('/');
-      toast({ title: 'Signed in successfully!' });
+      // The redirect will be handled by the useEffect hook
     } catch (error) {
       console.error('Google Sign-In Error:', error);
       toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
@@ -55,12 +78,45 @@ export default function SignUpPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleEmailSignUp} className="space-y-4">
+             <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="regNo">Registration Number</Label>
+              <Input
+                id="regNo"
+                type="text"
+                placeholder="2115XXXX"
+                required
+                value={regNo}
+                onChange={(e) => setRegNo(e.target.value)}
+              />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="9876543210"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">College Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="you@saveetha.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

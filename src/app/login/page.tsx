@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,21 +11,33 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn } from 'lucide-react';
 import Link from 'next/link';
+import { getRedirectResult } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import React from 'react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signInWithGoogle, loginWithEmailAndPassword } = useAuth();
+  const { signInWithGoogle, loginWithEmailAndPassword, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+   React.useEffect(() => {
+    if (!authLoading && user) {
+        if(user.displayName) {
+             router.push('/');
+        } else {
+            router.push('/complete-profile');
+        }
+    }
+  }, [user, authLoading, router]);
 
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
       await signInWithGoogle();
-      router.push('/');
-      toast({ title: 'Signed in successfully!' });
+      // The redirect will be handled by the useEffect hook
     } catch (error) {
       console.error('Google Sign-In Error:', error);
       toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
