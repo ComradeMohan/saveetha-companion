@@ -72,7 +72,7 @@ const NavLink = ({
 );
 
 function UserNav() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const router = useRouter();
 
   if (!user) {
@@ -85,7 +85,6 @@ function UserNav() {
   
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
   }
 
   const handleProfileClick = () => {
@@ -125,10 +124,12 @@ function UserNav() {
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleAdminClick}>
-          <Shield className="mr-2 h-4 w-4" />
-          <span>Admin</span>
-        </DropdownMenuItem>
+        {isAdmin && (
+           <DropdownMenuItem onClick={handleAdminClick}>
+            <Shield className="mr-2 h-4 w-4" />
+            <span>Admin</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />

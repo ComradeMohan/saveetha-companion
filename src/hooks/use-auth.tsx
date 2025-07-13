@@ -25,6 +25,8 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 
+const ADMIN_EMAIL = 'madiremohan0400.sse@saveetha.com';
+
 interface UserProfileData {
   name: string;
   regNo: string;
@@ -43,6 +45,7 @@ interface CompleteUserProfile {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
@@ -55,13 +58,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // If email is not verified, don't treat as fully logged in, unless it's a new user
         if (!user.emailVerified && (user.metadata.creationTime !== user.metadata.lastSignInTime)) {
             toast({
                 title: "Verification Required",
@@ -70,25 +73,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
             await signOut(auth);
             setUser(null);
+            setIsAdmin(false);
             setLoading(false);
             return;
         }
 
-        // Check if user profile is complete in Firestore
+        setIsAdmin(user.email === ADMIN_EMAIL);
+
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-           // If displayName is not on auth object, update it
           if (!user.displayName && userDoc.data()?.name) {
             await updateProfile(user, { displayName: userDoc.data()?.name });
           }
-          setUser({ ...user }); // Trigger re-render with updated user
+          setUser({ ...user });
         } else {
-          // New Google sign-in user, needs to complete profile
-          setUser(user); // Keep user object but it's incomplete
+          setUser(user);
         }
       } else {
         setUser(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -109,11 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        // New user, create partial profile, will be completed later
         await setDoc(userDocRef, {
           email: user.email,
           name: user.displayName,
-          createdAt: new Date().toISOString(), // Important for cleanup function
+          createdAt: new Date().toISOString(),
         });
         router.push('/complete-profile');
       } else {
@@ -153,27 +156,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: profile.name,
     });
     
-    // Store user info in Firestore
     const userDocRef = doc(db, 'users', user.uid);
     await setDoc(userDocRef, {
         name: profile.name,
         email: profile.email,
         regNo: profile.regNo,
         phone: profile.phone,
-        createdAt: new Date().toISOString(), // Important for cleanup function
+        createdAt: new Date().toISOString(),
     });
     
-    // Send verification email
     await sendEmailVerification(user, {
-      url: `${window.location.origin}/login`, // URL to redirect after verification
+      url: `${window.location.origin}/login`,
     });
-
-    // Note on automatic deletion: 
-    // Deleting a user after 1 hour of not verifying requires a server-side process,
-    // like a Firebase Cloud Function.
-    // The function would be triggered on a schedule (e.g., every hour), query for users
-    // with a 'createdAt' timestamp older than 1 hour and where 'emailVerified' is false,
-    // and then delete them from Auth and Firestore.
 
     await signOut(auth);
     return userCredential;
@@ -185,22 +179,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const user = auth.currentUser;
       const userDocRef = doc(db, 'users', user.uid);
       
-      // Update Firestore document with new details
       await setDoc(userDocRef, {
         regNo: profile.regNo,
         phone: profile.phone,
       }, { merge: true });
 
-      // If user has no displayName (e.g., from initial Google sign up), set it.
       if (!user.displayName) {
-        // This is a bit of a placeholder, ideally name is captured on a form
-        // but for now we mark it to signify completion.
          const userDoc = await getDoc(userDocRef);
          const name = userDoc.data()?.name || "New User";
          await updateProfile(user, { displayName: name });
       }
       
-      // Manually update the user state to reflect the change immediately
       setUser({ ...user });
   }
 
@@ -224,11 +213,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await signOut(auth);
+    router.push('/login');
   };
 
   const value = {
     user,
     loading,
+    isAdmin,
     signInWithGoogle,
     signUpWithEmailAndPassword,
     loginWithEmailAndPassword,
