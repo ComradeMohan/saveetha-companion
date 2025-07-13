@@ -17,6 +17,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -60,6 +61,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // If email is not verified, don't treat as fully logged in, unless it's a new user
+        if (!user.emailVerified && (user.metadata.creationTime !== user.metadata.lastSignInTime)) {
+            toast({
+                title: "Verification Required",
+                description: "Please verify your email address to log in.",
+                variant: 'destructive'
+            });
+            await signOut(auth);
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
         // Check if user profile is complete in Firestore
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
@@ -80,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -99,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await setDoc(userDocRef, {
           email: user.email,
           name: user.displayName,
+          createdAt: new Date().toISOString(), // Important for cleanup function
         });
         router.push('/complete-profile');
       } else {
@@ -144,10 +159,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: profile.name,
         email: profile.email,
         regNo: profile.regNo,
-        phone: profile.phone
+        phone: profile.phone,
+        createdAt: new Date().toISOString(), // Important for cleanup function
+    });
+    
+    // Send verification email
+    await sendEmailVerification(user, {
+      url: `${window.location.origin}/login`, // URL to redirect after verification
     });
 
-    setUser(user);
+    // Note on automatic deletion: 
+    // Deleting a user after 1 hour of not verifying requires a server-side process,
+    // like a Firebase Cloud Function.
+    // The function would be triggered on a schedule (e.g., every hour), query for users
+    // with a 'createdAt' timestamp older than 1 hour and where 'emailVerified' is false,
+    // and then delete them from Auth and Firestore.
+
+    await signOut(auth);
     return userCredential;
   }
   
@@ -176,11 +204,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({ ...user });
   }
 
-  const loginWithEmailAndPassword = (email:string, password:string) => {
+  const loginWithEmailAndPassword = async (email:string, password:string) => {
     if (!email.endsWith('@saveetha.com')) {
       throw new Error('Please use an email ending with @saveetha.com');
     }
-    return signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    if (!userCredential.user.emailVerified) {
+        toast({
+            title: 'Email Not Verified',
+            description: 'Please verify your email before logging in. A new verification link has been sent.',
+            variant: 'destructive'
+        });
+        await sendEmailVerification(userCredential.user);
+        await signOut(auth);
+        throw new Error("Email not verified");
+    }
+    return userCredential;
   }
 
   const logout = async () => {
