@@ -16,6 +16,7 @@ import {
   LogOut,
   User,
   CheckCircle2,
+  Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -91,6 +92,10 @@ function UserNav() {
     router.push('/profile');
   };
   
+  const handleAdminClick = () => {
+    router.push('/admin/dashboard');
+  }
+
   const userInitials = user.displayName ? user.displayName.slice(0, 2).toUpperCase() : <User className="h-4 w-4" />;
 
   return (
@@ -120,6 +125,11 @@ function UserNav() {
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleAdminClick}>
+          <Shield className="mr-2 h-4 w-4" />
+          <span>Admin</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
