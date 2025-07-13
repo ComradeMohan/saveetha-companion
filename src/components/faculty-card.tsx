@@ -1,0 +1,48 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import type { Faculty } from '@/lib/faculty-data';
+import { Phone, Building, BookOpen } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+export default function FacultyCard({ faculty }: { faculty: Faculty }) {
+  const initials = faculty.name
+    .split(' ')
+    .map(n => n[0])
+    .join('');
+
+  return (
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader className="flex flex-row items-center gap-4">
+        <Avatar className="h-12 w-12">
+            <AvatarImage src={`https://placehold.co/100x100.png?text=${initials}`} alt={faculty.name} data-ai-hint="person portrait" />
+            <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+        <div>
+            <CardTitle>{faculty.name}</CardTitle>
+            <CardDescription>{faculty.designation}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <BookOpen className="h-4 w-4" />
+          <span>{faculty.department}</span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Phone className="h-4 w-4" />
+          <span>{faculty.phone}</span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Building className="h-4 w-4" />
+          <span>Room: {faculty.room}</span>
+        </div>
+        <div className="flex flex-wrap gap-2 pt-2">
+          {faculty.subjects.map(subject => (
+            <Badge key={subject} variant="secondary">
+              {subject}
+            </Badge>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
