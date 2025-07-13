@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -84,6 +85,10 @@ function UserNav() {
     await logout();
     router.push('/login');
   }
+
+  const handleProfileClick = () => {
+    router.push('/profile');
+  };
   
   const userInitials = user.displayName ? user.displayName.slice(0, 2).toUpperCase() : <User className="h-4 w-4" />;
 
@@ -107,6 +112,10 @@ function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleProfileClick}>
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
