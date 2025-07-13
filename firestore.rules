@@ -2,11 +2,15 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow users to create their own profile document upon sign-up
-    // and read/update their own data after logging in.
+    // Allow users to read and write their own profile data.
     match /users/{userId} {
+      // A user can create their own document if they are authenticated
+      // and the document ID matches their user ID.
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // A user can read or update their own document if they are authenticated
+      // and the document ID matches their user ID.
       allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
     }
   }
 }
