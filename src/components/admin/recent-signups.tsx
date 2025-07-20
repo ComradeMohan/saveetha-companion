@@ -2,7 +2,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { format, subDays, startOfDay } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
 
@@ -18,7 +18,7 @@ interface RecentSignupsProps {
 
 export default function RecentSignups({ userList, loading }: RecentSignupsProps) {
   const chartData = useMemo(() => {
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
       const date = startOfDay(subDays(new Date(), i));
       return {
         name: format(date, 'MMM d'),
@@ -31,7 +31,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
       userList.forEach(user => {
         if (user.createdAt) {
           const signupDate = startOfDay(new Date(user.createdAt));
-          const dayEntry = last7Days.find(
+          const dayEntry = last30Days.find(
             day => day.date.getTime() === signupDate.getTime()
           );
           if (dayEntry) {
@@ -41,7 +41,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
       });
     }
 
-    return last7Days;
+    return last30Days;
   }, [userList, loading]);
 
   if (loading) {
@@ -50,16 +50,27 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
 
   return (
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={chartData}>
+      <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <defs>
+            <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+            </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
         <XAxis
           dataKey="name"
-          stroke="#888888"
+          stroke="hsl(var(--muted-foreground))"
           fontSize={12}
           tickLine={false}
           axisLine={false}
+          tickFormatter={(value, index) => {
+            // Show tick for every 5th day to avoid clutter
+            return index % 5 === 0 ? value : '';
+          }}
         />
         <YAxis
-          stroke="#888888"
+          stroke="hsl(var(--muted-foreground))"
           fontSize={12}
           tickLine={false}
           axisLine={false}
@@ -71,11 +82,12 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
                 background: "hsl(var(--background))",
                 border: "1px solid hsl(var(--border))",
                 borderRadius: "var(--radius)",
+                color: "hsl(var(--foreground))"
             }}
-            labelStyle={{ color: "hsl(var(--foreground))" }}
+            cursor={{ fill: 'hsl(var(--accent))' }}
         />
-        <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-      </BarChart>
+        <Area type="monotone" dataKey="total" stroke="hsl(var(--primary))" fill="url(#colorTotal)" fillOpacity={1} />
+      </AreaChart>
     </ResponsiveContainer>
   );
 }

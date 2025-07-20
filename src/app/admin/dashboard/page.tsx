@@ -1,8 +1,8 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Users, CalendarDays, BarChart } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { BookOpen, Users } from 'lucide-react';
 import RecentSignups from '@/components/admin/recent-signups';
 import useDashboardStats from '@/hooks/use-dashboard-stats';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -46,24 +46,17 @@ export default function AdminDashboard() {
           loading={loading}
         />
         <StatCard
-          title="Signups (This Week)"
-          value={stats.weeklySignups}
-          description="New users in the last 7 days"
-          icon={CalendarDays}
-          loading={loading}
-        />
-        <StatCard
-          title="Signups (This Month)"
-          value={stats.monthlySignups}
-          description="New users in the last 30 days"
-          icon={BarChart}
-          loading={loading}
-        />
-        <StatCard
           title="Concept Maps"
           value={stats.conceptMaps}
           description="Total maps available"
           icon={BookOpen}
+          loading={loading}
+        />
+         <StatCard
+          title="Faculty Members"
+          value={stats.facultyCount}
+          description="Total faculty in directory"
+          icon={Users}
           loading={loading}
         />
       </div>
@@ -71,6 +64,9 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Signups</CardTitle>
+            <CardDescription>
+                A chart of new user signups over the last 30 days.
+            </CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
             <RecentSignups userList={stats.userList} loading={loading} />

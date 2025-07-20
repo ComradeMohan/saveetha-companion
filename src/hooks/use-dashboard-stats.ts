@@ -21,6 +21,7 @@ interface Stats {
   weeklySignups: number;
   monthlySignups: number;
   conceptMaps: number;
+  facultyCount: number;
   userList: User[];
 }
 
@@ -30,6 +31,7 @@ export default function useDashboardStats() {
     weeklySignups: 0,
     monthlySignups: 0,
     conceptMaps: 0,
+    facultyCount: 0,
     userList: [],
   });
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,7 @@ export default function useDashboardStats() {
   useEffect(() => {
     const usersQuery = query(collection(db, 'users'));
     const conceptMapsQuery = query(collection(db, 'concept-maps'));
+    const facultyQuery = query(collection(db, 'faculty'));
 
     const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
       const usersData: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -101,9 +104,24 @@ export default function useDashboardStats() {
         });
     });
 
+    const unsubscribeFaculty = onSnapshot(facultyQuery, (snapshot) => {
+        setStats(prevStats => ({
+          ...prevStats,
+          facultyCount: snapshot.size,
+        }));
+      }, (error) => {
+          console.error("Error fetching faculty count:", error);
+          toast({
+              title: 'Error',
+              description: 'Could not fetch faculty count.',
+              variant: 'destructive',
+          });
+      });
+
     return () => {
       unsubscribeUsers();
       unsubscribeConceptMaps();
+      unsubscribeFaculty();
     };
   }, [toast]);
 
