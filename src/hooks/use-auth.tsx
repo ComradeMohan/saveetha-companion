@@ -123,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        setIsAdmin(user.email === ADMIN_EMAIL);
+        setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
 
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
