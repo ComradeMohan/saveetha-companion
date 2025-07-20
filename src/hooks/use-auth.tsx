@@ -18,6 +18,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
@@ -49,6 +50,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
+  sendPasswordReset: (email: string) => Promise<void>;
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -114,30 +116,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
+        // Only set the user if they are verified (or using Google which is auto-verified)
+        if (user.emailVerified) {
+          setIsAdmin(user.email === ADMIN_EMAIL);
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
 
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-
-        const updateData: any = {
-            lastSignInTime: user.metadata.lastSignInTime,
-            isVerified: user.emailVerified,
-        };
-        if (user.photoURL) {
-            updateData.photoURL = user.photoURL;
-        }
-
-        if (userDoc.exists()) {
-             await updateDoc(userDocRef, updateData);
-        }
-
-        if (userDoc.exists()) {
-          if (!user.displayName && userDoc.data()?.name) {
-            await updateProfile(user, { displayName: userDoc.data()?.name });
+          const updateData: any = {
+              lastSignInTime: user.metadata.lastSignInTime,
+              isVerified: user.emailVerified,
+          };
+          if (user.photoURL) {
+              updateData.photoURL = user.photoURL;
           }
-          setUser({ ...user });
-        } else {
-          setUser(user);
+
+          if (userDoc.exists()) {
+              await updateDoc(userDocRef, updateData);
+              if (!user.displayName && userDoc.data()?.name) {
+                await updateProfile(user, { displayName: userDoc.data()?.name });
+              }
+          }
+          setUser({ ...user }); // Set user state to trigger re-render and redirects
         }
       } else {
         setUser(null);
@@ -170,8 +169,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastSignInTime: user.metadata.lastSignInTime,
           photoURL: user.photoURL,
         });
+        // User is new and authenticated with Google, they need to complete their profile
         router.push('/complete-profile');
       } else {
+        // Existing user, go to dashboard
         router.push('/');
       }
 
@@ -204,7 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           url: `${window.location.origin}/login`,
         });
 
-        await signOut(auth);
+        await signOut(auth); // Sign out user after registration to force verification
         return userCredential;
     } catch (error: any) {
         handleAuthError(error, toast);
@@ -229,7 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
          await updateProfile(user, { displayName: name });
       }
       
-      setUser({ ...user });
+      setUser({ ...user }); // This will trigger the useEffect to redirect to '/'
   }
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
@@ -238,12 +239,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
             return;
         }
-        return await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        // Check verification after successful sign-in
+        if (!userCredential.user.emailVerified) {
+             toast({
+                title: 'Email Not Verified',
+                description: 'Please check your inbox (and spam folder) for a verification link.',
+                variant: 'destructive',
+            });
+            await signOut(auth); // Sign out the unverified user
+            return; // Stop execution
+        }
+        
+        // Let the onAuthStateChanged listener handle the redirect
+        return userCredential;
      } catch(error: any) {
         handleAuthError(error, toast);
         throw error;
      }
   }
+
+  const sendPasswordReset = async (email: string) => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+        toast({
+            title: 'Password Reset Email Sent',
+            description: 'Check your inbox (and spam folder) for a link to reset your password.',
+        });
+    } catch (error: any) {
+        // Modify the error handler to be more specific for this case
+        if (error.code === 'auth/user-not-found') {
+            toast({
+                title: 'User Not Found',
+                description: 'No account was found with this email address.',
+                variant: 'destructive',
+            });
+        } else {
+            handleAuthError(error, toast);
+        }
+        throw error;
+    }
+  };
 
   const logout = async () => {
     await signOut(auth);
@@ -257,6 +294,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signInWithGoogle,
     signUpWithEmailAndPassword,
     loginWithEmailAndPassword,
+    sendPasswordReset,
     completeUserProfile,
     logout,
   };

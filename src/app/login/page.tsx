@@ -21,29 +21,33 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const { signInWithGoogle, loginWithEmailAndPassword, user, loading: authLoading } = useAuth();
+  const { signInWithGoogle, loginWithEmailAndPassword, user, loading: authLoading, sendPasswordReset } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
    React.useEffect(() => {
-    const checkUser = async () => {
+    const checkUserAndRedirect = async () => {
         if (!authLoading && user) {
+            // User is logged in, check if profile is complete
             const userDoc = await getDoc(doc(db, "users", user.uid));
             if (userDoc.exists() && userDoc.data().regNo) {
-                 router.push('/');
+                // Profile is complete, go to dashboard
+                router.push('/');
             } else {
+                // Profile is not complete, go to completion page
                 router.push('/complete-profile');
             }
         }
-    }
-    checkUser();
+        // If no user, do nothing and stay on login page
+    };
+    checkUserAndRedirect();
   }, [user, authLoading, router]);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
       await signInWithGoogle();
-      // The redirect is handled by the useEffect or the signInWithGoogle function
+      // The redirect is handled by the useEffect
     } catch (error) {
       // Error is caught and toasted in the useAuth hook
     } finally {
@@ -56,12 +60,26 @@ export default function LoginPage() {
     setEmailLoading(true);
     try {
       await loginWithEmailAndPassword(email, password);
-      // The redirect will be handled by the useEffect hook
+      // The redirect will be handled by the useEffect hook after state update
     } catch (error) {
       // Error is caught and toasted in the useAuth hook
     } finally {
         setEmailLoading(false);
     }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address to reset your password.",
+        variant: "destructive"
+      });
+      return;
+    }
+    // Set loading state if you want a spinner on the whole form
+    // For now, the auth hook shows its own toasts
+    await sendPasswordReset(email);
   };
 
   return (
@@ -86,7 +104,16 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2 relative">
-              <Label htmlFor="password">Password</Label>
+               <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-sm font-medium text-primary hover:underline"
+                >
+                    Forgot password?
+                </button>
+              </div>
               <Input 
                 id="password" 
                 type={showPassword ? 'text' : 'password'}
