@@ -91,6 +91,10 @@ const handleAuthError = (error: any, toast: (options: any) => void) => {
             title = "Login Error";
             description = "Please use your @saveetha.com Google account to sign in.";
             break;
+        case 'auth/too-many-requests':
+            title = 'Too Many Attempts';
+            description = 'Access to this account has been temporarily disabled due to many failed login attempts. You can try again later.';
+            break;
         default:
             // Keep the generic message for other errors
             break;
@@ -110,8 +114,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // This is a strict check. If a user object exists but the email isn't verified,
-        // (and it's not a Google Sign-in which is auto-verified), we log them out.
         const isGoogleUser = user.providerData.some(p => p.providerId === GoogleAuthProvider.PROVIDER_ID);
         if (!user.emailVerified && !isGoogleUser) {
             toast({
@@ -252,17 +254,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        // This is the critical check during login
         if (!userCredential.user.emailVerified) {
             toast({
                 title: 'Email Not Verified',
                 description: 'Please check your inbox and verify your email before logging in.',
                 variant: 'destructive'
             });
-            await signOut(auth); // Immediately sign out the unverified user
-            return; // Stop the login process
+            await signOut(auth);
+            return;
         }
-        // The onAuthStateChanged listener will handle the redirect
         return userCredential;
      } catch(error: any) {
          if (error.message.includes('@saveetha.com')) {
