@@ -33,9 +33,15 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen w-full bg-muted/40">
       <AdminSidebar />
+<<<<<<< HEAD
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 flex-1">
         <AdminHeader />
         <main className="flex-1 overflow-auto p-4 sm:p-0">{children}</main>
+=======
+      <div className="flex flex-1 flex-col">
+        <AdminHeader />
+        <main className="flex-1 overflow-auto p-4 md:p-0">{children}</main>
+>>>>>>> 60e24e6 (make admin nav bar mobile responsive)
       </div>
     </div>
   );
