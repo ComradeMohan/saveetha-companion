@@ -20,6 +20,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useEffect } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -70,32 +73,28 @@ export default function ContactForm() {
         return;
     }
 
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('email', values.email);
-    formData.append('message', values.message);
-
     try {
-        const response = await fetch("https://getform.io/f/bnlxdykb", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "Accept": "application/json",
-            },
+        await addDoc(collection(db, 'contact-messages'), {
+            name: values.name,
+            email: values.email,
+            message: values.message,
+            status: 'Unread',
+            createdAt: new Date().toISOString()
         });
-
-        if (!response.ok) {
-            throw new Error(`Form submission failed with status ${response.status}`);
-        }
-
+        
         toast({
             title: 'Message Sent!',
             description: "We'll get back to you as soon as possible.",
         });
         
-        form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
+        form.reset({ 
+            name: user?.displayName || '', 
+            email: user?.email || '', 
+            message: '' 
+        });
+
     } catch (error) {
-        console.error("Error sending message via getform.io:", error);
+        console.error("Error saving message to Firestore:", error);
         toast({
             title: "Error",
             description: "Could not send your message. Please try again later.",
@@ -130,7 +129,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Doe" {...field} disabled={!!user} />
+                                        <Input placeholder="John Doe" {...field} disabled={!!user?.displayName} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -143,7 +142,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="john.doe@example.com" {...field} disabled={!!user} />
+                                        <Input placeholder="john.doe@example.com" {...field} disabled={!!user?.email} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>

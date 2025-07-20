@@ -8,10 +8,12 @@ import CgpaCalculator from '@/components/cgpa-calculator';
 import AttendanceCalculator from '@/components/attendance-calculator';
 import ConceptMapFinder from '@/components/concept-map-finder';
 import FacultyDirectory from '@/components/faculty-directory';
-import ContactForm from '@/components/contact-form';
 import { useAuth } from '@/hooks/use-auth';
 import Features from '@/components/features';
 import Stats from '@/components/stats';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
   const { user } = useAuth();
@@ -43,18 +45,25 @@ export default function Home() {
                 <FacultyDirectory />
               </div>
             </section>
-
-            <section id="contact" className="py-12 md:py-16 bg-card/50 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-              <div className="container mx-auto px-4">
-                <ContactForm />
-              </div>
-            </section>
           </>
         ) : (
           <>
             <Hero />
             <Features />
             <Stats />
+            <section id="contact" className="py-12 md:py-16 text-center">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold tracking-tight">Need Help?</h2>
+                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                        If you're having trouble signing up or logging in, please don't hesitate to contact us.
+                    </p>
+                    <Button asChild size="lg" className="mt-6">
+                        <Link href="/contact">
+                            Contact Support <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                    </Button>
+                </div>
+            </section>
           </>
         )}
       </main>

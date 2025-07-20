@@ -146,7 +146,7 @@ export default function Header() {
       { href: '#concepts', label: 'Concepts', icon: Lightbulb },
       { href: '#faculty', label: 'Faculty', icon: Users },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
-      { href: '#contact', label: 'Contact Us', icon: Contact },
+      { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
     
      const loggedInLinks = [
@@ -155,7 +155,7 @@ export default function Header() {
       { href: '#concepts', label: 'Concepts', icon: Lightbulb },
       { href: '#faculty', label: 'Faculty', icon: Users },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
-      { href: '#contact', label: 'Contact Us', icon: Contact },
+      { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
 
     if (user) {
@@ -171,11 +171,13 @@ export default function Header() {
             { href: '#concepts', label: 'Concepts' },
             { href: '#faculty', label: 'Faculty' },
             { href: '/calendar', label: 'Calendar' },
+            { href: '/contact', label: 'Contact Us' },
         ];
     }
     return [
         { href: '#features', label: 'Features' },
         { href: '#stats', label: 'Stats' },
+        { href: '/contact', label: 'Contact Us' },
     ];
   }, [user]);
 
