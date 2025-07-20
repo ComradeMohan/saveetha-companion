@@ -31,7 +31,7 @@ import { db } from '@/lib/firebase';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export type Event = {
@@ -52,8 +52,8 @@ const eventSchema = z.object({
      required_error: "You need to select a target audience."
   }),
 }).refine(data => {
-    if (data.endDate && data.startDate > data.endDate) {
-        return false;
+    if (data.endDate && data.startDate) {
+        return data.endDate >= data.startDate;
     }
     return true;
 }, {
@@ -75,6 +75,8 @@ export function AddEventDialog() {
       title: '',
     },
   });
+
+  const startDateValue = form.watch('startDate');
 
   const onSubmit = async (values: EventFormValues) => {
     setLoading(true);
@@ -165,7 +167,7 @@ export function AddEventDialog() {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date < new Date("1900-01-01")}
+                                    disabled={(date) => date < startOfDay(new Date())}
                                     initialFocus
                                 />
                             </PopoverContent>
@@ -204,7 +206,7 @@ export function AddEventDialog() {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date < new Date("1900-01-01")}
+                                    disabled={(date) => startDateValue ? date < startDateValue : date < startOfDay(new Date())}
                                     initialFocus
                                 />
                             </PopoverContent>
