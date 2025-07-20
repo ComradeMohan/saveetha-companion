@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, useFormState } from 'react-hook-form';
@@ -17,6 +18,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Loader2 } from 'lucide-react';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -40,6 +45,8 @@ function SubmitButton() {
 
 export default function ContactForm() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,15 +56,35 @@ export default function ContactForm() {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+        form.setValue('name', user.displayName || '');
+        form.setValue('email', user.email || '');
+    }
+  }, [user, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(values); // In a real app, you'd send this to a server
-    toast({
-      title: 'Message Sent!',
-      description: "We'll get back to you within 24 hours.",
-    });
-    form.reset();
+    try {
+        await addDoc(collection(db, 'contact-messages'), {
+            ...values,
+            userId: user?.uid || null,
+            status: 'Unread',
+            createdAt: new Date().toISOString(),
+        });
+
+        toast({
+            title: 'Message Sent!',
+            description: "We'll get back to you within 24 hours.",
+        });
+        form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
+    } catch (error) {
+        console.error("Error sending message:", error);
+        toast({
+            title: "Error",
+            description: "Could not send your message. Please try again.",
+            variant: 'destructive',
+        });
+    }
   }
 
   return (
@@ -86,7 +113,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
+                                        <Input placeholder="John Doe" {...field} disabled={!!user} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -99,7 +126,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="john.doe@example.com" {...field} />
+                                        <Input placeholder="john.doe@example.com" {...field} disabled={!!user} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>

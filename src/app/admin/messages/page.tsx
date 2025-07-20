@@ -1,18 +1,52 @@
 
 'use client';
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNow } from "date-fns";
 
-const messages = [
-    { name: 'John Doe', email: 'john@example.com', message: 'I have a question about the CGPA calculator.', status: 'Unread', received: '10 minutes ago' },
-    { name: 'Jane Smith', email: 'jane@example.com', message: 'Can I request a new feature?', status: 'Read', received: '2 hours ago' },
-    { name: 'Peter Jones', email: 'peter@example.com', message: 'Just wanted to say thank you for this amazing app!', status: 'Read', received: '1 day ago' },
-];
-
+interface Message {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    status: 'Unread' | 'Read';
+    createdAt: string;
+}
 
 export default function AdminMessagesPage() {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        const q = query(collection(db, 'contact-messages'), orderBy('createdAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const data: Message[] = [];
+            querySnapshot.forEach((doc) => {
+                data.push({ id: doc.id, ...doc.data() } as Message);
+            });
+            setMessages(data);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching messages:", error);
+            toast({
+                title: "Error",
+                description: "Could not fetch messages.",
+                variant: "destructive"
+            });
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [toast]);
+
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <h2 className="text-3xl font-bold tracking-tight">Contact Form Messages</h2>
@@ -35,21 +69,37 @@ export default function AdminMessagesPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                           {messages.map((message) => (
-                            <TableRow key={message.email}>
-                                <TableCell>
-                                    <div className="font-medium">{message.name}</div>
-                                    <div className="text-sm text-muted-foreground">{message.email}</div>
-                                </TableCell>
-                                <TableCell>{message.message}</TableCell>
-                                <TableCell>
-                                    <Badge variant={message.status === 'Unread' ? 'default' : 'secondary'}>
-                                        {message.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>{message.received}</TableCell>
-                            </TableRow>
-                           ))}
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="h-24 text-center">
+                                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                    </TableCell>
+                                </TableRow>
+                            ) : messages.length > 0 ? (
+                                messages.map((message) => (
+                                    <TableRow key={message.id} className={message.status === 'Unread' ? 'font-bold' : ''}>
+                                        <TableCell>
+                                            <div className="font-medium">{message.name}</div>
+                                            <div className={`text-sm ${message.status === 'Unread' ? 'text-foreground/80' : 'text-muted-foreground'}`}>{message.email}</div>
+                                        </TableCell>
+                                        <TableCell className="max-w-[400px] truncate">{message.message}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={message.status === 'Unread' ? 'default' : 'secondary'}>
+                                                {message.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                             {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                     <TableCell colSpan={4} className="h-24 text-center">
+                                        No messages found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
