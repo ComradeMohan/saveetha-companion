@@ -79,8 +79,8 @@ export default function ConceptMapFinder() {
                 <div className="p-2 bg-primary/10 rounded-lg mb-4">
                     <FileIcon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground group-hover:bg-primary/80 rounded-sm p-0.5" />
                 </div>
-                <h3 className="font-semibold text-base leading-tight">{map.title}</h3>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{map.description || `A concept map about ${map.title}`}</p>
+                <h3 className="font-semibold text-sm leading-snug">{map.title}</h3>
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{map.description || `A concept map about ${map.title}`}</p>
             </div>
           </Link>
         ))}
