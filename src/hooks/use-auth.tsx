@@ -110,7 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        if (!user.emailVerified && (user.metadata.creationTime !== user.metadata.lastSignInTime)) {
+        // This is a strict check. If a user object exists but the email isn't verified,
+        // (and it's not a Google Sign-in which is auto-verified), we log them out.
+        const isGoogleUser = user.providerData.some(p => p.providerId === GoogleAuthProvider.PROVIDER_ID);
+        if (!user.emailVerified && !isGoogleUser) {
             toast({
                 title: "Verification Required",
                 description: "Please verify your email address to log in.",
@@ -120,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(null);
             setIsAdmin(false);
             setLoading(false);
+            router.push('/login');
             return;
         }
 
@@ -156,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [toast]);
+  }, [router, toast]);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -247,16 +251,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw new Error('Please use an email ending with @saveetha.com');
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // This is the critical check during login
         if (!userCredential.user.emailVerified) {
             toast({
                 title: 'Email Not Verified',
-                description: 'Please verify your email before logging in. A new verification link has been sent.',
+                description: 'Please check your inbox and verify your email before logging in.',
                 variant: 'destructive'
             });
-            await sendEmailVerification(userCredential.user);
-            await signOut(auth);
-            throw new Error("Email not verified");
+            await signOut(auth); // Immediately sign out the unverified user
+            return; // Stop the login process
         }
+        // The onAuthStateChanged listener will handle the redirect
         return userCredential;
      } catch(error: any) {
          if (error.message.includes('@saveetha.com')) {
