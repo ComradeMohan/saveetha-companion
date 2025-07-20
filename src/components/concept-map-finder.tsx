@@ -71,7 +71,7 @@ export default function ConceptMapFinder() {
         <Input
           type="search"
           placeholder="Search by name or subject..."
-          className="pl-10 w-full bg-white/60 dark:bg-black/30"
+          className="pl-10 w-full"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
@@ -79,9 +79,9 @@ export default function ConceptMapFinder() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {loading && Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-lg border bg-white/50 backdrop-blur-md">
-                <Skeleton className="h-8 w-8 mb-4 rounded-md bg-gray-200" />
-                <Skeleton className="h-4 w-3/4 bg-gray-200" />
+            <div key={i} className="p-4 rounded-lg border bg-card">
+                <Skeleton className="h-8 w-8 mb-4 rounded-md" />
+                <Skeleton className="h-4 w-3/4" />
             </div>
         ))}
         {!loading && filteredResults.length === 0 && (
@@ -99,7 +99,7 @@ export default function ConceptMapFinder() {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-                "group rounded-xl border border-white/20 p-4 text-card-foreground shadow-lg backdrop-blur-lg",
+                "group rounded-xl border bg-card p-4 text-card-foreground",
                 "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1"
             )}
           >
