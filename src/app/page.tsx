@@ -11,6 +11,7 @@ import FacultyDirectory from '@/components/faculty-directory';
 import ContactForm from '@/components/contact-form';
 import { useAuth } from '@/hooks/use-auth';
 import Features from '@/components/features';
+import Stats from '@/components/stats';
 
 export default function Home() {
   const { user } = useAuth();
@@ -53,6 +54,7 @@ export default function Home() {
           <>
             <Hero />
             <Features />
+            <Stats />
           </>
         )}
       </main>
