@@ -5,6 +5,7 @@ import { AuthProvider } from '@/hooks/use-auth';
 import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
+import VerificationBanner from '@/components/verification-banner';
 
 export const metadata: Metadata = {
   title: 'Saveetha Companion',
@@ -51,6 +52,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <VerificationBanner />
             {children}
             <Toaster />
           </AuthProvider>

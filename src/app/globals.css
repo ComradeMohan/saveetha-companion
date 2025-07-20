@@ -151,6 +151,15 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+  
+  @keyframes scroll-text {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-50%); }
+  }
+  
+  .animate-scroll-text {
+    animation: scroll-text 40s linear infinite;
+  }
 
   .nav-link-hover {
     position: relative;
