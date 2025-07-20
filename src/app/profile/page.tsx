@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, User, Mail, Hash, Phone, CheckCircle2, Calculator } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
+import { ChartConfig, ChartContainer, RechartsPrimitive } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                                                         cornerRadius={10}
                                                         className="fill-primary"
                                                     >
-                                                        <RechartsPrimitive.LabelList
+                                                        <LabelList
                                                             position="center"
                                                             content={({ viewBox }) => {
                                                                 if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
