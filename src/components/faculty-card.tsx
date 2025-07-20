@@ -1,8 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Faculty } from '@/lib/faculty-data';
-import { Phone, BookOpen, MapPin } from 'lucide-react';
+import { Phone, BookOpen, MapPin, MessageCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import Link from 'next/link';
 
 export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   const initials = faculty.name
@@ -10,6 +13,15 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
     .map(n => n[0])
     .join('')
     .substring(0,2);
+    
+  const getWhatsAppLink = (phone: string) => {
+    let cleanPhone = phone.replace(/[^0-9]/g, '');
+    // If it's a 10 digit number, assume it's an Indian number and add 91
+    if (cleanPhone.length === 10) {
+        cleanPhone = `91${cleanPhone}`;
+    }
+    return `https://wa.me/${cleanPhone}`;
+  };
 
   return (
     <Card className="hover:shadow-xl transition-all duration-300 flex flex-col">
@@ -25,6 +37,12 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
                 <span>{faculty.department || 'N/A'}</span>
             </CardDescription>
         </div>
+         <Button asChild variant="ghost" size="icon">
+            <Link href={getWhatsAppLink(faculty.phone)} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-5 w-5 text-green-500" />
+                <span className="sr-only">Chat on WhatsApp</span>
+            </Link>
+        </Button>
       </CardHeader>
       <CardContent className="flex-grow space-y-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
