@@ -5,8 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, PlusCircle, Calculator } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, Save, Loader2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
+import { db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const gradePoints: { [key: string]: number } = {
   'S': 10,
@@ -26,6 +30,9 @@ type Course = {
 
 export default function CgpaCalculator() {
   const [courses, setCourses] = useState<Course[]>([{ id: 1, grade: '', credits: '' }]);
+  const [isSaving, setIsSaving] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const addCourse = () => {
     setCourses([...courses, { id: Date.now(), grade: '', credits: '' }]);
@@ -43,9 +50,14 @@ export default function CgpaCalculator() {
     );
   };
 
-  const { cgpa, totalCredits } = useMemo(() => {
+  const { cgpa, totalCredits, isValid } = useMemo(() => {
     let weightedSum = 0;
     let totalCredits = 0;
+    let isValid = true;
+
+    if (courses.length === 0 || courses.every(c => !c.grade || !c.credits)) {
+        isValid = false;
+    }
 
     courses.forEach(course => {
       const credits = parseFloat(course.credits);
@@ -56,10 +68,56 @@ export default function CgpaCalculator() {
         totalCredits += credits;
       }
     });
+    
+    if (totalCredits === 0) isValid = false;
 
-    const cgpa = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : '0.00';
-    return { cgpa, totalCredits };
+    const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : '0.00';
+    return { cgpa: cgpaValue, totalCredits, isValid };
   }, [courses]);
+  
+  const handleSaveCgpa = async () => {
+    if (!user) {
+        toast({
+            title: "Not Logged In",
+            description: "You need to be logged in to save your CGPA.",
+            variant: "destructive"
+        });
+        return;
+    }
+    if (!isValid) {
+        toast({
+            title: "Incomplete Data",
+            description: "Please fill in all grade and credit fields before saving.",
+            variant: "destructive"
+        });
+        return;
+    }
+    
+    setIsSaving(true);
+    try {
+        const docRef = doc(db, 'students_cgpa', user.uid);
+        await setDoc(docRef, {
+            userId: user.uid,
+            cgpa: parseFloat(cgpa),
+            totalCredits,
+            courses: courses.map(c => ({...c, credits: parseFloat(c.credits) })),
+            updatedAt: new Date().toISOString()
+        });
+        toast({
+            title: "Success!",
+            description: "Your CGPA has been saved successfully."
+        });
+    } catch (error) {
+        console.error("Error saving CGPA: ", error);
+        toast({
+            title: "Error",
+            description: "Could not save your CGPA. Please try again.",
+            variant: "destructive"
+        });
+    } finally {
+        setIsSaving(false);
+    }
+  };
 
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
@@ -115,8 +173,14 @@ export default function CgpaCalculator() {
         </Button>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-0">
-        <div className="text-sm">
-          <span className="font-semibold">Total Credits:</span> {totalCredits}
+        <div className="flex items-center gap-2">
+            <Button onClick={handleSaveCgpa} disabled={!user || !isValid || isSaving}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+                Save CGPA
+            </Button>
+            <div className="text-sm">
+                <span className="font-semibold">Total Credits:</span> {totalCredits}
+            </div>
         </div>
         <div className="text-center sm:text-right">
           <span className="text-sm font-semibold">Your CGPA</span>
