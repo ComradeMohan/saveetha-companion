@@ -155,6 +155,7 @@ export default function Header() {
       { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
       { href: '/#faculty', label: 'Faculty', icon: Users },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/notifications', label: 'Notifications', icon: Bell },
       { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
 
@@ -171,6 +172,7 @@ export default function Header() {
             { href: '/#concepts', label: 'Concepts' },
             { href: '/#faculty', label: 'Faculty' },
             { href: '/calendar', label: 'Calendar' },
+            { href: '/notifications', label: 'Notifications' },
             { href: '/contact', label: 'Contact Us' },
         ];
     }

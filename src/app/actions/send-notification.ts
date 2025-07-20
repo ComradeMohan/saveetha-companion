@@ -1,7 +1,6 @@
 
 'use server';
 
-// dotenv is no longer needed here as we read the file directly.
 import { adminDb, adminMessaging } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
@@ -27,6 +26,15 @@ export async function sendNotification(prevState: any, formData: FormData) {
     const { title, description } = validatedFields.data;
 
     try {
+        // 1. Save the notification to the 'notifications' collection
+        const notificationRef = await adminDb.collection('notifications').add({
+            title,
+            description,
+            createdAt: new Date().toISOString(),
+        });
+        console.log('Notification saved with ID: ', notificationRef.id);
+
+        // 2. Send the push notification
         const usersSnapshot = await adminDb.collection('users').get();
         if (usersSnapshot.empty) {
             return { type: 'info', message: 'No users to send notifications to.' };
@@ -65,7 +73,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
                     icon: '/favicon.ico',
                 },
                 fcm_options: {
-                    link: 'https://saveethacgpa.web.app/'
+                    link: '/notifications' // Open the new notifications page
                 }
             }
         };
