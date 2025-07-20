@@ -36,17 +36,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 
-const navigationLinks = [
-  { href: '/', label: 'Home', icon: GraduationCap },
-  { href: '#calculators', label: 'CGPA', icon: Calculator },
-  { href: '#calculators', label: 'Attendance', icon: Percent },
-  { href: '#concepts', label: 'Concepts', icon: Lightbulb },
-  { href: '#faculty', label: 'Faculty', icon: Users },
-  { href: '#notifications', label: 'Notifications', icon: Bell },
-  { href: '#events', label: 'Events', icon: Calendar },
-  { href: '#contact', label: 'Contact Us', icon: Contact },
-];
-
 const NavLink = ({
   href,
   children,
@@ -143,6 +132,24 @@ function UserNav() {
 
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const { user } = useAuth();
+
+  const navigationLinks = React.useMemo(() => {
+    const allLinks = [
+      { href: '/', label: 'Home', icon: GraduationCap },
+      { href: '#calculators', label: 'CGPA', icon: Calculator },
+      { href: '#calculators', label: 'Attendance', icon: Percent },
+      { href: '#concepts', label: 'Concepts', icon: Lightbulb },
+      { href: '#faculty', label: 'Faculty', icon: Users },
+      { href: '#notifications', label: 'Notifications', icon: Bell, disabled: true },
+      { href: '#events', label: 'Events', icon: Calendar, disabled: true },
+      { href: '#contact', label: 'Contact Us', icon: Contact },
+    ];
+    if (user) {
+      return allLinks.filter(link => link.label !== 'Home');
+    }
+    return allLinks;
+  }, [user]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -155,7 +162,7 @@ export default function Header() {
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigationLinks.slice(1, 5).map(link => (
+            {navigationLinks.slice(user ? 0 : 1, 5).map(link => (
               <NavLink key={link.href + link.label} href={link.href}>
                 {link.label}
               </NavLink>
