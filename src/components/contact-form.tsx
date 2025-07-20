@@ -20,8 +20,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useEffect } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 
 const formSchema = z.object({
@@ -73,14 +71,26 @@ export default function ContactForm() {
         return;
     }
 
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('email', values.email);
+    formData.append('message', values.message);
+    if (values._gotcha) {
+        formData.append('_gotcha', values._gotcha);
+    }
+
     try {
-        await addDoc(collection(db, 'contact-messages'), {
-            name: values.name,
-            email: values.email,
-            message: values.message,
-            status: 'Unread',
-            createdAt: new Date().toISOString()
+        const response = await fetch("https://getform.io/f/bdrgjxeb", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "Accept": "application/json",
+            },
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         toast({
             title: 'Message Sent!',
@@ -94,7 +104,7 @@ export default function ContactForm() {
         });
 
     } catch (error) {
-        console.error("Error saving message to Firestore:", error);
+        console.error("Error submitting to getform.io:", error);
         toast({
             title: "Error",
             description: "Could not send your message. Please try again later.",
