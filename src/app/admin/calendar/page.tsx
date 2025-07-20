@@ -83,16 +83,16 @@ export default function AdminCalendarPage() {
     return (
         <>
             <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">Events Calendar</h2>
                         <p className="text-muted-foreground">Manage academic and university events.</p>
                     </div>
                     <AddEventDialog />
                 </div>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[1fr_400px]">
+                <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[1fr_400px]">
                     <Card>
-                        <CardContent className="p-2">
+                        <CardContent className="p-2 md:p-4">
                              <Calendar
                                 mode="single"
                                 selected={selectedDate}

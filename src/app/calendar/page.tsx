@@ -38,7 +38,9 @@ export default function StudentCalendarPage() {
 
     useEffect(() => {
         // Persist filter to localStorage whenever it changes
-        localStorage.setItem('calendarAudienceFilter', audienceFilter);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('calendarAudienceFilter', audienceFilter);
+        }
     }, [audienceFilter]);
 
     useEffect(() => {
@@ -103,9 +105,9 @@ export default function StudentCalendarPage() {
                         </div>
                     </div>
 
-                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-[1fr_450px]">
+                    <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-[1fr_450px]">
                         <Card>
-                             <CardContent className="p-2">
+                             <CardContent className="p-2 md:p-4">
                                 <Calendar
                                     mode="single"
                                     selected={selectedDate}
@@ -171,4 +173,3 @@ export default function StudentCalendarPage() {
         </div>
     );
 }
-
