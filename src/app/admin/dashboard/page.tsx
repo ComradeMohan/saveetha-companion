@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, MessageSquare, Users, CalendarDays, BarChart } from 'lucide-react';
+import { BookOpen, Users, CalendarDays, BarChart } from 'lucide-react';
 import RecentSignups from '@/components/admin/recent-signups';
 import useDashboardStats from '@/hooks/use-dashboard-stats';
 import { Skeleton } from '@/components/ui/skeleton';
