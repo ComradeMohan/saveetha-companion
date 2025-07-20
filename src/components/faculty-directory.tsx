@@ -1,22 +1,48 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
 import { Search, Users, Loader2 } from 'lucide-react';
-import { facultyData } from '@/lib/faculty-data';
 import type { Faculty } from '@/lib/faculty-data';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function FacultyDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false); // Can be used for async filtering in future
+  const [facultyData, setFacultyData] = useState<Faculty[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+   useEffect(() => {
+        const q = query(collection(db, 'faculty'), orderBy('name'));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const data: Faculty[] = [];
+            querySnapshot.forEach((doc) => {
+                data.push({ id: doc.id, ...doc.data() } as Faculty);
+            });
+            setFacultyData(data);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching faculty data:", error);
+            toast({
+                title: "Error",
+                description: "Could not fetch faculty data.",
+                variant: "destructive"
+            });
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [toast]);
 
   const filteredFaculty = useMemo(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     
     if (!searchTerm) {
-      return facultyData.slice(0, 10);
+      return facultyData.slice(0, 6);
     }
 
     return facultyData.filter(
@@ -27,7 +53,7 @@ export default function FacultyDirectory() {
         (faculty.subjects && faculty.subjects.some(subject => subject.toLowerCase().includes(lowercasedFilter))) ||
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
-  }, [searchTerm]);
+  }, [searchTerm, facultyData]);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -53,8 +79,8 @@ export default function FacultyDirectory() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredFaculty.map((faculty, index) => (
-                <FacultyCard key={`${faculty.name}-${index}`} faculty={faculty} />
+            {filteredFaculty.map((faculty) => (
+                <FacultyCard key={faculty.id} faculty={faculty} />
             ))}
             {filteredFaculty.length === 0 && (
             <div className="col-span-full text-center py-10">
