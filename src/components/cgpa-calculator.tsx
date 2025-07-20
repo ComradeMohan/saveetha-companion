@@ -137,7 +137,7 @@ export default function CgpaCalculator() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground px-1">
           <span>Grade</span>
-          <span>Credit Hours</span>
+          <span>Credits</span>
           <span />
         </div>
         <ScrollArea className="h-60 pr-4">
@@ -161,7 +161,7 @@ export default function CgpaCalculator() {
                 </Select>
                 <Input
                   type="number"
-                  placeholder="e.g., 3"
+                  placeholder="e.g., 4"
                   value={course.credits}
                   onChange={(e) => handleCourseChange(course.id, 'credits', e.target.value)}
                   min="0"
