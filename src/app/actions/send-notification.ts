@@ -1,6 +1,7 @@
 
 'use server';
 
+import 'dotenv/config';
 import { adminDb, adminMessaging } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
