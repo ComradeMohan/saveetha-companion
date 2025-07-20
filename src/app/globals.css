@@ -4,23 +4,23 @@
 
 @layer base {
   :root {
-    --background: 220 100% 98.6%; /* Lumen Pulse: Soft white with a hint of blue */
-    --foreground: 228 20% 5.1%; /* Lumen Pulse: Deep navy black */
-    --card: 220 100% 98.6%;
+    --background: 220 100% 98.6%; /* Crystal Flux: Soft white with a hint of blue */
+    --foreground: 228 20% 5.1%; /* Crystal Flux: Deep navy black */
+    --card: 240 100% 100%; /* Set to white for glassmorphism base */
     --card-foreground: 228 20% 5.1%;
     --popover: 220 100% 98.6%;
     --popover-foreground: 228 20% 5.1%;
-    --primary: 267 86% 65%; /* Lumen Pulse: Bold purple */
-    --primary-foreground: 220 100% 98.6%; /* Lumen Pulse: Soft white */
+    --primary: 267 86% 65%; /* Crystal Flux: Bold purple */
+    --primary-foreground: 220 100% 98.6%; /* Crystal Flux: Soft white */
     --secondary: 220 20% 93%;
     --secondary-foreground: 228 20% 5.1%;
     --muted: 220 20% 93%;
-    --muted-foreground: 232 13% 41%; /* Lumen Pulse: Muted gray-blue */
+    --muted-foreground: 232 13% 41%; /* Crystal Flux: Muted gray-blue */
     --accent: 220 20% 93%;
     --accent-foreground: 228 20% 5.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
-    --border: 226 50% 91%; /* Lumen Pulse: Subtle light lines */
+    --border: 226 50% 91%; /* Crystal Flux: Subtle light lines */
     --input: 226 50% 91%;
     --ring: 267 86% 65%;
     --radius: 0.75rem;
@@ -86,11 +86,6 @@
     animation: blobMoveReverse 20s infinite ease-in-out;
     z-index: -1;
   }
-
-  .dark body::before, .dark body::after {
-    animation: none;
-    background: none;
-  }
   
   .dark body::before {
     content: "";
@@ -109,6 +104,11 @@
     linear-gradient(135deg, hsl(222, 84%, 4.9%), hsl(240, 20%, 10%));
     animation: dark-liquid-gradient 15s ease infinite;
     background-size: 200% 200%;
+  }
+
+   .dark body::after {
+    background: none;
+    animation: none;
   }
 
   @keyframes dark-liquid-gradient {
