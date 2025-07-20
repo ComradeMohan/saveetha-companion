@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
 import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Saveetha Companion',
@@ -24,6 +25,23 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         ></link>
+        {/* Google Analytics Scripts */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-SV60C81VTM"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-SV60C81VTM');
+            `,
+          }}
+        />
       </head>
       <body className="font-body antialiased bg-background text-foreground">
         <MouseSpotlight />
