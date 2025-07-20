@@ -1,21 +1,33 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users can only manage their own profiles
+    
+    // Helper function to check if the user is an admin
+    function isAdmin() {
+      return request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com' && request.auth.token.email_verified;
+    }
+
+    // Users can create their own profile and can only read/update their own document.
     match /users/{userId} {
       allow create: if request.auth != null;
-      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow read, update: if request.auth.uid == userId;
     }
 
-    // Admins can manage faculty data
+    // Only admins can manage the faculty directory.
     match /faculty/{document=**} {
-      allow read, write: if request.auth != null && request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
+      allow read, write: if isAdmin();
     }
 
-    // Default deny all other access
-    match /{document=**} {
-      allow read, write: if false;
+    // Only admins can manage concept maps.
+    match /concept-maps/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Authenticated users can create/update their own CGPA document.
+    match /students_cgpa/{userId} {
+      allow read, write: if request.auth.uid == userId;
     }
   }
 }
