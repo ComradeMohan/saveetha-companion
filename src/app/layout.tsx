@@ -39,7 +39,7 @@ export default function RootLayout({
           key="font-poppins"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"
-        ></link>
+        />
         {/* Google Analytics Scripts */}
         <Script
           key="gtag-js"
