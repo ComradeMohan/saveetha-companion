@@ -13,7 +13,7 @@ const useFcm = () => {
     const { user } = useAuth();
 
     useEffect(() => {
-        if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+        if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !user) {
             return;
         }
 
@@ -48,11 +48,16 @@ const useFcm = () => {
         requestPermissionAndToken();
 
         const unsubscribe = onMessage(messaging, (payload) => {
-            console.log('Message received. ', payload);
-            toast({
-                title: payload.notification?.title || 'New Notification',
-                description: payload.notification?.body,
-            });
+            console.log('Foreground message received. ', payload);
+
+            // Display a native browser notification instead of a toast
+            const notificationTitle = payload.notification?.title || 'New Notification';
+            const notificationOptions = {
+                body: payload.notification?.body,
+                icon: payload.notification?.icon || '/favicon.ico',
+            };
+
+            new Notification(notificationTitle, notificationOptions);
         });
 
         return () => {
