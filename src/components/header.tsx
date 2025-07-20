@@ -22,6 +22,9 @@ import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/use-auth';
@@ -167,6 +170,10 @@ export default function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription>Main navigation links for the application.</SheetDescription>
+            </SheetHeader>
             <Link href="/" className="flex items-center space-x-2">
               <GraduationCap className="h-6 w-6 text-primary" />
               <span className="font-bold">Saveetha Companion</span>
