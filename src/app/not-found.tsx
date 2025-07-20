@@ -14,7 +14,7 @@ export default function NotFound() {
           404 - Page Lost
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Oops! It seems this page has gone rogue. Not even our AI concept map could track it down. Let's get you back to familiar territory.
+          Oops! It seems this page has gone rogue. Not even our AI could track it down. Let's get you back to familiar territory.
         </p>
         <Button asChild size="lg" className="mt-8">
           <Link href="/">

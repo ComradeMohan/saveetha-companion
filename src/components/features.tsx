@@ -15,8 +15,8 @@ const features = [
   },
   {
     icon: Lightbulb,
-    title: 'AI Concept Maps',
-    description: 'Find AI-generated concept maps to visualize and understand complex topics.',
+    title: 'Concept Map Library',
+    description: 'Find concept maps to visualize and understand complex topics.',
   },
   {
     icon: Users,
