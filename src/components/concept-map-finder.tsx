@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,10 +6,10 @@ import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, Search, Loader2 } from 'lucide-react';
+import { Lightbulb, Search, Loader2, ExternalLink } from 'lucide-react';
 import { conceptMapFinder, type ConceptMapFinderOutput } from '@/ai/flows/concept-map-finder';
-import Image from 'next/image';
 import { Skeleton } from './ui/skeleton';
+import Link from 'next/link';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -40,13 +41,9 @@ export default function ConceptMapFinder() {
 
     setLoading(true);
     setSearched(true);
-    setResults([]);
+    setResults([]); // Clear previous results
     const searchResults = await conceptMapFinder({ query });
-    const placeholderResults = searchResults.map(r => ({
-      ...r,
-      url: `https://placehold.co/600x400.png`
-    }))
-    setResults(placeholderResults);
+    setResults(searchResults);
     setLoading(false);
   };
 
@@ -77,7 +74,7 @@ export default function ConceptMapFinder() {
                <Skeleton className="h-4 w-1/2 mt-1" />
             </CardHeader>
             <CardContent>
-              <Skeleton className="h-40 w-full" />
+              <Skeleton className="h-10 w-full" />
             </CardContent>
           </Card>
         ))}
@@ -88,20 +85,18 @@ export default function ConceptMapFinder() {
           </div>
         )}
         {!loading && results.map((map, index) => (
-          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in">
-            <CardHeader>
+          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in flex flex-col">
+            <CardHeader className="flex-grow">
               <CardTitle>{map.title}</CardTitle>
               <CardDescription>{map.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Image
-                src={map.url}
-                alt={map.title}
-                width={600}
-                height={400}
-                className="rounded-md object-cover aspect-[3/2]"
-                data-ai-hint="concept map diagram"
-              />
+                <Button asChild className="w-full">
+                    <Link href={map.url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Open Concept Map
+                    </Link>
+                </Button>
             </CardContent>
           </Card>
         ))}

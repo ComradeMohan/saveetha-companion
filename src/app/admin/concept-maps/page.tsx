@@ -4,14 +4,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2 } from "lucide-react";
+import { Loader2, ExternalLink } from "lucide-react";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import type { ConceptMap } from "@/lib/concept-map-data";
 import { AddConceptMapDialog } from "@/components/admin/add-concept-map-dialog";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function AdminConceptMapsPage() {
     const [conceptMaps, setConceptMaps] = useState<ConceptMap[]>([]);
@@ -64,11 +64,9 @@ export default function AdminConceptMapsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="hidden w-[100px] sm:table-cell">
-                                    <span className="sr-only">Image</span>
-                                </TableHead>
                                 <TableHead>Title</TableHead>
                                 <TableHead>Description</TableHead>
+                                <TableHead className="w-[100px] text-center">Link</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -81,21 +79,19 @@ export default function AdminConceptMapsPage() {
                             ) : conceptMaps.length > 0 ? (
                                 conceptMaps.map((map) => (
                                     <TableRow key={map.id}>
-                                         <TableCell className="hidden sm:table-cell">
-                                            <Image
-                                                alt={map.title}
-                                                className="aspect-square rounded-md object-cover"
-                                                height="64"
-                                                src={map.url}
-                                                width="64"
-                                                data-ai-hint="concept map diagram"
-                                            />
-                                        </TableCell>
                                         <TableCell className="font-medium">
                                             {map.title}
                                         </TableCell>
                                         <TableCell>
                                            {map.description}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Button asChild variant="outline" size="icon">
+                                                <Link href={map.url} target="_blank" rel="noopener noreferrer">
+                                                    <ExternalLink className="h-4 w-4" />
+                                                    <span className="sr-only">Open Link</span>
+                                                </Link>
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))

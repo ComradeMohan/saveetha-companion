@@ -33,7 +33,7 @@ import { db } from '@/lib/firebase';
 const conceptMapSchema = z.object({
   title: z.string().min(3, { message: 'Title must be at least 3 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
-  url: z.string().url({ message: 'Please enter a valid URL for the image.' }),
+  url: z.string().url({ message: 'Please enter a valid public URL.' }),
 });
 
 type ConceptMapFormValues = z.infer<typeof conceptMapSchema>;
@@ -89,7 +89,7 @@ export function AddConceptMapDialog() {
         <DialogHeader>
           <DialogTitle>Add New Concept Map</DialogTitle>
           <DialogDescription>
-            Enter the details for the new concept map below.
+            Upload your file (image or PDF) to a public hosting service, then paste the URL below.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -125,9 +125,9 @@ export function AddConceptMapDialog() {
               name="url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Image URL</FormLabel>
+                  <FormLabel>File URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/image.png" {...field} />
+                    <Input placeholder="https://example.com/your-file.pdf" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
