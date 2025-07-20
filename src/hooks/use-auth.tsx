@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!user.emailVerified && !isGoogleUser) {
             toast({
                 title: "Verification Required",
-                description: "Please verify your email address to log in.",
+                description: "Please verify your email address to log in. Check your spam folder.",
                 variant: 'destructive'
             });
             await signOut(auth);
@@ -250,27 +250,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
         if (!email.endsWith('@saveetha.com')) {
-          throw new Error('Please use an email ending with @saveetha.com');
-        }
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        
-        if (!userCredential.user.emailVerified) {
-            toast({
-                title: 'Email Not Verified',
-                description: 'Please check your inbox and verify your email before logging in.',
-                variant: 'destructive'
-            });
-            await signOut(auth);
+            toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
             return;
         }
-        return userCredential;
+        // Attempt to sign in and let onAuthStateChanged handle verification
+        return await signInWithEmailAndPassword(auth, email, password);
      } catch(error: any) {
-         if (error.message.includes('@saveetha.com')) {
-              toast({ title: 'Invalid Email', description: error.message, variant: 'destructive' });
-         } else {
-             handleAuthError(error, toast);
-         }
-         throw error;
+        handleAuthError(error, toast);
+        throw error;
      }
   }
 
