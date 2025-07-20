@@ -34,7 +34,7 @@ import type { Faculty } from '@/lib/faculty-data';
 
 const facultySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, { message: 'Please enter a valid phone number.' }),
+  phone: z.string().regex(/^\d{10}$/, { message: 'Please enter a valid 10-digit phone number.' }),
   department: z.string().min(3, { message: 'Please provide a department or subject.' }),
 });
 
@@ -122,7 +122,7 @@ export function EditFacultyDialog({ faculty, children }: EditFacultyDialogProps)
                         <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                            <Input placeholder="e.g., +919876543210" {...field} />
+                            <Input placeholder="e.g., 9876543210" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
