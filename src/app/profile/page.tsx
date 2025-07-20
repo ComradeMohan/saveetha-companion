@@ -11,7 +11,8 @@ import { Loader2, User, Mail, Hash, Phone, CheckCircle2, Calculator } from 'luci
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
-import { ChartConfig, ChartContainer, RechartsPrimitive } from '@/components/ui/chart';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
+import { RechartsPrimitive } from 'recharts';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -156,34 +157,38 @@ export default function ProfilePage() {
                                                         dataKey="value"
                                                         tick={false}
                                                     />
-                                                    <RadialBar
+                                                    <RechartsPrimitive.RadialBar
                                                         dataKey="value"
                                                         background
                                                         cornerRadius={10}
                                                         className="fill-primary"
                                                     >
+                                                        <RechartsPrimitive.Animation
+                                                            dataKey="value"
+                                                            type="number"
+                                                            from={0}
+                                                            to={cgpaData.cgpa * 10}
+                                                            duration={1500}
+                                                            easing="ease"
+                                                        />
                                                         <LabelList
                                                             position="center"
                                                             content={({ viewBox }) => {
                                                                 if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                                                                 return (
                                                                     <>
-                                                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
+                                                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                                                                         <tspan
-                                                                        x={viewBox.cx}
-                                                                        y={viewBox.cy}
-                                                                        className="text-4xl font-bold text-primary tabular-nums"
+                                                                            className="text-4xl font-bold text-primary tabular-nums"
                                                                         >
-                                                                        {cgpaData.cgpa.toFixed(2)}
+                                                                            {cgpaData.cgpa.toFixed(2)}
                                                                         </tspan>
                                                                     </text>
-                                                                    <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle">
+                                                                    <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
                                                                         <tspan
-                                                                        x={viewBox.cx}
-                                                                        y={(viewBox.cy || 0) + 20}
-                                                                        className="text-sm text-muted-foreground"
+                                                                            className="text-sm text-muted-foreground"
                                                                         >
-                                                                        out of 10
+                                                                            out of 10
                                                                         </tspan>
                                                                     </text>
                                                                     </>
@@ -192,7 +197,7 @@ export default function ProfilePage() {
                                                                 return null;
                                                             }}
                                                         />
-                                                    </RadialBar>
+                                                    </RechartsPrimitive.RadialBar>
                                                 </RadialBarChart>
                                             </ChartContainer>
                                         </CardContent>
