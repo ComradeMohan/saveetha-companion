@@ -24,20 +24,20 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   };
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 flex flex-col">
+    <Card className="flex flex-col">
       <CardHeader className="flex flex-row items-start gap-4 pb-4">
         <Avatar className="h-12 w-12">
             <AvatarImage src={`https://placehold.co/100x100.png?text=${initials}`} alt={faculty.name} data-ai-hint="person portrait" />
             <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-            <CardTitle>{faculty.name}</CardTitle>
-            <CardDescription className="flex items-center gap-2 pt-1">
+        <div className="flex-1 min-w-0">
+            <CardTitle className="break-words">{faculty.name}</CardTitle>
+            <CardDescription className="flex items-center gap-2 pt-1 truncate">
                 <BookOpen className="h-4 w-4 flex-shrink-0" />
                 <span>{faculty.department || 'N/A'}</span>
             </CardDescription>
         </div>
-         <Button asChild variant="ghost" size="icon">
+         <Button asChild variant="ghost" size="icon" className="flex-shrink-0">
             <Link href={getWhatsAppLink(faculty.phone)} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-5 w-5 text-green-500" />
                 <span className="sr-only">Chat on WhatsApp</span>
