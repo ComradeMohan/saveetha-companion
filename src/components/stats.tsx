@@ -6,6 +6,7 @@ import { Users, BookOpen, GraduationCap, BrainCircuit } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
 
 const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -36,24 +37,14 @@ const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: strin
 
 export default function Stats() {
     const [isVisible, setIsVisible] = useState(false);
-    const [facultyCount, setFacultyCount] = useState(0);
-    const [conceptMapCount, setConceptMapCount] = useState(0);
+    const [facultyCount, setFacultyCount] = useState(75); // Reverted to static
+    const [conceptMapCount, setConceptMapCount] = useState(20); // Reverted to static
     const statsRef = useRef<HTMLDivElement>(null);
+    const { user } = useAuth();
 
-    useEffect(() => {
-      const fetchCounts = async () => {
-        try {
-          const facultySnapshot = await getDocs(collection(db, 'faculty'));
-          setFacultyCount(facultySnapshot.size);
-
-          const conceptMapSnapshot = await getDocs(collection(db, 'concept-maps'));
-          setConceptMapCount(conceptMapSnapshot.size);
-        } catch (error) {
-          console.error("Error fetching stats:", error);
-        }
-      };
-      fetchCounts();
-    }, []);
+    // The fetch is removed to prevent permission errors for unauthenticated users.
+    // If you need dynamic stats, this data should be fetched on a server or an admin page,
+    // not on the public homepage.
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
