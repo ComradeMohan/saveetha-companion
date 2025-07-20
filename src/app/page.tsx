@@ -10,6 +10,7 @@ import ConceptMapFinder from '@/components/concept-map-finder';
 import FacultyDirectory from '@/components/faculty-directory';
 import ContactForm from '@/components/contact-form';
 import { useAuth } from '@/hooks/use-auth';
+import Features from '@/components/features';
 
 export default function Home() {
   const { user } = useAuth();
@@ -49,7 +50,10 @@ export default function Home() {
             </section>
           </>
         ) : (
-          <Hero />
+          <>
+            <Hero />
+            <Features />
+          </>
         )}
       </main>
       <Footer />
