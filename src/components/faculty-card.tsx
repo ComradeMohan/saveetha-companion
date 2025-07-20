@@ -1,9 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import type { Faculty } from '@/lib/faculty-data';
-import { Phone, Building, BookOpen } from 'lucide-react';
+import { Phone, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
 
 export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   const initials = faculty.name
@@ -20,28 +18,16 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
         </Avatar>
         <div>
             <CardTitle>{faculty.name}</CardTitle>
-            <CardDescription>{faculty.designation}</CardDescription>
+            <CardDescription className="flex items-center gap-2 pt-1">
+                <BookOpen className="h-4 w-4 flex-shrink-0" />
+                <span>{faculty.department}</span>
+            </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <BookOpen className="h-4 w-4 flex-shrink-0" />
-          <span>{faculty.department}</span>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
           <Phone className="h-4 w-4 flex-shrink-0" />
           <span>{faculty.phone}</span>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Building className="h-4 w-4 flex-shrink-0" />
-          <span>Room: {faculty.room}</span>
-        </div>
-        <div className="flex flex-wrap gap-2 pt-2">
-          {faculty.subjects.map(subject => (
-            <Badge key={subject} variant="secondary">
-              {subject}
-            </Badge>
-          ))}
         </div>
       </CardContent>
     </Card>
