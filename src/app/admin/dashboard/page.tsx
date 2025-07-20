@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { BookOpen, Users, MessageSquare } from 'lucide-react';
 import useDashboardStats from '@/hooks/use-dashboard-stats';
 import { Skeleton } from '@/components/ui/skeleton';
+import RecentSignups from '@/components/admin/recent-signups';
 
 function StatCard({ title, value, icon: Icon, description, loading }: { title: string, value: number | string, icon: React.ElementType, description: string, loading: boolean }) {
   return (
@@ -65,6 +66,17 @@ export default function AdminDashboard() {
           icon={MessageSquare}
           loading={loading}
         />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-full">
+            <CardHeader>
+                <CardTitle>Recent Signups</CardTitle>
+                <CardDescription>A chart of new users over the last 30 days.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+                <RecentSignups userList={stats.userList} loading={loading} />
+            </CardContent>
+        </Card>
       </div>
     </div>
   );
