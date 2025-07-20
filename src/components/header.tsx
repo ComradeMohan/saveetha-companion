@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from './theme-toggle';
 
 const NavLink = ({
   href,
@@ -195,7 +196,7 @@ export default function Header() {
           </span>
         </Link>
         
-        <div className="flex flex-1 items-center justify-end space-x-6">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              {navigationLinks.slice(user ? 0 : 1, 5).map(link => (
@@ -204,6 +205,7 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
+          <ThemeToggle />
           <UserNav />
         </div>
       </div>
