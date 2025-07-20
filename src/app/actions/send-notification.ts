@@ -1,7 +1,7 @@
 
 'use server';
 
-import 'dotenv/config';
+// dotenv is no longer needed here as we read the file directly.
 import { adminDb, adminMessaging } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
