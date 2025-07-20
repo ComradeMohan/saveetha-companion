@@ -33,18 +33,21 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link key="preconnect-fonts-googleapis" rel="preconnect" href="https://fonts.googleapis.com" />
+        <link key="preconnect-fonts-gstatic" rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
+          key="font-poppins"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         ></link>
         {/* Google Analytics Scripts */}
         <Script
+          key="gtag-js"
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-SV60C81VTM"
         />
         <Script
+          key="gtag-init"
           id="gtag-init"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
