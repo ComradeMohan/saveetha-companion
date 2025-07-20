@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Faculty } from "@/lib/faculty-data";
-import { MoreHorizontal, Loader2, Trash2 } from "lucide-react";
+import { MoreHorizontal, Loader2, Trash2, Pencil } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
 import { collection, onSnapshot, orderBy, query, doc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { EditFacultyDialog } from "@/components/admin/edit-faculty-dialog";
 
 export default function AdminFacultyPage() {
     const [facultyData, setFacultyData] = useState<Faculty[]>([]);
@@ -127,7 +128,12 @@ export default function AdminFacultyPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                                                        <EditFacultyDialog faculty={faculty}>
+                                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                                                <Pencil className="mr-2 h-4 w-4" />
+                                                                Edit
+                                                            </DropdownMenuItem>
+                                                        </EditFacultyDialog>
                                                         <DropdownMenuItem onClick={() => handleDeleteClick(faculty)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                                                             <Trash2 className="mr-2 h-4 w-4" />
                                                             Delete
@@ -160,7 +166,7 @@ export default function AdminFacultyPage() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+                        <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
                             Delete
                         </AlertDialogAction>
