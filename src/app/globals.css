@@ -10,7 +10,7 @@
     --card-foreground: 228 20% 5.1%;
     --popover: 210 40% 100%;
     --popover-foreground: 228 20% 5.1%;
-    --primary: 201 68% 51%; /* #2e9ed6 */
+    --primary: 262 80% 56%; /* New Vibrant Purple */
     --primary-foreground: 210 40% 98%;
     --secondary: 260 100% 97%; /* Soft Lavender */
     --secondary-foreground: 260 20% 20%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 226 50% 91%;
     --input: 210 40% 96%;
-    --ring: 201 68% 51%;
+    --ring: 262 80% 56%;
     --radius: 0.75rem;
 
     --spotlight-color: hsl(var(--primary) / 0.1);
@@ -35,7 +35,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 201 68% 51%; /* #2e9ed6 */
+    --primary: 262 80% 56%; /* New Vibrant Purple */
     --primary-foreground: 210 40% 98%;
     --secondary: 217 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -47,7 +47,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217 32.6% 17.5%;
     --input: 217 32.6% 17.5%;
-    --ring: 201 68% 51%;
+    --ring: 262 80% 56%;
 
     --spotlight-color: hsl(var(--primary) / 0.08);
   }
@@ -101,7 +101,7 @@
     z-index: -1;
     background: radial-gradient(
       80% 80% at 50% 50%,
-      rgba(46, 158, 214, 0.15) 0%, /* Blue Glow */
+      rgba(120, 80, 228, 0.15) 0%, /* Purple Glow */
       rgba(188, 170, 255, 0.05) 50%, /* Soft Purple Glow */
       rgba(30, 27, 75, 0) 100%
     ),
