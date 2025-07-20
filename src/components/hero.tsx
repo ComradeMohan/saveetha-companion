@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section id="home" className="py-20 md:py-32 animate-fade-in">
+    <section id="home" className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-20 md:py-32 animate-fade-in">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
           Your All-in-One Academic Hub
@@ -13,10 +13,10 @@ export default function Hero() {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
           <Button asChild size="lg">
-            <Link href="#calculators">Get Started</Link>
+            <Link href="/signup">Get Started</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="#faculty">Find Faculty</Link>
+            <Link href="#features">Learn More</Link>
           </Button>
         </div>
       </div>
