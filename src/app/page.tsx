@@ -1,3 +1,6 @@
+
+'use client';
+
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Hero from '@/components/hero';
@@ -6,13 +9,16 @@ import AttendanceCalculator from '@/components/attendance-calculator';
 import ConceptMapFinder from '@/components/concept-map-finder';
 import FacultyDirectory from '@/components/faculty-directory';
 import ContactForm from '@/components/contact-form';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <Hero />
+        {!user && <Hero />}
         
         <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="container mx-auto px-4">
