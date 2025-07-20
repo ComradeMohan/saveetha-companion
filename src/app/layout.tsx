@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
 import { ThemeProvider } from '@/components/theme-provider';
+import MouseSpotlight from '@/components/mouse-spotlight';
 
 export const metadata: Metadata = {
   title: 'Saveetha Companion',
@@ -25,6 +26,7 @@ export default function RootLayout({
         ></link>
       </head>
       <body className="font-body antialiased bg-background text-foreground">
+        <MouseSpotlight />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

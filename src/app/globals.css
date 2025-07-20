@@ -24,6 +24,8 @@
     --input: 226 50% 91%;
     --ring: 267 86% 65%;
     --radius: 0.75rem;
+
+    --spotlight-color: hsl(var(--primary) / 0.1);
   }
  
   .dark {
@@ -46,6 +48,8 @@
     --border: 217 32.6% 17.5%;
     --input: 217 32.6% 17.5%;
     --ring: 240 67% 94%; /* Lavender */
+
+    --spotlight-color: hsl(var(--primary) / 0.08);
   }
 }
 
@@ -109,6 +113,22 @@
    .dark body::after {
     background: none;
     animation: none;
+  }
+
+  #spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      var(--spotlight-color) 0%,
+      transparent 25%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: background 0.2s ease-out;
   }
 
   @keyframes dark-liquid-gradient {
