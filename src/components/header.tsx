@@ -17,6 +17,7 @@ import {
   User,
   CheckCircle2,
   Shield,
+  Megaphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -137,32 +138,6 @@ function UserNav() {
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const { user } = useAuth();
-
-  const navigationLinks = React.useMemo(() => {
-    const allLinks = [
-      { href: '/', label: 'Home', icon: GraduationCap },
-      { href: '/#calculators', label: 'CGPA', icon: Calculator },
-      { href: '/#calculators', label: 'Attendance', icon: Percent },
-      { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
-      { href: '/#faculty', label: 'Faculty', icon: Users },
-      { href: '/calendar', label: 'Calendar', icon: Calendar },
-      { href: '/contact', label: 'Contact Us', icon: Contact },
-    ];
-    
-     const loggedInLinks = [
-      { href: '/#calculators', label: 'CGPA', icon: Calculator },
-      { href: '/#calculators', label: 'Attendance', icon: Percent },
-      { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
-      { href: '/#faculty', label: 'Faculty', icon: Users },
-      { href: '/calendar', label: 'Calendar', icon: Calendar },
-      { href: '/contact', label: 'Contact Us', icon: Contact },
-    ];
-
-    if (user) {
-      return loggedInLinks;
-    }
-    return allLinks;
-  }, [user]);
   
   const desktopNavLinks = React.useMemo(() => {
     if (user) {
@@ -171,6 +146,7 @@ export default function Header() {
             { href: '/#concepts', label: 'Concepts' },
             { href: '/#faculty', label: 'Faculty' },
             { href: '/calendar', label: 'Calendar' },
+            { href: '/updates', label: 'Updates' },
             { href: '/contact', label: 'Contact Us' },
         ];
     }
@@ -209,14 +185,14 @@ export default function Header() {
               </Link>
               <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
                 <div className="flex flex-col space-y-3">
-                  {navigationLinks.map(link => (
+                  {desktopNavLinks.map(link => (
                     <NavLink
                       key={link.href + link.label}
                       href={link.href}
                       onClose={() => setIsSheetOpen(false)}
                       className="flex items-center gap-2 text-lg"
                     >
-                      <link.icon className="h-5 w-5" /> {link.label}
+                      {link.label}
                     </NavLink>
                   ))}
                 </div>

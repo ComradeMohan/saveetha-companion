@@ -30,6 +30,7 @@ import {
   Calendar,
   UserCircle,
   Inbox,
+  Megaphone,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 >>>>>>> 60e24e6 (make admin nav bar mobile responsive)
@@ -42,7 +43,7 @@ const adminNavLinks = [
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { href: '/admin/updates', label: 'Updates', icon: Megaphone },
 ];
 
 export default function AdminHeader() {
