@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, Bell, LogOut, Calendar, UserCircle } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, Bell, LogOut, Calendar, UserCircle, Inbox } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -13,6 +13,7 @@ const adminNavLinks = [
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
+  { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/notifications', label: 'Notifications', icon: Bell, disabled: true },

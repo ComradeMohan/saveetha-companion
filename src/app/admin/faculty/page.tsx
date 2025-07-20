@@ -16,6 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { EditFacultyDialog } from "@/components/admin/edit-faculty-dialog";
 import { facultyData as localFacultyData } from "@/lib/faculty-data";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 export default function AdminFacultyPage() {
     const [facultyData, setFacultyData] = useState<Faculty[]>([]);
@@ -159,7 +160,7 @@ export default function AdminFacultyPage() {
                     <CardHeader>
                         <CardTitle>Faculty Members</CardTitle>
                         <CardDescription>
-                            A list of all faculty members in the system.
+                            A list of all faculty members in the system. View pending requests <Link href="/admin/requests" className="text-primary underline">here</Link>.
                         </CardDescription>
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

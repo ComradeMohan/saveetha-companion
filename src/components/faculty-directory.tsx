@@ -4,11 +4,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
-import { Search, Users, Loader2 } from 'lucide-react';
+import { Search, Users, Loader2, PlusCircle } from 'lucide-react';
 import { type Faculty } from '@/lib/faculty-data';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { SuggestFacultyDialog } from './suggest-faculty-dialog';
 
 export default function FacultyDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,6 +64,9 @@ export default function FacultyDirectory() {
         <p className="text-muted-foreground mt-2">
             Search faculty by name, subject, department, or phone number.
         </p>
+         <div className="mt-4">
+            <SuggestFacultyDialog />
+        </div>
       </div>
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
