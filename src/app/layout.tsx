@@ -40,7 +40,24 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
-        {/* Google Analytics Scripts */}
+      </head>
+      <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
+        <MouseSpotlight />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <FcmProvider>
+              <VerificationBanner />
+              {children}
+              <Toaster />
+            </FcmProvider>
+          </AuthProvider>
+        </ThemeProvider>
+        
+        {/* Google Analytics Scripts - Moved to end of body */}
         <Script
           key="gtag-js"
           strategy="afterInteractive"
@@ -59,22 +76,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-      <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
-        <MouseSpotlight />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <FcmProvider>
-              <VerificationBanner />
-              {children}
-              <Toaster />
-            </FcmProvider>
-          </AuthProvider>
-        </ThemeProvider>
       </body>
     </html>
   );
