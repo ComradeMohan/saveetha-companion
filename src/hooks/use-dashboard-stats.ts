@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { subDays, startOfDay } from 'date-fns';
@@ -18,20 +18,18 @@ interface Stats {
     count: number;
     newToday: number;
   };
-  weeklySignups: number;
-  monthlySignups: number;
   conceptMaps: number;
   facultyCount: number;
-  userList: User[];
+  unreadMessages: number;
+  userList: User[]; // Kept for potential future use, but not displayed directly
 }
 
 export default function useDashboardStats() {
   const [stats, setStats] = useState<Stats>({
     totalUsers: { count: 0, newToday: 0 },
-    weeklySignups: 0,
-    monthlySignups: 0,
     conceptMaps: 0,
     facultyCount: 0,
+    unreadMessages: 0,
     userList: [],
   });
   const [loading, setLoading] = useState(true);
@@ -41,30 +39,40 @@ export default function useDashboardStats() {
     const usersQuery = query(collection(db, 'users'));
     const conceptMapsQuery = query(collection(db, 'concept-maps'));
     const facultyQuery = query(collection(db, 'faculty'));
+    const messagesQuery = query(collection(db, 'contact-messages'), where('status', '==', 'Unread'));
 
-    const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+    const unsubscribers: (() => void)[] = [];
+    let initialLoads = 4; // Number of collections we are loading
+
+    const handleInitialLoad = () => {
+        initialLoads--;
+        if (initialLoads === 0) {
+            setLoading(false);
+        }
+    }
+
+    const handleError = (error: Error, type: string) => {
+        console.error(`Error fetching ${type}:`, error);
+        toast({
+            title: 'Error',
+            description: `Could not fetch ${type}.`,
+            variant: 'destructive',
+        });
+        handleInitialLoad();
+    }
+
+    unsubscribers.push(onSnapshot(usersQuery, (snapshot) => {
       const usersData: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       const now = new Date();
       const todayStart = startOfDay(now);
-      const weekStart = startOfDay(subDays(now, 6)); // Last 7 days including today
-      const monthStart = startOfDay(subDays(now, 29)); // Last 30 days including today
 
       let newToday = 0;
-      let weeklySignups = 0;
-      let monthlySignups = 0;
-
       usersData.forEach(user => {
         if (user.createdAt) {
           const createdAtDate = new Date(user.createdAt);
           if (createdAtDate >= todayStart) {
             newToday++;
-          }
-          if (createdAtDate >= weekStart) {
-            weeklySignups++;
-          }
-          if (createdAtDate >= monthStart) {
-            monthlySignups++;
           }
         }
       });
@@ -75,53 +83,38 @@ export default function useDashboardStats() {
           count: snapshot.size,
           newToday: newToday,
         },
-        weeklySignups,
-        monthlySignups,
         userList: usersData,
       }));
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching users:", error);
-      toast({
-        title: 'Error',
-        description: 'Could not fetch user statistics.',
-        variant: 'destructive',
-      });
-      setLoading(false);
-    });
+      handleInitialLoad();
+    }, (e) => handleError(e, "user statistics")));
 
-    const unsubscribeConceptMaps = onSnapshot(conceptMapsQuery, (snapshot) => {
+    unsubscribers.push(onSnapshot(conceptMapsQuery, (snapshot) => {
       setStats(prevStats => ({
         ...prevStats,
         conceptMaps: snapshot.size,
       }));
-    }, (error) => {
-        console.error("Error fetching concept maps:", error);
-        toast({
-            title: 'Error',
-            description: 'Could not fetch concept map count.',
-            variant: 'destructive',
-        });
-    });
+      handleInitialLoad();
+    }, (e) => handleError(e, "concept map count")));
 
-    const unsubscribeFaculty = onSnapshot(facultyQuery, (snapshot) => {
+    unsubscribers.push(onSnapshot(facultyQuery, (snapshot) => {
         setStats(prevStats => ({
           ...prevStats,
           facultyCount: snapshot.size,
         }));
-      }, (error) => {
-          console.error("Error fetching faculty count:", error);
-          toast({
-              title: 'Error',
-              description: 'Could not fetch faculty count.',
-              variant: 'destructive',
-          });
-      });
+        handleInitialLoad();
+      }, (e) => handleError(e, "faculty count")));
+
+    unsubscribers.push(onSnapshot(messagesQuery, (snapshot) => {
+        setStats(prevStats => ({
+            ...prevStats,
+            unreadMessages: snapshot.size,
+        }));
+        handleInitialLoad();
+    }, (e) => handleError(e, "unread messages")));
+
 
     return () => {
-      unsubscribeUsers();
-      unsubscribeConceptMaps();
-      unsubscribeFaculty();
+      unsubscribers.forEach(unsub => unsub());
     };
   }, [toast]);
 

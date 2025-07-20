@@ -2,8 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookOpen, Users } from 'lucide-react';
-import RecentSignups from '@/components/admin/recent-signups';
+import { BookOpen, Users, MessageSquare } from 'lucide-react';
 import useDashboardStats from '@/hooks/use-dashboard-stats';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -46,32 +45,26 @@ export default function AdminDashboard() {
           loading={loading}
         />
         <StatCard
-          title="Concept Maps"
-          value={stats.conceptMaps}
-          description="Total maps available"
-          icon={BookOpen}
-          loading={loading}
-        />
-         <StatCard
           title="Faculty Members"
           value={stats.facultyCount}
           description="Total faculty in directory"
           icon={Users}
           loading={loading}
         />
-      </div>
-      <div className="grid gap-4 grid-cols-1">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Signups</CardTitle>
-            <CardDescription>
-                A chart of new user signups over the last 30 days.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <RecentSignups userList={stats.userList} loading={loading} />
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Concept Maps"
+          value={stats.conceptMaps}
+          description="Total maps available"
+          icon={BookOpen}
+          loading={loading}
+        />
+        <StatCard
+          title="Contact Messages"
+          value={stats.unreadMessages}
+          description="Unread messages"
+          icon={MessageSquare}
+          loading={loading}
+        />
       </div>
     </div>
   );
