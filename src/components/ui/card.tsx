@@ -9,11 +9,10 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card/60 text-card-foreground shadow-lg backdrop-blur-xl", // Glassmorphism effect
+      "rounded-xl border border-white/20 bg-white/50 text-card-foreground shadow-lg backdrop-blur-lg", // Frosted Glass effect
       "transition-all duration-300",
-      "dark:bg-card/60 dark:backdrop-blur-sm",
-      "dark:hover:border-primary/40 dark:hover:shadow-primary/10 dark:hover:shadow-lg",
-       "hover:shadow-primary/20", // Light theme hover glow
+      "dark:border-white/10 dark:bg-black/20 dark:backdrop-blur-xl", // Dark mode glassmorphism
+      "hover:shadow-primary/20 hover:border-primary/30",
       className
     )}
     {...props}

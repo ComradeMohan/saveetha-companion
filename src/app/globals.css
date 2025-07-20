@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    --background: 220 100% 98.6%; /* Crystal Flux: Soft white with a hint of blue */
-    --foreground: 228 20% 5.1%; /* Crystal Flux: Deep navy black */
-    --card: 240 100% 100%; /* Set to white for glassmorphism base */
+    --background: 210 17% 98%; /* #f8f9fb */
+    --foreground: 228 20% 5.1%;
+    --card: 0 0% 100%; /* White base for glassmorphism */
     --card-foreground: 228 20% 5.1%;
-    --popover: 220 100% 98.6%;
+    --popover: 210 17% 98%;
     --popover-foreground: 228 20% 5.1%;
-    --primary: 267 86% 65%; /* Crystal Flux: Bold purple */
-    --primary-foreground: 220 100% 98.6%; /* Crystal Flux: Soft white */
-    --secondary: 220 20% 93%;
-    --secondary-foreground: 228 20% 5.1%;
+    --primary: 201 68% 51%; /* #2e9ed6 */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 260 100% 97%; /* Soft Lavender */
+    --secondary-foreground: 260 20% 20%;
     --muted: 220 20% 93%;
-    --muted-foreground: 232 13% 41%; /* Crystal Flux: Muted gray-blue */
-    --accent: 220 20% 93%;
-    --accent-foreground: 228 20% 5.1%;
+    --muted-foreground: 232 13% 41%;
+    --accent: 260 100% 97%;
+    --accent-foreground: 260 20% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
-    --border: 226 50% 91%; /* Crystal Flux: Subtle light lines */
+    --border: 226 50% 91%;
     --input: 226 50% 91%;
-    --ring: 267 86% 65%;
+    --ring: 201 68% 51%;
     --radius: 0.75rem;
 
     --spotlight-color: hsl(var(--primary) / 0.1);
   }
  
   .dark {
-    --background: 222 84% 4.9%; /* Dark Blue/Black */
+    --background: 222 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 240 67% 94%; /* Lavender */
-    --primary-foreground: 240 5.9% 10%;
+    --primary: 201 68% 51%; /* #2e9ed6 */
+    --primary-foreground: 210 40% 98%;
     --secondary: 217 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217 32.6% 17.5%;
@@ -47,7 +47,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217 32.6% 17.5%;
     --input: 217 32.6% 17.5%;
-    --ring: 240 67% 94%; /* Lavender */
+    --ring: 201 68% 51%;
 
     --spotlight-color: hsl(var(--primary) / 0.08);
   }
@@ -64,30 +64,30 @@
   body::before {
     content: "";
     position: fixed;
-    top: -100px;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, hsl(var(--primary) / 0.1), hsl(var(--background) / 0.5));
+    top: -150px;
+    right: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.1), transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.6;
-    animation: blobMove 15s infinite ease-in-out;
+    filter: blur(100px);
+    opacity: 0.8;
+    animation: blobMove 20s infinite ease-in-out;
     z-index: -1;
   }
 
   body::after {
     content: "";
     position: fixed;
-    bottom: -150px;
-    left: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, hsl(var(--secondary) / 0.1), hsl(var(--background) / 0.5));
+    bottom: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, hsl(260 100% 90% / 0.2), transparent 70%);
     border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.5;
-    animation: blobMoveReverse 20s infinite ease-in-out;
+    filter: blur(120px);
+    opacity: 0.7;
+    animation: blobMoveReverse 25s infinite ease-in-out;
     z-index: -1;
   }
   
@@ -101,9 +101,9 @@
     z-index: -1;
     background: radial-gradient(
       80% 80% at 50% 50%,
-      rgba(160, 196, 255, 0.15) 0%, /* Soft Blue Glow */
-      rgba(230, 230, 250, 0.05) 50%, /* Lavender Glow */
-      rgba(30, 27, 75, 0) 100%   /* Deep Purple Transparent */
+      rgba(46, 158, 214, 0.15) 0%, /* Blue Glow */
+      rgba(188, 170, 255, 0.05) 50%, /* Soft Purple Glow */
+      rgba(30, 27, 75, 0) 100%
     ),
     linear-gradient(135deg, hsl(222, 84%, 4.9%), hsl(240, 20%, 10%));
     animation: dark-liquid-gradient 15s ease infinite;
@@ -130,6 +130,21 @@
     z-index: -1;
     transition: background 0.2s ease-out;
   }
+  
+  @keyframes blobMove {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(40px, -50px) scale(1.1); }
+    66% { transform: translate(-30px, 30px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+
+  @keyframes blobMoveReverse {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(-40px, 60px) scale(1.1); }
+      66% { transform: translate(50px, -40px) scale(0.9); }
+      100% { transform: translate(0px, 0px) scale(1); }
+  }
+
 
   @keyframes dark-liquid-gradient {
     0% { background-position: 0% 50%; }

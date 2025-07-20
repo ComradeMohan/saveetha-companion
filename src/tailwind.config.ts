@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Poppins', 'sans-serif'],
+        headline: ['Poppins', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -105,13 +105,15 @@ export default {
         },
         'blobMove': {
           '0%': { transform: 'translate(0px, 0px) scale(1)' },
-          '50%': { transform: 'translate(20px, -30px) scale(1.1)' },
+          '33%': { transform: 'translate(40px, -50px) scale(1.1)' },
+          '66%': { transform: 'translate(-30px, 30px) scale(0.9)' },
           '100%': { transform: 'translate(0px, 0px) scale(1)' },
         },
         'blobMoveReverse': {
-            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-            '50%': { transform: 'translate(-20px, 30px) scale(1.1)' },
-            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(-40px, 60px) scale(1.1)' },
+          '66%': { transform: 'translate(50px, -40px) scale(0.9)' },
+          '100%': { transform: 'translate(0px, 0px) scale(1)' },
         },
       },
       animation: {

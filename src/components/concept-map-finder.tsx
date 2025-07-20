@@ -67,7 +67,7 @@ export default function ConceptMapFinder() {
         <Input
           type="search"
           placeholder="Search by name or subject..."
-          className="pl-10 w-full"
+          className="pl-10 w-full bg-white/60 dark:bg-black/30"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
@@ -75,10 +75,10 @@ export default function ConceptMapFinder() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {loading && Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="p-4 rounded-lg border bg-card/60">
-             <Skeleton className="h-8 w-8 mb-4 rounded-md" />
-             <Skeleton className="h-4 w-3/4" />
-          </div>
+            <div key={i} className="p-4 rounded-lg border bg-white/50 backdrop-blur-md">
+                <Skeleton className="h-8 w-8 mb-4 rounded-md bg-gray-200" />
+                <Skeleton className="h-4 w-3/4 bg-gray-200" />
+            </div>
         ))}
         {!loading && filteredResults.length === 0 && (
           <div className="col-span-full text-center py-10">
@@ -95,13 +95,13 @@ export default function ConceptMapFinder() {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-                "group rounded-lg border bg-card/50 p-4 text-card-foreground shadow-lg backdrop-blur-xl",
+                "group rounded-xl border border-white/20 bg-white/50 p-4 text-card-foreground shadow-lg backdrop-blur-lg",
                 "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1"
             )}
           >
             <div className="flex flex-col justify-start items-start h-full">
                 <div className="p-2 bg-primary/10 rounded-lg mb-4">
-                    <FileIcon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground group-hover:bg-primary/80 rounded-sm p-0.5" />
+                    <FileIcon className="h-6 w-6 text-primary transition-colors duration-300" />
                 </div>
                 <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
             </div>
