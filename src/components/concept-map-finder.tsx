@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Loader2, File as FileIcon, Lightbulb } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Loader2, File as FileIcon, Lightbulb, Search } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -10,11 +10,13 @@ import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import type { ConceptMap } from '@/lib/concept-map-data';
+import { Input } from './ui/input';
 
 
 export default function ConceptMapFinder() {
   const [results, setResults] = useState<ConceptMap[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -38,7 +40,17 @@ export default function ConceptMapFinder() {
     });
 
     return () => unsubscribe();
-}, [toast]);
+  }, [toast]);
+  
+  const filteredResults = useMemo(() => {
+    if (!searchTerm) {
+        return results;
+    }
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return results.filter(map => 
+        map.title.toLowerCase().includes(lowercasedTerm)
+    );
+  }, [searchTerm, results]);
 
 
   return (
@@ -46,25 +58,37 @@ export default function ConceptMapFinder() {
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold tracking-tight">Concept Map Library</h2>
         <p className="text-muted-foreground mt-2">
-          Browse through the available concept maps for your subjects.
+          Browse or search through the available concept maps for your subjects.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {loading && Array.from({ length: 8 }).map((_, i) => (
+       <div className="relative mb-8 max-w-lg mx-auto">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search by name or subject..."
+          className="pl-10 w-full"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {loading && Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="p-4 rounded-lg border bg-card/60">
              <Skeleton className="h-8 w-8 mb-4 rounded-md" />
              <Skeleton className="h-4 w-3/4" />
-             <Skeleton className="h-4 w-1/2 mt-2" />
           </div>
         ))}
-        {!loading && results.length === 0 && (
+        {!loading && filteredResults.length === 0 && (
           <div className="col-span-full text-center py-10">
             <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
-            <p className="mt-4 text-muted-foreground">No concept maps have been uploaded yet.</p>
+            <p className="mt-4 text-muted-foreground">
+                {searchTerm ? "No concept maps match your search." : "No concept maps have been uploaded yet."}
+            </p>
           </div>
         )}
-        {!loading && results.map((map, index) => (
+        {!loading && filteredResults.map((map, index) => (
           <Link
             key={map.id || index}
             href={map.url}
@@ -79,7 +103,7 @@ export default function ConceptMapFinder() {
                 <div className="p-2 bg-primary/10 rounded-lg mb-4">
                     <FileIcon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground group-hover:bg-primary/80 rounded-sm p-0.5" />
                 </div>
-                <h3 className="font-semibold text-base leading-tight">{map.title}</h3>
+                <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
             </div>
           </Link>
         ))}
