@@ -20,13 +20,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useEffect } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
-  _gotcha: z.string().optional(), // Honeypot field
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -66,31 +67,14 @@ export default function ContactForm() {
   }, [user, form]);
 
   async function onSubmit(values: FormValues) {
-    if (values._gotcha) {
-        // This is likely a bot, so we don't submit.
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('email', values.email);
-    formData.append('message', values.message);
-    if (values._gotcha) {
-        formData.append('_gotcha', values._gotcha);
-    }
-
-    try {
-        const response = await fetch("https://getform.io/f/bdrgjxeb", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "Accept": "application/json",
-            },
+     try {
+        await addDoc(collection(db, 'contact-messages'), {
+            name: values.name,
+            email: values.email,
+            message: values.message,
+            status: 'Unread',
+            createdAt: new Date().toISOString(),
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
         
         toast({
             title: 'Message Sent!',
@@ -104,7 +88,7 @@ export default function ContactForm() {
         });
 
     } catch (error) {
-        console.error("Error submitting to getform.io:", error);
+        console.error("Error saving message to Firestore:", error);
         toast({
             title: "Error",
             description: "Could not send your message. Please try again later.",
@@ -174,17 +158,6 @@ export default function ContactForm() {
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="_gotcha"
-                            render={({ field }) => (
-                                <FormItem className="hidden">
-                                <FormControl>
-                                    <Input type="hidden" {...field} />
-                                </FormControl>
-                                </FormItem>
                             )}
                         />
                         <SubmitButton />

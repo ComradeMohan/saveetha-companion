@@ -26,8 +26,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Loader2, LifeBuoy } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
@@ -37,6 +35,7 @@ const issueFormSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
   regNo: z.string().optional(),
   message: z.string().min(10, { message: 'Please describe your issue in at least 10 characters.' }),
+  _gotcha: z.string().optional(), // Honeypot field
 });
 
 type IssueFormValues = z.infer<typeof issueFormSchema>;
@@ -66,19 +65,38 @@ export function LoginIssueDialog() {
       email: '',
       regNo: '',
       message: '',
+      _gotcha: '',
     },
   });
 
   async function onSubmit(values: IssueFormValues) {
+    if (values._gotcha) {
+        // Bot submission, do nothing.
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('email', values.email);
+    formData.append('regNo', values.regNo || 'Not provided');
+    formData.append('message', values.message);
+    formData.append('subject', 'Login/Registration Issue');
+    if (values._gotcha) {
+      formData.append('_gotcha', values._gotcha);
+    }
+
     try {
-        await addDoc(collection(db, 'contact-messages'), {
-            name: values.name,
-            email: values.email,
-            message: `Reg No: ${values.regNo || 'Not provided'}\n\nIssue: ${values.message}`,
-            status: 'Unread',
-            createdAt: new Date().toISOString(),
-            subject: 'Login/Registration Issue'
+        const response = await fetch("https://getform.io/f/bdrgjxeb", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "Accept": "application/json",
+            },
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         toast({
             title: 'Report Sent!',
@@ -89,7 +107,7 @@ export function LoginIssueDialog() {
         setOpen(false);
 
     } catch (error) {
-        console.error("Error saving issue report to Firestore:", error);
+        console.error("Error submitting issue to getform.io:", error);
         toast({
             title: "Error",
             description: "Could not send your report. Please try again later.",
@@ -181,6 +199,17 @@ export function LoginIssueDialog() {
                 </FormItem>
                 )}
             />
+             <FormField
+                control={form.control}
+                name="_gotcha"
+                render={({ field }) => (
+                    <FormItem className="hidden">
+                    <FormControl>
+                        <Input type="text" {...field} autoComplete="off" tabIndex={-1} />
+                    </FormControl>
+                    </FormItem>
+                )}
+             />
             <DialogFooter>
                 <SubmitButton />
             </DialogFooter>
