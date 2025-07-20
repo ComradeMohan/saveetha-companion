@@ -58,7 +58,7 @@ export default function FacultyDirectory() {
   }, [searchTerm, firestoreFaculty]);
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div>
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold tracking-tight">Faculty Directory</h2>
         <p className="text-muted-foreground mt-2">
