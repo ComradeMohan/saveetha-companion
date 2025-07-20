@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   const initials = faculty.name
@@ -26,13 +27,13 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="flex flex-row items-start gap-4 pb-4">
-        <Avatar className="h-12 w-12">
+        <Avatar className="h-10 w-10">
             <AvatarImage src={`https://placehold.co/100x100.png?text=${initials}`} alt={faculty.name} data-ai-hint="person portrait" />
             <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-            <CardTitle className="break-words">{faculty.name}</CardTitle>
-            <CardDescription className="flex items-center gap-2 pt-1 truncate">
+            <CardTitle className="break-words text-lg md:text-xl">{faculty.name}</CardTitle>
+            <CardDescription className="flex items-center gap-2 pt-1 truncate text-sm">
                 <BookOpen className="h-4 w-4 flex-shrink-0" />
                 <span>{faculty.department || 'N/A'}</span>
             </CardDescription>
@@ -57,7 +58,7 @@ export default function FacultyCard({ faculty }: { faculty: Faculty }) {
         )}
         {faculty.subjects && faculty.subjects.length > 0 && (
             <div className="pt-2">
-                <h4 className="font-semibold mb-2">Subjects</h4>
+                <h4 className="font-semibold mb-2 text-sm">Subjects</h4>
                 <div className="flex flex-wrap gap-2">
                     {faculty.subjects.map(subject => (
                         <Badge key={subject} variant="secondary">{subject}</Badge>
