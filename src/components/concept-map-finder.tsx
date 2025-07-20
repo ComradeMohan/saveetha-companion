@@ -43,13 +43,17 @@ export default function ConceptMapFinder() {
   }, [toast]);
   
   const filteredResults = useMemo(() => {
-    if (!searchTerm) {
-        return results;
-    }
     const lowercasedTerm = searchTerm.toLowerCase();
-    return results.filter(map => 
-        map.title.toLowerCase().includes(lowercasedTerm)
-    );
+    
+    // If there's a search term, filter all results
+    if (lowercasedTerm) {
+        return results.filter(map => 
+            map.title.toLowerCase().includes(lowercasedTerm)
+        );
+    }
+    
+    // Otherwise, show the first 6 by default
+    return results.slice(0, 6);
   }, [searchTerm, results]);
 
 
