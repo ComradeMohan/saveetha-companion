@@ -141,19 +141,19 @@ export default function Header() {
   const navigationLinks = React.useMemo(() => {
     const allLinks = [
       { href: '/', label: 'Home', icon: GraduationCap },
-      { href: '#calculators', label: 'CGPA', icon: Calculator },
-      { href: '#calculators', label: 'Attendance', icon: Percent },
-      { href: '#concepts', label: 'Concepts', icon: Lightbulb },
-      { href: '#faculty', label: 'Faculty', icon: Users },
+      { href: '/#calculators', label: 'CGPA', icon: Calculator },
+      { href: '/#calculators', label: 'Attendance', icon: Percent },
+      { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
+      { href: '/#faculty', label: 'Faculty', icon: Users },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
       { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
     
      const loggedInLinks = [
-      { href: '#calculators', label: 'CGPA', icon: Calculator },
-      { href: '#calculators', label: 'Attendance', icon: Percent },
-      { href: '#concepts', label: 'Concepts', icon: Lightbulb },
-      { href: '#faculty', label: 'Faculty', icon: Users },
+      { href: '/#calculators', label: 'CGPA', icon: Calculator },
+      { href: '/#calculators', label: 'Attendance', icon: Percent },
+      { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
+      { href: '/#faculty', label: 'Faculty', icon: Users },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
       { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
@@ -167,16 +167,16 @@ export default function Header() {
   const desktopNavLinks = React.useMemo(() => {
     if (user) {
        return [
-            { href: '#calculators', label: 'Calculators' },
-            { href: '#concepts', label: 'Concepts' },
-            { href: '#faculty', label: 'Faculty' },
+            { href: '/#calculators', label: 'Calculators' },
+            { href: '/#concepts', label: 'Concepts' },
+            { href: '/#faculty', label: 'Faculty' },
             { href: '/calendar', label: 'Calendar' },
             { href: '/contact', label: 'Contact Us' },
         ];
     }
     return [
-        { href: '#features', label: 'Features' },
-        { href: '#stats', label: 'Stats' },
+        { href: '/#features', label: 'Features' },
+        { href: '/#stats', label: 'Stats' },
         { href: '/contact', label: 'Contact Us' },
     ];
   }, [user]);
