@@ -56,26 +56,26 @@ export default function CgpaCalculator() {
   const { cgpa, totalCredits, isValid } = useMemo(() => {
     let weightedSum = 0;
     let totalCredits = 0;
-    let isValid = true;
+    
+    const validCourses = courses.filter(course => {
+        const credits = parseFloat(course.credits);
+        const point = gradePoints[course.grade];
+        return !isNaN(credits) && credits > 0 && point !== undefined;
+    });
 
-    if (courses.length === 0 || courses.every(c => !c.grade || !c.credits)) {
-        isValid = false;
+    if (validCourses.length === 0) {
+      return { cgpa: '0.00', totalCredits: 0, isValid: false };
     }
 
-    courses.forEach(course => {
+    validCourses.forEach(course => {
       const credits = parseFloat(course.credits);
       const point = gradePoints[course.grade];
-
-      if (!isNaN(credits) && credits > 0 && point !== undefined) {
-        weightedSum += point * credits;
-        totalCredits += credits;
-      }
+      weightedSum += point * credits;
+      totalCredits += credits;
     });
-    
-    if (totalCredits === 0) isValid = false;
 
     const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : '0.00';
-    return { cgpa: cgpaValue, totalCredits, isValid };
+    return { cgpa: cgpaValue, totalCredits, isValid: true };
   }, [courses]);
   
   const handleSaveCgpa = async () => {
@@ -90,7 +90,7 @@ export default function CgpaCalculator() {
     if (!isValid) {
         toast({
             title: "Incomplete Data",
-            description: "Please fill in all grade and credit fields before saving.",
+            description: "Please fill in valid grade and credit fields before saving.",
             variant: "destructive"
         });
         return;
@@ -99,11 +99,13 @@ export default function CgpaCalculator() {
     setIsSaving(true);
     try {
         const docRef = doc(db, 'students_cgpa', user.uid);
+        const coursesToSave = courses.filter(c => c.grade && c.credits && parseFloat(c.credits) > 0);
+
         await setDoc(docRef, {
             userId: user.uid,
             cgpa: parseFloat(cgpa),
             totalCredits,
-            courses: courses.map(c => ({...c, credits: parseFloat(c.credits) })),
+            courses: coursesToSave.map(c => ({grade: c.grade, credits: parseFloat(c.credits) })),
             updatedAt: new Date().toISOString()
         });
         toast({
