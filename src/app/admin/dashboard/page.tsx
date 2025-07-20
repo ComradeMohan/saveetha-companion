@@ -109,51 +109,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-      <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <div className="space-y-8">
-              <div className="flex items-center">
-                <Users className="h-8 w-8 text-muted-foreground mr-4"/>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    New user signed up.
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    user@saveetha.com
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">2m ago</div>
-              </div>
-              <div className="flex items-center">
-                <MessageSquare className="h-8 w-8 text-muted-foreground mr-4"/>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    New contact message.
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    From: student@example.com
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">1h ago</div>
-              </div>
-               <div className="flex items-center">
-                <BookOpen className="h-8 w-8 text-muted-foreground mr-4"/>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    New concept map added.
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Topic: "Data Structures"
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">3h ago</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
     </div>
   );
 }
