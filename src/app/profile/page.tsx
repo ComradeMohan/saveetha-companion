@@ -7,12 +7,11 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, User, Mail, Hash, Phone, CheckCircle2, Calculator } from 'lucide-react';
+import { Loader2, User, Phone, CheckCircle2, Calculator } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
-import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { RechartsPrimitive } from 'recharts';
+import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
+import { ChartConfig, ChartContainer, RechartsPrimitive } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -171,7 +170,7 @@ export default function ProfilePage() {
                                                             duration={1500}
                                                             easing="ease"
                                                         />
-                                                        <LabelList
+                                                        <RechartsPrimitive.LabelList
                                                             position="center"
                                                             content={({ viewBox }) => {
                                                                 if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
@@ -179,14 +178,14 @@ export default function ProfilePage() {
                                                                     <>
                                                                     <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                                                                         <tspan
-                                                                            className="text-4xl font-bold text-primary tabular-nums"
+                                                                            className="fill-foreground text-4xl font-bold tabular-nums"
                                                                         >
                                                                             {cgpaData.cgpa.toFixed(2)}
                                                                         </tspan>
                                                                     </text>
                                                                     <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
                                                                         <tspan
-                                                                            className="text-sm text-muted-foreground"
+                                                                            className="fill-muted-foreground text-sm"
                                                                         >
                                                                             out of 10
                                                                         </tspan>
