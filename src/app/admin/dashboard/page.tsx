@@ -1,10 +1,57 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, BookOpen, DollarSign, MessageSquare, Users } from 'lucide-react';
+import { Activity, BookOpen, MessageSquare, Users, Loader2 } from 'lucide-react';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    users: 0,
+    faculty: 0,
+    conceptMaps: 0,
+    unreadMessages: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const collections = {
+      users: collection(db, 'users'),
+      faculty: collection(db, 'faculty'),
+      conceptMaps: collection(db, 'concept-maps'),
+      unreadMessages: query(collection(db, 'contact-messages'), where('status', '==', 'Unread')),
+    };
+
+    const unsubscribes = Object.entries(collections).map(([key, collectionQuery]) => {
+      return onSnapshot(
+        collectionQuery,
+        (snapshot) => {
+          setStats((prevStats) => ({
+            ...prevStats,
+            [key]: snapshot.size,
+          }));
+          setLoading(false);
+        },
+        (error) => {
+          console.error(`Error fetching ${key}:`, error);
+          toast({
+            title: 'Error',
+            description: `Could not fetch ${key} count.`,
+            variant: 'destructive',
+          });
+          setLoading(false);
+        }
+      );
+    });
+
+    // Cleanup listeners on component unmount
+    return () => unsubscribes.forEach((unsub) => unsub());
+  }, [toast]);
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -17,9 +64,9 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.users}</div>}
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              Total registered users
             </p>
           </CardContent>
         </Card>
@@ -31,7 +78,7 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+23</div>
+            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.faculty}</div>}
             <p className="text-xs text-muted-foreground">
               Total faculty in directory
             </p>
@@ -43,7 +90,7 @@ export default function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.conceptMaps}</div>}
              <p className="text-xs text-muted-foreground">
               Total maps available
             </p>
@@ -55,7 +102,7 @@ export default function AdminDashboard() {
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12</div>
+             {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.unreadMessages}</div>}
             <p className="text-xs text-muted-foreground">
               Unread messages
             </p>
