@@ -4,39 +4,15 @@
 import { useEffect, useState, useRef } from 'react';
 import { Users, BookOpen, GraduationCap, BrainCircuit } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const stats = [
-  {
-    icon: Users,
-    value: 1500,
-    label: 'Students Using',
-    suffix: '+',
-  },
-  {
-    icon: BookOpen,
-    value: 30,
-    label: 'Courses Covered',
-    suffix: '+',
-  },
-  {
-    icon: GraduationCap,
-    value: 189,
-    label: 'Faculty Listed',
-    suffix: '+',
-  },
-  {
-    icon: BrainCircuit,
-    value: 122,
-    label: 'AI Concepts Mapped',
-    suffix: '+',
-  },
-];
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
   const target = value;
 
   useEffect(() => {
+    if (value === 0) return;
     let start = 0;
     const duration = 2000;
     const frameDuration = 1000 / 60;
@@ -53,14 +29,31 @@ const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: strin
       }
     };
     requestAnimationFrame(counter);
-  }, [target]);
+  }, [target, value]);
 
   return <span className="text-4xl font-bold text-primary">{Math.floor(count)}{suffix}</span>;
 };
 
 export default function Stats() {
     const [isVisible, setIsVisible] = useState(false);
+    const [facultyCount, setFacultyCount] = useState(0);
+    const [conceptMapCount, setConceptMapCount] = useState(0);
     const statsRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      const fetchCounts = async () => {
+        try {
+          const facultySnapshot = await getDocs(collection(db, 'faculty'));
+          setFacultyCount(facultySnapshot.size);
+
+          const conceptMapSnapshot = await getDocs(collection(db, 'concept-maps'));
+          setConceptMapCount(conceptMapSnapshot.size);
+        } catch (error) {
+          console.error("Error fetching stats:", error);
+        }
+      };
+      fetchCounts();
+    }, []);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -78,10 +71,38 @@ export default function Stats() {
 
         return () => {
             if (statsRef.current) {
+                // eslint-disable-next-line react-hooks/exhaustive-deps
                 observer.unobserve(statsRef.current);
             }
         };
     }, []);
+
+    const stats = [
+      {
+        icon: Users,
+        value: 1500,
+        label: 'Students Using',
+        suffix: '+',
+      },
+      {
+        icon: GraduationCap,
+        value: facultyCount,
+        label: 'Faculty Listed',
+        suffix: '',
+      },
+      {
+        icon: BrainCircuit,
+        value: conceptMapCount,
+        label: 'Concepts Mapped',
+        suffix: '',
+      },
+       {
+        icon: BookOpen,
+        value: 30,
+        label: 'Courses Covered',
+        suffix: '+',
+      },
+    ];
 
   return (
     <section ref={statsRef} id="stats" className="py-20 md:py-28 bg-background">
