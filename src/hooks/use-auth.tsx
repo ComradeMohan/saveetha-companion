@@ -116,27 +116,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Only set the user if they are verified (or using Google which is auto-verified)
-        if (user.emailVerified) {
-          setIsAdmin(user.email === ADMIN_EMAIL);
+        const isGoogleProvider = user.providerData.some(p => p.providerId === GoogleAuthProvider.PROVIDER_ID);
+        // Allow login for verified emails OR for any google sign in.
+        // The verification banner will prompt Google users to complete profile if needed.
+        if (user.emailVerified || isGoogleProvider) {
+          setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
           const userDocRef = doc(db, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
+          
+          try {
+            const userDoc = await getDoc(userDocRef);
+            const updateData: any = {
+                lastSignInTime: user.metadata.lastSignInTime,
+                isVerified: user.emailVerified,
+            };
+            if (user.photoURL) {
+                updateData.photoURL = user.photoURL;
+            }
 
-          const updateData: any = {
-              lastSignInTime: user.metadata.lastSignInTime,
-              isVerified: user.emailVerified,
-          };
-          if (user.photoURL) {
-              updateData.photoURL = user.photoURL;
+            if (userDoc.exists()) {
+                await updateDoc(userDocRef, updateData);
+                if (!user.displayName && userDoc.data()?.name) {
+                  await updateProfile(user, { displayName: userDoc.data()?.name });
+                }
+            }
+            // Refresh user object to get latest profile info
+            const refreshedUser = { ...user, displayName: user.displayName, photoURL: user.photoURL };
+            setUser(refreshedUser);
+          } catch(error){
+            console.error("Error updating user document:", error);
+            // Still set the user, as they are authenticated.
+            setUser(user);
           }
-
-          if (userDoc.exists()) {
-              await updateDoc(userDocRef, updateData);
-              if (!user.displayName && userDoc.data()?.name) {
-                await updateProfile(user, { displayName: userDoc.data()?.name });
-              }
-          }
-          setUser({ ...user }); // Set user state to trigger re-render and redirects
         }
       } else {
         setUser(null);
@@ -224,13 +234,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: profile.phone,
       }, { merge: true });
 
+      // If user has no display name (e.g. they signed up with google but never had one),
+      // we need to refetch their name from the DB and set it.
       if (!user.displayName) {
          const userDoc = await getDoc(userDocRef);
          const name = userDoc.data()?.name || "New User";
          await updateProfile(user, { displayName: name });
       }
       
-      setUser({ ...user }); // This will trigger the useEffect to redirect to '/'
+      // Manually update the user state to reflect completion and trigger redirect effect
+      setUser({ ...user }); 
+      router.push('/');
   }
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
@@ -240,19 +254,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-        // Check verification after successful sign-in
-        if (!userCredential.user.emailVerified) {
-             toast({
-                title: 'Email Not Verified',
-                description: 'Please check your inbox (and spam folder) for a verification link.',
-                variant: 'destructive',
-            });
-            await signOut(auth); // Sign out the unverified user
-            return; // Stop execution
-        }
         
-        // Let the onAuthStateChanged listener handle the redirect
+        // Let the onAuthStateChanged listener handle the verification and redirect
         return userCredential;
      } catch(error: any) {
         handleAuthError(error, toast);
