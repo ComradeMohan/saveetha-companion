@@ -18,8 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Loader2 } from 'lucide-react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
 import { useEffect } from 'react';
 
@@ -27,7 +25,10 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
+  _gotcha: z.string().optional(), // Honeypot field
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 function SubmitButton() {
     const { isSubmitting } = useFormState();
@@ -47,7 +48,7 @@ export default function ContactForm() {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -63,26 +64,41 @@ export default function ContactForm() {
     }
   }, [user, form]);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormValues) {
+    if (values._gotcha) {
+        // This is likely a bot, so we don't submit.
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('email', values.email);
+    formData.append('message', values.message);
+
     try {
-        await addDoc(collection(db, 'contact-messages'), {
-            ...values,
-            userId: user?.uid || null,
-            status: 'Unread',
-            createdAt: new Date().toISOString(),
+        const response = await fetch("https://getform.io/f/bnlxdykb", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "Accept": "application/json",
+            },
         });
+
+        if (!response.ok) {
+            throw new Error(`Form submission failed with status ${response.status}`);
+        }
 
         toast({
             title: 'Message Sent!',
-            description: "We'll get back to you within 24 hours.",
+            description: "We'll get back to you as soon as possible.",
         });
         
         form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
     } catch (error) {
-        console.error("Error sending message:", error);
+        console.error("Error sending message via getform.io:", error);
         toast({
             title: "Error",
-            description: "Could not send your message. Please try again.",
+            description: "Could not send your message. Please try again later.",
             variant: 'destructive',
         });
     }
@@ -101,7 +117,7 @@ export default function ContactForm() {
                 <CardTitle className="flex items-center gap-2">
                     <Mail className="h-6 w-6 text-primary" /> Send Us a Message
                 </CardTitle>
-                <CardDescription>Response within 24 hours guaranteed.</CardDescription>
+                <CardDescription>We'll get back to you as soon as we can.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -149,6 +165,17 @@ export default function ContactForm() {
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="_gotcha"
+                            render={({ field }) => (
+                                <FormItem className="hidden">
+                                <FormControl>
+                                    <Input type="hidden" {...field} />
+                                </FormControl>
+                                </FormItem>
                             )}
                         />
                         <SubmitButton />
