@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -21,6 +22,8 @@ const gradePoints: { [key: string]: number } = {
   'E': 5,
   'RA': 0,
 };
+
+const allGrades = Object.keys(gradePoints);
 
 type Course = {
   id: number;
@@ -119,6 +122,8 @@ export default function CgpaCalculator() {
     }
   };
 
+  const selectedGrades = useMemo(() => new Set(courses.map(c => c.grade).filter(Boolean)), [courses]);
+
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
       <CardHeader>
@@ -135,14 +140,19 @@ export default function CgpaCalculator() {
         </div>
         <ScrollArea className="h-60 pr-4">
           <div className="space-y-2">
-            {courses.map((course, index) => (
+            {courses.map((course, index) => {
+              const availableGrades = allGrades.filter(grade => !selectedGrades.has(grade) || grade === course.grade);
+              return (
               <div key={course.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
-                <Select onValueChange={(value) => handleCourseChange(course.id, 'grade', value)}>
+                <Select
+                  value={course.grade} 
+                  onValueChange={(value) => handleCourseChange(course.id, 'grade', value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Grade" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.keys(gradePoints).map(grade => (
+                    {availableGrades.map(grade => (
                       <SelectItem key={grade} value={grade}>{grade}</SelectItem>
                     ))}
                   </SelectContent>
@@ -164,7 +174,8 @@ export default function CgpaCalculator() {
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
-            ))}
+              )
+            })}
           </div>
         </ScrollArea>
         <Button variant="outline" size="sm" onClick={addCourse}>
