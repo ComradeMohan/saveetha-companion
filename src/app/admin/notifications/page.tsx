@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ function SubmitButton() {
 }
 
 export default function AdminNotificationsPage() {
-    const [state, formAction] = useFormState(sendNotification, initialState);
+    const [state, formAction] = useActionState(sendNotification, initialState);
     const { toast } = useToast();
 
     useEffect(() => {
