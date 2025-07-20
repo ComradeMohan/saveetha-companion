@@ -4,10 +4,10 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay, isFuture, isToday } from 'date-fns';
 import { Loader2, Filter, Calendar as CalendarIcon } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
@@ -26,10 +26,9 @@ const audienceOptions = ["All Years", "1st Year", "2nd Year", "3rd Year", "4th Y
 export default function StudentCalendarPage() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const { toast } = useToast();
     
-    // State for filter, with lazy initialization from localStorage
     const [audienceFilter, setAudienceFilter] = useState<string>(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('calendarAudienceFilter') || 'All Years';
@@ -38,14 +37,19 @@ export default function StudentCalendarPage() {
     });
 
     useEffect(() => {
-        // Persist filter to localStorage whenever it changes
         if (typeof window !== 'undefined') {
             localStorage.setItem('calendarAudienceFilter', audienceFilter);
         }
     }, [audienceFilter]);
 
     useEffect(() => {
-        const q = query(collection(db, 'events'), orderBy('startDate', 'desc'));
+        const today = startOfDay(new Date()).toISOString();
+        const q = query(
+            collection(db, 'events'), 
+            where('startDate', '>=', today),
+            orderBy('startDate', 'asc')
+        );
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
@@ -80,7 +84,17 @@ export default function StudentCalendarPage() {
         return isWithinInterval(date, { start: startDate, end: endDate });
     };
 
-    const eventsForSelectedDay = selectedDate ? filteredEvents.filter(e => isDateInEventRange(selectedDate, e)) : [];
+    const displayedEvents = useMemo(() => {
+        if (selectedDate) {
+            return filteredEvents.filter(e => isDateInEventRange(selectedDate, e));
+        }
+        // By default, show upcoming events (today or in the future)
+        return filteredEvents.filter(e => {
+            const eventStartDate = new Date(e.startDate);
+            return isToday(eventStartDate) || isFuture(eventStartDate);
+        });
+    }, [selectedDate, filteredEvents]);
+
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -112,14 +126,14 @@ export default function StudentCalendarPage() {
                         </div>
                     </div>
 
-                    <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-[1fr_450px]">
-                        <Card>
+                    <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[auto_1fr]">
+                        <Card className="w-full max-w-sm mx-auto">
                              <CardContent className="p-2 md:p-4">
                                 <Calendar
                                     mode="single"
                                     selected={selectedDate}
                                     onSelect={setSelectedDate}
-                                    className="p-0 [&_td]:w-full"
+                                    className="p-0"
                                     components={{
                                         DayContent: ({ date }) => {
                                             const dayEvents = filteredEvents.filter(e => isDateInEventRange(date, e));
@@ -141,20 +155,22 @@ export default function StudentCalendarPage() {
                             </CardContent>
                         </Card>
                         <Card>
-                            <CardHeader>
+                           <CardHeader>
                                 <CardTitle>
-                                    Events for {selectedDate ? format(selectedDate, 'PPP') : 'N/A'}
+                                    {selectedDate ? `Events for ${format(selectedDate, 'PPP')}` : 'Upcoming Events'}
                                 </CardTitle>
-                                <CardDescription>Select a date to view scheduled events.</CardDescription>
+                                <CardDescription>
+                                    {selectedDate ? 'A list of events for the selected date.' : 'All upcoming events.'}
+                                </CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {loading ? (
                                     <div className="flex justify-center items-center h-48">
                                         <Loader2 className="h-6 w-6 animate-spin" />
                                     </div>
-                                ) : eventsForSelectedDay.length > 0 ? (
+                                ) : displayedEvents.length > 0 ? (
                                     <div className="space-y-4">
-                                        {eventsForSelectedDay.map(event => (
+                                        {displayedEvents.map(event => (
                                             <div key={event.id} className="flex items-start gap-3 p-3 bg-secondary/50 rounded-lg">
                                                 <div className="p-2 bg-primary/10 rounded-lg mt-1">
                                                      <CalendarIcon className="h-4 w-4 text-primary"/>
@@ -162,18 +178,19 @@ export default function StudentCalendarPage() {
                                                 <div>
                                                     <p className="font-semibold">{event.title}</p>
                                                     <p className="text-sm text-muted-foreground">{event.targetAudience}</p>
-                                                     {event.endDate && (
-                                                        <p className="text-xs text-muted-foreground">
-                                                            {format(new Date(event.startDate), 'MMM d')} - {format(new Date(event.endDate), 'MMM d')}
-                                                        </p>
-                                                     )}
+                                                     <p className="text-xs text-muted-foreground">
+                                                        {format(new Date(event.startDate), 'MMM d, yyyy')}
+                                                        {event.endDate && ` - ${format(new Date(event.endDate), 'MMM d, yyyy')}`}
+                                                     </p>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="text-center text-muted-foreground py-16">
-                                        <p>No events scheduled for this day.</p>
+                                        <p>
+                                            {selectedDate ? 'No events scheduled for this day.' : 'No upcoming events found.'}
+                                        </p>
                                     </div>
                                 )}
                             </CardContent>
