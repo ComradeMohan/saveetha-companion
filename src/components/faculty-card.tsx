@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Faculty } from '@/lib/faculty-data';
 import { Phone, Building, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
 
 export default function FacultyCard({ faculty }: { faculty: Faculty }) {
   const initials = faculty.name
