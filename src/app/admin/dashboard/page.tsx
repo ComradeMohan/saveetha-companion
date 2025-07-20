@@ -1,111 +1,79 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, BookOpen, MessageSquare, Users, Loader2 } from 'lucide-react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useToast } from '@/hooks/use-toast';
+import { BookOpen, MessageSquare, Users, CalendarDays, BarChart } from 'lucide-react';
+import RecentSignups from '@/components/admin/recent-signups';
+import useDashboardStats from '@/hooks/use-dashboard-stats';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function StatCard({ title, value, icon: Icon, description, loading }: { title: string, value: number | string, icon: React.ElementType, description: string, loading: boolean }) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <>
+            <Skeleton className="h-8 w-1/2 mb-1" />
+            <Skeleton className="h-4 w-full" />
+          </>
+        ) : (
+          <>
+            <div className="text-2xl font-bold">{value}</div>
+            <p className="text-xs text-muted-foreground">{description}</p>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    users: 0,
-    faculty: 0,
-    conceptMaps: 0,
-    unreadMessages: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const collections = {
-      users: collection(db, 'users'),
-      faculty: collection(db, 'faculty'),
-      conceptMaps: collection(db, 'concept-maps'),
-      unreadMessages: query(collection(db, 'contact-messages'), where('status', '==', 'Unread')),
-    };
-
-    const unsubscribes = Object.entries(collections).map(([key, collectionQuery]) => {
-      return onSnapshot(
-        collectionQuery,
-        (snapshot) => {
-          setStats((prevStats) => ({
-            ...prevStats,
-            [key]: snapshot.size,
-          }));
-          setLoading(false);
-        },
-        (error) => {
-          console.error(`Error fetching ${key}:`, error);
-          toast({
-            title: 'Error',
-            description: `Could not fetch ${key} count.`,
-            variant: 'destructive',
-          });
-          setLoading(false);
-        }
-      );
-    });
-
-    // Cleanup listeners on component unmount
-    return () => unsubscribes.forEach((unsub) => unsub());
-  }, [toast]);
+  const { stats, loading } = useDashboardStats();
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Users"
+          value={stats.totalUsers.count}
+          description={`${stats.totalUsers.newToday > 0 ? `+${stats.totalUsers.newToday}` : 'No new users'} today`}
+          icon={Users}
+          loading={loading}
+        />
+        <StatCard
+          title="Signups (This Week)"
+          value={stats.weeklySignups}
+          description="New users in the last 7 days"
+          icon={CalendarDays}
+          loading={loading}
+        />
+        <StatCard
+          title="Signups (This Month)"
+          value={stats.monthlySignups}
+          description="New users in the last 30 days"
+          icon={BarChart}
+          loading={loading}
+        />
+        <StatCard
+          title="Concept Maps"
+          value={stats.conceptMaps}
+          description="Total maps available"
+          icon={BookOpen}
+          loading={loading}
+        />
+      </div>
+      <div className="grid gap-4 grid-cols-1">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Users
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle>Recent Signups</CardTitle>
           </CardHeader>
-          <CardContent>
-            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.users}</div>}
-            <p className="text-xs text-muted-foreground">
-              Total registered users
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Faculty Members
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.faculty}</div>}
-            <p className="text-xs text-muted-foreground">
-              Total faculty in directory
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Concept Maps</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.conceptMaps}</div>}
-             <p className="text-xs text-muted-foreground">
-              Total maps available
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Contact Messages</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-             {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.unreadMessages}</div>}
-            <p className="text-xs text-muted-foreground">
-              Unread messages
-            </p>
+          <CardContent className="pl-2">
+            <RecentSignups userList={stats.userList} loading={loading} />
           </CardContent>
         </Card>
       </div>
