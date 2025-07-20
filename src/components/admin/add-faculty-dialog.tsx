@@ -29,14 +29,12 @@ import { useToast } from '@/hooks/use-toast';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Textarea } from '../ui/textarea';
 
 const facultySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  designation: z.string().min(2, { message: 'Designation is required.' }),
-  department: z.string().min(2, { message: 'Department is required.' }),
-  subjects: z.string().min(2, { message: 'Please enter at least one subject.' }),
   phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, { message: 'Please enter a valid phone number.' }),
-  room: z.string().min(1, { message: 'Room number is required.' }),
+  details: z.string().min(3, { message: 'Please provide a department or subject.' }),
 });
 
 type FacultyFormValues = z.infer<typeof facultySchema>;
@@ -50,21 +48,21 @@ export function AddFacultyDialog() {
     resolver: zodResolver(facultySchema),
     defaultValues: {
       name: '',
-      designation: '',
-      department: '',
-      subjects: '',
       phone: '',
-      room: '',
+      details: '',
     },
   });
 
   const onSubmit = async (values: FacultyFormValues) => {
     setLoading(true);
     try {
-      const subjectsArray = values.subjects.split(',').map(s => s.trim()).filter(s => s);
       await addDoc(collection(db, 'faculty'), {
-        ...values,
-        subjects: subjectsArray,
+        name: values.name,
+        phone: values.phone,
+        department: values.details, // Storing details in the 'department' field for search compatibility
+        subjects: [], // Providing empty array to maintain data structure
+        designation: '', // Providing empty string
+        room: '', // Providing empty string
         createdAt: new Date().toISOString(),
       });
 
@@ -102,88 +100,47 @@ export function AddFacultyDialog() {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ScrollArea className="h-96 pr-6">
-                <div className="space-y-4 py-4">
-                    <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., Dr. Jane Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="designation"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Designation</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., Professor" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="department"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Department</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., Computer Science" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="subjects"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Subjects</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., AI, Machine Learning (comma-separated)" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., +919876543210" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="room"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Room Number</FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g., A-101" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                </div>
-            </ScrollArea>
+            <div className="space-y-4 py-4">
+                <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g., Dr. Jane Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g., +919876543210" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="details"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Department / Subject</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="e.g., Computer Science or Artificial Intelligence" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
             <DialogFooter className="mt-4">
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
