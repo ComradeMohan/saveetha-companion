@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, Bell, LogOut, Calendar, UserCircle, Inbox, Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
@@ -33,6 +33,12 @@ export default function AdminHeader() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
+          <SheetHeader>
+            <SheetTitle className="sr-only">Admin Menu</SheetTitle>
+            <SheetDescription className="sr-only">
+              Navigation menu for the admin dashboard.
+            </SheetDescription>
+          </SheetHeader>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"
