@@ -7,6 +7,7 @@ let app;
 
 if (!admin.apps.length) {
   try {
+    // We will use a file named 'serviceAccountKey.json' in the root directory.
     const serviceAccountPath = path.resolve(process.cwd(), 'serviceAccountKey.json');
     
     if (!fs.existsSync(serviceAccountPath)) {
@@ -22,6 +23,7 @@ if (!admin.apps.length) {
 
   } catch (error: any) {
     console.error('Firebase Admin SDK initialization error:', error.message);
+    // Throwing the error here will stop the server and make it clear what the issue is.
     throw new Error(`Firebase Admin SDK failed to initialize: ${error.message}`);
   }
 } else {
