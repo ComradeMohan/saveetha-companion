@@ -55,7 +55,7 @@ const NavLink = ({
     <span
       onClick={onClose}
       className={
-        'text-sm font-medium text-muted-foreground transition-colors hover:text-primary ' +
+        'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
         className
       }
     >
@@ -170,11 +170,13 @@ export default function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Navigation Menu</SheetTitle>
-              <SheetDescription>Main navigation links for the application.</SheetDescription>
+            <SheetHeader>
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                Main navigation links for the application.
+                </SheetDescription>
             </SheetHeader>
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2 p-4">
               <GraduationCap className="h-6 w-6 text-primary" />
               <span className="font-bold">Saveetha Companion</span>
             </Link>
