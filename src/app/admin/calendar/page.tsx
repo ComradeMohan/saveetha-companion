@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, deleteDoc, doc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { format, isSameDay, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay, isFuture, isToday } from 'date-fns';
 import { AddEventDialog } from '@/components/admin/add-event-dialog';
 import type { Event } from '@/components/admin/add-event-dialog';
 import { Loader2, Trash2 } from 'lucide-react';
@@ -18,13 +18,19 @@ import { Badge } from '@/components/ui/badge';
 export default function AdminCalendarPage() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
     const { toast } = useToast();
 
     useEffect(() => {
-        const q = query(collection(db, 'events'), orderBy('startDate', 'desc'));
+        const today = startOfDay(new Date()).toISOString();
+        const q = query(
+            collection(db, 'events'), 
+            where('startDate', '>=', today),
+            orderBy('startDate', 'asc')
+        );
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
@@ -58,7 +64,13 @@ export default function AdminCalendarPage() {
         return isWithinInterval(date, { start: startDate, end: endDate });
     };
 
-    const eventsForSelectedDay = selectedDate ? events.filter(e => isDateInEventRange(selectedDate, e)) : [];
+    const displayedEvents = useMemo(() => {
+        if (selectedDate) {
+            return events.filter(e => isDateInEventRange(selectedDate, e));
+        }
+        // By default, show upcoming events (today or in the future)
+        return events.filter(e => isToday(new Date(e.startDate)) || isFuture(new Date(e.startDate)));
+    }, [selectedDate, events]);
 
      const handleDeleteClick = (event: Event) => {
         setEventToDelete(event);
@@ -98,14 +110,14 @@ export default function AdminCalendarPage() {
                     </div>
                     <AddEventDialog />
                 </div>
-                <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[1fr_400px]">
-                    <Card>
+                <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[auto_1fr]">
+                    <Card className="w-full max-w-sm mx-auto">
                         <CardContent className="p-2 md:p-4">
                              <Calendar
                                 mode="single"
                                 selected={selectedDate}
                                 onSelect={setSelectedDate}
-                                className="p-0 [&_td]:w-full"
+                                className="p-0"
                                 components={{
                                 DayContent: ({ date }) => {
                                     const dayEvents = events.filter(e => isDateInEventRange(date, e));
@@ -129,21 +141,27 @@ export default function AdminCalendarPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                Events for {selectedDate ? format(selectedDate, 'PPP') : 'N/A'}
+                                {selectedDate ? `Events for ${format(selectedDate, 'PPP')}` : 'Upcoming Events'}
                             </CardTitle>
-                            <CardDescription>Select a date to see its events.</CardDescription>
+                            <CardDescription>
+                                {selectedDate ? 'Events scheduled for the selected date.' : 'A list of all upcoming events.'}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             {loading ? (
                                 <div className="flex justify-center items-center h-24">
                                     <Loader2 className="h-6 w-6 animate-spin" />
                                 </div>
-                            ) : eventsForSelectedDay.length > 0 ? (
+                            ) : displayedEvents.length > 0 ? (
                                 <div className="space-y-4">
-                                    {eventsForSelectedDay.map(event => (
+                                    {displayedEvents.map(event => (
                                         <div key={event.id} className="flex items-center justify-between gap-2 p-3 bg-secondary/50 rounded-lg">
                                             <div>
                                                 <p className="font-semibold">{event.title}</p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {format(new Date(event.startDate), 'MMM d, yyyy')}
+                                                    {event.endDate && ` - ${format(new Date(event.endDate), 'MMM d, yyyy')}`}
+                                                </p>
                                                 <Badge variant="outline" className="mt-1">{event.targetAudience}</Badge>
                                             </div>
                                             <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(event)}>
@@ -154,7 +172,9 @@ export default function AdminCalendarPage() {
                                 </div>
                             ) : (
                                 <div className="text-center text-muted-foreground py-10">
-                                    <p>No events for this day.</p>
+                                    <p>
+                                        {selectedDate ? "No events for this day." : "No upcoming events."}
+                                    </p>
                                 </div>
                             )}
                         </CardContent>
