@@ -154,23 +154,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <GraduationCap className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">
-              Saveetha Companion
-            </span>
-          </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigationLinks.slice(user ? 0 : 1, 5).map(link => (
-              <NavLink key={link.href + link.label} href={link.href}>
-                {link.label}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-
-        {/* Mobile Nav */}
+        {/* Mobile Nav Trigger */}
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button
@@ -202,15 +186,24 @@ export default function Header() {
             </div>
           </SheetContent>
         </Sheet>
-        <Link
-          href="/"
-          className="flex items-center space-x-2 md:hidden"
-        >
+        
+        {/* Logo */}
+        <Link href="/" className="mr-6 flex items-center space-x-2">
           <GraduationCap className="h-6 w-6 text-primary" />
-          <span className="font-bold">Saveetha Companion</span>
+          <span className="hidden font-bold sm:inline-block">
+            Saveetha Companion
+          </span>
         </Link>
-
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        
+        <div className="flex flex-1 items-center justify-end space-x-6">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+             {navigationLinks.slice(user ? 0 : 1, 5).map(link => (
+              <NavLink key={link.href + link.label} href={link.href}>
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
           <UserNav />
         </div>
       </div>
