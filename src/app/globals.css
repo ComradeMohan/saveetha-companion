@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --background: 210 17% 98%; /* #f8f9fb */
+    --background: 210 40% 98%;
     --foreground: 228 20% 5.1%;
-    --card: 0 0% 100%; /* White base for glassmorphism */
+    --card: 210 40% 100%;
     --card-foreground: 228 20% 5.1%;
-    --popover: 210 17% 98%;
+    --popover: 210 40% 100%;
     --popover-foreground: 228 20% 5.1%;
     --primary: 201 68% 51%; /* #2e9ed6 */
     --primary-foreground: 210 40% 98%;
@@ -21,7 +21,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
     --border: 226 50% 91%;
-    --input: 226 50% 91%;
+    --input: 210 40% 96%;
     --ring: 201 68% 51%;
     --radius: 0.75rem;
 
