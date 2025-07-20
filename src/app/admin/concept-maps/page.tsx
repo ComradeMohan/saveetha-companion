@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search } from "lucide-react";
 import { collection, onSnapshot, orderBy, query, doc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 
 export default function AdminConceptMapsPage() {
@@ -22,6 +23,7 @@ export default function AdminConceptMapsPage() {
     const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
     const [mapToDelete, setMapToDelete] = useState<ConceptMap | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
     useEffect(() => {
@@ -45,6 +47,17 @@ export default function AdminConceptMapsPage() {
 
         return () => unsubscribe();
     }, [toast]);
+    
+    const filteredConceptMaps = useMemo(() => {
+        if (!searchTerm) {
+            return conceptMaps;
+        }
+        const lowercasedFilter = searchTerm.toLowerCase();
+        return conceptMaps.filter(
+            map => map.title.toLowerCase().includes(lowercasedFilter)
+        );
+    }, [searchTerm, conceptMaps]);
+
 
     const handleDeleteClick = (map: ConceptMap) => {
         setMapToDelete(map);
@@ -92,6 +105,15 @@ export default function AdminConceptMapsPage() {
                         <CardDescription>
                             A list of all concept maps in the system.
                         </CardDescription>
+                         <div className="relative pt-2">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                            placeholder="Search by name..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 w-full md:w-1/2 lg:w-1/3"
+                            />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -109,8 +131,8 @@ export default function AdminConceptMapsPage() {
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
-                                ) : conceptMaps.length > 0 ? (
-                                    conceptMaps.map((map) => (
+                                ) : filteredConceptMaps.length > 0 ? (
+                                    filteredConceptMaps.map((map) => (
                                         <TableRow key={map.id}>
                                             <TableCell className="font-medium">
                                                 {map.title}
@@ -154,7 +176,7 @@ export default function AdminConceptMapsPage() {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={3} className="h-24 text-center">
-                                            No concept maps found.
+                                            {searchTerm ? "No concept maps match your search." : "No concept maps found."}
                                         </TableCell>
                                     </TableRow>
                                 )}
