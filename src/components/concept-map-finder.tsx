@@ -99,7 +99,7 @@ export default function ConceptMapFinder() {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-                "group rounded-xl border border-white/20 bg-white/50 p-4 text-card-foreground shadow-lg backdrop-blur-lg",
+                "group rounded-xl border border-white/20 p-4 text-card-foreground shadow-lg backdrop-blur-lg",
                 "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1"
             )}
           >
