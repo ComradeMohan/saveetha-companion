@@ -27,8 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
         >
           <AuthProvider>
