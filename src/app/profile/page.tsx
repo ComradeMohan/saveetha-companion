@@ -89,9 +89,9 @@ export default function ProfilePage() {
   return (
     <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1 py-12 md:py-20">
+        <main className="flex-1 py-12 md:py-16">
             <div className="container mx-auto px-4">
-                <Card className="max-w-2xl mx-auto shadow-lg">
+                <Card className="max-w-2xl mx-auto p-2 sm:p-0">
                     <CardHeader>
                         <CardTitle className="text-2xl">Your Profile</CardTitle>
                         <CardDescription>View your personal information and academic progress.</CardDescription>

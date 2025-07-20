@@ -83,7 +83,7 @@ export default function LoginPage() {
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-background/80 p-4">
-        <Card className="w-full max-w-sm shadow-lg">
+        <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome Back!</CardTitle>
             <CardDescription>Sign in to access your dashboard.</CardDescription>

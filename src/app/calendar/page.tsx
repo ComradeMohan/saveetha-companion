@@ -126,7 +126,7 @@ export default function StudentCalendarPage() {
                         </div>
                     </div>
 
-                    <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[auto_1fr]">
+                    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-[auto_1fr]">
                         <Card className="w-full max-w-sm mx-auto">
                              <CardContent className="p-2 md:p-4">
                                 <Calendar
