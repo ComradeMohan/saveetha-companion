@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Faculty } from "@/lib/faculty-data";
-import { MoreHorizontal, Loader2, Trash2, Pencil, UploadCloud } from "lucide-react";
+import { MoreHorizontal, Loader2, Trash2, Pencil, UploadCloud, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
 import { collection, onSnapshot, orderBy, query, doc, deleteDoc, writeBatch } from "firebase/firestore";
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { EditFacultyDialog } from "@/components/admin/edit-faculty-dialog";
 import { facultyData as localFacultyData } from "@/lib/faculty-data";
+import { Input } from "@/components/ui/input";
 
 export default function AdminFacultyPage() {
     const [facultyData, setFacultyData] = useState<Faculty[]>([]);
@@ -23,6 +24,7 @@ export default function AdminFacultyPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [selectedFaculty, setSelectedFaculty] = useState<Faculty | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
     useEffect(() => {
@@ -46,6 +48,20 @@ export default function AdminFacultyPage() {
 
         return () => unsubscribe();
     }, [toast]);
+    
+    const filteredFaculty = useMemo(() => {
+        if (!searchTerm) {
+            return facultyData;
+        }
+        const lowercasedFilter = searchTerm.toLowerCase();
+        return facultyData.filter(
+            faculty =>
+                faculty.name.toLowerCase().includes(lowercasedFilter) ||
+                (faculty.department && faculty.department.toLowerCase().includes(lowercasedFilter)) ||
+                (faculty.phone && faculty.phone.includes(lowercasedFilter))
+        );
+    }, [searchTerm, facultyData]);
+
 
     const handleSeedDatabase = async () => {
         setIsSeeding(true);
@@ -145,6 +161,15 @@ export default function AdminFacultyPage() {
                         <CardDescription>
                             A list of all faculty members in the system.
                         </CardDescription>
+                         <div className="relative pt-2">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                            placeholder="Search by name, department, phone..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 w-full md:w-1/2 lg:w-1/3"
+                            />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -163,8 +188,8 @@ export default function AdminFacultyPage() {
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
-                                ) : facultyData.length > 0 ? (
-                                    facultyData.map((faculty) => (
+                                ) : filteredFaculty.length > 0 ? (
+                                    filteredFaculty.map((faculty) => (
                                         <TableRow key={faculty.id}>
                                             <TableCell className="font-medium">
                                                 {faculty.name}
@@ -199,7 +224,7 @@ export default function AdminFacultyPage() {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={4} className="h-24 text-center">
-                                            No faculty found. Click "Seed Database" to populate from local data.
+                                            {searchTerm ? "No faculty found matching your search." : "No faculty found. Click \"Seed Database\" to populate from local data."}
                                         </TableCell>
                                     </TableRow>
                                 )}
