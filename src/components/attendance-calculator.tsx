@@ -21,16 +21,30 @@ export default function AttendanceCalculator() {
     return (attended / total) * 100;
   }, [totalClasses, attendedClasses]);
 
-  const neededFor75 = useMemo(() => {
+  const attendanceMessage = useMemo(() => {
     const total = parseInt(totalClasses);
     const attended = parseInt(attendedClasses);
+    const targetPercentage = 80;
 
-    if(isNaN(total) || isNaN(attended) || percentage >= 75) return "You're safe!";
-    
-    const needed = Math.ceil((0.75 * total - attended) / 0.25);
-    if(needed <= 0) return "You're safe!";
+    if (isNaN(total) || isNaN(attended) || total === 0) {
+      return '';
+    }
 
-    return `You need to attend the next ${needed} class${needed > 1 ? 'es' : ''} continuously.`;
+    if (percentage >= targetPercentage) {
+      // Calculate how many classes can be bunked
+      const bunkableClasses = Math.floor((attended - (targetPercentage / 100) * total) / (targetPercentage / 100));
+      if (bunkableClasses > 0) {
+        return `You can miss the next ${bunkableClasses} class${bunkableClasses > 1 ? 'es' : ''} and stay safe.`;
+      }
+      return "You're safe, but don't miss any classes!";
+    } else {
+      // Calculate how many classes are needed
+      const needed = Math.ceil(((targetPercentage / 100) * total - attended) / (1 - (targetPercentage / 100)));
+      if (needed > 0) {
+        return `You need to attend the next ${needed} class${needed > 1 ? 'es' : ''} continuously.`;
+      }
+      return "You're safe!";
+    }
   }, [totalClasses, attendedClasses, percentage]);
 
   return (
@@ -43,7 +57,7 @@ export default function AttendanceCalculator() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Enter your attendance details to see your current percentage.
+          Enter your attendance details to see your current percentage (80% is required).
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -78,7 +92,7 @@ export default function AttendanceCalculator() {
             <span className="text-sm font-semibold">Your Attendance</span>
             <p className="text-3xl font-bold text-primary">{percentage.toFixed(1)}%</p>
         </div>
-        <p className="text-sm text-muted-foreground text-center h-5">{neededFor75}</p>
+        <p className="text-sm text-muted-foreground text-center h-5">{attendanceMessage}</p>
       </CardFooter>
     </Card>
   );
