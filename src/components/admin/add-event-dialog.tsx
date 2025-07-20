@@ -37,7 +37,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export type Event = {
   id?: string;
   title: string;
-  date: string; // ISO string
+  startDate: string; // ISO string
+  endDate?: string; // ISO string, optional
   targetAudience: "All Years" | "1st Year" | "2nd Year" | "3rd Year" | "4th Year";
 };
 
@@ -45,11 +46,21 @@ const audienceOptions = ["All Years", "1st Year", "2nd Year", "3rd Year", "4th Y
 
 const eventSchema = z.object({
   title: z.string().min(3, { message: 'Title must be at least 3 characters.' }),
-  date: z.date({ required_error: 'A date is required.' }),
+  startDate: z.date({ required_error: 'A start date is required.' }),
+  endDate: z.date().optional(),
   targetAudience: z.enum(["All Years", "1st Year", "2nd Year", "3rd Year", "4th Year"], {
      required_error: "You need to select a target audience."
   }),
+}).refine(data => {
+    if (data.endDate && data.startDate > data.endDate) {
+        return false;
+    }
+    return true;
+}, {
+    message: "End date cannot be before start date.",
+    path: ["endDate"],
 });
+
 
 type EventFormValues = z.infer<typeof eventSchema>;
 
@@ -70,7 +81,8 @@ export function AddEventDialog() {
     try {
       await addDoc(collection(db, 'events'), {
         title: values.title,
-        date: values.date.toISOString(),
+        startDate: values.startDate.toISOString(),
+        endDate: values.endDate ? values.endDate.toISOString() : null,
         targetAudience: values.targetAudience,
         createdAt: new Date().toISOString(),
       });
@@ -100,7 +112,7 @@ export function AddEventDialog() {
           <PlusCircle className="mr-2 h-4 w-4" /> Add Event
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Event</DialogTitle>
           <DialogDescription>
@@ -122,45 +134,87 @@ export function AddEventDialog() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Event Date</FormLabel>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <FormControl>
-                                <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                )}
-                                >
-                                {field.value ? (
-                                    format(field.value, "PPP")
-                                ) : (
-                                    <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                            </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) => date < new Date("1900-01-01")}
-                                initialFocus
-                            />
-                        </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                    <FormLabel>Start Date</FormLabel>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !field.value && "text-muted-foreground"
+                                    )}
+                                    >
+                                    {field.value ? (
+                                        format(field.value, "PPP")
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) => date < new Date("1900-01-01")}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                 <FormField
+                control={form.control}
+                name="endDate"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                    <FormLabel>End Date (Optional)</FormLabel>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !field.value && "text-muted-foreground"
+                                    )}
+                                    >
+                                    {field.value ? (
+                                        format(field.value, "PPP")
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) => date < new Date("1900-01-01")}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+
             <FormField
                 control={form.control}
                 name="targetAudience"

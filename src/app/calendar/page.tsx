@@ -7,7 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { format, isSameDay } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Loader2, Filter, Calendar as CalendarIcon } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
@@ -16,7 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 type Event = {
     id: string;
     title: string;
-    date: string; // ISO string
+    startDate: string; // ISO string
+    endDate?: string; // ISO string
     targetAudience: "All Years" | "1st Year" | "2nd Year" | "3rd Year" | "4th Year";
 };
 
@@ -44,7 +45,7 @@ export default function StudentCalendarPage() {
     }, [audienceFilter]);
 
     useEffect(() => {
-        const q = query(collection(db, 'events'), orderBy('date', 'desc'));
+        const q = query(collection(db, 'events'), orderBy('startDate', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
@@ -73,7 +74,13 @@ export default function StudentCalendarPage() {
         );
     }, [events, audienceFilter]);
     
-    const eventsForSelectedDay = selectedDate ? filteredEvents.filter(e => isSameDay(new Date(e.date), selectedDate)) : [];
+    const isDateInEventRange = (date: Date, event: Event) => {
+        const startDate = startOfDay(new Date(event.startDate));
+        const endDate = event.endDate ? endOfDay(new Date(event.endDate)) : startDate;
+        return isWithinInterval(date, { start: startDate, end: endDate });
+    };
+
+    const eventsForSelectedDay = selectedDate ? filteredEvents.filter(e => isDateInEventRange(selectedDate, e)) : [];
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -115,7 +122,7 @@ export default function StudentCalendarPage() {
                                     className="p-0 [&_td]:w-full"
                                     components={{
                                         DayContent: ({ date }) => {
-                                            const dayEvents = filteredEvents.filter(e => isSameDay(new Date(e.date), date));
+                                            const dayEvents = filteredEvents.filter(e => isDateInEventRange(date, e));
                                             return (
                                                 <div className="relative flex h-full w-full items-center justify-center">
                                                     <span>{date.getDate()}</span>
@@ -155,6 +162,11 @@ export default function StudentCalendarPage() {
                                                 <div>
                                                     <p className="font-semibold">{event.title}</p>
                                                     <p className="text-sm text-muted-foreground">{event.targetAudience}</p>
+                                                     {event.endDate && (
+                                                        <p className="text-xs text-muted-foreground">
+                                                            {format(new Date(event.startDate), 'MMM d')} - {format(new Date(event.endDate), 'MMM d')}
+                                                        </p>
+                                                     )}
                                                 </div>
                                             </div>
                                         ))}

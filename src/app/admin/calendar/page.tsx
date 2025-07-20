@@ -8,8 +8,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { format, isSameDay } from 'date-fns';
-import { AddEventDialog, type Event } from '@/components/admin/add-event-dialog';
+import { format, isSameDay, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { AddEventDialog } from '@/components/admin/add-event-dialog';
+import type { Event } from '@/components/admin/add-event-dialog';
 import { Loader2, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,7 @@ export default function AdminCalendarPage() {
     const { toast } = useToast();
 
     useEffect(() => {
-        const q = query(collection(db, 'events'), orderBy('date', 'desc'));
+        const q = query(collection(db, 'events'), orderBy('startDate', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
@@ -31,7 +32,8 @@ export default function AdminCalendarPage() {
                 eventsData.push({
                     id: doc.id,
                     title: data.title,
-                    date: data.date, // Stored as ISO string
+                    startDate: data.startDate, 
+                    endDate: data.endDate,
                     targetAudience: data.targetAudience,
                 });
             });
@@ -50,7 +52,13 @@ export default function AdminCalendarPage() {
         return () => unsubscribe();
     }, [toast]);
 
-    const eventsForSelectedDay = selectedDate ? events.filter(e => isSameDay(new Date(e.date), selectedDate)) : [];
+    const isDateInEventRange = (date: Date, event: Event) => {
+        const startDate = startOfDay(new Date(event.startDate));
+        const endDate = event.endDate ? endOfDay(new Date(event.endDate)) : startDate;
+        return isWithinInterval(date, { start: startDate, end: endDate });
+    };
+
+    const eventsForSelectedDay = selectedDate ? events.filter(e => isDateInEventRange(selectedDate, e)) : [];
 
      const handleDeleteClick = (event: Event) => {
         setEventToDelete(event);
@@ -100,7 +108,7 @@ export default function AdminCalendarPage() {
                                 className="p-0 [&_td]:w-full"
                                 components={{
                                 DayContent: ({ date }) => {
-                                    const dayEvents = events.filter(e => isSameDay(new Date(e.date), date));
+                                    const dayEvents = events.filter(e => isDateInEventRange(date, e));
                                     return (
                                     <div className="relative flex h-full w-full items-center justify-center">
                                         <span>{date.getDate()}</span>
