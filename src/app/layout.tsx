@@ -50,9 +50,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             <FcmProvider>
-              <VerificationBanner />
-              {children}
-              <Toaster />
+              <VerificationBanner key="verification-banner" />
+              <main key="main-content">{children}</main>
+              <Toaster key="toaster" />
             </FcmProvider>
           </AuthProvider>
         </ThemeProvider>
