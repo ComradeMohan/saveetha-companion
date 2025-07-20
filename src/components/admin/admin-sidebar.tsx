@@ -12,7 +12,7 @@ const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen, disabled: true },
+  { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/notifications', label: 'Notifications', icon: Bell, disabled: true },
 ];
 
@@ -33,7 +33,7 @@ export default function AdminSidebar() {
           <Button
             key={link.href}
             asChild
-            variant={pathname === link.href ? 'secondary' : 'ghost'}
+            variant={pathname.startsWith(link.href) ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             disabled={link.disabled}
           >
