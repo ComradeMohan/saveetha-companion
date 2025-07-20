@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, File as FileIcon, Lightbulb, Search } from 'lucide-react';
+import { Loader2, File as FileIcon, Lightbulb, Search, Upload } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -63,6 +63,18 @@ export default function ConceptMapFinder() {
         <h2 className="text-3xl font-bold tracking-tight">Concept Map Library</h2>
         <p className="text-muted-foreground mt-2">
           Browse or search through the available concept maps for your subjects.
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          (Want to upload missing concept maps or files?{' '}
+          <a
+            href="https://saveetha-hub.netlify.app/file-manager"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline hover:text-primary/80"
+          >
+            Upload here
+          </a>
+          )
         </p>
       </div>
 
