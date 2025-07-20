@@ -124,8 +124,6 @@ export default function CgpaCalculator() {
     }
   };
 
-  const selectedGrades = useMemo(() => new Set(courses.map(c => c.grade).filter(Boolean)), [courses]);
-
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
       <CardHeader>
@@ -142,9 +140,7 @@ export default function CgpaCalculator() {
         </div>
         <ScrollArea className="h-60 pr-4">
           <div className="space-y-2">
-            {courses.map((course, index) => {
-              const availableGrades = allGrades.filter(grade => !selectedGrades.has(grade) || grade === course.grade);
-              return (
+            {courses.map((course) => (
               <div key={course.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
                 <Select
                   value={course.grade} 
@@ -154,7 +150,7 @@ export default function CgpaCalculator() {
                     <SelectValue placeholder="Grade" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableGrades.map(grade => (
+                    {allGrades.map(grade => (
                       <SelectItem key={grade} value={grade}>{grade}</SelectItem>
                     ))}
                   </SelectContent>
@@ -176,8 +172,7 @@ export default function CgpaCalculator() {
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
-              )
-            })}
+            ))}
           </div>
         </ScrollArea>
         <Button variant="outline" size="sm" onClick={addCourse}>
@@ -185,7 +180,7 @@ export default function CgpaCalculator() {
           Add Course
         </Button>
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-0">
+      <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
         <div className="flex items-center gap-2">
             <Button onClick={handleSaveCgpa} disabled={!user || !isValid || isSaving}>
                 {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
