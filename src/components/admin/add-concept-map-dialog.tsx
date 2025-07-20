@@ -43,6 +43,10 @@ export function AddConceptMapDialog() {
 
   const form = useForm<ConceptMapFormValues>({
     resolver: zodResolver(conceptMapSchema),
+    defaultValues: {
+      title: '',
+      url: ''
+    }
   });
 
   const onSubmit = async (values: ConceptMapFormValues) => {
@@ -51,7 +55,7 @@ export function AddConceptMapDialog() {
       await addDoc(collection(db, 'concept-maps'), {
         title: values.title,
         url: values.url,
-        description: '', // Description is optional
+        description: '', // This field is no longer in the form but kept for data consistency
         createdAt: new Date().toISOString(),
       });
 
@@ -91,7 +95,7 @@ export function AddConceptMapDialog() {
         <DialogHeader>
           <DialogTitle>Add New Concept Map</DialogTitle>
           <DialogDescription>
-            Provide a name and a public URL for the new concept map file (image or PDF).
+            Upload your file (image or PDF) to a public hosting service, then paste the name and URL below.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
