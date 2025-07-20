@@ -24,15 +24,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 const conceptMapSchema = z.object({
-  title: z.string().min(3, { message: 'Title must be at least 3 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
+  title: z.string().min(3, { message: 'Name must be at least 3 characters.' }),
   url: z.string().url({ message: 'Please enter a valid public URL.' }),
 });
 
@@ -47,7 +45,6 @@ export function AddConceptMapDialog() {
     resolver: zodResolver(conceptMapSchema),
     defaultValues: {
       title: '',
-      description: '',
       url: '',
     },
   });
@@ -56,7 +53,9 @@ export function AddConceptMapDialog() {
     setLoading(true);
     try {
       await addDoc(collection(db, 'concept-maps'), {
-        ...values,
+        title: values.title,
+        url: values.url,
+        description: '', // Keep description field for schema consistency, but empty
         createdAt: new Date().toISOString(),
       });
 
@@ -99,22 +98,9 @@ export function AddConceptMapDialog() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Concept Map Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Data Structures & Algorithms" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="A brief description of the concept map." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,7 +111,7 @@ export function AddConceptMapDialog() {
               name="url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>File URL</FormLabel>
+                  <FormLabel>Public PDF/Image URL</FormLabel>
                   <FormControl>
                     <Input placeholder="https://example.com/your-file.pdf" {...field} />
                   </FormControl>

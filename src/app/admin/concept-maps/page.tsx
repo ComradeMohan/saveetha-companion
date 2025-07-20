@@ -64,15 +64,14 @@ export default function AdminConceptMapsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Description</TableHead>
+                                <TableHead>Name</TableHead>
                                 <TableHead className="w-[100px] text-center">Link</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="h-24 text-center">
+                                    <TableCell colSpan={2} className="h-24 text-center">
                                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                     </TableCell>
                                 </TableRow>
@@ -81,9 +80,6 @@ export default function AdminConceptMapsPage() {
                                     <TableRow key={map.id}>
                                         <TableCell className="font-medium">
                                             {map.title}
-                                        </TableCell>
-                                        <TableCell>
-                                           {map.description}
                                         </TableCell>
                                         <TableCell className="text-center">
                                             <Button asChild variant="outline" size="icon">
@@ -97,7 +93,7 @@ export default function AdminConceptMapsPage() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="h-24 text-center">
+                                    <TableCell colSpan={2} className="h-24 text-center">
                                         No concept maps found.
                                     </TableCell>
                                 </TableRow>

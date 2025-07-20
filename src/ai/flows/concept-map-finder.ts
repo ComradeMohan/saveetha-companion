@@ -38,7 +38,7 @@ const conceptMapSearchTool = ai.defineTool(
     name: 'conceptMapSearch',
     description: 'Searches for concept maps related to a given query.',
     inputSchema: z.object({
-      query: z.string().describe('The search query for concept maps.'),
+      query: z.string().describe('The search query for a concept map.'),
     }),
     outputSchema: z.array(ConceptMapSchema),
   },
@@ -65,7 +65,7 @@ const conceptMapSearchTool = ai.defineTool(
     return maps.map(m => ({
         title: m.title,
         url: m.url,
-        description: m.description,
+        description: m.description || `A concept map about ${m.title}`, // Provide a fallback description
     }));
   }
 );
@@ -79,7 +79,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI assistant helping students find relevant concept maps.
 The student will provide a search query.
 1. Use the conceptMapSearch tool to get a list of available concept maps.
-2. From that list, select up to 6 of the most relevant concept maps that best match the student's query.
+2. From that list, select up to 6 of the most relevant concept maps that best match the student's query. For each map, provide a very brief, one-sentence description based on its title if one isn't provided.
 3. Return only the concept maps that you have selected.
 
 Query: {{{query}}}`,
