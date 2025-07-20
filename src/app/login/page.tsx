@@ -32,12 +32,7 @@ export default function LoginPage() {
             const userDocRef = doc(db, "users", user.uid);
             const userDoc = await getDoc(userDocRef);
             if (userDoc.exists() && (userDoc.data().regNo || user.emailVerified)) {
-                // If they have a regNo (from email signup) or are google-verified, profile is likely complete or they're a google user
-                if(userDoc.data().regNo){
-                     router.push('/');
-                } else {
-                     router.push('/complete-profile');
-                }
+                router.push('/');
             } else {
                 router.push('/complete-profile');
             }

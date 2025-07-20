@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFormState } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -28,6 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LifeBuoy } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { cn } from '@/lib/utils';
 
 
 const issueFormSchema = z.object({
@@ -56,8 +57,17 @@ function SubmitButton() {
 
 export function LoginIssueDialog() {
   const [open, setOpen] = useState(false);
+  const [showInitialPrompt, setShowInitialPrompt] = useState(true);
   const { toast } = useToast();
   
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        setShowInitialPrompt(false);
+    }, 5000); // Hide the prompt after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const form = useForm<IssueFormValues>({
     resolver: zodResolver(issueFormSchema),
     defaultValues: {
@@ -118,21 +128,33 @@ export function LoginIssueDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                        <Button variant="outline" size="icon" className="rounded-full h-12 w-12 shadow-lg">
-                            <LifeBuoy className="h-6 w-6" />
-                            <span className="sr-only">Report an issue</span>
-                        </Button>
-                    </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Login or Signup Problems?</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+        <div 
+            className="relative"
+            onMouseEnter={() => setShowInitialPrompt(false)}
+            onFocus={() => setShowInitialPrompt(false)}
+        >
+             <div className={cn(
+                "absolute bottom-full right-0 mb-2 w-max rounded-md bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity duration-300",
+                showInitialPrompt && "opacity-100"
+            )}>
+                Login/Signup Problems?
+            </div>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" size="icon" className="rounded-full h-12 w-12 shadow-lg">
+                                <LifeBuoy className="h-6 w-6" />
+                                <span className="sr-only">Report an issue</span>
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Login/Signup Problems?</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        </div>
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
