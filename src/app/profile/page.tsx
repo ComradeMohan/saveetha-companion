@@ -137,7 +137,7 @@ export default function ProfilePage() {
                                         <CardHeader>
                                             <CardTitle className="text-lg">Your CGPA</CardTitle>
                                         </CardHeader>
-                                        <CardContent className="flex items-center justify-center">
+                                        <CardContent className="flex items-center justify-center p-0">
                                             <ChartContainer
                                                 config={chartConfig}
                                                 className="mx-auto aspect-square h-48 w-48"
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                                                 >
                                                     <PolarAngleAxis
                                                         type="number"
-                                                        domain={[0, 10]}
+                                                        domain={[0, 100]}
                                                         dataKey="value"
                                                         tick={false}
                                                     />
@@ -161,19 +161,42 @@ export default function ProfilePage() {
                                                         background
                                                         cornerRadius={10}
                                                         className="fill-primary"
-                                                    />
+                                                    >
+                                                        <RechartsPrimitive.LabelList
+                                                            position="center"
+                                                            content={({ viewBox }) => {
+                                                                if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                                                return (
+                                                                    <>
+                                                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
+                                                                        <tspan
+                                                                        x={viewBox.cx}
+                                                                        y={viewBox.cy}
+                                                                        className="text-4xl font-bold text-primary tabular-nums"
+                                                                        >
+                                                                        {cgpaData.cgpa.toFixed(2)}
+                                                                        </tspan>
+                                                                    </text>
+                                                                    <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle">
+                                                                        <tspan
+                                                                        x={viewBox.cx}
+                                                                        y={(viewBox.cy || 0) + 20}
+                                                                        className="text-sm text-muted-foreground"
+                                                                        >
+                                                                        out of 10
+                                                                        </tspan>
+                                                                    </text>
+                                                                    </>
+                                                                )
+                                                                }
+                                                                return null;
+                                                            }}
+                                                        />
+                                                    </RadialBar>
                                                 </RadialBarChart>
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                    <span className="text-4xl font-bold text-primary tabular-nums">
-                                                        {cgpaData.cgpa.toFixed(2)}
-                                                    </span>
-                                                    <span className="text-sm text-muted-foreground">
-                                                        out of 10
-                                                    </span>
-                                                </div>
                                             </ChartContainer>
                                         </CardContent>
-                                        <CardFooter className="text-center text-sm text-muted-foreground justify-center">
+                                        <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-6">
                                             <p>Based on {cgpaData.totalCredits} total credits.</p>
                                         </CardFooter>
                                     </Card>

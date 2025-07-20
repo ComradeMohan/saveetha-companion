@@ -375,5 +375,6 @@ export {
   ChartBar,
   ChartRadialBar,
   ChartPolarAngleAxis,
-  ChartRadialBarChart
+  ChartRadialBarChart,
+  RechartsPrimitive,
 }
