@@ -59,10 +59,7 @@ export function AddFacultyDialog() {
       await addDoc(collection(db, 'faculty'), {
         name: values.name,
         phone: values.phone,
-        department: values.details, // Storing details in the 'department' field for search compatibility
-        subjects: [], // Providing empty array to maintain data structure
-        designation: '', // Providing empty string
-        room: '', // Providing empty string
+        department: values.details, // Storing details in the 'department' field
         createdAt: new Date().toISOString(),
       });
 
@@ -100,47 +97,49 @@ export function AddFacultyDialog() {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-4 py-4">
-                <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                        <Input placeholder="e.g., Dr. Jane Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                        <Input placeholder="e.g., +919876543210" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="details"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Department / Subject</FormLabel>
-                    <FormControl>
-                        <Textarea placeholder="e.g., Computer Science or Artificial Intelligence" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-            </div>
+             <ScrollArea className="max-h-[60vh] p-1">
+                <div className="space-y-4 py-4 pr-4">
+                    <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                            <Input placeholder="e.g., Dr. Jane Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                            <Input placeholder="e.g., +919876543210" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="details"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Department / Subject</FormLabel>
+                        <FormControl>
+                            <Textarea placeholder="e.g., Computer Science or Artificial Intelligence" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+            </ScrollArea>
             <DialogFooter className="mt-4">
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

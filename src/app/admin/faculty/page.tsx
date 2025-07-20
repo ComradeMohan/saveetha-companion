@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Faculty } from "@/lib/faculty-data";
-import { PlusCircle, MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal, Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -66,16 +65,15 @@ export default function AdminFacultyPage() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>
-                                <TableHead>Department</TableHead>
-                                <TableHead>Subjects</TableHead>
-                                <TableHead>Room</TableHead>
+                                <TableHead>Department / Subject</TableHead>
+                                <TableHead>Phone Number</TableHead>
                                 <TableHead><span className="sr-only">Actions</span></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-24 text-center">
+                                    <TableCell colSpan={4} className="h-24 text-center">
                                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                     </TableCell>
                                 </TableRow>
@@ -83,16 +81,10 @@ export default function AdminFacultyPage() {
                                 facultyData.map((faculty) => (
                                     <TableRow key={faculty.id}>
                                         <TableCell className="font-medium">
-                                            <div className="font-medium">{faculty.name}</div>
-                                            <div className="text-sm text-muted-foreground">{faculty.designation}</div>
+                                            {faculty.name}
                                         </TableCell>
                                         <TableCell>{faculty.department}</TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-wrap gap-1">
-                                                {faculty.subjects.map(s => <Badge variant="outline" key={s}>{s}</Badge>)}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>{faculty.room}</TableCell>
+                                        <TableCell>{faculty.phone}</TableCell>
                                         <TableCell>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -112,7 +104,7 @@ export default function AdminFacultyPage() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-24 text-center">
+                                    <TableCell colSpan={4} className="h-24 text-center">
                                         No faculty found.
                                     </TableCell>
                                 </TableRow>
