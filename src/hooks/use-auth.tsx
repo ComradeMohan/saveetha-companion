@@ -114,21 +114,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const isGoogleUser = user.providerData.some(p => p.providerId === GoogleAuthProvider.PROVIDER_ID);
-        if (!user.emailVerified && !isGoogleUser) {
-            toast({
-                title: "Verification Required",
-                description: "Please verify your email address to log in. Check your spam folder.",
-                variant: 'destructive'
-            });
-            await signOut(auth);
-            setUser(null);
-            setIsAdmin(false);
-            setLoading(false);
-            router.push('/login');
-            return;
-        }
-
         setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
 
         const userDocRef = doc(db, 'users', user.uid);
@@ -253,7 +238,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
             return;
         }
-        // Attempt to sign in and let onAuthStateChanged handle verification
         return await signInWithEmailAndPassword(auth, email, password);
      } catch(error: any) {
         handleAuthError(error, toast);
