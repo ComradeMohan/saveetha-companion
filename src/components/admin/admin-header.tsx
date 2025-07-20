@@ -15,8 +15,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetDescription,
+  SheetTrigger,
 } from '@/components/ui/sheet';
 import {
   GraduationCap,
@@ -42,7 +42,7 @@ const adminNavLinks = [
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/admin/notifications', label: 'Notifications', icon: Bell, disabled: true },
+  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
 ];
 
 export default function AdminHeader() {

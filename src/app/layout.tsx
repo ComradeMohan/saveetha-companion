@@ -1,5 +1,6 @@
 
-import type { Metadata } from 'next';
+'use client';
+
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
@@ -7,11 +8,22 @@ import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import VerificationBanner from '@/components/verification-banner';
+import useFcm from '@/hooks/use-fcm';
+import { useAuth } from '@/hooks/use-auth';
 
-export const metadata: Metadata = {
-  title: 'Saveetha Companion',
-  description: 'A companion app for Saveetha University students.',
-};
+function FcmProvider({ children }: { children: React.ReactNode }) {
+    const { user } = useAuth();
+    // Only mount the FCM hook if there is a logged-in user
+    if(user) {
+        return <FcmHandler>{children}</FcmHandler>;
+    }
+    return <>{children}</>;
+}
+
+function FcmHandler({ children }: { children: React.ReactNode }) {
+    useFcm();
+    return <>{children}</>;
+}
 
 export default function RootLayout({
   children,
@@ -53,9 +65,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <VerificationBanner />
-            {children}
-            <Toaster />
+            <FcmProvider>
+              <VerificationBanner />
+              {children}
+              <Toaster />
+            </FcmProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

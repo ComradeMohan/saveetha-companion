@@ -17,6 +17,10 @@ const adminNavLinks = [
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
+<<<<<<< HEAD
+=======
+  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
+>>>>>>> 9ad8fd7 (no i need make fcm services. Learn more)
 ];
 
 const disabledLinks = [
