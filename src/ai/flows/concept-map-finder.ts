@@ -48,21 +48,26 @@ const conceptMapSearchTool = ai.defineTool(
     const mapsRef = collection(db, 'concept-maps');
 
     // Note: Firestore doesn't support full-text search natively.
-    // This is a simple implementation. For more advanced search,
-    // consider a third-party service like Algolia or Elasticsearch.
-    // Here, we're just fetching a few and letting the LLM do the filtering.
-    const q = firestoreQuery(mapsRef, limit(20));
-
-    const querySnapshot = await getDocs(q);
-    const maps: ConceptMap[] = [];
+    // We fetch all documents and filter them in memory.
+    // For large datasets, a dedicated search service like Algolia or Elasticsearch is recommended.
+    const querySnapshot = await getDocs(mapsRef);
+    const allMaps: ConceptMap[] = [];
     querySnapshot.forEach((doc) => {
-        maps.push({ id: doc.id, ...doc.data() } as ConceptMap);
+        allMaps.push({ id: doc.id, ...doc.data() } as ConceptMap);
     });
+
+    console.log(`Fetched ${allMaps.length} total maps from Firestore.`);
+
+    // Filter the maps based on the query
+    const lowercasedQuery = input.query.toLowerCase();
+    const filteredMaps = allMaps.filter(map => 
+        map.title.toLowerCase().includes(lowercasedQuery)
+    );
     
-    console.log(`Found ${maps.length} maps in Firestore.`);
+    console.log(`Found ${filteredMaps.length} maps matching the query.`);
     
     // Return a subset of properties matching the schema
-    return maps.map(m => ({
+    return filteredMaps.map(m => ({
         title: m.title,
         url: m.url,
         description: m.description || `A concept map about ${m.title}`, // Provide a fallback description
@@ -78,8 +83,8 @@ const prompt = ai.definePrompt({
   tools: [conceptMapSearchTool],
   prompt: `You are an AI assistant helping students find relevant concept maps.
 The student will provide a search query.
-1. Use the conceptMapSearch tool to get a list of available concept maps.
-2. From that list, select up to 6 of the most relevant concept maps that best match the student's query. For each map, provide a very brief, one-sentence description based on its title if one isn't provided.
+1. Use the conceptMapSearch tool with the student's query to get a list of relevant concept maps. The tool has already filtered the maps.
+2. From that list, select up to 6 of the best concept maps. For each map, provide a very brief, one-sentence description based on its title if one isn't provided.
 3. Return only the concept maps that you have selected.
 
 Query: {{{query}}}`,
