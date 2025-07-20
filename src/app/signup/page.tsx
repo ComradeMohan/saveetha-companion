@@ -62,8 +62,7 @@ export default function SignUpPage() {
       });
       router.push('/login');
     } catch (error) {
-      console.error('Email Sign-Up Error:', error);
-      toast({ title: 'Error creating account', description: (error as Error).message, variant: 'destructive' });
+      // Error is caught and toasted in the useAuth hook
     } finally {
         setEmailLoading(false);
     }
@@ -75,8 +74,7 @@ export default function SignUpPage() {
       await signInWithGoogle();
       // The redirect will be handled by the useEffect or signInWithGoogle function
     } catch (error) {
-      console.error('Google Sign-In Error:', error);
-       // Toast is already handled in useAuth hook
+       // Error is caught and toasted in the useAuth hook
     } finally {
        setGoogleLoading(false);
     }

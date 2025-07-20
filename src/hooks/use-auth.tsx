@@ -55,6 +55,51 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const handleAuthError = (error: any, toast: (options: any) => void) => {
+    console.error("Firebase Auth Error:", error.code, error.message);
+    let title = 'Authentication Error';
+    let description = 'An unexpected error occurred. Please try again.';
+
+    switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+             title = 'Invalid Credentials';
+             description = 'The email or password you entered is incorrect. Please try again.';
+            break;
+        case 'auth/email-already-in-use':
+            title = 'Account Exists';
+            description = 'An account with this email address already exists.';
+            break;
+        case 'auth/weak-password':
+            title = 'Weak Password';
+            description = 'The password must be at least 6 characters long.';
+            break;
+        case 'auth/invalid-email':
+            title = 'Invalid Email';
+            description = 'Please enter a valid email address.';
+            break;
+        case 'auth/network-request-failed':
+            title = 'Network Error';
+            description = 'Please check your internet connection and try again.';
+            break;
+        case 'auth/popup-closed-by-user':
+             title = "Login Canceled";
+             description = "You closed the sign-in window. Please try again.";
+            break;
+        case 'auth/operation-not-supported-in-this-environment':
+            title = "Login Error";
+            description = "Please use your @saveetha.com Google account to sign in.";
+            break;
+        default:
+            // Keep the generic message for other errors
+            break;
+    }
+    
+    toast({ title, description, variant: 'destructive' });
+};
+
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -124,53 +169,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
     } catch (error: any) {
-        if (error.code === 'auth/popup-closed-by-user') {
-             toast({
-                title: "Login Canceled",
-                description: "You closed the sign-in window. Please try again.",
-                variant: "destructive"
-            });
-        }
-        else if (error.code === 'auth/operation-not-supported-in-this-environment' || error.message.includes('hd parameter')) {
-            toast({
-                title: "Login Error",
-                description: "Please use your @saveetha.com Google account to sign in.",
-                variant: "destructive"
-            });
-        } else {
-             toast({
-                title: "Login Error",
-                description: error.message,
-                variant: "destructive"
-            });
-        }
+        handleAuthError(error, toast);
         throw error;
     }
   };
   
   const signUpWithEmailAndPassword = async (profile: SignUpProfile) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, profile.email, profile.password!);
-    const user = userCredential.user;
-    
-    await updateProfile(user, {
-        displayName: profile.name,
-    });
-    
-    const userDocRef = doc(db, 'users', user.uid);
-    await setDoc(userDocRef, {
-        name: profile.name,
-        email: profile.email,
-        regNo: profile.regNo,
-        phone: profile.phone,
-        createdAt: new Date().toISOString(),
-    });
-    
-    await sendEmailVerification(user, {
-      url: `${window.location.origin}/login`,
-    });
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, profile.email, profile.password!);
+        const user = userCredential.user;
+        
+        await updateProfile(user, {
+            displayName: profile.name,
+        });
+        
+        const userDocRef = doc(db, 'users', user.uid);
+        await setDoc(userDocRef, {
+            name: profile.name,
+            email: profile.email,
+            regNo: profile.regNo,
+            phone: profile.phone,
+            createdAt: new Date().toISOString(),
+        });
+        
+        await sendEmailVerification(user, {
+          url: `${window.location.origin}/login`,
+        });
 
-    await signOut(auth);
-    return userCredential;
+        await signOut(auth);
+        return userCredential;
+    } catch (error: any) {
+        handleAuthError(error, toast);
+        throw error;
+    }
   }
   
   const completeUserProfile = async (profile: CompleteUserProfile) => {
@@ -194,21 +225,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
-    if (!email.endsWith('@saveetha.com')) {
-      throw new Error('Please use an email ending with @saveetha.com');
-    }
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if (!userCredential.user.emailVerified) {
-        toast({
-            title: 'Email Not Verified',
-            description: 'Please verify your email before logging in. A new verification link has been sent.',
-            variant: 'destructive'
-        });
-        await sendEmailVerification(userCredential.user);
-        await signOut(auth);
-        throw new Error("Email not verified");
-    }
-    return userCredential;
+     try {
+        if (!email.endsWith('@saveetha.com')) {
+          throw new Error('Please use an email ending with @saveetha.com');
+        }
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+            toast({
+                title: 'Email Not Verified',
+                description: 'Please verify your email before logging in. A new verification link has been sent.',
+                variant: 'destructive'
+            });
+            await sendEmailVerification(userCredential.user);
+            await signOut(auth);
+            throw new Error("Email not verified");
+        }
+        return userCredential;
+     } catch(error: any) {
+         if (error.message.includes('@saveetha.com')) {
+              toast({ title: 'Invalid Email', description: error.message, variant: 'destructive' });
+         } else {
+             handleAuthError(error, toast);
+         }
+         throw error;
+     }
   }
 
   const logout = async () => {

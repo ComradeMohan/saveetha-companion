@@ -45,8 +45,7 @@ export default function LoginPage() {
       await signInWithGoogle();
       // The redirect is handled by the useEffect or the signInWithGoogle function
     } catch (error) {
-      console.error('Google Sign-In Error:', error);
-      // Toast is already handled in useAuth hook
+      // Error is caught and toasted in the useAuth hook
     } finally {
       setGoogleLoading(false);
     }
@@ -59,8 +58,7 @@ export default function LoginPage() {
       await loginWithEmailAndPassword(email, password);
       // The redirect will be handled by the useEffect hook
     } catch (error) {
-      console.error('Email Sign-In Error:', error);
-      toast({ title: 'Error signing in', description: (error as Error).message, variant: 'destructive' });
+      // Error is caught and toasted in the useAuth hook
     } finally {
         setEmailLoading(false);
     }
