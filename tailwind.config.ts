@@ -103,6 +103,16 @@ export default {
           '0%': { transform: 'translateY(24px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        'blobMove': {
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '50%': { transform: 'translate(20px, -30px) scale(1.1)' },
+          '100%': { transform: 'translate(0px, 0px) scale(1)' },
+        },
+        'blobMoveReverse': {
+            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+            '50%': { transform: 'translate(-20px, 30px) scale(1.1)' },
+            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

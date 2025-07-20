@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 240 10% 99%; /* Off-white */
-    --foreground: 240 10% 3.9%;
-    --card: 240 10% 99%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 240 10% 99%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 262.1 83.3% 57.8%; /* Vibrant purple */
-    --primary-foreground: 210 20% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --background: 220 100% 98.6%; /* Lumen Pulse: Soft white with a hint of blue */
+    --foreground: 228 20% 5.1%; /* Lumen Pulse: Deep navy black */
+    --card: 220 100% 98.6%;
+    --card-foreground: 228 20% 5.1%;
+    --popover: 220 100% 98.6%;
+    --popover-foreground: 228 20% 5.1%;
+    --primary: 267 86% 65%; /* Lumen Pulse: Bold purple */
+    --primary-foreground: 220 100% 98.6%; /* Lumen Pulse: Soft white */
+    --secondary: 220 20% 93%;
+    --secondary-foreground: 228 20% 5.1%;
+    --muted: 220 20% 93%;
+    --muted-foreground: 232 13% 41%; /* Lumen Pulse: Muted gray-blue */
+    --accent: 220 20% 93%;
+    --accent-foreground: 228 20% 5.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
+    --border: 226 50% 91%; /* Lumen Pulse: Subtle light lines */
+    --input: 226 50% 91%;
+    --ring: 267 86% 65%;
     --radius: 0.75rem;
   }
  
@@ -60,17 +60,46 @@
   body::before {
     content: "";
     position: fixed;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.1), hsl(var(--background) / 0.5));
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: blobMove 15s infinite ease-in-out;
+    z-index: -1;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, hsl(var(--secondary) / 0.1), hsl(var(--background) / 0.5));
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    animation: blobMoveReverse 20s infinite ease-in-out;
+    z-index: -1;
+  }
+
+  .dark body::before, .dark body::after {
+    animation: none;
+    background: none;
+  }
+  
+  .dark body::before {
+    content: "";
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--secondary)));
-    animation: light-liquid-gradient 20s ease infinite;
-    background-size: 200% 200%;
-  }
-
-  .dark body::before {
     background: radial-gradient(
       80% 80% at 50% 50%,
       rgba(160, 196, 255, 0.15) 0%, /* Soft Blue Glow */
@@ -80,12 +109,6 @@
     linear-gradient(135deg, hsl(222, 84%, 4.9%), hsl(240, 20%, 10%));
     animation: dark-liquid-gradient 15s ease infinite;
     background-size: 200% 200%;
-  }
-
-  @keyframes light-liquid-gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
   }
 
   @keyframes dark-liquid-gradient {
