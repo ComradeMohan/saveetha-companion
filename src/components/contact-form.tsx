@@ -29,8 +29,6 @@ const formSchema = z.object({
   message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
 });
 
-const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
-
 function SubmitButton() {
     const { isSubmitting } = useFormState();
     return (
@@ -79,12 +77,6 @@ export default function ContactForm() {
             description: "We'll get back to you within 24 hours.",
         });
         
-        // Trigger mailto link to notify admin
-        const subject = encodeURIComponent(`New Contact Form Submission from ${values.name}`);
-        const body = encodeURIComponent(`You have a new message:\n\nName: ${values.name}\nEmail: ${values.email}\n\nMessage:\n${values.message}`);
-        window.location.href = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
-
-
         form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
     } catch (error) {
         console.error("Error sending message:", error);
