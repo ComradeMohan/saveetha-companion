@@ -6,18 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Faculty } from "@/lib/faculty-data";
-import { MoreHorizontal, Loader2, Trash2, Pencil } from "lucide-react";
+import { MoreHorizontal, Loader2, Trash2, Pencil, UploadCloud } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
-import { collection, onSnapshot, orderBy, query, doc, deleteDoc } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, doc, deleteDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { EditFacultyDialog } from "@/components/admin/edit-faculty-dialog";
+import { facultyData as localFacultyData } from "@/lib/faculty-data";
 
 export default function AdminFacultyPage() {
     const [facultyData, setFacultyData] = useState<Faculty[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isSeeding, setIsSeeding] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [selectedFaculty, setSelectedFaculty] = useState<Faculty | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -44,6 +46,47 @@ export default function AdminFacultyPage() {
 
         return () => unsubscribe();
     }, [toast]);
+
+    const handleSeedDatabase = async () => {
+        setIsSeeding(true);
+        toast({
+            title: "Seeding Database...",
+            description: `Adding ${localFacultyData.length} faculty members. This may take a moment.`
+        });
+        try {
+            const batch = writeBatch(db);
+            const facultyCollection = collection(db, 'faculty');
+
+            localFacultyData.forEach((facultyMember) => {
+                const docRef = doc(facultyCollection); // Create a new doc with a random ID
+                batch.set(docRef, {
+                    name: facultyMember.name,
+                    phone: facultyMember.phone,
+                    department: facultyMember.department,
+                    subjects: facultyMember.subjects || [],
+                    roomNo: facultyMember.roomNo || '',
+                    createdAt: new Date().toISOString()
+                });
+            });
+
+            await batch.commit();
+
+            toast({
+                title: "Success!",
+                description: "Firestore has been populated with local faculty data.",
+            });
+        } catch (error) {
+            console.error("Error seeding database:", error);
+            toast({
+                title: "Error",
+                description: "Could not seed the database. Check the console for details.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsSeeding(false);
+        }
+    };
+
 
     const handleDeleteClick = (faculty: Faculty) => {
         setSelectedFaculty(faculty);
@@ -83,7 +126,17 @@ export default function AdminFacultyPage() {
                             Here you can add, edit, or remove faculty members from the directory.
                         </p>
                     </div>
-                    <AddFacultyDialog />
+                    <div className="flex items-center gap-2">
+                         <Button
+                            variant="outline"
+                            onClick={handleSeedDatabase}
+                            disabled={isSeeding || facultyData.length > 0}
+                        >
+                            {isSeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
+                            Seed Database
+                        </Button>
+                        <AddFacultyDialog />
+                    </div>
                 </div>
 
                 <Card>
@@ -98,7 +151,7 @@ export default function AdminFacultyPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Department / Subject</TableHead>
+                                    <TableHead>Department</TableHead>
                                     <TableHead>Phone Number</TableHead>
                                     <TableHead><span className="sr-only">Actions</span></TableHead>
                                 </TableRow>
@@ -146,7 +199,7 @@ export default function AdminFacultyPage() {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={4} className="h-24 text-center">
-                                            No faculty found.
+                                            No faculty found. Click "Seed Database" to populate from local data.
                                         </TableCell>
                                     </TableRow>
                                 )}

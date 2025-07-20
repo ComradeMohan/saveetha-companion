@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
 import { Search, Users, Loader2 } from 'lucide-react';
-import { type Faculty, facultyData as localFacultyData } from '@/lib/faculty-data';
+import { type Faculty } from '@/lib/faculty-data';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -30,7 +30,7 @@ export default function FacultyDirectory() {
             console.error("Error fetching faculty data from Firestore:", error);
             toast({
                 title: "Error",
-                description: "Could not fetch new faculty data.",
+                description: "Could not fetch faculty data.",
                 variant: "destructive"
             });
             setLoading(false);
@@ -38,26 +38,15 @@ export default function FacultyDirectory() {
 
         return () => unsubscribe();
     }, [toast]);
-    
-    const combinedFaculty = useMemo(() => {
-        const allFaculty = [...localFacultyData, ...firestoreFaculty];
-        const uniqueFaculty = allFaculty.filter((faculty, index, self) => 
-            index === self.findIndex((f) => (
-                f.name === faculty.name && f.phone === faculty.phone
-            ))
-        );
-        return uniqueFaculty;
-    }, [firestoreFaculty]);
-
 
   const filteredFaculty = useMemo(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     
     if (!searchTerm) {
-      return combinedFaculty.slice(0, 6);
+      return firestoreFaculty.slice(0, 6);
     }
 
-    return combinedFaculty.filter(
+    return firestoreFaculty.filter(
       faculty =>
         faculty.name.toLowerCase().includes(lowercasedFilter) ||
         (faculty.department && faculty.department.toLowerCase().includes(lowercasedFilter)) ||
@@ -65,7 +54,7 @@ export default function FacultyDirectory() {
         (faculty.subjects && faculty.subjects.some(subject => subject.toLowerCase().includes(lowercasedFilter))) ||
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
-  }, [searchTerm, combinedFaculty]);
+  }, [searchTerm, firestoreFaculty]);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -85,7 +74,7 @@ export default function FacultyDirectory() {
           onChange={e => setSearchTerm(e.target.value)}
         />
       </div>
-      {loading && combinedFaculty.length === 0 ? (
+      {loading ? (
         <div className="flex justify-center items-center py-10">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
