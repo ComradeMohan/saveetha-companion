@@ -145,14 +145,38 @@ export default function Header() {
       { href: '#calculators', label: 'Attendance', icon: Percent },
       { href: '#concepts', label: 'Concepts', icon: Lightbulb },
       { href: '#faculty', label: 'Faculty', icon: Users },
-      { href: '#notifications', label: 'Notifications', icon: Bell, disabled: true },
-      { href: '#events', label: 'Events', icon: Calendar, disabled: true },
+      { href: '/calendar', label: 'Calendar', icon: Calendar },
       { href: '#contact', label: 'Contact Us', icon: Contact },
     ];
+    
+     const loggedInLinks = [
+      { href: '#calculators', label: 'CGPA', icon: Calculator },
+      { href: '#calculators', label: 'Attendance', icon: Percent },
+      { href: '#concepts', label: 'Concepts', icon: Lightbulb },
+      { href: '#faculty', label: 'Faculty', icon: Users },
+      { href: '/calendar', label: 'Calendar', icon: Calendar },
+      { href: '#contact', label: 'Contact Us', icon: Contact },
+    ];
+
     if (user) {
-      return allLinks.filter(link => link.label !== 'Home');
+      return loggedInLinks;
     }
     return allLinks;
+  }, [user]);
+  
+  const desktopNavLinks = React.useMemo(() => {
+    if (user) {
+       return [
+            { href: '#calculators', label: 'Calculators' },
+            { href: '#concepts', label: 'Concepts' },
+            { href: '#faculty', label: 'Faculty' },
+            { href: '/calendar', label: 'Calendar' },
+        ];
+    }
+    return [
+        { href: '#features', label: 'Features' },
+        { href: '#stats', label: 'Stats' },
+    ];
   }, [user]);
 
   return (
@@ -208,7 +232,7 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             {navigationLinks.slice(user ? 0 : 1, 5).map(link => (
+             {desktopNavLinks.map(link => (
               <NavLink key={link.href + link.label} href={link.href}>
                 {link.label}
               </NavLink>
