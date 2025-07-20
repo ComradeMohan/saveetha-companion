@@ -20,7 +20,7 @@ import {
   sendEmailVerification,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
@@ -127,6 +127,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
+
+        const updateData: any = {
+            lastSignInTime: user.metadata.lastSignInTime,
+            isVerified: user.emailVerified,
+        };
+        if (user.photoURL) {
+            updateData.photoURL = user.photoURL;
+        }
+
+        if (userDoc.exists()) {
+             await updateDoc(userDocRef, updateData);
+        }
+
         if (userDoc.exists()) {
           if (!user.displayName && userDoc.data()?.name) {
             await updateProfile(user, { displayName: userDoc.data()?.name });
@@ -162,6 +175,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: user.email,
           name: user.displayName,
           createdAt: new Date().toISOString(),
+          isVerified: user.emailVerified,
+          lastSignInTime: user.metadata.lastSignInTime,
+          photoURL: user.photoURL,
         });
         router.push('/complete-profile');
       } else {
@@ -190,6 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             regNo: profile.regNo,
             phone: profile.phone,
             createdAt: new Date().toISOString(),
+            isVerified: false,
         });
         
         await sendEmailVerification(user, {
