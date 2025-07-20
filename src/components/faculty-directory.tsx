@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
 import { Search, Users, Loader2 } from 'lucide-react';
@@ -13,15 +13,17 @@ export default function FacultyDirectory() {
   const [loading, setLoading] = useState(false); // Can be used for async filtering in future
 
   const filteredFaculty = useMemo(() => {
-    if (!searchTerm) {
-      return facultyData;
-    }
     const lowercasedFilter = searchTerm.toLowerCase();
+    
+    if (!searchTerm) {
+      return facultyData.slice(0, 10);
+    }
+
     return facultyData.filter(
       faculty =>
         faculty.name.toLowerCase().includes(lowercasedFilter) ||
         faculty.department.toLowerCase().includes(lowercasedFilter) ||
-        faculty.phone.includes(lowercasedFilter) ||
+        (faculty.phone && faculty.phone.includes(lowercasedFilter)) ||
         (faculty.subjects && faculty.subjects.some(subject => subject.toLowerCase().includes(lowercasedFilter))) ||
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
