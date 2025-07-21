@@ -46,6 +46,7 @@ export async function createUpdate(prevState: any, formData: FormData) {
         const tokens: string[] = [];
         usersSnapshot.forEach(doc => {
             const userData = doc.data();
+            // Ensure fcmTokens exists and is an array before spreading
             if (userData.fcmTokens && Array.isArray(userData.fcmTokens)) {
                 tokens.push(...userData.fcmTokens);
             }
