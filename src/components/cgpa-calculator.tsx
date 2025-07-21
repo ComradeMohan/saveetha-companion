@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -6,12 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calculator } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
-import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
-import { Button } from './ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
 
 const gradePoints: { [key: string]: number } = {
   S: 10,
@@ -68,51 +61,33 @@ export default function CgpaCalculator() {
           CGPA Calculator
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground px-1">
-          <span>Grade</span>
-          <span>Credits</span>
-          <span />
-        </div>
-        <ScrollArea className="h-60 pr-4">
-          <div className="space-y-2">
-            {courses.map((course) => (
-              <div key={course.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
-                <Select
-                  value={course.grade} 
-                  onValueChange={(value) => handleCourseChange(course.id, 'grade', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Grade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allGrades.map(grade => (
-                      <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  type="number"
-                  placeholder="e.g., 4"
-                  value={course.credits}
-                  onChange={(e) => handleCourseChange(course.id, 'credits', e.target.value)}
-                  min="0"
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeCourse(course.id)}
-                  disabled={courses.length === 1}
-                  aria-label="Remove course"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            ))}
+      <CardContent className="space-y-6">
+         <p className="text-sm text-muted-foreground -mt-2">
+          Enter the number of subjects for each grade. Each subject is assumed to be 4 credits.
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          {grades.map(grade => (
+            <div key={grade} className="space-y-2">
+              <Label htmlFor={`grade-${grade}`} className="text-lg font-bold">{grade}</Label>
+              <Input
+                id={`grade-${grade}`}
+                type="number"
+                placeholder="0"
+                value={gradeCounts[grade]}
+                onChange={e => handleCountChange(grade, e.target.value)}
+                min="0"
+                className="text-center"
+              />
+            </div>
+          ))}
         </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
          <div className="text-center sm:text-left">
+            <span className="text-sm font-semibold">Total Subjects</span>
+            <p className="text-xl font-bold">{totalSubjects}</p>
+        </div>
+        <div className="text-center sm:text-left">
             <span className="text-sm font-semibold">Total Credits</span>
             <p className="text-xl font-bold">{totalCredits}</p>
         </div>
