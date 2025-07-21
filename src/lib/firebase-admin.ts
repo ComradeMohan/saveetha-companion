@@ -1,29 +1,28 @@
 
 import admin from 'firebase-admin';
-import * as fs from 'fs';
-import * as path from 'path';
+import 'dotenv/config';
 
 let app;
 
 if (!admin.apps.length) {
   try {
-    // We will use a file named 'serviceAccountKey.json' in the root directory.
-    const serviceAccountPath = path.resolve(process.cwd(), 'serviceAccountKey.json');
-    
-    if (!fs.existsSync(serviceAccountPath)) {
-      throw new Error('serviceAccountKey.json not found in the project root. Please download it from your Firebase project settings and place it there.');
+    const serviceAccount = {
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    };
+
+    if (!serviceAccount.projectId || !serviceAccount.privateKey || !serviceAccount.clientEmail) {
+      throw new Error('Firebase Admin SDK environment variables are not set. Please check your .env file.');
     }
 
-    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-
     app = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(serviceAccount as any),
     });
-    console.log('Firebase Admin SDK initialized successfully from serviceAccountKey.json.');
+    console.log('Firebase Admin SDK initialized successfully from environment variables.');
 
   } catch (error: any) {
     console.error('Firebase Admin SDK initialization error:', error.message);
-    // Throwing the error here will stop the server and make it clear what the issue is.
     throw new Error(`Firebase Admin SDK failed to initialize: ${error.message}`);
   }
 } else {
