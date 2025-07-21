@@ -23,14 +23,14 @@ export default function AdminSidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex transition-all duration-300 ease-in-out group-hover:w-56">
         <TooltipProvider>
             <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
                 <Link
                     href="/"
-                    className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+                    className="group/logo flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8"
                 >
-                    <GraduationCap className="h-4 w-4 transition-all group-hover:scale-110" />
+                    <GraduationCap className="h-4 w-4 transition-all group-hover/logo:scale-110" />
                     <span className="sr-only">Saveetha Companion</span>
                 </Link>
                 {adminNavLinks.map(link => (
@@ -39,27 +39,29 @@ export default function AdminSidebar() {
                         <Link
                             href={link.href}
                             className={cn(
-                                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
+                                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8 group-hover:w-full group-hover:justify-start group-hover:px-3",
                                 pathname.startsWith(link.href) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
                             )}
                         >
                             <link.icon className="h-5 w-5" />
-                            <span className="sr-only">{link.label}</span>
+                            <span className="ml-4 hidden group-hover:inline">{link.label}</span>
+                            <span className="sr-only group-hover:hidden">{link.label}</span>
                         </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">{link.label}</TooltipContent>
+                        <TooltipContent side="right" className="group-hover:hidden">{link.label}</TooltipContent>
                     </Tooltip>
                 ))}
             </nav>
             <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
                 <Tooltip>
                     <TooltipTrigger asChild>
-                    <button onClick={logout} className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+                    <button onClick={logout} className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 group-hover:w-full group-hover:justify-start group-hover:px-3">
                         <LogOut className="h-5 w-5" />
-                        <span className="sr-only">Logout</span>
+                        <span className="ml-4 hidden group-hover:inline">Logout</span>
+                        <span className="sr-only group-hover:hidden">Logout</span>
                     </button>
                     </TooltipTrigger>
-                    <TooltipContent side="right">Logout</TooltipContent>
+                    <TooltipContent side="right" className="group-hover:hidden">Logout</TooltipContent>
                 </Tooltip>
             </nav>
         </TooltipProvider>
