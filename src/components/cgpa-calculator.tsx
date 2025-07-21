@@ -32,10 +32,7 @@ export default function CgpaCalculator() {
   const [gradeCounts, setGradeCounts] = useState<GradeCounts>(
     grades.reduce((acc, grade) => ({ ...acc, [grade]: '' }), {})
   );
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-
+  
   const handleCountChange = (grade: string, value: string) => {
     // Only allow non-negative integers
     if (/^\d*$/.test(value)) {
@@ -62,48 +59,6 @@ export default function CgpaCalculator() {
     return { cgpa: cgpaValue, totalSubjects, totalCredits };
   }, [gradeCounts]);
 
-  const handleSaveCgpa = async () => {
-    if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please log in to save your CGPA.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (totalCredits === 0) {
-      toast({
-        title: "No Data",
-        description: "Please enter your grades before saving.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsSaving(true);
-    try {
-      const cgpaDocRef = doc(db, 'students_cgpa', user.uid);
-      await setDoc(cgpaDocRef, {
-        cgpa: parseFloat(cgpa.toFixed(2)),
-        totalCredits: totalCredits,
-        updatedAt: new Date().toISOString(),
-      });
-      toast({
-        title: "Success!",
-        description: "Your CGPA has been saved to your profile."
-      });
-    } catch (error) {
-      console.error("Error saving CGPA:", error);
-      toast({
-        title: "Error",
-        description: "Could not save your CGPA. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }
 
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
@@ -154,12 +109,6 @@ export default function CgpaCalculator() {
                 </Button>
               </div>
             ))}
-        </div>
-        <div className="mt-6 flex justify-end">
-            <Button onClick={handleSaveCgpa} disabled={isSaving || !user || totalCredits === 0}>
-                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Save CGPA to Profile
-            </Button>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
