@@ -6,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calculator } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { Button } from './ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 const gradePoints: { [key: string]: number } = {
   S: 10,
@@ -26,6 +32,9 @@ export default function CgpaCalculator() {
   const [gradeCounts, setGradeCounts] = useState<GradeCounts>(
     grades.reduce((acc, grade) => ({ ...acc, [grade]: '' }), {})
   );
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleCountChange = (grade: string, value: string) => {
     // Only allow non-negative integers
@@ -48,10 +57,53 @@ export default function CgpaCalculator() {
     }
     
     const totalCredits = totalSubjects * 4;
-    const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : '0.00';
+    const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits) : 0;
 
     return { cgpa: cgpaValue, totalSubjects, totalCredits };
   }, [gradeCounts]);
+
+  const handleSaveCgpa = async () => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to save your CGPA.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (totalCredits === 0) {
+      toast({
+        title: "No Data",
+        description: "Please enter your grades before saving.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      const cgpaDocRef = doc(db, 'students_cgpa', user.uid);
+      await setDoc(cgpaDocRef, {
+        cgpa: parseFloat(cgpa.toFixed(2)),
+        totalCredits: totalCredits,
+        updatedAt: new Date().toISOString(),
+      });
+      toast({
+        title: "Success!",
+        description: "Your CGPA has been saved to your profile."
+      });
+    } catch (error) {
+      console.error("Error saving CGPA:", error);
+      toast({
+        title: "Error",
+        description: "Could not save your CGPA. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
@@ -103,6 +155,12 @@ export default function CgpaCalculator() {
               </div>
             ))}
         </div>
+        <div className="mt-6 flex justify-end">
+            <Button onClick={handleSaveCgpa} disabled={isSaving || !user || totalCredits === 0}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Save CGPA to Profile
+            </Button>
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
          <div className="text-center sm:text-left">
@@ -111,7 +169,7 @@ export default function CgpaCalculator() {
         </div>
         <div className="text-center sm:text-right">
           <span className="text-sm font-semibold">Your CGPA</span>
-          <p className="text-3xl font-bold text-primary">{cgpa}</p>
+          <p className="text-3xl font-bold text-primary">{cgpa.toFixed(2)}</p>
         </div>
       </CardFooter>
     </Card>
