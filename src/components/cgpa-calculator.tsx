@@ -2,130 +2,56 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, PlusCircle, Calculator, Save, Loader2 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth } from '@/hooks/use-auth';
-import { useToast } from '@/hooks/use-toast';
-import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
+import { Label } from '@/components/ui/label';
+import { Calculator } from 'lucide-react';
 
 const gradePoints: { [key: string]: number } = {
-  'S': 10,
-  'A': 9,
-  'B': 8,
-  'C': 7,
-  'D': 6,
-  'E': 5,
-  'RA': 0,
+  S: 10,
+  A: 9,
+  B: 8,
+  C: 7,
+  D: 6,
+  E: 5,
 };
 
-const allGrades = Object.keys(gradePoints);
+const grades = Object.keys(gradePoints);
 
-type Course = {
-  id: number;
-  grade: string;
-  credits: string;
+type GradeCounts = {
+  [key: string]: string;
 };
 
 export default function CgpaCalculator() {
-  const [courses, setCourses] = useState<Course[]>([{ id: 1, grade: '', credits: '' }]);
-  const [isSaving, setIsSaving] = useState(false);
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const router = useRouter();
+  const [gradeCounts, setGradeCounts] = useState<GradeCounts>(
+    grades.reduce((acc, grade) => ({ ...acc, [grade]: '' }), {})
+  );
 
-  const addCourse = () => {
-    setCourses([...courses, { id: Date.now(), grade: '', credits: '' }]);
+  const handleCountChange = (grade: string, value: string) => {
+    // Only allow non-negative integers
+    if (/^\d*$/.test(value)) {
+      setGradeCounts(prev => ({ ...prev, [grade]: value }));
+    }
   };
 
-  const removeCourse = (id: number) => {
-    setCourses(courses.filter(course => course.id !== id));
-  };
-
-  const handleCourseChange = (id: number, field: 'grade' | 'credits', value: string) => {
-    setCourses(
-      courses.map(course =>
-        course.id === id ? { ...course, [field]: value } : course
-      )
-    );
-  };
-
-  const { cgpa, totalCredits, isValid } = useMemo(() => {
+  const { cgpa, totalSubjects, totalCredits } = useMemo(() => {
     let weightedSum = 0;
-    let totalCredits = 0;
-    
-    const validCourses = courses.filter(course => {
-        const credits = parseFloat(course.credits);
-        const point = gradePoints[course.grade];
-        return !isNaN(credits) && credits > 0 && point !== undefined;
-    });
+    let totalSubjects = 0;
 
-    if (validCourses.length === 0) {
-      return { cgpa: '0.00', totalCredits: 0, isValid: false };
+    for (const grade of grades) {
+      const count = parseInt(gradeCounts[grade] || '0');
+      if (count > 0) {
+        const point = gradePoints[grade];
+        weightedSum += point * count * 4; // Each subject is 4 credits
+        totalSubjects += count;
+      }
     }
-
-    validCourses.forEach(course => {
-      const credits = parseFloat(course.credits);
-      const point = gradePoints[course.grade];
-      weightedSum += point * credits;
-      totalCredits += credits;
-    });
-
+    
+    const totalCredits = totalSubjects * 4;
     const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : '0.00';
-    return { cgpa: cgpaValue, totalCredits, isValid: true };
-  }, [courses]);
-  
-  const handleSaveCgpa = async () => {
-    if (!user) {
-        toast({
-            title: "Authentication Required",
-            description: "You need to be logged in to save your CGPA. Redirecting to login...",
-            variant: "destructive"
-        });
-        setTimeout(() => router.push('/login'), 2000);
-        return;
-    }
-    if (!isValid) {
-        toast({
-            title: "Incomplete Data",
-            description: "Please fill in valid grade and credit fields before saving.",
-            variant: "destructive"
-        });
-        return;
-    }
-    
-    setIsSaving(true);
-    try {
-        const docRef = doc(db, 'students_cgpa', user.uid);
-        const coursesToSave = courses.filter(c => c.grade && c.credits && parseFloat(c.credits) > 0);
 
-        await setDoc(docRef, {
-            userId: user.uid,
-            cgpa: parseFloat(cgpa),
-            totalCredits,
-            courses: coursesToSave.map(c => ({grade: c.grade, credits: parseFloat(c.credits) })),
-            updatedAt: new Date().toISOString()
-        });
-        toast({
-            title: "Success!",
-            description: "Your CGPA has been saved successfully."
-        });
-    } catch (error) {
-        console.error("Error saving CGPA: ", error);
-        toast({
-            title: "Error",
-            description: "Could not save your CGPA. Please try again.",
-            variant: "destructive"
-        });
-    } finally {
-        setIsSaving(false);
-    }
-  };
+    return { cgpa: cgpaValue, totalSubjects, totalCredits };
+  }, [gradeCounts]);
 
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
@@ -138,7 +64,7 @@ export default function CgpaCalculator() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground px-1">
           <span>Grade</span>
-          <span>Subjects</span>
+          <span>Credits</span>
           <span />
         </div>
         <ScrollArea className="h-60 pr-4">
@@ -176,22 +102,12 @@ export default function CgpaCalculator() {
                 </Button>
               </div>
             ))}
-          </div>
-        </ScrollArea>
-        <Button variant="outline" size="sm" onClick={addCourse}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Course
-        </Button>
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
-        <div className="flex items-center gap-2">
-            <Button onClick={handleSaveCgpa} disabled={!isValid || isSaving}>
-                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
-                Save CGPA
-            </Button>
-            <div className="text-sm">
-                <span className="font-semibold">Total Credits:</span> {totalCredits}
-            </div>
+         <div className="text-center sm:text-left">
+            <span className="text-sm font-semibold">Total Credits</span>
+            <p className="text-xl font-bold">{totalCredits}</p>
         </div>
         <div className="text-center sm:text-right">
           <span className="text-sm font-semibold">Your CGPA</span>
