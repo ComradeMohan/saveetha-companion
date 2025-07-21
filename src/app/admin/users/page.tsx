@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, CheckCircle2, XCircle } from "lucide-react";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { format, formatDistanceToNow } from "date-fns";
@@ -30,9 +30,11 @@ export default function AdminUsersPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
-    useEffect(() => {
-        const q = query(collection(db, 'users'), orderBy('name', 'asc'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const fetchUsers = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'users'), orderBy('name', 'asc'));
+            const querySnapshot = await getDocs(q);
             const data: User[] = [];
             querySnapshot.forEach((doc) => {
                 const docData = doc.data();
@@ -48,19 +50,21 @@ export default function AdminUsersPage() {
                 });
             });
             setUsers(data);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching users:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch user data.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const filteredUsers = useMemo(() => {
         if (!searchTerm) {

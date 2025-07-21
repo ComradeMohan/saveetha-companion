@@ -1,46 +1,57 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Loader2, File as FileIcon, Lightbulb, Search, Upload } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import type { ConceptMap } from '@/lib/concept-map-data';
 import { Input } from './ui/input';
 
+let conceptMapCache: ConceptMap[] | null = null;
 
 export default function ConceptMapFinder() {
-  const [results, setResults] = useState<ConceptMap[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState<ConceptMap[]>(conceptMapCache || []);
+  const [loading, setLoading] = useState(!conceptMapCache);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
-  useEffect(() => {
+  const fetchConceptMaps = useCallback(async () => {
+    if (conceptMapCache) {
+      setResults(conceptMapCache);
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
-    const q = query(collection(db, 'concept-maps'), orderBy('title'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    try {
+        const q = query(collection(db, 'concept-maps'), orderBy('title'));
+        const querySnapshot = await getDocs(q);
         const data: ConceptMap[] = [];
         querySnapshot.forEach((doc) => {
             data.push({ id: doc.id, ...doc.data() } as ConceptMap);
         });
+        conceptMapCache = data; // Cache the results
         setResults(data);
-        setLoading(false);
-    }, (error) => {
+    } catch (error) {
         console.error("Error fetching concept maps:", error);
         toast({
             title: "Error",
             description: "Could not fetch concept maps.",
             variant: "destructive"
         });
+    } finally {
         setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, [toast]);
+  
+  useEffect(() => {
+    fetchConceptMaps();
+  }, [fetchConceptMaps]);
   
   const filteredResults = useMemo(() => {
     const lowercasedTerm = searchTerm.toLowerCase();

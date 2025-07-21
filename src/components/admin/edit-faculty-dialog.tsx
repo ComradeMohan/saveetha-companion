@@ -43,9 +43,10 @@ type FacultyFormValues = z.infer<typeof facultySchema>;
 interface EditFacultyDialogProps {
   faculty: Faculty;
   children: React.ReactNode;
+  onFacultyUpdated: () => void;
 }
 
-export function EditFacultyDialog({ faculty, children }: EditFacultyDialogProps) {
+export function EditFacultyDialog({ faculty, children, onFacultyUpdated }: EditFacultyDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -72,6 +73,7 @@ export function EditFacultyDialog({ faculty, children }: EditFacultyDialogProps)
         title: 'Success',
         description: 'Faculty member updated successfully.',
       });
+      onFacultyUpdated(); // Callback to refetch data
       form.reset(values);
       setOpen(false);
     } catch (error) {

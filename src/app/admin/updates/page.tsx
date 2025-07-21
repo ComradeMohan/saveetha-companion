@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, useCallback } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { createUpdate } from '@/app/actions/create-update';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, Plus, ExternalLink, Link as LinkIcon } from 'lucide-react';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { Loader2, Send, Link as LinkIcon } from 'lucide-react';
+import { collection, orderBy, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -55,6 +55,28 @@ export default function AdminUpdatesPage() {
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
+    const fetchUpdates = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'updates'), orderBy('createdAt', 'desc'));
+            const snapshot = await getDocs(q);
+            const updatesData: Update[] = [];
+            snapshot.forEach((doc) => {
+                updatesData.push({ id: doc.id, ...doc.data() } as Update);
+            });
+            setUpdates(updatesData);
+        } catch (error) {
+             console.error("Error fetching updates:", error);
+            toast({ title: "Error", description: "Could not fetch past updates.", variant: "destructive" });
+        } finally {
+            setLoading(false);
+        }
+    }, [toast]);
+    
+    useEffect(() => {
+        fetchUpdates();
+    }, [fetchUpdates]);
+
     useEffect(() => {
         if (state.type) {
             toast({
@@ -63,31 +85,13 @@ export default function AdminUpdatesPage() {
                 variant: state.type === 'error' ? 'destructive' : 'default',
             });
             if (state.type === 'success') {
-                // Manually reset the form fields by targeting their names
                 const form = document.getElementById('update-form') as HTMLFormElement;
                 if(form) form.reset();
+                fetchUpdates(); // Refetch updates after a successful post
             }
         }
-    }, [state, toast]);
+    }, [state, toast, fetchUpdates]);
     
-    useEffect(() => {
-        const q = query(collection(db, 'updates'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const updatesData: Update[] = [];
-            snapshot.forEach((doc) => {
-                updatesData.push({ id: doc.id, ...doc.data() } as Update);
-            });
-            setUpdates(updatesData);
-            setLoading(false);
-        }, (error) => {
-            console.error("Error fetching updates:", error);
-            toast({ title: "Error", description: "Could not fetch past updates.", variant: "destructive" });
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, [toast]);
-
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div>

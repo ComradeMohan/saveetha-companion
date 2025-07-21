@@ -39,7 +39,11 @@ const facultyRequestSchema = z.object({
 
 type FacultyRequestFormValues = z.infer<typeof facultyRequestSchema>;
 
-export function SuggestFacultyDialog() {
+interface SuggestFacultyDialogProps {
+  onSuggestionAdded: () => void;
+}
+
+export function SuggestFacultyDialog({ onSuggestionAdded }: SuggestFacultyDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -67,6 +71,7 @@ export function SuggestFacultyDialog() {
         title: 'Suggestion Submitted!',
         description: 'Thank you for your contribution. An admin will review it shortly.',
       });
+      onSuggestionAdded();
       form.reset();
       setOpen(false);
     } catch (error) {

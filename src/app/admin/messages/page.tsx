@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Mail, User, Phone, BookUser } from "lucide-react";
-import { collection, onSnapshot, orderBy, query, doc, updateDoc } from "firebase/firestore";
+import { Loader2, Mail } from "lucide-react";
+import { collection, orderBy, query, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { format, formatDistanceToNow } from "date-fns";
@@ -28,27 +28,31 @@ export default function AdminMessagesPage() {
     const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
     const { toast } = useToast();
 
-    useEffect(() => {
-        const q = query(collection(db, 'contact-messages'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const fetchMessages = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'contact-messages'), orderBy('createdAt', 'desc'));
+            const querySnapshot = await getDocs(q);
             const data: Message[] = [];
             querySnapshot.forEach((doc) => {
                 data.push({ id: doc.id, ...doc.data() } as Message);
             });
             setMessages(data);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching messages:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch messages.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchMessages();
+    }, [fetchMessages]);
 
     const handleRowClick = async (message: Message) => {
         setSelectedMessage(message);
@@ -56,6 +60,8 @@ export default function AdminMessagesPage() {
             try {
                 const messageRef = doc(db, 'contact-messages', message.id);
                 await updateDoc(messageRef, { status: 'Read' });
+                // Optimistically update the UI before refetching
+                setMessages(prev => prev.map(m => m.id === message.id ? {...m, status: 'Read'} : m));
             } catch (error) {
                 console.error("Error marking message as read:", error);
             }
@@ -75,6 +81,8 @@ export default function AdminMessagesPage() {
             });
             // Update local state to reflect change immediately in the sheet
             setSelectedMessage(prev => prev ? { ...prev, status: newStatus } : null);
+             // Optimistically update the main list as well
+            setMessages(prev => prev.map(m => m.id === selectedMessage.id ? {...m, status: newStatus} : m));
         } catch (error) {
             console.error("Error updating message status:", error);
             toast({

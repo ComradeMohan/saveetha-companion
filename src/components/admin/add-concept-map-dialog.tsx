@@ -36,7 +36,11 @@ const conceptMapSchema = z.object({
 
 type ConceptMapFormValues = z.infer<typeof conceptMapSchema>;
 
-export function AddConceptMapDialog() {
+interface AddConceptMapDialogProps {
+    onMapAdded: () => void;
+}
+
+export function AddConceptMapDialog({ onMapAdded }: AddConceptMapDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -63,6 +67,7 @@ export function AddConceptMapDialog() {
         title: 'Success',
         description: 'Concept map added successfully.',
       });
+      onMapAdded(); // Callback to refetch data
       form.reset({ title: '', url: '' });
       setOpen(false);
     } catch (error) {

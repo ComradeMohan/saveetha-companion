@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -26,28 +26,31 @@ export default function UpdatesPage() {
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
-    useEffect(() => {
-        const q = query(collection(db, 'updates'), orderBy('createdAt', 'desc'));
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+    const fetchUpdates = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'updates'), orderBy('createdAt', 'desc'));
+            const snapshot = await getDocs(q);
             const updatesData: Update[] = [];
             snapshot.forEach((doc) => {
                 updatesData.push({ id: doc.id, ...doc.data() } as Update);
             });
             setUpdates(updatesData);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching updates:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch updates.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchUpdates();
+    }, [fetchUpdates]);
 
 
     return (

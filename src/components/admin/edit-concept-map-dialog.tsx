@@ -40,9 +40,10 @@ type ConceptMapFormValues = z.infer<typeof conceptMapSchema>;
 interface EditConceptMapDialogProps {
   conceptMap: ConceptMap;
   children: React.ReactNode;
+  onMapUpdated: () => void;
 }
 
-export function EditConceptMapDialog({ conceptMap, children }: EditConceptMapDialogProps) {
+export function EditConceptMapDialog({ conceptMap, children, onMapUpdated }: EditConceptMapDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -66,6 +67,7 @@ export function EditConceptMapDialog({ conceptMap, children }: EditConceptMapDia
         title: 'Success',
         description: 'Concept map updated successfully.',
       });
+      onMapUpdated(); // Callback to refetch data
       form.reset(values);
       setOpen(false);
     } catch (error) {

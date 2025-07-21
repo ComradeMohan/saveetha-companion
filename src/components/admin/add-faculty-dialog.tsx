@@ -39,7 +39,11 @@ const facultySchema = z.object({
 
 type FacultyFormValues = z.infer<typeof facultySchema>;
 
-export function AddFacultyDialog() {
+interface AddFacultyDialogProps {
+  onFacultyAdded: () => void;
+}
+
+export function AddFacultyDialog({ onFacultyAdded }: AddFacultyDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -67,6 +71,7 @@ export function AddFacultyDialog() {
         title: 'Success',
         description: 'Faculty member added successfully.',
       });
+      onFacultyAdded(); // Callback to refetch data
       form.reset();
       setOpen(false);
     } catch (error) {

@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search } from "lucide-react";
-import { collection, onSnapshot, orderBy, query, doc, deleteDoc } from "firebase/firestore";
+import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import type { ConceptMap } from "@/lib/concept-map-data";
@@ -26,27 +26,31 @@ export default function AdminConceptMapsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
-    useEffect(() => {
-        const q = query(collection(db, 'concept-maps'), orderBy('title'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const fetchConceptMaps = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'concept-maps'), orderBy('title'));
+            const querySnapshot = await getDocs(q);
             const data: ConceptMap[] = [];
             querySnapshot.forEach((doc) => {
                 data.push({ id: doc.id, ...doc.data() } as ConceptMap);
             });
             setConceptMaps(data);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching concept maps:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch concept maps.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchConceptMaps();
+    }, [fetchConceptMaps]);
     
     const filteredConceptMaps = useMemo(() => {
         if (!searchTerm) {
@@ -72,6 +76,7 @@ export default function AdminConceptMapsPage() {
                 title: "Success",
                 description: "Concept map deleted successfully."
             });
+            fetchConceptMaps(); // Refetch data
         } catch (error) {
             console.error("Error deleting concept map:", error);
             toast({
@@ -96,7 +101,7 @@ export default function AdminConceptMapsPage() {
                             Add, edit, or remove concept maps available to users.
                         </p>
                     </div>
-                    <AddConceptMapDialog />
+                    <AddConceptMapDialog onMapAdded={fetchConceptMaps} />
                 </div>
 
                 <Card>
@@ -155,7 +160,7 @@ export default function AdminConceptMapsPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                         <EditConceptMapDialog conceptMap={map}>
+                                                         <EditConceptMapDialog conceptMap={map} onMapUpdated={fetchConceptMaps}>
                                                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                                                 <Pencil className="mr-2 h-4 w-4" />
                                                                 Edit

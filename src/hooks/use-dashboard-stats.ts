@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { useState, useEffect, useCallback } from 'react';
+import { collection, query, where, getCountFromServer, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { subDays, startOfDay } from 'date-fns';
+import { startOfDay } from 'date-fns';
 
 interface User {
   id: string;
@@ -21,7 +21,7 @@ interface Stats {
   conceptMaps: number;
   facultyCount: number;
   unreadMessages: number;
-  userList: User[]; // Kept for potential future use, but not displayed directly
+  userList: User[];
 }
 
 export default function useDashboardStats() {
@@ -35,88 +35,69 @@ export default function useDashboardStats() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const usersQuery = query(collection(db, 'users'));
-    const conceptMapsQuery = query(collection(db, 'concept-maps'));
-    const facultyQuery = query(collection(db, 'faculty'));
-    const messagesQuery = query(collection(db, 'contact-messages'), where('status', '==', 'Unread'));
+  const fetchStats = useCallback(async () => {
+    setLoading(true);
+    try {
+        const usersCol = collection(db, 'users');
+        const conceptMapsCol = collection(db, 'concept-maps');
+        const facultyCol = collection(db, 'faculty');
+        const messagesCol = collection(db, 'contact-messages');
+        const todayStart = startOfDay(new Date());
 
-    const unsubscribers: (() => void)[] = [];
-    let initialLoads = 4; // Number of collections we are loading
+        // Batch count queries
+        const [
+            usersSnapshot,
+            conceptMapsSnapshot,
+            facultySnapshot,
+            unreadMessagesSnapshot
+        ] = await Promise.all([
+            getCountFromServer(usersCol),
+            getCountFromServer(conceptMapsCol),
+            getCountFromServer(facultyCol),
+            getCountFromServer(query(messagesCol, where('status', '==', 'Unread')))
+        ]);
 
-    const handleInitialLoad = () => {
-        initialLoads--;
-        if (initialLoads === 0) {
-            setLoading(false);
-        }
-    }
+        // Fetch user list for chart (can be further optimized with pagination if needed)
+        const userListQuery = query(collection(db, 'users'));
+        const userListSnapshot = await getDocs(userListQuery);
+        const userList: User[] = userListSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        let newToday = 0;
+        userList.forEach(user => {
+            if (user.createdAt) {
+                const createdAtDate = new Date(user.createdAt);
+                if (createdAtDate >= todayStart) {
+                    newToday++;
+                }
+            }
+        });
 
-    const handleError = (error: Error, type: string) => {
-        console.error(`Error fetching ${type}:`, error);
+        setStats({
+            totalUsers: {
+                count: usersSnapshot.data().count,
+                newToday: newToday,
+            },
+            conceptMaps: conceptMapsSnapshot.data().count,
+            facultyCount: facultySnapshot.data().count,
+            unreadMessages: unreadMessagesSnapshot.data().count,
+            userList: userList,
+        });
+
+    } catch (error: any) {
+        console.error("Error fetching dashboard stats:", error);
         toast({
             title: 'Error',
-            description: `Could not fetch ${type}.`,
+            description: `Could not fetch dashboard statistics. ${error.code === 'permission-denied' ? 'Please check Firestore rules.' : ''}`,
             variant: 'destructive',
         });
-        handleInitialLoad();
+    } finally {
+        setLoading(false);
     }
-
-    unsubscribers.push(onSnapshot(usersQuery, (snapshot) => {
-      const usersData: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      const now = new Date();
-      const todayStart = startOfDay(now);
-
-      let newToday = 0;
-      usersData.forEach(user => {
-        if (user.createdAt) {
-          const createdAtDate = new Date(user.createdAt);
-          if (createdAtDate >= todayStart) {
-            newToday++;
-          }
-        }
-      });
-
-      setStats(prevStats => ({
-        ...prevStats,
-        totalUsers: {
-          count: snapshot.size,
-          newToday: newToday,
-        },
-        userList: usersData,
-      }));
-      handleInitialLoad();
-    }, (e) => handleError(e, "user statistics")));
-
-    unsubscribers.push(onSnapshot(conceptMapsQuery, (snapshot) => {
-      setStats(prevStats => ({
-        ...prevStats,
-        conceptMaps: snapshot.size,
-      }));
-      handleInitialLoad();
-    }, (e) => handleError(e, "concept map count")));
-
-    unsubscribers.push(onSnapshot(facultyQuery, (snapshot) => {
-        setStats(prevStats => ({
-          ...prevStats,
-          facultyCount: snapshot.size,
-        }));
-        handleInitialLoad();
-      }, (e) => handleError(e, "faculty count")));
-
-    unsubscribers.push(onSnapshot(messagesQuery, (snapshot) => {
-        setStats(prevStats => ({
-            ...prevStats,
-            unreadMessages: snapshot.size,
-        }));
-        handleInitialLoad();
-    }, (e) => handleError(e, "unread messages")));
-
-
-    return () => {
-      unsubscribers.forEach(unsub => unsub());
-    };
   }, [toast]);
+  
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   return { stats, loading };
 }

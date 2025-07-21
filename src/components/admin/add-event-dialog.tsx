@@ -42,6 +42,10 @@ export type Event = {
   targetAudience: "All Years" | "1st Year" | "2nd Year" | "3rd Year" | "4th Year";
 };
 
+interface AddEventDialogProps {
+  onEventAdded: () => void;
+}
+
 const audienceOptions = ["All Years", "1st Year", "2nd Year", "3rd Year", "4th Year"];
 
 const eventSchema = z.object({
@@ -64,7 +68,7 @@ const eventSchema = z.object({
 
 type EventFormValues = z.infer<typeof eventSchema>;
 
-export function AddEventDialog() {
+export function AddEventDialog({ onEventAdded }: AddEventDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -93,6 +97,7 @@ export function AddEventDialog() {
         title: 'Success',
         description: 'Event added successfully.',
       });
+      onEventAdded();
       form.reset();
       setOpen(false);
     } catch (error) {

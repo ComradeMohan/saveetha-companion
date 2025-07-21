@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, orderBy, doc, deleteDoc, addDoc } from 'firebase/firestore';
+import { useEffect, useState, useCallback } from 'react';
+import { collection, query, orderBy, doc, deleteDoc, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, Check, X, UserPlus, Inbox, Clock } from 'lucide-react';
+import { Loader2, Check, X, Inbox } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface FacultyRequest {
@@ -30,27 +30,31 @@ export default function AdminFacultyRequestsPage() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const q = query(collection(db, 'faculty-requests'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const requestsData: FacultyRequest[] = [];
-      snapshot.forEach((doc) => {
-        requestsData.push({ id: doc.id, ...doc.data() } as FacultyRequest);
-      });
-      setRequests(requestsData);
-      setLoading(false);
-    }, (error) => {
-      console.error('Error fetching faculty requests:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not fetch faculty requests.',
-        variant: 'destructive',
-      });
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+  const fetchRequests = useCallback(async () => {
+    setLoading(true);
+    try {
+        const q = query(collection(db, 'faculty-requests'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const requestsData: FacultyRequest[] = [];
+        snapshot.forEach((doc) => {
+            requestsData.push({ id: doc.id, ...doc.data() } as FacultyRequest);
+        });
+        setRequests(requestsData);
+    } catch (error) {
+        console.error('Error fetching faculty requests:', error);
+        toast({
+            title: 'Error',
+            description: 'Could not fetch faculty requests.',
+            variant: 'destructive',
+        });
+    } finally {
+        setLoading(false);
+    }
   }, [toast]);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
 
   const handleApprove = async (request: FacultyRequest) => {
     setProcessingId(request.id);
@@ -67,6 +71,7 @@ export default function AdminFacultyRequestsPage() {
 
       // Delete the request
       await deleteDoc(doc(db, 'faculty-requests', request.id));
+      fetchRequests(); // Refetch requests
 
       toast({
         title: 'Approved!',
@@ -88,6 +93,7 @@ export default function AdminFacultyRequestsPage() {
     setProcessingId(requestId);
     try {
       await deleteDoc(doc(db, 'faculty-requests', requestId));
+      fetchRequests(); // Refetch requests
       toast({
         title: 'Rejected',
         description: 'The faculty suggestion has been rejected.',

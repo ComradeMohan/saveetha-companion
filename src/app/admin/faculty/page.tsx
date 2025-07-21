@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,7 +9,7 @@ import type { Faculty } from "@/lib/faculty-data";
 import { MoreHorizontal, Loader2, Trash2, Pencil, UploadCloud, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AddFacultyDialog } from "@/components/admin/add-faculty-dialog";
-import { collection, onSnapshot, orderBy, query, doc, deleteDoc, writeBatch } from "firebase/firestore";
+import { collection, orderBy, query, doc, deleteDoc, writeBatch, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -28,27 +28,31 @@ export default function AdminFacultyPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
-    useEffect(() => {
-        const q = query(collection(db, 'faculty'), orderBy('name'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const fetchFacultyData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'faculty'), orderBy('name'));
+            const querySnapshot = await getDocs(q);
             const data: Faculty[] = [];
             querySnapshot.forEach((doc) => {
                 data.push({ id: doc.id, ...doc.data() } as Faculty);
             });
             setFacultyData(data);
-            setLoading(false);
-        }, (error) => {
-            console.error("Error fetching faculty data:", error);
+        } catch (error) {
+             console.error("Error fetching faculty data:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch faculty data.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchFacultyData();
+    }, [fetchFacultyData]);
     
     const filteredFaculty = useMemo(() => {
         if (!searchTerm) {
@@ -87,7 +91,7 @@ export default function AdminFacultyPage() {
             });
 
             await batch.commit();
-
+            fetchFacultyData(); // Refetch data after seeding
             toast({
                 title: "Success!",
                 description: "Firestore has been populated with local faculty data.",
@@ -119,6 +123,7 @@ export default function AdminFacultyPage() {
                 title: "Success",
                 description: "Faculty member deleted successfully."
             });
+            fetchFacultyData(); // Refetch after delete
         } catch (error) {
             console.error("Error deleting faculty:", error);
             toast({
@@ -152,7 +157,7 @@ export default function AdminFacultyPage() {
                             {isSeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
                             Seed Database
                         </Button>
-                        <AddFacultyDialog />
+                        <AddFacultyDialog onFacultyAdded={fetchFacultyData} />
                     </div>
                 </div>
 
@@ -207,7 +212,7 @@ export default function AdminFacultyPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <EditFacultyDialog faculty={faculty}>
+                                                        <EditFacultyDialog faculty={faculty} onFacultyUpdated={fetchFacultyData}>
                                                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                                                 <Pencil className="mr-2 h-4 w-4" />
                                                                 Edit

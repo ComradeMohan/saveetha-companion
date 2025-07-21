@@ -1,44 +1,57 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
-import { Search, Users, Loader2, PlusCircle } from 'lucide-react';
+import { Search, Users, Loader2 } from 'lucide-react';
 import { type Faculty } from '@/lib/faculty-data';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { SuggestFacultyDialog } from './suggest-faculty-dialog';
 
+// In-memory cache for faculty data
+let facultyCache: Faculty[] | null = null;
+
 export default function FacultyDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [firestoreFaculty, setFirestoreFaculty] = useState<Faculty[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [firestoreFaculty, setFirestoreFaculty] = useState<Faculty[]>(facultyCache || []);
+  const [loading, setLoading] = useState(!facultyCache);
   const { toast } = useToast();
 
-   useEffect(() => {
-        setLoading(true);
+  const fetchFacultyData = useCallback(async () => {
+    if (facultyCache) {
+      setFirestoreFaculty(facultyCache);
+      setLoading(false);
+      return;
+    }
+    
+    setLoading(true);
+    try {
         const q = query(collection(db, 'faculty'), orderBy('name'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const data: Faculty[] = [];
-            querySnapshot.forEach((doc) => {
-                data.push({ id: doc.id, ...doc.data() } as Faculty);
-            });
-            setFirestoreFaculty(data);
-            setLoading(false);
-        }, (error) => {
-            console.error("Error fetching faculty data from Firestore:", error);
-            toast({
-                title: "Error",
-                description: "Could not fetch faculty data.",
-                variant: "destructive"
-            });
-            setLoading(false);
+        const querySnapshot = await getDocs(q);
+        const data: Faculty[] = [];
+        querySnapshot.forEach((doc) => {
+            data.push({ id: doc.id, ...doc.data() } as Faculty);
         });
+        facultyCache = data; // Cache the results
+        setFirestoreFaculty(data);
+    } catch (error) {
+        console.error("Error fetching faculty data from Firestore:", error);
+        toast({
+            title: "Error",
+            description: "Could not fetch faculty data.",
+            variant: "destructive"
+        });
+    } finally {
+        setLoading(false);
+    }
+  }, [toast]);
 
-        return () => unsubscribe();
-    }, [toast]);
+  useEffect(() => {
+    fetchFacultyData();
+  }, [fetchFacultyData]);
 
   const filteredFaculty = useMemo(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -65,7 +78,10 @@ export default function FacultyDirectory() {
             Search faculty by name, subject, department, or phone number.
         </p>
          <div className="mt-4">
-            <SuggestFacultyDialog />
+            <SuggestFacultyDialog onSuggestionAdded={() => {
+                // Clear cache to refetch on next load if a suggestion is made (for admin page)
+                // For student page, no immediate refetch needed.
+            }}/>
         </div>
       </div>
       <div className="relative mb-8">

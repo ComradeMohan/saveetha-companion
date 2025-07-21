@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import { collection, query, orderBy, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { format, isWithinInterval, startOfDay, endOfDay, isFuture, isToday } from 'date-fns';
@@ -42,33 +42,36 @@ export default function StudentCalendarPage() {
         }
     }, [audienceFilter]);
 
-    useEffect(() => {
-        const today = startOfDay(new Date()).toISOString();
-        const q = query(
-            collection(db, 'events'), 
-            where('startDate', '>=', today),
-            orderBy('startDate', 'asc')
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+    const fetchEvents = useCallback(async () => {
+        setLoading(true);
+        try {
+            const today = startOfDay(new Date()).toISOString();
+            const q = query(
+                collection(db, 'events'), 
+                where('startDate', '>=', today),
+                orderBy('startDate', 'asc')
+            );
+            const snapshot = await getDocs(q);
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
                 eventsData.push({ id: doc.id, ...doc.data() } as Event);
             });
             setEvents(eventsData);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching events:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch events.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
 
     const filteredEvents = useMemo(() => {
         return events.filter(event => 

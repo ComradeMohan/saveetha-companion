@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { collection, onSnapshot, query, orderBy, deleteDoc, doc, where } from 'firebase/firestore';
+import { collection, query, orderBy, deleteDoc, doc, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { format, isWithinInterval, startOfDay, endOfDay, isFuture, isToday } from 'date-fns';
@@ -23,15 +23,16 @@ export default function AdminCalendarPage() {
     const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
     const { toast } = useToast();
 
-    useEffect(() => {
-        const today = startOfDay(new Date()).toISOString();
-        const q = query(
-            collection(db, 'events'), 
-            where('startDate', '>=', today),
-            orderBy('startDate', 'asc')
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+    const fetchEvents = useCallback(async () => {
+        setLoading(true);
+        try {
+            const today = startOfDay(new Date()).toISOString();
+            const q = query(
+                collection(db, 'events'), 
+                where('startDate', '>=', today),
+                orderBy('startDate', 'asc')
+            );
+            const snapshot = await getDocs(q);
             const eventsData: Event[] = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
@@ -44,19 +45,22 @@ export default function AdminCalendarPage() {
                 });
             });
             setEvents(eventsData);
-            setLoading(false);
-        }, (error) => {
+        } catch (error) {
             console.error("Error fetching events:", error);
             toast({
                 title: "Error",
                 description: "Could not fetch events.",
                 variant: "destructive"
             });
+        } finally {
             setLoading(false);
-        });
-
-        return () => unsubscribe();
+        }
     }, [toast]);
+    
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
 
     const isDateInEventRange = (date: Date, event: Event) => {
         const startDate = startOfDay(new Date(event.startDate));
@@ -86,6 +90,8 @@ export default function AdminCalendarPage() {
                 title: "Success",
                 description: "Event deleted successfully."
             });
+            // Refetch events after deletion
+            fetchEvents();
         } catch (error) {
             console.error("Error deleting event:", error);
             toast({
@@ -108,7 +114,7 @@ export default function AdminCalendarPage() {
                         <h2 className="text-3xl font-bold tracking-tight">Events Calendar</h2>
                         <p className="text-muted-foreground">Manage academic and university events.</p>
                     </div>
-                    <AddEventDialog />
+                    <AddEventDialog onEventAdded={fetchEvents} />
                 </div>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-[auto_1fr]">
                     <Card className="w-full max-w-sm mx-auto">
