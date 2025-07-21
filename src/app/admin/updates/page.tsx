@@ -9,11 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { createUpdate } from '@/app/actions/create-update';
+import { deleteUpdate } from '@/app/actions/delete-update';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, Link as LinkIcon } from 'lucide-react';
+import { Loader2, Send, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { collection, orderBy, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { formatDistanceToNow } from 'date-fns';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+
 
 const initialState = {
   type: '',
@@ -53,6 +56,9 @@ export default function AdminUpdatesPage() {
     const [state, formAction, isPending] = useActionState(createUpdate, initialState);
     const [updates, setUpdates] = useState<Update[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const [updateToDelete, setUpdateToDelete] = useState<Update | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const { toast } = useToast();
 
     const fetchUpdates = useCallback(async () => {
@@ -91,8 +97,35 @@ export default function AdminUpdatesPage() {
             }
         }
     }, [state, toast, fetchUpdates]);
+
+    const handleDeleteClick = (update: Update) => {
+        setUpdateToDelete(update);
+        setIsAlertOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!updateToDelete || !updateToDelete.id) return;
+        setIsDeleting(true);
+
+        const result = await deleteUpdate(updateToDelete.id);
+        
+        toast({
+            title: result.type === 'success' ? 'Success!' : 'Error',
+            description: result.message,
+            variant: result.type === 'error' ? 'destructive' : 'default',
+        });
+
+        if(result.type === 'success') {
+            fetchUpdates();
+        }
+
+        setIsDeleting(false);
+        setIsAlertOpen(false);
+        setUpdateToDelete(null);
+    };
     
     return (
+        <>
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div>
                 <Card>
@@ -141,11 +174,17 @@ export default function AdminUpdatesPage() {
                             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                                 {updates.map(update => (
                                     <div key={update.id} className="p-4 bg-secondary/50 rounded-lg">
-                                        <div className="flex justify-between items-start">
-                                            <h4 className="font-semibold">{update.title}</h4>
-                                            <p className="text-xs text-muted-foreground flex-shrink-0 ml-4">
-                                                {update.createdAt ? formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true }) : 'Just now'}
-                                            </p>
+                                        <div className="flex justify-between items-start gap-4">
+                                            <div className="flex-1">
+                                                <h4 className="font-semibold">{update.title}</h4>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {update.createdAt ? formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true }) : 'Just now'}
+                                                </p>
+                                            </div>
+                                            <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(update)}>
+                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                                <span className="sr-only">Delete update</span>
+                                            </Button>
                                         </div>
                                         <p className="text-sm text-muted-foreground mt-1">{update.description}</p>
                                         {update.link && (
@@ -167,5 +206,23 @@ export default function AdminUpdatesPage() {
                 </Card>
             </div>
         </div>
+         <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the update: <span className="font-semibold">{updateToDelete?.title}</span>. This action cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Delete'}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+        </>
     );
 }
+
