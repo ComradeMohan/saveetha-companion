@@ -21,9 +21,11 @@ if (!admin.apps.length) {
     });
     console.log('Firebase Admin SDK initialized successfully from environment variables.');
 
-  } catch (error: any) {
+  } catch (error: any)
+   {
     console.error('Firebase Admin SDK initialization error:', error.message);
-    throw new Error(`Firebase Admin SDK failed to initialize: ${error.message}`);
+    // Avoid throwing an error that crashes the server if the SDK is not needed for all parts.
+    // Instead, the services will fail if used without proper initialization.
   }
 } else {
     app = admin.app();
