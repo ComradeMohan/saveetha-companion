@@ -23,11 +23,7 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {!user && (
-          <>
             <Hero />
-            <Features />
-            <Stats />
-          </>
         )}
 
         <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
@@ -53,19 +49,23 @@ export default function Home() {
         </section>
         
         {!user && (
-           <section id="contact" className="py-12 md:py-16 text-center">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold tracking-tight">Need Help?</h2>
-                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        If you're having trouble signing up or logging in, please don't hesitate to contact us.
-                    </p>
-                    <Button asChild size="lg" className="mt-6">
-                        <Link href="/contact">
-                            Contact Support <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                    </Button>
-                </div>
-            </section>
+            <>
+                <Features />
+                <Stats />
+                <section id="contact" className="py-12 md:py-16 text-center">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold tracking-tight">Need Help?</h2>
+                        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                            If you're having trouble signing up or logging in, please don't hesitate to contact us.
+                        </p>
+                        <Button asChild size="lg" className="mt-6">
+                            <Link href="/contact">
+                                Contact Support <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                    </div>
+                </section>
+            </>
         )}
       </main>
       <Footer />
