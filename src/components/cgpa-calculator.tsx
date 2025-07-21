@@ -138,7 +138,7 @@ export default function CgpaCalculator() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-semibold text-sm text-muted-foreground px-1">
           <span>Grade</span>
-          <span>Credits</span>
+          <span>Subjects</span>
           <span />
         </div>
         <ScrollArea className="h-60 pr-4">
