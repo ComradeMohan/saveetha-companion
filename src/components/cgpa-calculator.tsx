@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { db } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 const gradePoints: { [key: string]: number } = {
   'S': 10,
@@ -36,6 +37,7 @@ export default function CgpaCalculator() {
   const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   const addCourse = () => {
     setCourses([...courses, { id: Date.now(), grade: '', credits: '' }]);
@@ -81,10 +83,11 @@ export default function CgpaCalculator() {
   const handleSaveCgpa = async () => {
     if (!user) {
         toast({
-            title: "Not Logged In",
-            description: "You need to be logged in to save your CGPA.",
+            title: "Authentication Required",
+            description: "You need to be logged in to save your CGPA. Redirecting to login...",
             variant: "destructive"
         });
+        setTimeout(() => router.push('/login'), 2000);
         return;
     }
     if (!isValid) {
@@ -182,7 +185,7 @@ export default function CgpaCalculator() {
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
         <div className="flex items-center gap-2">
-            <Button onClick={handleSaveCgpa} disabled={!user || !isValid || isSaving}>
+            <Button onClick={handleSaveCgpa} disabled={!isValid || isSaving}>
                 {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                 Save CGPA
             </Button>

@@ -10,6 +10,10 @@ import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { SuggestFacultyDialog } from './suggest-faculty-dialog';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
+import { PlusCircle } from 'lucide-react';
 
 // In-memory cache for faculty data
 let facultyCache: Faculty[] | null = null;
@@ -19,6 +23,9 @@ export default function FacultyDirectory() {
   const [firestoreFaculty, setFirestoreFaculty] = useState<Faculty[]>(facultyCache || []);
   const [loading, setLoading] = useState(!facultyCache);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const router = useRouter();
+
 
   const fetchFacultyData = useCallback(async () => {
     if (facultyCache) {
@@ -69,6 +76,19 @@ export default function FacultyDirectory() {
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
   }, [searchTerm, firestoreFaculty]);
+  
+  const handleSuggestClick = () => {
+    if (!user) {
+        toast({
+            title: "Authentication Required",
+            description: "You need to be logged in to suggest a faculty member. Redirecting to login...",
+            variant: "destructive"
+        });
+        setTimeout(() => router.push('/login'), 2000);
+    }
+    // If user is logged in, the dialog will open via its own trigger.
+    // This function is only for the case when the user is not logged in.
+  };
 
   return (
     <div>
@@ -78,10 +98,15 @@ export default function FacultyDirectory() {
             Search faculty by name, subject, department, or phone number.
         </p>
          <div className="mt-4">
-            <SuggestFacultyDialog onSuggestionAdded={() => {
-                // Clear cache to refetch on next load if a suggestion is made (for admin page)
-                // For student page, no immediate refetch needed.
-            }}/>
+            {user ? (
+                <SuggestFacultyDialog onSuggestionAdded={() => {
+                    // No action needed here for students
+                }}/>
+            ) : (
+                 <Button variant="link" onClick={handleSuggestClick}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Missing Faculty
+                </Button>
+            )}
         </div>
       </div>
       <div className="relative mb-8">
