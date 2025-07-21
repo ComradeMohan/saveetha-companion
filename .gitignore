@@ -44,3 +44,4 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.logsrc/lib/serviceAccountKey.json
 src/lib/serviceAccountKey.json
+src/lib/serviceAccountKey.json
