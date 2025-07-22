@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowDown } from 'lucide-react';
@@ -12,13 +13,20 @@ export default function Hero() {
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
           Welcome to the Saveetha Companion. Calculate your CGPA, track attendance, find resources, and connect with faculty, all in one place.
         </p>
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
-          <Button asChild size="lg">
-            <Link href="/signup">Get Started</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="#calculators">Try the Calculators</Link>
-          </Button>
+        <div className="mt-8 flex flex-col justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
+            <div className="flex flex-col sm:flex-row gap-4">
+                 <Button asChild size="lg">
+                    <Link href="/signup">Get Started</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                    <Link href="#calculators">Try the Calculators</Link>
+                </Button>
+            </div>
+            <Button asChild variant="link" className="mt-2">
+                 <a href="https://mobile-app-5ql3.onrender.com/" target="_blank" rel="noopener noreferrer">
+                    ARMS Fetch
+                </a>
+            </Button>
         </div>
       </div>
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-slide-in-up" style={{ animationDelay: '0.5s' }}>
