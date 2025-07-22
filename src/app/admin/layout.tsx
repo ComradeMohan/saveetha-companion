@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import AdminSidebar from '@/components/admin/admin-sidebar';
-import { Loader2 } from 'lucide-react';
 import AdminHeader from '@/components/admin/admin-header';
+import LoadingAnimation from '@/components/loading-animation';
 
 export default function AdminLayout({
   children,
@@ -25,7 +25,7 @@ export default function AdminLayout({
   if (loading || !isAdmin) {
     return (
        <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <LoadingAnimation />
       </div>
     );
   }

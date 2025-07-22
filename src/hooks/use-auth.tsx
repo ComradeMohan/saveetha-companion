@@ -22,9 +22,9 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
+import LoadingAnimation from '@/components/loading-animation';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 
@@ -305,7 +305,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <LoadingAnimation />
       </div>
     );
   }

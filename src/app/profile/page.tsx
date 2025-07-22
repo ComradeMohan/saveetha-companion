@@ -7,13 +7,14 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, User, Phone, CheckCircle2, Calculator } from 'lucide-react';
+import { User, Phone, CheckCircle2, Calculator } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 import { ChartConfig, ChartContainer, RechartsPrimitive } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import LoadingAnimation from '@/components/loading-animation';
 
 interface UserProfile {
   name: string;
@@ -99,7 +100,7 @@ export default function ProfilePage() {
                     <CardContent>
                         {loading || authLoading ? (
                             <div className="flex justify-center items-center py-10">
-                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                <LoadingAnimation />
                             </div>
                         ) : profile ? (
                             <div className="space-y-6">
