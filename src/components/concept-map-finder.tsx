@@ -127,8 +127,8 @@ export default function ConceptMapFinder() {
             )}
           >
             <div className="flex flex-col justify-start items-start h-full">
-                <div className="p-2 bg-primary/10 rounded-lg mb-4">
-                    <FileIcon className="h-6 w-6 text-primary transition-colors duration-300" />
+                <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
+                    <FileIcon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
                 </div>
                 <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
             </div>
