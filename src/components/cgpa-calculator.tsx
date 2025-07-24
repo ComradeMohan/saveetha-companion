@@ -66,10 +66,15 @@ export default function CgpaCalculator() {
          <p className="text-sm text-muted-foreground -mt-2">
           Enter the number of subjects for each grade. Each subject is assumed to be 4 credits.
         </p>
-        <div className="grid grid-cols-3 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {grades.map(grade => (
-            <div key={grade} className="flex flex-col items-center gap-2">
-              <Label htmlFor={`grade-${grade}`} className="text-lg font-bold text-center h-8 w-8 flex items-center justify-center rounded-full bg-secondary text-secondary-foreground">{grade}</Label>
+            <div key={grade} className="relative">
+              <Label 
+                htmlFor={`grade-${grade}`} 
+                className="absolute left-0 top-0 flex h-full w-10 items-center justify-center rounded-l-md border-r bg-secondary font-bold text-secondary-foreground"
+              >
+                {grade}
+              </Label>
               <Input
                 id={`grade-${grade}`}
                 type="number"
@@ -77,7 +82,7 @@ export default function CgpaCalculator() {
                 value={gradeCounts[grade]}
                 onChange={e => handleCountChange(grade, e.target.value)}
                 min="0"
-                className="w-20 text-center text-lg"
+                className="w-full pl-12 text-center text-lg h-12"
               />
             </div>
           ))}
