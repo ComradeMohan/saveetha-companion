@@ -22,11 +22,6 @@ export default function Hero() {
                     <Link href="#calculators">Try the Calculators</Link>
                 </Button>
             </div>
-            <Button asChild size="lg" variant="secondary" className="mt-2">
-                 <a href="https://mobile-app-5ql3.onrender.com/" target="_blank" rel="noopener noreferrer">
-                    ARMS Fetch
-                </a>
-            </Button>
         </div>
       </div>
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-slide-in-up" style={{ animationDelay: '0.5s' }}>
