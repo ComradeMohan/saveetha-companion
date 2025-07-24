@@ -158,8 +158,8 @@ export default function Header() {
   }, [user]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-1/2 md:-translate-x-1/2 md:w-auto">
-       <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:rounded-full md:border md:shadow-lg">
+    <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-4 md:right-4">
+       <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:mx-auto md:max-w-full md:rounded-full md:border md:shadow-lg">
         <div className="flex items-center gap-2">
           {/* Mobile Nav Trigger */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
