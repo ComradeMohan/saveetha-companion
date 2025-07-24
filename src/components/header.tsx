@@ -158,8 +158,8 @@ export default function Header() {
   }, [user]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-1/2 md:-translate-x-1/2 md:w-auto">
+       <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:rounded-full md:border md:shadow-lg">
         <div className="flex items-center gap-2">
           {/* Mobile Nav Trigger */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -203,7 +203,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
-            <span className="font-bold sm:inline-block">
+            <span className="hidden font-bold sm:inline-block">
               Saveetha Companion
             </span>
           </Link>
@@ -221,7 +221,7 @@ export default function Header() {
           <ThemeToggle />
           <UserNav />
         </div>
-      </div>
+       </div>
     </header>
   );
 }
