@@ -1,8 +1,9 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm, useFormState } from 'react-hook-form';
+import { useState, useEffect, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, LifeBuoy } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { cn } from '@/lib/utils';
+import { submitIssue } from '@/app/actions/submit-issue';
 
 
 const issueFormSchema = z.object({
@@ -41,11 +43,17 @@ const issueFormSchema = z.object({
 
 type IssueFormValues = z.infer<typeof issueFormSchema>;
 
+const initialState = {
+  type: '',
+  message: '',
+  errors: null,
+};
+
 function SubmitButton() {
-    const { isSubmitting } = useFormState();
+    const { pending } = useFormStatus();
     return (
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
+        <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Sending...
@@ -59,6 +67,7 @@ export function LoginIssueDialog() {
   const [open, setOpen] = useState(false);
   const [showInitialPrompt, setShowInitialPrompt] = useState(true);
   const { toast } = useToast();
+  const [state, formAction] = useActionState(submitIssue, initialState);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -78,53 +87,21 @@ export function LoginIssueDialog() {
       _gotcha: '',
     },
   });
-
-  async function onSubmit(values: IssueFormValues) {
-    if (values._gotcha) {
-        // Bot submission, do nothing.
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('email', values.email);
-    formData.append('regNo', values.regNo || 'Not provided');
-    formData.append('message', values.message);
-    formData.append('subject', 'Login/Registration Issue');
-    if (values._gotcha) {
-      formData.append('_gotcha', values._gotcha);
-    }
-
-    try {
-        const response = await fetch("https://getform.io/f/bdrgjxeb", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "Accept": "application/json",
-            },
+  
+  useEffect(() => {
+    if (state.type) {
+        toast({
+            title: state.type === 'success' ? 'Success!' : 'Error',
+            description: state.message,
+            variant: state.type === 'error' ? 'destructive' : 'default',
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (state.type === 'success') {
+            form.reset();
+            setOpen(false);
         }
-        
-        toast({
-            title: 'Report Sent!',
-            description: "We've received your report and will get back to you as soon as possible.",
-        });
-        
-        form.reset();
-        setOpen(false);
-
-    } catch (error) {
-        console.error("Error submitting issue to getform.io:", error);
-        toast({
-            title: "Error",
-            description: "Could not send your report. Please try again later.",
-            variant: 'destructive',
-        });
     }
-  }
+  }, [state, toast, form]);
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -164,7 +141,7 @@ export function LoginIssueDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form action={formAction} className="space-y-4">
              <FormField
                 control={form.control}
                 name="name"

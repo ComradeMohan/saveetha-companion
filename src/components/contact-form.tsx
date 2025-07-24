@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useForm, useFormState } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { useActionState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -17,11 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Loader2 } from 'lucide-react';
+import { Mail, Loader2, Send } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { useEffect } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { sendMessage } from '@/app/actions/send-message';
+import { useFormStatus } from 'react-dom';
 
 
 const formSchema = z.object({
@@ -32,21 +32,28 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const initialState = {
+  type: '',
+  message: '',
+  errors: null,
+};
+
 function SubmitButton() {
-    const { isSubmitting } = useFormState();
+    const { pending } = useFormStatus();
     return (
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
+        <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Sending...
                 </>
-            ) : "Send Message" }
+            ) : <><Send className="mr-2 h-4 w-4" /> Send Message</> }
         </Button>
     )
 }
 
 export default function ContactForm() {
+  const [state, formAction] = useActionState(sendMessage, initialState);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -65,37 +72,19 @@ export default function ContactForm() {
         form.setValue('email', user.email || '');
     }
   }, [user, form]);
-
-  async function onSubmit(values: FormValues) {
-     try {
-        await addDoc(collection(db, 'contact-messages'), {
-            name: values.name,
-            email: values.email,
-            message: values.message,
-            status: 'Unread',
-            createdAt: new Date().toISOString(),
-        });
-        
+  
+  useEffect(() => {
+    if (state.type) {
         toast({
-            title: 'Message Sent!',
-            description: "We'll get back to you as soon as possible.",
+            title: state.type === 'success' ? 'Success!' : 'Error',
+            description: state.message,
+            variant: state.type === 'error' ? 'destructive' : 'default',
         });
-        
-        form.reset({ 
-            name: user?.displayName || '', 
-            email: user?.email || '', 
-            message: '' 
-        });
-
-    } catch (error) {
-        console.error("Error saving message to Firestore:", error);
-        toast({
-            title: "Error",
-            description: "Could not send your message. Please try again later.",
-            variant: 'destructive',
-        });
+        if (state.type === 'success') {
+            form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
+        }
     }
-  }
+  }, [state, toast, form, user]);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -114,7 +103,7 @@ export default function ContactForm() {
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form action={formAction} className="space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
