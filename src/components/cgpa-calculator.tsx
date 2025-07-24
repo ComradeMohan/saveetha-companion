@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -27,8 +28,8 @@ export default function CgpaCalculator() {
   );
   
   const handleCountChange = (grade: string, value: string) => {
-    // Only allow non-negative integers
-    if (/^\d*$/.test(value)) {
+    // Only allow non-negative integers up to 2 digits
+    if (/^\d{0,2}$/.test(value)) {
       setGradeCounts(prev => ({ ...prev, [grade]: value }));
     }
   };
@@ -65,10 +66,10 @@ export default function CgpaCalculator() {
          <p className="text-sm text-muted-foreground -mt-2">
           Enter the number of subjects for each grade. Each subject is assumed to be 4 credits.
         </p>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-x-4 gap-y-6">
           {grades.map(grade => (
-            <div key={grade} className="space-y-2">
-              <Label htmlFor={`grade-${grade}`} className="text-lg font-bold">{grade}</Label>
+            <div key={grade} className="flex flex-col items-center gap-2">
+              <Label htmlFor={`grade-${grade}`} className="text-lg font-bold text-center h-8 w-8 flex items-center justify-center rounded-full bg-secondary text-secondary-foreground">{grade}</Label>
               <Input
                 id={`grade-${grade}`}
                 type="number"
@@ -76,7 +77,7 @@ export default function CgpaCalculator() {
                 value={gradeCounts[grade]}
                 onChange={e => handleCountChange(grade, e.target.value)}
                 min="0"
-                className="text-center"
+                className="w-20 text-center text-lg"
               />
             </div>
           ))}
