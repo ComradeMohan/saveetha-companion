@@ -56,23 +56,23 @@ export const metadata: Metadata = {
 };
 
 
+// This component will only be rendered on the client, inside AuthProvider
+function FcmHandler({ children }: { children: React.ReactNode }) {
+    useFcm();
+    return <>{children}</>;
+}
+
+// This component checks for a user and conditionally renders FcmHandler
+function FcmProviderWrapper({ children }: { children: React.ReactNode }) {
+    const { user } = useAuth();
+    
+    return user ? <FcmHandler>{children}</FcmHandler> : <>{children}</>;
+}
+
+
 // Client-side provider wrapper
 function AppProviders({ children }: { children: React.ReactNode }) {
   'use client';
-
-  function FcmProvider({ children }: { children: React.ReactNode }) {
-      const { user } = useAuth();
-      // Only mount the FCM hook if there is a logged-in user
-      if(user) {
-          return <FcmHandler>{children}</FcmHandler>;
-      }
-      return <>{children}</>;
-  }
-  
-  function FcmHandler({ children }: { children: React.ReactNode }) {
-      useFcm();
-      return <>{children}</>;
-  }
 
   return (
     <ThemeProvider
@@ -81,11 +81,11 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <AuthProvider>
-        <FcmProvider>
+        <FcmProviderWrapper>
           <VerificationBanner key="verification-banner" />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
-        </FcmProvider>
+        </FcmProviderWrapper>
       </AuthProvider>
     </ThemeProvider>
   )
