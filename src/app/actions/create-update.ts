@@ -1,7 +1,6 @@
-
 'use server';
 
-import { adminDb, adminMessaging } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -29,7 +28,7 @@ export async function createUpdate(prevState: any, formData: FormData) {
     const { title, description, link } = validatedFields.data;
 
     try {
-        // 1. Save the update to Firestore
+        // Save the update to Firestore
         await adminDb.collection('updates').add({
             title,
             description,
@@ -37,58 +36,11 @@ export async function createUpdate(prevState: any, formData: FormData) {
             createdAt: FieldValue.serverTimestamp(),
         });
 
-        // 2. Send the push notification
-        const usersSnapshot = await adminDb.collection('users').get();
-        if (usersSnapshot.empty) {
-            return { type: 'success', message: 'Update posted, but no users to send notifications to.' };
-        }
-
-        const tokens: string[] = [];
-        usersSnapshot.forEach(doc => {
-            const userData = doc.data();
-            // Ensure fcmTokens exists and is an array before spreading
-            if (userData.fcmTokens && Array.isArray(userData.fcmTokens)) {
-                tokens.push(...userData.fcmTokens);
-            }
-        });
-
-        const uniqueTokens = [...new Set(tokens)];
-
-        if (uniqueTokens.length === 0) {
-            return { type: 'success', message: 'Update posted, but no users have enabled notifications.' };
-        }
+        // FCM functionality is removed.
         
-        console.log(`Sending update notification to ${uniqueTokens.length} tokens.`);
-
-        const message = {
-            notification: {
-                title,
-                body: description,
-            },
-            tokens: uniqueTokens,
-            android: {
-                notification: {
-                    icon: '/favicon.ico',
-                    color: '#8A2BE2',
-                },
-            },
-            webpush: {
-                notification: {
-                    icon: '/favicon.ico',
-                },
-                fcm_options: {
-                    link: '/updates' // Open the updates page
-                }
-            }
-        };
-
-        const response = await adminMessaging.sendEachForMulticast(message);
-        const successCount = response.successCount;
-        const failureCount = response.failureCount;
-
         return { 
             type: 'success', 
-            message: `Update posted! Notification sent: ${successCount} successful, ${failureCount} failed.` 
+            message: `Update posted successfully!` 
         };
 
     } catch (error: any) {

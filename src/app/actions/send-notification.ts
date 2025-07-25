@@ -1,88 +1,13 @@
-
 'use server';
 
-import { adminDb, adminMessaging } from '@/lib/firebase-admin';
-import { z } from 'zod';
-
-const notificationSchema = z.object({
-    title: z.string().min(1, { message: 'Title is required.' }),
-    description: z.string().min(1, { message: 'Description is required.' }),
-});
+// This file is no longer used since FCM has been removed,
+// but is kept to prevent build errors from components that might still import it.
+// The primary update logic is now in `create-update.ts`.
 
 export async function sendNotification(prevState: any, formData: FormData) {
-    const validatedFields = notificationSchema.safeParse({
-        title: formData.get('title'),
-        description: formData.get('description'),
-    });
-
-    if (!validatedFields.success) {
-        return {
-            type: 'error',
-            message: 'Validation failed.',
-            errors: validatedFields.error.flatten().fieldErrors,
-        };
-    }
-
-    const { title, description } = validatedFields.data;
-
-    try {
-        // 1. Send the push notification
-        const usersSnapshot = await adminDb.collection('users').get();
-        if (usersSnapshot.empty) {
-            return { type: 'info', message: 'No users to send notifications to.' };
-        }
-
-        const tokens: string[] = [];
-        usersSnapshot.forEach(doc => {
-            const userData = doc.data();
-            if (userData.fcmTokens && Array.isArray(userData.fcmTokens)) {
-                tokens.push(...userData.fcmTokens);
-            }
-        });
-
-        const uniqueTokens = [...new Set(tokens)];
-
-        if (uniqueTokens.length === 0) {
-            return { type: 'info', message: 'No users have enabled notifications.' };
-        }
-        
-        console.log(`Sending notification to ${uniqueTokens.length} tokens.`);
-
-        const message = {
-            notification: {
-                title,
-                body: description,
-            },
-            tokens: uniqueTokens,
-            android: {
-                notification: {
-                    icon: '/favicon.ico',
-                    color: '#8A2BE2',
-                },
-            },
-            webpush: {
-                notification: {
-                    icon: '/favicon.ico',
-                },
-                fcm_options: {
-                    link: '/' // Open the homepage
-                }
-            }
-        };
-
-        const response = await adminMessaging.sendEachForMulticast(message);
-        console.log('Successfully sent message:', response);
-        
-        const successCount = response.successCount;
-        const failureCount = response.failureCount;
-
-        return { 
-            type: 'success', 
-            message: `Notification sent! ${successCount} successful, ${failureCount} failed.` 
-        };
-
-    } catch (error: any) {
-        console.error('Error sending notification:', error);
-        return { type: 'error', message: 'An unexpected error occurred while sending the notification.' };
-    }
+    console.warn("sendNotification is deprecated and should not be used.");
+    return {
+        type: 'info',
+        message: 'This function is no longer active. Please use the Updates page.',
+    };
 }

@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useActionState, useEffect, useState, useCallback } from 'react';
+import { useActionState, useEffect, useState, useCallback, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,12 +39,12 @@ function SubmitButton() {
             {pending ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending...
+                    Posting...
                 </>
             ) : (
                 <>
                     <Send className="mr-2 h-4 w-4" />
-                    Post Update & Notify
+                    Post Update
                 </>
             )}
         </Button>
@@ -53,6 +52,7 @@ function SubmitButton() {
 }
 
 export default function AdminUpdatesPage() {
+    const formRef = useRef<HTMLFormElement>(null);
     const [state, formAction, isPending] = useActionState(createUpdate, initialState);
     const [updates, setUpdates] = useState<Update[]>([]);
     const [loading, setLoading] = useState(true);
@@ -91,8 +91,7 @@ export default function AdminUpdatesPage() {
                 variant: state.type === 'error' ? 'destructive' : 'default',
             });
             if (state.type === 'success') {
-                const form = document.getElementById('update-form') as HTMLFormElement;
-                if(form) form.reset();
+                formRef.current?.reset();
                 fetchUpdates(); // Refetch updates after a successful post
             }
         }
@@ -129,11 +128,11 @@ export default function AdminUpdatesPage() {
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div>
                 <Card>
-                    <form action={formAction} id="update-form">
+                    <form action={formAction} ref={formRef}>
                         <CardHeader>
                             <CardTitle>Create an Update</CardTitle>
                             <CardDescription>
-                                This will be saved and will also send a push notification to all users.
+                                This will be saved and shown on the public Updates page.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -225,4 +224,3 @@ export default function AdminUpdatesPage() {
         </>
     );
 }
-

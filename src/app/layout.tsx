@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -7,8 +6,6 @@ import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import VerificationBanner from '@/components/verification-banner';
-import useFcm from '@/hooks/use-fcm';
-import { useAuth } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: {
@@ -55,21 +52,6 @@ export const metadata: Metadata = {
   },
 };
 
-
-// This component will only be rendered on the client, inside AuthProvider
-function FcmHandler({ children }: { children: React.ReactNode }) {
-    useFcm();
-    return <>{children}</>;
-}
-
-// This component checks for a user and conditionally renders FcmHandler
-function FcmProviderWrapper({ children }: { children: React.ReactNode }) {
-    const { user } = useAuth();
-    
-    return user ? <FcmHandler>{children}</FcmHandler> : <>{children}</>;
-}
-
-
 // Client-side provider wrapper
 function AppProviders({ children }: { children: React.ReactNode }) {
   'use client';
@@ -81,11 +63,9 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <AuthProvider>
-        <FcmProviderWrapper>
           <VerificationBanner key="verification-banner" />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
-        </FcmProviderWrapper>
       </AuthProvider>
     </ThemeProvider>
   )
@@ -105,6 +85,11 @@ export default function RootLayout({
         <link
           key="font-poppins"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+         <link
+          key="font-inter"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>

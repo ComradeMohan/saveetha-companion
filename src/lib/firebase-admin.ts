@@ -1,4 +1,3 @@
-
 import admin from 'firebase-admin';
 import 'dotenv/config';
 
@@ -32,6 +31,7 @@ if (!admin.apps.length) {
 }
 
 const adminDb = admin.firestore();
-const adminMessaging = admin.messaging();
+// Messaging has been removed.
+// const adminMessaging = admin.messaging();
 
-export { adminDb, adminMessaging };
+export { adminDb };
