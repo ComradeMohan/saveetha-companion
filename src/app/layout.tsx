@@ -1,6 +1,5 @@
 
-'use client';
-
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
@@ -11,19 +10,87 @@ import VerificationBanner from '@/components/verification-banner';
 import useFcm from '@/hooks/use-fcm';
 import { useAuth } from '@/hooks/use-auth';
 
-function FcmProvider({ children }: { children: React.ReactNode }) {
-    const { user } = useAuth();
-    // Only mount the FCM hook if there is a logged-in user
-    if(user) {
-        return <FcmHandler>{children}</FcmHandler>;
-    }
-    return <>{children}</>;
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Saveetha Companion',
+    default: 'Saveetha Companion - Your All-in-One Academic Hub',
+  },
+  description: 'Your all-in-one academic hub for Saveetha Engineering College. Calculate CGPA, track attendance, find resources, and connect with faculty, all in one place.',
+  keywords: ['Saveetha', 'CGPA Calculator', 'Attendance Tracker', 'Faculty Directory', 'Student Companion', 'SEC'],
+  authors: [{ name: 'comrademohan', url: 'https://github.com/comrademohan' }],
+  creator: 'comrademohan',
+  openGraph: {
+    title: 'Saveetha Companion - Your All-in-One Academic Hub',
+    description: 'Calculate CGPA, track attendance, find concept maps, and get important updates for Saveetha Engineering College.',
+    url: 'https://saveetha-companion.web.app', // Replace with your actual domain
+    siteName: 'Saveetha Companion',
+    images: [
+      {
+        url: 'https://placehold.co/1200x630.png', // Replace with a specific OG image URL
+        width: 1200,
+        height: 630,
+        alt: 'Saveetha Companion App Interface',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Saveetha Companion - Your All-in-One Academic Hub',
+    description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
+    // creator: '@yourtwitterhandle', // Optional: Replace with your Twitter handle
+    images: ['https://placehold.co/1200x630.png'], // Replace with your Twitter card image URL
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
+
+// Client-side provider wrapper
+function AppProviders({ children }: { children: React.ReactNode }) {
+  'use client';
+
+  function FcmProvider({ children }: { children: React.ReactNode }) {
+      const { user } = useAuth();
+      // Only mount the FCM hook if there is a logged-in user
+      if(user) {
+          return <FcmHandler>{children}</FcmHandler>;
+      }
+      return <>{children}</>;
+  }
+  
+  function FcmHandler({ children }: { children: React.ReactNode }) {
+      useFcm();
+      return <>{children}</>;
+  }
+
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      disableTransitionOnChange
+    >
+      <AuthProvider>
+        <FcmProvider>
+          <VerificationBanner key="verification-banner" />
+          <main key="main-content">{children}</main>
+          <Toaster key="toaster" />
+        </FcmProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  )
 }
 
-function FcmHandler({ children }: { children: React.ReactNode }) {
-    useFcm();
-    return <>{children}</>;
-}
 
 export default function RootLayout({
   children,
@@ -43,19 +110,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
         <MouseSpotlight />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <FcmProvider>
-              <VerificationBanner key="verification-banner" />
-              <main key="main-content">{children}</main>
-              <Toaster key="toaster" />
-            </FcmProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AppProviders>{children}</AppProviders>
         
         {/* Google Analytics Scripts - Moved to end of body */}
         <Script
