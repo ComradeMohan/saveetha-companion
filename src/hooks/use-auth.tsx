@@ -86,7 +86,7 @@ const handleAuthError = (error: any, toast: (options: any) => void) => {
             break;
         case 'auth/network-request-failed':
             title = 'Network Error';
-            description = 'Please check your internet connection and try again.';
+            description = 'Could not connect to the server. Please check your internet connection and try again.';
             break;
         case 'auth/popup-closed-by-user':
              title = "Login Canceled";
@@ -98,7 +98,7 @@ const handleAuthError = (error: any, toast: (options: any) => void) => {
             break;
         case 'auth/too-many-requests':
             title = 'Too Many Attempts';
-            description = 'Access to this account has been temporarily disabled due to many failed login attempts. You can try again later.';
+            description = 'Access to this account has been temporarily disabled due to many failed login attempts. We are facing high traffic, please try again in a few minutes.';
             break;
         default:
             // Keep the generic message for other errors
@@ -170,7 +170,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router, toast]);
 
   const signInWithGoogle = async () => {
-    setIsNavigating(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       'hd': 'saveetha.com'
@@ -200,13 +199,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     } catch (error: any) {
         handleAuthError(error, toast);
-        setIsNavigating(false);
         throw error;
     }
   };
   
   const signUpWithEmailAndPassword = async (profile: SignUpProfile) => {
-    setIsNavigating(true);
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, profile.email, profile.password!);
         const user = userCredential.user;
@@ -234,7 +231,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential;
     } catch (error: any) {
         handleAuthError(error, toast);
-        setIsNavigating(false);
         throw error;
     }
   }
@@ -265,11 +261,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
-     setIsNavigating(true);
      try {
         if (!email.endsWith('@saveetha.com')) {
             toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
-            setIsNavigating(false);
             return;
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -278,7 +272,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential;
      } catch(error: any) {
         handleAuthError(error, toast);
-        setIsNavigating(false);
         throw error;
      }
   }
@@ -306,6 +299,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    setIsNavigating(true);
     await signOut(auth);
     router.push('/login');
   };
