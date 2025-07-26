@@ -54,24 +54,6 @@ export default function SignUpPage() {
       return;
     }
 
-    if (!regNo.startsWith('19')) {
-      toast({
-        title: 'Invalid Registration Number',
-        description: 'Please enter your correct registration number starting with 19.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (phone.length !== 10) {
-       toast({
-        title: 'Invalid Phone Number',
-        description: 'Please enter a valid 10-digit phone number.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     setEmailLoading(true);
     try {
       await signUpWithEmailAndPassword({ name, regNo, phone, email, password });
