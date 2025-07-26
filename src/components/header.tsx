@@ -47,15 +47,20 @@ const NavLink = ({
   children,
   className,
   onClose,
+  onClick,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
   onClose?: () => void;
+  onClick?: () => void;
 }) => (
   <Link href={href} passHref>
     <span
-      onClick={onClose}
+      onClick={() => {
+        onClose?.();
+        onClick?.();
+      }}
       className={
         'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
         className
@@ -67,26 +72,29 @@ const NavLink = ({
 );
 
 function UserNav() {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, setIsNavigating } = useAuth();
   const router = useRouter();
 
   if (!user) {
     return (
-      <Button asChild>
+      <Button asChild onClick={() => setIsNavigating(true)}>
         <Link href="/login">Login</Link>
       </Button>
     );
   }
   
   const handleLogout = async () => {
+    setIsNavigating(true);
     await logout();
   }
 
   const handleProfileClick = () => {
+    setIsNavigating(true);
     router.push('/profile');
   };
   
   const handleAdminClick = () => {
+    setIsNavigating(true);
     router.push('/admin/dashboard');
   }
 
@@ -138,7 +146,11 @@ function UserNav() {
 
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-  const { user } = useAuth();
+  const { user, setIsNavigating } = useAuth();
+  
+  const handleNavLinkClick = () => {
+    setIsNavigating(true);
+  };
   
   const desktopNavLinks = React.useMemo(() => {
     if (user) {
@@ -198,7 +210,7 @@ export default function Header() {
                   Main navigation links for the application.
                   </SheetDescription>
               </SheetHeader>
-              <Link href="/" className="flex items-center space-x-2 p-4">
+              <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2 p-4">
                 <GraduationCap className="h-6 w-6 text-primary" />
                 <span className="font-bold">Saveetha Companion</span>
               </Link>
@@ -208,6 +220,7 @@ export default function Header() {
                     <NavLink
                       key={link.href + link.label}
                       href={link.href}
+                      onClick={handleNavLinkClick}
                       onClose={() => setIsSheetOpen(false)}
                       className="flex items-center gap-4 text-lg"
                     >
@@ -221,7 +234,7 @@ export default function Header() {
           </Sheet>
           
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block">
               Saveetha Companion
@@ -233,7 +246,7 @@ export default function Header() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              {desktopNavLinks.map(link => (
-              <NavLink key={link.href + link.label} href={link.href}>
+              <NavLink key={link.href + link.label} href={link.href} onClick={handleNavLinkClick}>
                 {link.label}
               </NavLink>
             ))}

@@ -8,6 +8,7 @@ import {
   useContext,
   ReactNode,
 } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   onAuthStateChanged,
   User,
@@ -47,6 +48,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAdmin: boolean;
+  isNavigating: boolean;
+  setIsNavigating: (isNavigating: boolean) => void;
   signInWithGoogle: () => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
@@ -109,9 +112,17 @@ const handleAuthError = (error: any, toast: (options: any) => void) => {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // End navigation loading when path changes
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -159,6 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router, toast]);
 
   const signInWithGoogle = async () => {
+    setIsNavigating(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       'hd': 'saveetha.com'
@@ -188,11 +200,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     } catch (error: any) {
         handleAuthError(error, toast);
+        setIsNavigating(false);
         throw error;
     }
   };
   
   const signUpWithEmailAndPassword = async (profile: SignUpProfile) => {
+    setIsNavigating(true);
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, profile.email, profile.password!);
         const user = userCredential.user;
@@ -216,15 +230,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
 
         await signOut(auth); // Sign out user after registration to force verification
+        router.push('/login');
         return userCredential;
     } catch (error: any) {
         handleAuthError(error, toast);
+        setIsNavigating(false);
         throw error;
     }
   }
   
   const completeUserProfile = async (profile: CompleteUserProfile) => {
       if (!auth.currentUser) throw new Error("No user is signed in.");
+      setIsNavigating(true);
       
       const user = auth.currentUser;
       const userDocRef = doc(db, 'users', user.uid);
@@ -248,9 +265,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
+     setIsNavigating(true);
      try {
         if (!email.endsWith('@saveetha.com')) {
             toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
+            setIsNavigating(false);
             return;
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -259,6 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential;
      } catch(error: any) {
         handleAuthError(error, toast);
+        setIsNavigating(false);
         throw error;
      }
   }
@@ -294,6 +314,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     isAdmin,
+    isNavigating,
+    setIsNavigating,
     signInWithGoogle,
     signUpWithEmailAndPassword,
     loginWithEmailAndPassword,
@@ -302,15 +324,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
   };
 
+  const PageLoader = () => (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      <LoadingAnimation />
+    </div>
+  );
+
   if (loading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <LoadingAnimation />
-      </div>
-    );
+    return <PageLoader />;
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isNavigating && <PageLoader />}
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = (): AuthContextType => {
