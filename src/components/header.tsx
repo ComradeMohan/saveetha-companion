@@ -11,13 +11,14 @@ import {
   Menu,
   Percent,
   Bell,
-  Calendar,
+  Calendar as CalendarIcon,
   Contact,
   LogOut,
   User,
   CheckCircle2,
   Shield,
-  Megaphone,
+  LayoutGrid,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -157,6 +158,24 @@ export default function Header() {
     ];
   }, [user]);
 
+  const mobileNavLinks = React.useMemo(() => {
+     if (user) {
+       return [
+            { href: '/#calculators', label: 'Calculators', icon: Calculator },
+            { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
+            { href: '/#faculty', label: 'Faculty', icon: Users },
+            { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
+            { href: '/updates', label: 'Updates', icon: Bell },
+            { href: '/contact', label: 'Contact Us', icon: Contact },
+        ];
+    }
+    return [
+        { href: '/#features', label: 'Features', icon: LayoutGrid },
+        { href: '/#stats', label: 'Stats', icon: BarChart3 },
+        { href: '/contact', label: 'Contact Us', icon: Contact },
+    ];
+  }, [user])
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-4 md:right-4">
        <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:mx-auto md:max-w-full md:rounded-full md:border md:shadow-lg">
@@ -185,13 +204,14 @@ export default function Header() {
               </Link>
               <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
                 <div className="flex flex-col space-y-3">
-                  {desktopNavLinks.map(link => (
+                  {mobileNavLinks.map(link => (
                     <NavLink
                       key={link.href + link.label}
                       href={link.href}
                       onClose={() => setIsSheetOpen(false)}
-                      className="flex items-center gap-2 text-lg"
+                      className="flex items-center gap-4 text-lg"
                     >
+                      <link.icon className="h-5 w-5" />
                       {link.label}
                     </NavLink>
                   ))}
