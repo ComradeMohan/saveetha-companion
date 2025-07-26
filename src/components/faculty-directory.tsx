@@ -14,6 +14,8 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { PlusCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // In-memory cache for faculty data
 let facultyCache: Faculty[] | null = null;
