@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import VerificationBanner from '@/components/verification-banner';
+import ScrollProgress from '@/components/scroll-progress';
 
 export const metadata: Metadata = {
   title: {
@@ -94,6 +95,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
+        <ScrollProgress />
         <MouseSpotlight />
         <AppProviders>{children}</AppProviders>
         
