@@ -42,7 +42,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 
-const NavLink = ({
+const NavLink = React.memo(function NavLink({
   href,
   children,
   className,
@@ -54,22 +54,24 @@ const NavLink = ({
   className?: string;
   onClose?: () => void;
   onClick?: () => void;
-}) => (
-  <Link href={href} passHref>
-    <span
-      onClick={() => {
-        onClose?.();
-        onClick?.();
-      }}
-      className={
-        'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
-        className
-      }
-    >
-      {children}
-    </span>
-  </Link>
-);
+}) {
+  return (
+    <Link href={href} passHref>
+      <span
+        onClick={() => {
+          onClose?.();
+          onClick?.();
+        }}
+        className={
+          'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
+          className
+        }
+      >
+        {children}
+      </span>
+    </Link>
+  );
+});
 
 function UserNav() {
   const { user, logout, isAdmin, setIsNavigating } = useAuth();

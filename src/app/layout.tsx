@@ -8,6 +8,15 @@ import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import VerificationBanner from '@/components/verification-banner';
 import ScrollProgress from '@/components/scroll-progress';
+import { Inter } from 'next/font/google';
+import { cn } from '@/lib/utils';
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
 
 export const metadata: Metadata = {
   title: {
@@ -80,15 +89,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className={cn("scroll-smooth", inter.variable)} suppressHydrationWarning>
       <head>
-        <link key="preconnect-fonts-googleapis" rel="preconnect" href="https://fonts.googleapis.com" />
-        <link key="preconnect-fonts-gstatic" rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          key="font-inter"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
         <ScrollProgress />

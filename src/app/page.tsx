@@ -4,16 +4,29 @@
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Hero from '@/components/hero';
-import CgpaCalculator from '@/components/cgpa-calculator';
-import AttendanceCalculator from '@/components/attendance-calculator';
-import ConceptMapFinder from '@/components/concept-map-finder';
-import FacultyDirectory from '@/components/faculty-directory';
 import { useAuth } from '@/hooks/use-auth';
 import Features from '@/components/features';
 import Stats from '@/components/stats';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
+  loading: () => <Skeleton className="w-full h-[400px]" />,
+  ssr: false,
+});
+const AttendanceCalculator = dynamic(() => import('@/components/attendance-calculator'), {
+  loading: () => <Skeleton className="w-full h-[400px]" />,
+  ssr: false,
+});
+const ConceptMapFinder = dynamic(() => import('@/components/concept-map-finder'), {
+  loading: () => <Skeleton className="w-full h-[200px]" />,
+});
+const FacultyDirectory = dynamic(() => import('@/components/faculty-directory'), {
+  loading: () => <Skeleton className="w-full h-[200px]" />,
+});
 
 export default function Home() {
   const { user } = useAuth();
