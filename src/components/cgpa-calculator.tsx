@@ -55,7 +55,7 @@ export default function CgpaCalculator() {
 
 
   return (
-    <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-xl">
+    <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-primary/10 hover:-translate-y-1">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-6 w-6 text-primary" />
@@ -88,19 +88,14 @@ export default function CgpaCalculator() {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between items-center bg-secondary/50 p-4 rounded-b-lg gap-4 sm:gap-2">
-         <div className="text-center sm:text-left">
-            <span className="text-sm font-semibold">Total Subjects</span>
-            <p className="text-xl font-bold">{totalSubjects}</p>
+      <CardFooter className="flex flex-col items-center justify-center bg-secondary/50 p-4 rounded-b-lg space-y-2">
+        <div className="text-center">
+            <span className="text-sm font-semibold">Your CGPA</span>
+            <p className="text-4xl font-bold text-primary">{cgpa.toFixed(2)}</p>
         </div>
-        <div className="text-center sm:text-left">
-            <span className="text-sm font-semibold">Total Credits</span>
-            <p className="text-xl font-bold">{totalCredits}</p>
-        </div>
-        <div className="text-center sm:text-right">
-          <span className="text-sm font-semibold">Your CGPA</span>
-          <p className="text-3xl font-bold text-primary">{cgpa.toFixed(2)}</p>
-        </div>
+        <p className="text-sm text-muted-foreground text-center h-5">
+            Based on {totalSubjects} subjects and {totalCredits} credits.
+        </p>
       </CardFooter>
     </Card>
   );

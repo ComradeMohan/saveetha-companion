@@ -92,7 +92,7 @@ export default function ProfilePage() {
         <Header />
         <main className="flex-1 py-12 md:py-16">
             <div className="container mx-auto px-4">
-                <Card className="max-w-2xl mx-auto p-2 sm:p-0">
+                <Card className="max-w-3xl mx-auto p-2 sm:p-0">
                     <CardHeader>
                         <CardTitle className="text-2xl">Your Profile</CardTitle>
                         <CardDescription>View your personal information and academic progress.</CardDescription>
@@ -104,7 +104,7 @@ export default function ProfilePage() {
                             </div>
                         ) : profile ? (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 border-b pb-6">
                                     <Avatar className="h-20 w-20">
                                         <AvatarImage src={profile.photoURL} alt={profile.name} />
                                         <AvatarFallback className="text-2xl">{userInitials}</AvatarFallback>
@@ -117,104 +117,108 @@ export default function ProfilePage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                                    <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                        <User className="h-5 w-5 text-primary" />
-                                        <div>
-                                            <p className="font-semibold">Registration No.</p>
-                                            <p className="text-muted-foreground">{profile.regNo}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                            <User className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <p className="font-semibold">Registration No.</p>
+                                                <p className="text-muted-foreground">{profile.regNo}</p>
+                                            </div>
+                                        </div>
+                                         <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                            <Phone className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <p className="font-semibold">Phone Number</p>
+                                                <p className="text-muted-foreground">{profile.phone}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                     <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                        <Phone className="h-5 w-5 text-primary" />
-                                        <div>
-                                            <p className="font-semibold">Phone Number</p>
-                                            <p className="text-muted-foreground">{profile.phone}</p>
-                                        </div>
+                                    <div>
+                                        {cgpaData ? (
+                                            <Card className="bg-secondary/30">
+                                                <CardHeader className="text-center pb-0">
+                                                    <CardTitle className="text-lg">Your CGPA</CardTitle>
+                                                </CardHeader>
+                                                <CardContent className="flex items-center justify-center p-0">
+                                                    <ChartContainer
+                                                        config={chartConfig}
+                                                        className="mx-auto aspect-square h-48 w-48"
+                                                    >
+                                                        <RadialBarChart
+                                                            data={chartData}
+                                                            startAngle={-270}
+                                                            endAngle={90}
+                                                            innerRadius="70%"
+                                                            outerRadius="100%"
+                                                            barSize={20}
+                                                        >
+                                                            <PolarAngleAxis
+                                                                type="number"
+                                                                domain={[0, 100]}
+                                                                dataKey="value"
+                                                                tick={false}
+                                                            />
+                                                            <RechartsPrimitive.RadialBar
+                                                                dataKey="value"
+                                                                background
+                                                                cornerRadius={10}
+                                                                className="fill-primary"
+                                                            >
+                                                                <RechartsPrimitive.Animation
+                                                                    dataKey="value"
+                                                                    type="number"
+                                                                    from={0}
+                                                                    to={cgpaData.cgpa * 10}
+                                                                    duration={1500}
+                                                                    easing="ease"
+                                                                />
+                                                                <RechartsPrimitive.LabelList
+                                                                    position="center"
+                                                                    content={({ viewBox }) => {
+                                                                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                                                        return (
+                                                                            <>
+                                                                            <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                                                                                <tspan
+                                                                                    className="fill-foreground text-4xl font-bold tabular-nums"
+                                                                                >
+                                                                                    {cgpaData.cgpa.toFixed(2)}
+                                                                                </tspan>
+                                                                            </text>
+                                                                            <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
+                                                                                <tspan
+                                                                                    className="fill-muted-foreground text-sm"
+                                                                                >
+                                                                                    out of 10
+                                                                                </tspan>
+                                                                            </text>
+                                                                            </>
+                                                                        )
+                                                                        }
+                                                                        return null;
+                                                                    }}
+                                                                />
+                                                            </RechartsPrimitive.RadialBar>
+                                                        </RadialBarChart>
+                                                    </ChartContainer>
+                                                </CardContent>
+                                                <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-2 pb-4">
+                                                    <p>Based on {cgpaData.totalCredits} total credits.</p>
+                                                </CardFooter>
+                                            </Card>
+                                        ) : (
+                                            <div className="text-center py-6 px-4 border-2 border-dashed rounded-lg">
+                                                <Calculator className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                                                <p className="font-semibold">No CGPA data found.</p>
+                                                <p className="text-sm text-muted-foreground mb-4">Calculate and save your CGPA to see it here.</p>
+                                                <Button asChild>
+                                                    <Link href="/#calculators">Go to Calculator</Link>
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                {cgpaData ? (
-                                    <Card className="bg-secondary/30">
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Your CGPA</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="flex items-center justify-center p-0">
-                                            <ChartContainer
-                                                config={chartConfig}
-                                                className="mx-auto aspect-square h-48 w-48"
-                                            >
-                                                <RadialBarChart
-                                                    data={chartData}
-                                                    startAngle={-270}
-                                                    endAngle={90}
-                                                    innerRadius="70%"
-                                                    outerRadius="100%"
-                                                    barSize={20}
-                                                >
-                                                    <PolarAngleAxis
-                                                        type="number"
-                                                        domain={[0, 100]}
-                                                        dataKey="value"
-                                                        tick={false}
-                                                    />
-                                                    <RechartsPrimitive.RadialBar
-                                                        dataKey="value"
-                                                        background
-                                                        cornerRadius={10}
-                                                        className="fill-primary"
-                                                    >
-                                                        <RechartsPrimitive.Animation
-                                                            dataKey="value"
-                                                            type="number"
-                                                            from={0}
-                                                            to={cgpaData.cgpa * 10}
-                                                            duration={1500}
-                                                            easing="ease"
-                                                        />
-                                                        <RechartsPrimitive.LabelList
-                                                            position="center"
-                                                            content={({ viewBox }) => {
-                                                                if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                                                                return (
-                                                                    <>
-                                                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                                                                        <tspan
-                                                                            className="fill-foreground text-4xl font-bold tabular-nums"
-                                                                        >
-                                                                            {cgpaData.cgpa.toFixed(2)}
-                                                                        </tspan>
-                                                                    </text>
-                                                                    <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
-                                                                        <tspan
-                                                                            className="fill-muted-foreground text-sm"
-                                                                        >
-                                                                            out of 10
-                                                                        </tspan>
-                                                                    </text>
-                                                                    </>
-                                                                )
-                                                                }
-                                                                return null;
-                                                            }}
-                                                        />
-                                                    </RechartsPrimitive.RadialBar>
-                                                </RadialBarChart>
-                                            </ChartContainer>
-                                        </CardContent>
-                                        <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-6">
-                                            <p>Based on {cgpaData.totalCredits} total credits.</p>
-                                        </CardFooter>
-                                    </Card>
-                                ) : (
-                                    <div className="text-center py-6 px-4 border-2 border-dashed rounded-lg">
-                                        <Calculator className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                                        <p className="font-semibold">No CGPA data found.</p>
-                                        <p className="text-sm text-muted-foreground mb-4">Calculate and save your CGPA to see it here.</p>
-                                        <Button asChild>
-                                            <Link href="/#calculators">Go to Calculator</Link>
-                                        </Button>
-                                    </div>
-                                )}
                             </div>
                         ) : (
                             <div className="text-center py-10">
