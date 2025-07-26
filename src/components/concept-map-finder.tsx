@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Loader2, File as FileIcon, Lightbulb, Search, Upload } from 'lucide-react';
+import { File as FileIcon, Lightbulb, Search } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,7 @@ import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import type { ConceptMap } from '@/lib/concept-map-data';
 import { Input } from './ui/input';
+import { Card } from './ui/card';
 
 let conceptMapCache: ConceptMap[] | null = null;
 
@@ -56,14 +57,13 @@ export default function ConceptMapFinder() {
   const filteredResults = useMemo(() => {
     const lowercasedTerm = searchTerm.toLowerCase();
     
-    // If there's a search term, filter all results
     if (lowercasedTerm) {
         return results.filter(map => 
             map.title.toLowerCase().includes(lowercasedTerm)
         );
     }
     
-    // Otherwise, show the first 6 by default
+    // Show a limited number by default if not searching
     return results.slice(0, 6);
   }, [searchTerm, results]);
 
@@ -102,10 +102,12 @@ export default function ConceptMapFinder() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {loading && Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-lg border bg-card">
-                <Skeleton className="h-8 w-8 mb-4 rounded-md" />
-                <Skeleton className="h-4 w-3/4" />
-            </div>
+            <Card key={i} className="p-4 rounded-lg border bg-card">
+                <div className="flex flex-col justify-start items-start h-full space-y-4">
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                    <Skeleton className="h-4 w-3/4" />
+                </div>
+            </Card>
         ))}
         {!loading && filteredResults.length === 0 && (
           <div className="col-span-full text-center py-10">
@@ -138,3 +140,4 @@ export default function ConceptMapFinder() {
     </div>
   );
 }
+

@@ -64,7 +64,7 @@ export default function FacultyDirectory() {
     const lowercasedFilter = searchTerm.toLowerCase();
     
     if (!searchTerm) {
-      return firestoreFaculty.slice(0, 6);
+      return firestoreFaculty; // Show all results when not searching, but component can limit display
     }
 
     return firestoreFaculty.filter(
@@ -89,6 +89,8 @@ export default function FacultyDirectory() {
     // If user is logged in, the dialog will open via its own trigger.
     // This function is only for the case when the user is not logged in.
   };
+
+  const displayedFaculty = searchTerm ? filteredFaculty : firestoreFaculty.slice(0, 6);
 
   return (
     <div>
@@ -120,18 +122,34 @@ export default function FacultyDirectory() {
         />
       </div>
       {loading ? (
-        <div className="flex justify-center items-center py-10">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index} className="flex flex-col">
+              <CardHeader className="flex flex-row items-start gap-4 pb-4">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 min-w-0 space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </CardHeader>
+              <CardContent className="flex-grow space-y-3 text-sm">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredFaculty.map((faculty, index) => (
+            {displayedFaculty.map((faculty, index) => (
                 <FacultyCard key={faculty.id || `${faculty.name}-${index}`} faculty={faculty} />
             ))}
-            {filteredFaculty.length === 0 && (
+            {displayedFaculty.length === 0 && (
             <div className="col-span-full text-center py-10">
                 <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">No faculty members match your search.</p>
+                <p className="mt-4 text-muted-foreground">
+                    {searchTerm ? "No faculty members match your search." : "No faculty found."}
+                </p>
             </div>
             )}
         </div>
