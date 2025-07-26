@@ -9,12 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { Loader2, UserPlus, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { LoginIssueDialog } from '@/components/login-issue-dialog';
+import { cn } from '@/lib/utils';
 
 export default function SignUpPage() {
   const [name, setName] = useState('');
@@ -23,8 +24,8 @@ export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { signUpWithEmailAndPassword, signInWithGoogle, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -43,18 +44,21 @@ export default function SignUpPage() {
     checkUser();
   }, [user, authLoading, router]);
 
+  const onInputChange = () => {
+    if (error) {
+      setError(null);
+    }
+  };
+
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.endsWith('@saveetha.com')) {
-      toast({
-        title: 'Invalid Email',
-        description: 'Please use an email ending with @saveetha.com',
-        variant: 'destructive',
-      });
+      setError('Please use an email ending with @saveetha.com');
       return;
     }
 
-    setEmailLoading(true);
+    setLoading(true);
+    setError(null);
     try {
       await signUpWithEmailAndPassword({ name, regNo, phone, email, password });
       toast({ 
@@ -62,22 +66,23 @@ export default function SignUpPage() {
         description: `We've sent a verification link to ${email}. Please check your inbox.`,
       });
       router.push('/login');
-    } catch (error) {
-      // Error is caught and toasted in the useAuth hook
+    } catch (err: any) {
+      setError(err.message);
     } finally {
-        setEmailLoading(false);
+        setLoading(false);
     }
   };
   
   const handleGoogleSignIn = async () => {
-    setGoogleLoading(true);
+    setLoading(true);
+    setError(null);
     try {
       await signInWithGoogle();
       // The redirect will be handled by the useEffect or signInWithGoogle function
-    } catch (error) {
-       // Error is caught and toasted in the useAuth hook
+    } catch (err: any) {
+       setError(err.message);
     } finally {
-       setGoogleLoading(false);
+       setLoading(false);
     }
   };
 
@@ -99,8 +104,8 @@ export default function SignUpPage() {
                   placeholder="John Doe"
                   required
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  disabled={emailLoading || googleLoading}
+                  onChange={(e) => { setName(e.target.value); onInputChange(); }}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -111,8 +116,8 @@ export default function SignUpPage() {
                   placeholder="19YYDDRRR"
                   required
                   value={regNo}
-                  onChange={(e) => setRegNo(e.target.value)}
-                  disabled={emailLoading || googleLoading}
+                  onChange={(e) => { setRegNo(e.target.value); onInputChange(); }}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -123,8 +128,8 @@ export default function SignUpPage() {
                   placeholder="9876543210"
                   required
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  disabled={emailLoading || googleLoading}
+                  onChange={(e) => { setPhone(e.target.value); onInputChange(); }}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -135,8 +140,8 @@ export default function SignUpPage() {
                   placeholder="you@saveetha.com"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={emailLoading || googleLoading}
+                  onChange={(e) => { setEmail(e.target.value); onInputChange(); }}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2 relative">
@@ -146,9 +151,9 @@ export default function SignUpPage() {
                   type={showPassword ? 'text' : 'password'}
                   required 
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); onInputChange(); }}
                   minLength={6}
-                  disabled={emailLoading || googleLoading}
+                  disabled={loading}
                 />
                 <Button
                   type="button"
@@ -161,18 +166,24 @@ export default function SignUpPage() {
                   <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
                 </Button>
               </div>
-              <Button type="submit" className="w-full" disabled={emailLoading || googleLoading}>
-                {emailLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
                 Sign Up
               </Button>
             </form>
-            <div className="my-4 flex items-center">
+            {error && (
+                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-destructive">
+                    <AlertCircle className="h-4 w-4"/>
+                    <p>{error}</p>
+                </div>
+            )}
+            <div className={cn("my-4 flex items-center", error && "mt-2")}>
               <div className="flex-grow border-t border-muted" />
               <span className="mx-4 text-xs uppercase text-muted-foreground">Or</span>
               <div className="flex-grow border-t border-muted" />
             </div>
-            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={emailLoading || googleLoading}>
-              {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
               <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
               }
               Sign up with Google

@@ -60,7 +60,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const handleAuthError = (error: any, toast: (options: any) => void) => {
+const handleAuthError = (error: any, toast: (options: any) => void): string => {
     console.error("Firebase Auth Error:", error.code, error.message);
     let title = 'Authentication Error';
     let description = 'An unexpected error occurred. Please try again.';
@@ -69,43 +69,38 @@ const handleAuthError = (error: any, toast: (options: any) => void) => {
         case 'auth/user-not-found':
         case 'auth/wrong-password':
         case 'auth/invalid-credential':
-             title = 'Invalid Credentials';
-             description = 'The email or password you entered is incorrect. Please try again.';
+             description = 'The email or password you entered is incorrect.';
             break;
         case 'auth/email-already-in-use':
-            title = 'Account Exists';
             description = 'An account with this email address already exists.';
             break;
         case 'auth/weak-password':
-            title = 'Weak Password';
             description = 'The password must be at least 6 characters long.';
             break;
         case 'auth/invalid-email':
-            title = 'Invalid Email';
             description = 'Please enter a valid email address.';
             break;
         case 'auth/network-request-failed':
             title = 'Network Error';
-            description = 'Could not connect to the server. Please check your internet connection and try again.';
+            description = 'Could not connect to the server. Please check your internet connection.';
+            toast({ title, description, variant: 'destructive' });
             break;
         case 'auth/popup-closed-by-user':
-             title = "Login Canceled";
-             description = "You closed the sign-in window. Please try again.";
+             description = "The sign-in window was closed before completing. Please try again.";
             break;
         case 'auth/operation-not-supported-in-this-environment':
             title = "Login Error";
             description = "Please use your @saveetha.com Google account to sign in.";
+            toast({ title, description, variant: 'destructive' });
             break;
         case 'auth/too-many-requests':
             title = 'Too Many Attempts';
-            description = 'Access to this account has been temporarily disabled due to many failed login attempts. We are facing high traffic, please try again in a few minutes.';
-            break;
-        default:
-            // Keep the generic message for other errors
+            description = 'Access to this account is temporarily disabled due to many failed attempts.';
+            toast({ title, description, variant: 'destructive' });
             break;
     }
     
-    toast({ title, description, variant: 'destructive' });
+    return description;
 };
 
 
@@ -198,8 +193,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
     } catch (error: any) {
-        handleAuthError(error, toast);
-        throw error;
+      const message = handleAuthError(error, toast);
+      throw new Error(message);
     }
   };
   
@@ -227,11 +222,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
 
         await signOut(auth); // Sign out user after registration to force verification
-        router.push('/login');
         return userCredential;
     } catch (error: any) {
-        handleAuthError(error, toast);
-        throw error;
+        const message = handleAuthError(error, toast);
+        throw new Error(message);
     }
   }
   
@@ -263,16 +257,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
         if (!email.endsWith('@saveetha.com')) {
-            toast({ title: 'Invalid Email', description: 'Please use an email ending with @saveetha.com', variant: 'destructive' });
-            return;
+            throw new Error('Please use an email ending with @saveetha.com');
         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
         // Let the onAuthStateChanged listener handle the verification and redirect
         return userCredential;
      } catch(error: any) {
-        handleAuthError(error, toast);
-        throw error;
+        const message = handleAuthError(error, toast);
+        throw new Error(message);
      }
   }
 
