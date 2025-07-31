@@ -153,6 +153,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Still set the user, as they are authenticated.
             setUser(user);
           }
+        } else {
+           // User exists but email is not verified. Don't treat as logged in.
+           // This prevents the redirect loop and allows the login page to show an error.
+           setUser(null);
+           setIsAdmin(false);
         }
       } else {
         setUser(null);
@@ -256,14 +261,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
-        if (!email.endsWith('@saveetha.com')) {
-            throw new Error('Please use an email ending with @saveetha.com');
-        }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        // Let the onAuthStateChanged listener handle the verification and redirect
+        if (!userCredential.user.emailVerified) {
+          // Special case: login is successful but email is not verified.
+          await signOut(auth); // Log them out immediately
+          throw new Error("Please verify your email before logging in. Check your inbox (and spam folder) for a verification link.");
+        }
+        
+        // Let the onAuthStateChanged listener handle the verification and redirect for verified users
         return userCredential;
      } catch(error: any) {
+        if (error instanceof Error && error.message.startsWith("Please verify your email")) {
+          throw error; // Re-throw our custom error
+        }
         const message = handleAuthError(error, toast);
         throw new Error(message);
      }

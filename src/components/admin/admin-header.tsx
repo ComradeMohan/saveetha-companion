@@ -23,6 +23,7 @@ import {
   Inbox,
   Menu,
   Megaphone,
+  BarChartHorizontal,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -31,6 +32,7 @@ const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
+  { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },

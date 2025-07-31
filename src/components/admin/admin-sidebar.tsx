@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -11,6 +11,7 @@ const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
+  { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
@@ -45,7 +46,7 @@ export default function AdminSidebar() {
                         >
                             <link.icon className="h-5 w-5" />
                             <span className="ml-4 hidden group-hover:inline">{link.label}</span>
-                            <span className="sr-only group-hover:hidden">{link.label}</span>
+                            <span className="sr-only" suppressHydrationWarning>{link.label}</span>
                         </Link>
                         </TooltipTrigger>
                         <TooltipContent side="right" className="group-hover:hidden">{link.label}</TooltipContent>
