@@ -122,42 +122,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const isGoogleProvider = user.providerData.some(p => p.providerId === GoogleAuthProvider.PROVIDER_ID);
-        // Allow login for verified emails OR for any google sign in.
-        // The verification banner will prompt Google users to complete profile if needed.
-        if (user.emailVerified || isGoogleProvider) {
-          setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
-          const userDocRef = doc(db, 'users', user.uid);
-          
-          try {
-            const userDoc = await getDoc(userDocRef);
-            const updateData: any = {
-                lastSignInTime: user.metadata.lastSignInTime,
-                isVerified: user.emailVerified,
-            };
-            if (user.photoURL) {
-                updateData.photoURL = user.photoURL;
-            }
-
-            if (userDoc.exists()) {
-                await updateDoc(userDocRef, updateData);
-                if (!user.displayName && userDoc.data()?.name) {
-                  await updateProfile(user, { displayName: userDoc.data()?.name });
-                }
-            }
-            // Refresh user object to get latest profile info
-            const refreshedUser = { ...user, displayName: user.displayName, photoURL: user.photoURL };
-            setUser(refreshedUser);
-          } catch(error){
-            console.error("Error updating user document:", error);
-            // Still set the user, as they are authenticated.
-            setUser(user);
+        setIsAdmin(user.email === ADMIN_EMAIL && user.emailVerified);
+        const userDocRef = doc(db, 'users', user.uid);
+        
+        try {
+          const userDoc = await getDoc(userDocRef);
+          const updateData: any = {
+              lastSignInTime: user.metadata.lastSignInTime,
+              isVerified: user.emailVerified,
+          };
+          if (user.photoURL) {
+              updateData.photoURL = user.photoURL;
           }
-        } else {
-           // User exists but email is not verified. Don't treat as logged in.
-           // This prevents the redirect loop and allows the login page to show an error.
-           setUser(null);
-           setIsAdmin(false);
+
+          if (userDoc.exists()) {
+              await updateDoc(userDocRef, updateData);
+              if (!user.displayName && userDoc.data()?.name) {
+                await updateProfile(user, { displayName: userDoc.data()?.name });
+              }
+          }
+          // Refresh user object to get latest profile info
+          // We must create a new object to trigger a re-render in consumers of the hook
+          const refreshedUser: User = { ...user };
+          setUser(refreshedUser);
+        } catch(error){
+          console.error("Error updating user document:", error);
+          // Still set the user, as they are authenticated.
+          setUser(user);
         }
       } else {
         setUser(null);
@@ -167,7 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [router, toast]);
+  }, []);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -262,19 +253,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        
-        if (!userCredential.user.emailVerified) {
-          // Special case: login is successful but email is not verified.
-          await signOut(auth); // Log them out immediately
-          throw new Error("Please verify your email before logging in. Check your inbox (and spam folder) for a verification link.");
-        }
-        
-        // Let the onAuthStateChanged listener handle the verification and redirect for verified users
+        // Let the onAuthStateChanged listener handle the verification and redirect
         return userCredential;
      } catch(error: any) {
-        if (error instanceof Error && error.message.startsWith("Please verify your email")) {
-          throw error; // Re-throw our custom error
-        }
         const message = handleAuthError(error, toast);
         throw new Error(message);
      }

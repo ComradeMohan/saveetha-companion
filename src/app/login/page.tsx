@@ -60,7 +60,13 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      await loginWithEmailAndPassword(email, password);
+      const userCredential = await loginWithEmailAndPassword(email, password);
+      if (!userCredential.user.emailVerified) {
+          toast({ 
+            title: 'Verification Pending',
+            description: "We've sent a new verification link to your email. Please check your inbox (and spam folder).",
+          });
+      }
       // The redirect will be handled by the useEffect hook after state update
     } catch (err: any) {
       setError(err.message);
