@@ -16,15 +16,14 @@ import { Card } from './ui/card';
 let conceptMapCache: ConceptMap[] | null = null;
 
 export default function ConceptMapFinder() {
-  const [results, setResults] = useState<ConceptMap[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [allMaps, setAllMaps] = useState<ConceptMap[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [hasSearched, setHasSearched] = useState(false);
   const { toast } = useToast();
 
   const fetchConceptMaps = useCallback(async () => {
     if (conceptMapCache) {
-      setResults(conceptMapCache);
+      setAllMaps(conceptMapCache);
       setLoading(false);
       return;
     }
@@ -37,8 +36,8 @@ export default function ConceptMapFinder() {
         querySnapshot.forEach((doc) => {
             data.push({ id: doc.id, ...doc.data() } as ConceptMap);
         });
-        conceptMapCache = data; // Cache the results
-        setResults(data);
+        conceptMapCache = data;
+        setAllMaps(data);
     } catch (error) {
         console.error("Error fetching concept maps:", error);
         toast({
@@ -51,25 +50,25 @@ export default function ConceptMapFinder() {
     }
   }, [toast]);
   
+  useEffect(() => {
+    fetchConceptMaps();
+  }, [fetchConceptMaps]);
+  
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    if (term && !hasSearched) {
-      setHasSearched(true);
-      fetchConceptMaps();
-    }
+    setSearchTerm(e.target.value);
   };
   
   const filteredResults = useMemo(() => {
-    if (!searchTerm || !hasSearched) {
-      return [];
+    if (!searchTerm) {
+      // Show some initial maps if available, or an empty array.
+      return allMaps.slice(0, 6);
     }
     const lowercasedTerm = searchTerm.toLowerCase();
     
-    return results.filter(map => 
+    return allMaps.filter(map => 
         map.title.toLowerCase().includes(lowercasedTerm)
     );
-  }, [searchTerm, results, hasSearched]);
+  }, [searchTerm, allMaps]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -113,49 +112,40 @@ export default function ConceptMapFinder() {
                 </div>
             </Card>
            ))
-        ) : hasSearched && searchTerm ? (
-            filteredResults.length > 0 ? (
-                filteredResults.map((map, index) => {
-                    const isPdf = map.url.toLowerCase().endsWith('.pdf');
-                    const href = isPdf ? `/view-pdf/${encodeURIComponent(map.url)}` : map.url;
-                    const target = isPdf ? '_self' : '_blank';
-                    const Icon = isPdf ? FileText : FileIcon;
+        ) : filteredResults.length > 0 ? (
+            filteredResults.map((map, index) => {
+                const isPdf = map.url.toLowerCase().endsWith('.pdf');
+                const href = isPdf ? `/view-pdf/${encodeURIComponent(map.url)}` : map.url;
+                const target = isPdf ? '_self' : '_blank';
+                const Icon = isPdf ? FileText : FileIcon;
 
-                    return (
-                        <Link
-                        key={map.id || index}
-                        href={href}
-                        target={target}
-                        rel={target === '_blank' ? 'noopener noreferrer' : ''}
-                        className={cn(
-                            "group rounded-xl border bg-card p-4 text-card-foreground",
-                            "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1"
-                        )}
-                        >
-                        <div className="flex flex-col justify-start items-start h-full">
-                            <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
-                                <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
-                            </div>
-                            <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
+                return (
+                    <Link
+                    key={map.id || index}
+                    href={href}
+                    target={target}
+                    rel={target === '_blank' ? 'noopener noreferrer' : ''}
+                    className={cn(
+                        "group rounded-xl border bg-card p-4 text-card-foreground",
+                        "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1"
+                    )}
+                    >
+                    <div className="flex flex-col justify-start items-start h-full">
+                        <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
+                            <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
                         </div>
-                        </Link>
-                    );
-                })
-            ) : (
-                <div className="col-span-full text-center py-10">
-                    <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <p className="mt-4 text-muted-foreground">
-                        No concept maps match your search.
-                    </p>
-                </div>
-            )
+                        <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
+                    </div>
+                    </Link>
+                );
+            })
         ) : (
-          <div className="col-span-full text-center py-10">
-            <Type className="mx-auto h-12 w-12 text-muted-foreground" />
-            <p className="mt-4 text-muted-foreground">
-              Enter a topic to begin your search.
-            </p>
-          </div>
+            <div className="col-span-full text-center py-10">
+                <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
+                <p className="mt-4 text-muted-foreground">
+                    {searchTerm ? "No concept maps match your search." : "No concept maps found."}
+                </p>
+            </div>
         )}
       </div>
     </div>

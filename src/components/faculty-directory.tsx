@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
 import { Search, Users, Loader2, Type } from 'lucide-react';
@@ -22,9 +22,8 @@ let facultyCache: Faculty[] | null = null;
 
 export default function FacultyDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [firestoreFaculty, setFirestoreFaculty] = useState<Faculty[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [allFaculty, setAllFaculty] = useState<Faculty[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
@@ -32,7 +31,7 @@ export default function FacultyDirectory() {
 
   const fetchFacultyData = useCallback(async () => {
     if (facultyCache) {
-      setFirestoreFaculty(facultyCache);
+      setAllFaculty(facultyCache);
       setLoading(false);
       return;
     }
@@ -45,8 +44,8 @@ export default function FacultyDirectory() {
         querySnapshot.forEach((doc) => {
             data.push({ id: doc.id, ...doc.data() } as Faculty);
         });
-        facultyCache = data; // Cache the results
-        setFirestoreFaculty(data);
+        facultyCache = data;
+        setAllFaculty(data);
     } catch (error) {
         console.error("Error fetching faculty data from Firestore:", error);
         toast({
@@ -58,23 +57,23 @@ export default function FacultyDirectory() {
         setLoading(false);
     }
   }, [toast]);
+  
+  useEffect(() => {
+    fetchFacultyData();
+  }, [fetchFacultyData]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const term = e.target.value;
       setSearchTerm(term);
-      if (term && !hasSearched) {
-          setHasSearched(true);
-          fetchFacultyData();
-      }
   };
 
   const filteredFaculty = useMemo(() => {
-    if (!searchTerm || !hasSearched) {
-      return [];
+    if (!searchTerm) {
+      return allFaculty.slice(0, 6); // Show a few initial faculty members
     }
     const lowercasedFilter = searchTerm.toLowerCase();
     
-    return firestoreFaculty.filter(
+    return allFaculty.filter(
       faculty =>
         faculty.name.toLowerCase().includes(lowercasedFilter) ||
         (faculty.department && faculty.department.toLowerCase().includes(lowercasedFilter)) ||
@@ -82,7 +81,7 @@ export default function FacultyDirectory() {
         (faculty.subjects && faculty.subjects.some(subject => subject.toLowerCase().includes(lowercasedFilter))) ||
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
-  }, [searchTerm, firestoreFaculty, hasSearched]);
+  }, [searchTerm, allFaculty]);
   
   const handleSuggestClick = () => {
     if (!user) {
@@ -116,7 +115,7 @@ export default function FacultyDirectory() {
             )}
         </div>
       </div>
-      <div className="relative mb-8">
+      <div className="relative mb-8 max-w-lg mx-auto">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           type="search"
@@ -143,24 +142,15 @@ export default function FacultyDirectory() {
                 </CardContent>
               </Card>
             ))
-        ) : hasSearched && searchTerm ? (
-            filteredFaculty.length > 0 ? (
-                filteredFaculty.map((faculty, index) => (
-                    <FacultyCard key={faculty.id || `${faculty.name}-${index}`} faculty={faculty} />
-                ))
-            ) : (
-                <div className="col-span-full text-center py-10">
-                    <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <p className="mt-4 text-muted-foreground">
-                        No faculty members match your search.
-                    </p>
-                </div>
-            )
+        ) : filteredFaculty.length > 0 ? (
+            filteredFaculty.map((faculty, index) => (
+                <FacultyCard key={faculty.id || `${faculty.name}-${index}`} faculty={faculty} />
+            ))
         ) : (
-             <div className="col-span-full text-center py-10">
-                <Type className="mx-auto h-12 w-12 text-muted-foreground" />
+            <div className="col-span-full text-center py-10">
+                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                 <p className="mt-4 text-muted-foreground">
-                    Enter a name, subject, or department to begin your search.
+                    {searchTerm ? "No faculty members match your search." : "No faculty found."}
                 </p>
             </div>
         )}

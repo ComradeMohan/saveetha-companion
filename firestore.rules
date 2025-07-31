@@ -3,77 +3,50 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if the user is the admin.
-    // The admin must be an authenticated, verified user with the specific admin email.
+    // Helper function to check if the user is admin.
     function isAdmin() {
       return request.auth != null &&
              request.auth.token.email_verified == true &&
              request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
     }
 
-    //
-    // PUBLIC-READABLE COLLECTIONS
-    // Anyone can read this data, but only admins can write to it.
-    //
+    // Give admin full access if they are verified.
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Allow anyone to read public data.
     match /faculty/{docId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
     match /concept-maps/{docId} {
       allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /events/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
     }
      match /updates/{docId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
-    
-    //
-    // USER-SPECIFIC COLLECTIONS
-    // Users can only access their own documents.
-    //
-    match /users/{userId} {
-      // A user can be created upon signup.
-      allow create: if request.auth != null;
-      // Only the authenticated user can read or update their own profile. No one else can.
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      // Users should not be able to delete their own account from the client.
-      allow delete: if false;
-    }
-    match /students_cgpa/{userId} {
-      // Only the authenticated user can read or write their own CGPA data.
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    //
-    // SUBMISSION-ONLY COLLECTIONS (Write-only for clients)
-    // These collections are for forms. Anyone can submit, but no one can read/update/delete from the client.
-    //
-    match /contact-messages/{messageId} {
-      allow create: if true;
-      allow read, update, delete: if false;
-    }
-    match /login-issues/{issueId} {
-        allow create: if true;
-        allow read, update, delete: if false;
-    }
-    match /faculty-requests/{requestId} {
-        // Only authenticated users can suggest faculty.
-        allow create: if request.auth != null;
-        allow read, update, delete: if false;
+    match /events/{docId} {
+      allow read: if true;
     }
 
-    //
-    // ADMIN-ONLY COLLECTIONS
-    // These collections should only be accessible by the admin via server-side logic.
-    // We explicitly deny all client-side access for maximum security.
-    //
-    match /admin/{docId}/{subcollection}/{subId} {
-        allow read, write: if false;
+    // Allow authenticated users to manage their own data.
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+    match /students_cgpa/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Allow anyone to submit forms (contact, issues, suggestions).
+     match /contact-messages/{messageId} {
+      allow create: if true;
+    }
+    match /login-issues/{issueId} {
+      allow create: if true;
+    }
+    match /faculty-requests/{requestId} {
+      allow create: if request.auth != null;
     }
   }
 }

@@ -9,7 +9,6 @@ import {
   Lightbulb,
   Users,
   Menu,
-  Percent,
   Bell,
   Calendar as CalendarIcon,
   Contact,
@@ -244,7 +243,7 @@ export default function Header() {
           </Link>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              {desktopNavLinks.map(link => (

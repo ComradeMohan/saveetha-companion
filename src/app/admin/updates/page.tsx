@@ -126,7 +126,7 @@ export default function AdminUpdatesPage() {
     return (
         <>
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <div>
+            <div className="w-full">
                 <Card>
                     <form action={formAction} ref={formRef}>
                         <CardHeader>
@@ -158,7 +158,7 @@ export default function AdminUpdatesPage() {
                     </form>
                 </Card>
             </div>
-             <div>
+             <div className="w-full">
                 <Card>
                     <CardHeader>
                         <CardTitle>Recent Updates</CardTitle>
