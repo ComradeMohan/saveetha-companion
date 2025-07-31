@@ -4,7 +4,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
-import { Search, Users, Loader2, Type } from 'lucide-react';
+import { Search, Users, Loader2 } from 'lucide-react';
 import { type Faculty } from '@/lib/faculty-data';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -23,16 +23,15 @@ let facultyCache: Faculty[] | null = null;
 export default function FacultyDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allFaculty, setAllFaculty] = useState<Faculty[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
 
-
   const fetchFacultyData = useCallback(async () => {
     if (facultyCache) {
       setAllFaculty(facultyCache);
-      setLoading(false);
       return;
     }
     
@@ -58,18 +57,23 @@ export default function FacultyDirectory() {
     }
   }, [toast]);
   
-  useEffect(() => {
-    fetchFacultyData();
-  }, [fetchFacultyData]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const term = e.target.value;
       setSearchTerm(term);
+      
+      if(term.trim() !== '' && !facultyCache) {
+          setHasSearched(true);
+          await fetchFacultyData();
+      } else if (term.trim() === '') {
+          setHasSearched(false);
+      } else {
+          setHasSearched(true);
+      }
   };
 
   const filteredFaculty = useMemo(() => {
-    if (!searchTerm) {
-      return allFaculty.slice(0, 6); // Show a few initial faculty members
+    if (!hasSearched) {
+      return [];
     }
     const lowercasedFilter = searchTerm.toLowerCase();
     
@@ -81,7 +85,7 @@ export default function FacultyDirectory() {
         (faculty.subjects && faculty.subjects.some(subject => subject.toLowerCase().includes(lowercasedFilter))) ||
         (faculty.roomNo && faculty.roomNo.toLowerCase().includes(lowercasedFilter))
     );
-  }, [searchTerm, allFaculty]);
+  }, [searchTerm, allFaculty, hasSearched]);
   
   const handleSuggestClick = () => {
     if (!user) {
@@ -92,8 +96,6 @@ export default function FacultyDirectory() {
         });
         setTimeout(() => router.push('/login'), 2000);
     }
-    // If user is logged in, the dialog will open via its own trigger.
-    // This function is only for the case when the user is not logged in.
   };
 
   return (
@@ -142,7 +144,7 @@ export default function FacultyDirectory() {
                 </CardContent>
               </Card>
             ))
-        ) : filteredFaculty.length > 0 ? (
+        ) : hasSearched && filteredFaculty.length > 0 ? (
             filteredFaculty.map((faculty, index) => (
                 <FacultyCard key={faculty.id || `${faculty.name}-${index}`} faculty={faculty} />
             ))
@@ -150,7 +152,7 @@ export default function FacultyDirectory() {
             <div className="col-span-full text-center py-10">
                 <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                 <p className="mt-4 text-muted-foreground">
-                    {searchTerm ? "No faculty members match your search." : "No faculty found."}
+                    {hasSearched ? "No faculty members match your search." : "Start typing to find faculty members."}
                 </p>
             </div>
         )}
