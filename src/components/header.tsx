@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   Menu,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -26,6 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
+import { cn } from '@/lib/utils';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -127,10 +129,14 @@ function UserNav() {
 
 
 export default function Header() {
-  const { user, setIsNavigating, setMobileMenuOpen } = useAuth();
+  const { user, setIsNavigating, isMobileMenuOpen, setMobileMenuOpen } = useAuth();
   
   const handleNavLinkClick = () => {
     setIsNavigating(true);
+  };
+  
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
   };
   
   const desktopNavLinks = React.useMemo(() => {
@@ -154,7 +160,15 @@ export default function Header() {
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
        <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mx-auto max-w-5xl shadow-lg px-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          {/* Mobile Nav Trigger */}
+           <div className="md:hidden">
+              <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
+                <Menu className={cn("h-6 w-6 transition-transform duration-300", isMobileMenuOpen && "rotate-90 scale-0")}/>
+                <X className={cn("h-6 w-6 absolute transition-transform duration-300", !isMobileMenuOpen && "-rotate-90 scale-0")}/>
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+           </div>
           {/* Logo */}
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
@@ -173,13 +187,6 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
-           {/* Mobile Nav Trigger */}
-           <div className="md:hidden">
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Open Menu</span>
-              </Button>
-           </div>
           <ThemeToggle />
           <UserNav />
         </div>
