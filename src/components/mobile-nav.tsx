@@ -64,7 +64,7 @@ export default function MobileNav() {
   }, [pathname]);
 
   return (
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-[40]">
+    <div className="md:hidden fixed bottom-6 right-6 z-[40]">
        {/* Backdrop */}
         {isMenuOpen && (
             <div
@@ -74,42 +74,40 @@ export default function MobileNav() {
         )}
         
       <div className={cn(
-          "absolute bottom-20 right-6 transition-all duration-300 ease-in-out",
+          "absolute bottom-0 right-0 transition-all duration-300 ease-in-out",
           isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}>
           {navLinks.map((link, index) => {
-            const angle = 180 + (index * (90 / (navLinks.length > 1 ? navLinks.length - 1 : 1)));
             const style = {
               transform: isMenuOpen
-                ? `rotate(${angle}deg) translate(5rem) rotate(-${angle}deg)`
-                : 'translate(0,0) scale(0.5)',
+                ? `translateY(-${(index + 1) * 3.75}rem)`
+                : 'translateY(0) scale(0.5)',
               transitionDelay: isMenuOpen ? `${index * 40}ms` : '0ms',
               opacity: isMenuOpen ? 1 : 0,
-              transformOrigin: 'bottom right',
             };
 
             return (
               <div
                 key={link.href}
-                className="absolute bottom-0 right-0"
+                className="absolute bottom-0 right-0 transition-all duration-300 ease-in-out"
                 style={style}
               >
-                <div className="flex items-center justify-end" style={{ transform: 'rotate(0deg)' }}>
+                <div className="flex items-center justify-end gap-3">
                   <span className={cn(
-                      "bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-full shadow-md whitespace-nowrap transition-opacity duration-200 mr-2",
+                      "bg-foreground text-background text-sm font-semibold px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap transition-opacity duration-200",
                       isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                   )}>
                       {link.label}
                   </span>
                   <Button
                       asChild
-                      className="rounded-full w-10 h-10 shadow-lg"
+                      className="rounded-full w-12 h-12 shadow-lg"
                       size="icon"
                       onClick={handleNavLinkClick}
                       aria-label={link.label}
                   >
                       <Link href={link.href}>
-                          <link.icon className="h-4 w-4" />
+                          <link.icon className="h-5 w-5" />
                       </Link>
                   </Button>
                 </div>
@@ -118,21 +116,21 @@ export default function MobileNav() {
           })}
         </div>
         
-        <div className="absolute bottom-6 right-6 z-10">
+        <div className="relative z-10">
             <Button
                 className={cn(
                     "w-14 h-14 rounded-full shadow-lg relative transition-transform duration-300",
-                    isMenuOpen ? "bg-destructive hover:bg-destructive/90" : ""
+                    isMenuOpen ? "bg-destructive hover:bg-destructive/90 scale-110" : ""
                 )}
                 onClick={toggleMenu}
             >
                 <Menu className={cn(
-                    "h-6 w-6 absolute transition-opacity,transform duration-300",
-                    isMenuOpen ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+                    "h-6 w-6 absolute transition-all duration-300",
+                    isMenuOpen ? 'opacity-0 scale-50 rotate-90' : 'opacity-100 scale-100 rotate-0'
                 )} />
                 <X className={cn(
-                    "h-6 w-6 absolute transition-opacity,transform duration-300",
-                    isMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                    "h-6 w-6 absolute transition-all duration-300",
+                    isMenuOpen ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-90'
                 )} />
             </Button>
         </div>
