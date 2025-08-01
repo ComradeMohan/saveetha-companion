@@ -49,7 +49,9 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isNavigating: boolean;
+  isMobileMenuOpen: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
+  setMobileMenuOpen: (isOpen: boolean) => void;
   signInWithGoogle: () => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
@@ -109,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -253,7 +256,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // Let the onAuthStateChanged listener handle the verification and redirect
+        if (!userCredential.user.emailVerified) {
+             toast({ 
+                title: 'Verification Recommended',
+                description: "Please check your email (and spam folder) to verify your account.",
+             });
+        }
         return userCredential;
      } catch(error: any) {
         const message = handleAuthError(error, toast);
@@ -294,7 +302,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     isAdmin,
     isNavigating,
+    isMobileMenuOpen,
     setIsNavigating,
+    setMobileMenuOpen,
     signInWithGoogle,
     signUpWithEmailAndPassword,
     loginWithEmailAndPassword,

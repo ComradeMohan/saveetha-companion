@@ -22,16 +22,15 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 export default function MobileNav() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const { user, setIsNavigating } = useAuth();
+  const { user, setIsNavigating, isMobileMenuOpen, setMobileMenuOpen } = useAuth();
   const pathname = usePathname();
 
   const handleNavLinkClick = () => {
     setIsNavigating(true);
-    setIsOpen(false);
+    setMobileMenuOpen(false);
   };
   
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
 
   const navLinks = React.useMemo(() => {
     const commonLinks = [
@@ -57,38 +56,34 @@ export default function MobileNav() {
 
   // Close menu on path change
   React.useEffect(() => {
-    if (isOpen) {
-      setIsOpen(false);
+    if (isMobileMenuOpen) {
+      setMobileMenuOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   return (
-    <div className="md:hidden fixed bottom-6 right-6 z-[99]">
-      <div className="relative">
-        {/* Backdrop */}
-        {isOpen && (
+    <div className="md:hidden fixed bottom-0 inset-x-0 z-[99]">
+       {/* Backdrop */}
+        {isMobileMenuOpen && (
             <div
                 className="fixed inset-0 bg-black/40 backdrop-blur-sm"
                 onClick={toggleMenu}
             />
         )}
         
-        {/* Menu Items */}
-        <div
-          className={cn(
-            "absolute bottom-0 right-0 transition-all duration-300 ease-in-out",
-            isOpen ? "pointer-events-auto" : "pointer-events-none"
-          )}
-        >
+      <div className={cn(
+          "absolute bottom-6 right-6 transition-all duration-300 ease-in-out",
+          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}>
           {navLinks.map((link, index) => {
             const angle = (index * (90 / (navLinks.length -1)));
             const style = {
-              transform: isOpen
+              transform: isMobileMenuOpen
                 ? `rotate(${angle}deg) translate(7rem) rotate(-${angle}deg)`
                 : 'translate(0,0)',
-              transitionDelay: isOpen ? `${index * 50}ms` : '0ms',
-              opacity: isOpen ? 1 : 0,
+              transitionDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms',
+              opacity: isMobileMenuOpen ? 1 : 0,
             };
 
             return (
@@ -110,7 +105,7 @@ export default function MobileNav() {
                     </Button>
                     <span className={cn(
                         "absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-md shadow-md whitespace-nowrap transition-opacity duration-200",
-                        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                        isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                     )}>
                         {link.label}
                     </span>
@@ -119,28 +114,7 @@ export default function MobileNav() {
             );
           })}
         </div>
-
-        {/* Main FAB */}
-        <Button
-          className="rounded-full w-16 h-16 shadow-xl relative"
-          onClick={toggleMenu}
-          aria-expanded={isOpen}
-          aria-label="Toggle navigation menu"
-        >
-          <Menu
-            className={cn(
-              "h-7 w-7 transition-all duration-300 absolute",
-              isOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
-            )}
-          />
-          <X
-            className={cn(
-              "h-7 w-7 transition-all duration-300 absolute",
-              isOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'
-            )}
-          />
-        </Button>
-      </div>
     </div>
   );
 }
+

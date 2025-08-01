@@ -60,13 +60,7 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const userCredential = await loginWithEmailAndPassword(email, password);
-      if (!userCredential.user.emailVerified) {
-          toast({ 
-            title: 'Verification Pending',
-            description: "We've sent a new verification link to your email. Please check your inbox (and spam folder).",
-          });
-      }
+      await loginWithEmailAndPassword(email, password);
       // The redirect will be handled by the useEffect hook after state update
     } catch (err: any) {
       setError(err.message);
@@ -157,7 +151,7 @@ export default function LoginPage() {
               </Button>
             </form>
              {error && (
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400">
+                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-destructive dark:text-red-400">
                     <AlertCircle className="h-4 w-4"/>
                     <p>{error}</p>
                 </div>

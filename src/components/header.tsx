@@ -11,6 +11,7 @@ import {
   BarChart3,
   User,
   LogOut,
+  Menu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -126,7 +127,7 @@ function UserNav() {
 
 
 export default function Header() {
-  const { user, setIsNavigating } = useAuth();
+  const { user, setIsNavigating, setMobileMenuOpen } = useAuth();
   
   const handleNavLinkClick = () => {
     setIsNavigating(true);
@@ -172,6 +173,13 @@ export default function Header() {
               </NavLink>
             ))}
           </nav>
+           {/* Mobile Nav Trigger */}
+           <div className="md:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open Menu</span>
+              </Button>
+           </div>
           <ThemeToggle />
           <UserNav />
         </div>
