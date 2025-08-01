@@ -10,6 +10,7 @@ import VerificationBanner from '@/components/verification-banner';
 import ScrollProgress from '@/components/scroll-progress';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import MobileNav from '@/components/mobile-nav';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -77,6 +78,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <VerificationBanner key="verification-banner" />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
+          <MobileNav />
       </AuthProvider>
     </ThemeProvider>
   )

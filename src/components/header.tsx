@@ -4,30 +4,15 @@
 import * as React from 'react';
 import Link from 'next/link';
 import {
-  Calculator,
   GraduationCap,
-  Lightbulb,
-  Users,
-  Menu,
-  Bell,
-  Calendar as CalendarIcon,
-  Contact,
-  LogOut,
-  User,
   CheckCircle2,
   Shield,
   LayoutGrid,
-  BarChart3
+  BarChart3,
+  User,
+  LogOut,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/use-auth';
 import {
   DropdownMenu,
@@ -45,22 +30,17 @@ const NavLink = React.memo(function NavLink({
   href,
   children,
   className,
-  onClose,
   onClick,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
-  onClose?: () => void;
   onClick?: () => void;
 }) {
   return (
     <Link href={href} passHref>
       <span
-        onClick={() => {
-          onClose?.();
-          onClick?.();
-        }}
+        onClick={onClick}
         className={
           'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
           className
@@ -146,7 +126,6 @@ function UserNav() {
 
 
 export default function Header() {
-  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const { user, setIsNavigating } = useAuth();
   
   const handleNavLinkClick = () => {
@@ -171,69 +150,10 @@ export default function Header() {
     ];
   }, [user]);
 
-  const mobileNavLinks = React.useMemo(() => {
-     if (user) {
-       return [
-            { href: '/#calculators', label: 'Calculators', icon: Calculator },
-            { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
-            { href: '/#faculty', label: 'Faculty', icon: Users },
-            { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
-            { href: '/updates', label: 'Updates', icon: Bell },
-            { href: '/contact', label: 'Contact Us', icon: Contact },
-        ];
-    }
-    return [
-        { href: '/#features', label: 'Features', icon: LayoutGrid },
-        { href: '/#stats', label: 'Stats', icon: BarChart3 },
-        { href: '/contact', label: 'Contact Us', icon: Contact },
-    ];
-  }, [user])
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-4 md:right-4">
        <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:mx-auto md:max-w-full md:rounded-full md:border md:shadow-lg">
         <div className="flex items-center gap-2">
-          {/* Mobile Nav Trigger */}
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
-              <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">
-                  Main navigation links for the application.
-                  </SheetDescription>
-              </SheetHeader>
-              <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2 p-4">
-                <GraduationCap className="h-6 w-6 text-primary" />
-                <span className="font-bold">Saveetha Companion</span>
-              </Link>
-              <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-                <div className="flex flex-col space-y-3">
-                  {mobileNavLinks.map(link => (
-                    <NavLink
-                      key={link.href + link.label}
-                      href={link.href}
-                      onClick={handleNavLinkClick}
-                      onClose={() => setIsSheetOpen(false)}
-                      className="flex items-center gap-4 text-lg"
-                    >
-                      <link.icon className="h-5 w-5" />
-                      {link.label}
-                    </NavLink>
-                  ))}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-          
           {/* Logo */}
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
