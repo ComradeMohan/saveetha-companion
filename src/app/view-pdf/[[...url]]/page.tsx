@@ -35,7 +35,7 @@ export default function PdfViewerPage() {
                 </Link>
             </Button>
         </div>
-        <div className="container mx-auto px-4 h-[calc(100vh-10rem)] pb-8">
+        <div className="container mx-auto px-4 h-[calc(100vh-12rem)] pb-8">
           {pdfUrl ? (
             <iframe
               src={pdfUrl}

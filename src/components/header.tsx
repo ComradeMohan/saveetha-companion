@@ -151,8 +151,8 @@ export default function Header() {
   }, [user]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 md:top-4 md:left-4 md:right-4">
-       <div className="container flex h-16 items-center justify-between rounded-none border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:mx-auto md:max-w-full md:rounded-full md:border md:shadow-lg">
+    <header className="fixed top-4 left-0 right-0 z-50 px-4">
+       <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mx-auto max-w-5xl shadow-lg px-6">
         <div className="flex items-center gap-2">
           {/* Logo */}
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
