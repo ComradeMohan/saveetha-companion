@@ -8,7 +8,7 @@ import { Skeleton } from './ui/skeleton';
 import { ArrowRight, Bell, Calendar, Calculator, Book, Users, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 function StatCardSkeleton() {
     return (
@@ -45,68 +45,36 @@ export default function Dashboard() {
                     <p className="text-muted-foreground mt-1">Here's your academic snapshot for today.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Column 1: CGPA and Countdown */}
-                    <div className="space-y-6">
-                        {loading ? (
-                            <StatCardSkeleton />
-                        ) : (
-                            <Card className="h-full">
-                                <CardHeader>
-                                    <CardTitle>Your CGPA</CardTitle>
-                                    <CardDescription>Current calculated average</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    {data.cgpa ? (
-                                        <>
-                                            <p className="text-5xl font-bold text-primary">{data.cgpa.cgpa.toFixed(2)}</p>
-                                            <p className="text-sm text-muted-foreground mt-1">
-                                                Based on {data.cgpa.totalCredits} credits
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <div className="text-center py-4">
-                                            <p className="text-muted-foreground text-sm mb-2">No CGPA data found.</p>
-                                            <Button asChild variant="secondary" size="sm">
-                                                <Link href="/#calculators">Go to Calculator</Link>
-                                            </Button>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        )}
-                        {loading ? (
-                            <StatCardSkeleton />
-                        ) : (
-                             <Card className="h-full">
-                                <CardHeader>
-                                    <CardTitle>Next Event</CardTitle>
-                                    <CardDescription>{data.nextEvent ? data.nextEvent.title : 'No upcoming events'}</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    {data.nextEvent ? (
-                                        <>
-                                            <p className="text-5xl font-bold text-primary">{data.daysUntilNextEvent}</p>
-                                            <p className="text-sm text-muted-foreground mt-1">
-                                                {data.daysUntilNextEvent === 1 ? 'day remaining' : 'days remaining'} until {format(new Date(data.nextEvent.startDate), 'MMM d')}
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <div className="text-center py-4">
-                                            <p className="text-muted-foreground text-sm mb-2">Check the calendar for details.</p>
-                                            <Button asChild variant="secondary" size="sm">
-                                                <Link href="/calendar">View Calendar</Link>
-                                            </Button>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
-
-                    {/* Column 2: Announcements */}
-                    <div className="lg:col-span-1">
-                         <Card className="h-full">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                    {/* Column 1 & 2: CGPA and Announcements */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Your CGPA</CardTitle>
+                                <CardDescription>Current calculated average</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {loading ? (
+                                    <Skeleton className="h-16 w-1/2" />
+                                ) : data.cgpa ? (
+                                    <>
+                                        <p className="text-5xl font-bold text-primary">{data.cgpa.cgpa.toFixed(2)}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">
+                                            Based on {data.cgpa.totalCredits} credits
+                                        </p>
+                                    </>
+                                ) : (
+                                    <div className="text-center py-4">
+                                        <p className="text-muted-foreground text-sm mb-2">No CGPA data found.</p>
+                                        <Button asChild variant="secondary" size="sm">
+                                            <Link href="/#calculators">Go to Calculator</Link>
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                        
+                        <Card>
                             <CardHeader>
                                 <CardTitle>Recent Announcements</CardTitle>
                                 <CardDescription>Latest news and updates</CardDescription>
