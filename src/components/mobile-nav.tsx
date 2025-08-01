@@ -78,10 +78,10 @@ export default function MobileNav() {
           isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}>
           {navLinks.map((link, index) => {
-            const angle = 90 + (index * (90 / (navLinks.length > 1 ? navLinks.length -1 : 1)));
+            const angle = 180 + (index * (90 / (navLinks.length > 1 ? navLinks.length -1 : 1)));
             const style = {
               transform: isMenuOpen
-                ? `rotate(${angle}deg) translate(7rem) rotate(-${angle}deg)`
+                ? `rotate(${angle}deg) translate(6rem) rotate(-${angle}deg)`
                 : 'translate(0,0) scale(0.5)',
               transitionDelay: isMenuOpen ? `${index * 40}ms` : '0ms',
               opacity: isMenuOpen ? 1 : 0,
@@ -97,12 +97,12 @@ export default function MobileNav() {
                  <div className="relative">
                     <Button
                         asChild
-                        className="rounded-full w-14 h-14 shadow-lg"
+                        className="rounded-full w-12 h-12 shadow-lg"
                         onClick={handleNavLinkClick}
                         aria-label={link.label}
                     >
                         <Link href={link.href}>
-                            <link.icon className="h-6 w-6" />
+                            <link.icon className="h-5 w-5" />
                         </Link>
                     </Button>
                     <span className={cn(
