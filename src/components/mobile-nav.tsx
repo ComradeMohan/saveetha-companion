@@ -78,10 +78,10 @@ export default function MobileNav() {
           isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}>
           {navLinks.map((link, index) => {
-            const angle = 180 + (index * (90 / (navLinks.length > 1 ? navLinks.length -1 : 1)));
+            const angle = 180 + (index * (90 / (navLinks.length > 1 ? navLinks.length - 1 : 1)));
             const style = {
               transform: isMenuOpen
-                ? `rotate(${angle}deg) translate(6rem) rotate(-${angle}deg)`
+                ? `rotate(${angle}deg) translate(5rem) rotate(-${angle}deg)`
                 : 'translate(0,0) scale(0.5)',
               transitionDelay: isMenuOpen ? `${index * 40}ms` : '0ms',
               opacity: isMenuOpen ? 1 : 0,
@@ -91,12 +91,12 @@ export default function MobileNav() {
             return (
               <div
                 key={link.href}
-                className="absolute bottom-0 right-0 transition-all duration-300"
+                className="absolute bottom-0 right-0"
                 style={style}
               >
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-end" style={{ transform: 'rotate(0deg)' }}>
                   <span className={cn(
-                      "bg-foreground text-background text-xs font-semibold px-3 py-1.5 rounded-full shadow-md whitespace-nowrap transition-opacity duration-200 mr-3",
+                      "bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-full shadow-md whitespace-nowrap transition-opacity duration-200 mr-2",
                       isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                   )}>
                       {link.label}
@@ -104,6 +104,7 @@ export default function MobileNav() {
                   <Button
                       asChild
                       className="rounded-full w-10 h-10 shadow-lg"
+                      size="icon"
                       onClick={handleNavLinkClick}
                       aria-label={link.label}
                   >
