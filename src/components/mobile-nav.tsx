@@ -14,6 +14,7 @@ import {
   BarChart3,
   Home,
   X,
+  Menu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
