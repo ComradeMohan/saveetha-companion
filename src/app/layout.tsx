@@ -11,6 +11,8 @@ import ScrollProgress from '@/components/scroll-progress';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import MobileNav from '@/components/mobile-nav';
+import { Suspense } from 'react';
+import LoadingAnimation from '@/components/loading-animation';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -97,7 +99,13 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
         <ScrollProgress />
         <MouseSpotlight />
-        <AppProviders>{children}</AppProviders>
+        <Suspense fallback={
+            <div className="flex h-screen w-full items-center justify-center">
+                <LoadingAnimation />
+            </div>
+        }>
+            <AppProviders>{children}</AppProviders>
+        </Suspense>
         
         {/* Google Analytics Scripts - Moved to end of body */}
         <Script
