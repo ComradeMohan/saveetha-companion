@@ -94,24 +94,24 @@ export default function MobileNav() {
                 className="absolute bottom-0 right-0 transition-all duration-300"
                 style={style}
               >
-                 <div className="relative">
-                    <Button
-                        asChild
-                        className="rounded-full w-12 h-12 shadow-lg"
-                        onClick={handleNavLinkClick}
-                        aria-label={link.label}
-                    >
-                        <Link href={link.href}>
-                            <link.icon className="h-5 w-5" />
-                        </Link>
-                    </Button>
-                    <span className={cn(
-                        "absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-md shadow-md whitespace-nowrap transition-opacity duration-200",
-                        isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                    )}>
-                        {link.label}
-                    </span>
-                 </div>
+                <div className="flex items-center justify-end">
+                  <span className={cn(
+                      "bg-foreground text-background text-xs font-semibold px-3 py-1.5 rounded-full shadow-md whitespace-nowrap transition-opacity duration-200 mr-3",
+                      isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                  )}>
+                      {link.label}
+                  </span>
+                  <Button
+                      asChild
+                      className="rounded-full w-10 h-10 shadow-lg"
+                      onClick={handleNavLinkClick}
+                      aria-label={link.label}
+                  >
+                      <Link href={link.href}>
+                          <link.icon className="h-4 w-4" />
+                      </Link>
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -120,17 +120,17 @@ export default function MobileNav() {
         <div className="absolute bottom-6 right-6 z-10">
             <Button
                 className={cn(
-                    "w-16 h-16 rounded-full shadow-lg relative transition-transform duration-300",
+                    "w-14 h-14 rounded-full shadow-lg relative transition-transform duration-300",
                     isMenuOpen ? "bg-destructive hover:bg-destructive/90" : ""
                 )}
                 onClick={toggleMenu}
             >
                 <Menu className={cn(
-                    "h-7 w-7 absolute transition-opacity,transform duration-300",
+                    "h-6 w-6 absolute transition-opacity,transform duration-300",
                     isMenuOpen ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
                 )} />
                 <X className={cn(
-                    "h-7 w-7 absolute transition-opacity,transform duration-300",
+                    "h-6 w-6 absolute transition-opacity,transform duration-300",
                     isMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
                 )} />
             </Button>
