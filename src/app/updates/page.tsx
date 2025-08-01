@@ -1,6 +1,7 @@
 
 'use client';
 
+import React, { Suspense } from 'react';
 import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
@@ -20,8 +21,7 @@ interface Update {
     createdAt: any;
 }
 
-
-export default function UpdatesPage() {
+function UpdatesContent() {
     const [updates, setUpdates] = useState<Update[]>([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
@@ -52,67 +52,78 @@ export default function UpdatesPage() {
         fetchUpdates();
     }, [fetchUpdates]);
 
+    return (
+        <main className="flex-1 py-12 md:py-16">
+            <div className="container mx-auto px-4 max-w-3xl">
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold tracking-tight">Updates & Announcements</h2>
+                    <p className="text-muted-foreground mt-2">
+                        The latest news and announcements from the university.
+                    </p>
+                </div>
 
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Recent Updates</CardTitle>
+                        <CardDescription>
+                            A list of all announcements.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                            <div className="flex justify-center items-center h-48">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                            </div>
+                        ) : updates.length > 0 ? (
+                            <div className="space-y-6">
+                                {updates.map(update => (
+                                    <div key={update.id} className="flex items-start gap-4">
+                                        <div className="p-3 bg-primary/10 rounded-full mt-1">
+                                            <Bell className="h-5 w-5 text-primary"/>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-baseline">
+                                                <h3 className="font-semibold text-lg">{update.title}</h3>
+                                                <p className="text-xs text-muted-foreground flex-shrink-0 ml-4">
+                                                    {update.createdAt ? formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true }) : ''}
+                                                </p>
+                                            </div>
+                                            <p className="text-muted-foreground mt-1">{update.description}</p>
+                                            {update.link && (
+                                                <Button asChild size="sm" className="mt-3">
+                                                    <a href={update.link} target="_blank" rel="noopener noreferrer">
+                                                        <ExternalLink className="mr-2 h-4 w-4" /> Open Link
+                                                    </a>
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-muted-foreground py-16">
+                                <Bell className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                                <p className="mt-4">No updates posted yet.</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        </main>
+    );
+}
+
+export default function UpdatesPage() {
     return (
         <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 py-12 md:py-16">
-                 <div className="container mx-auto px-4 max-w-3xl">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold tracking-tight">Updates & Announcements</h2>
-                        <p className="text-muted-foreground mt-2">
-                            The latest news and announcements from the university.
-                        </p>
-                    </div>
-
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Recent Updates</CardTitle>
-                            <CardDescription>
-                                A list of all announcements.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {loading ? (
-                                <div className="flex justify-center items-center h-48">
-                                    <Loader2 className="h-6 w-6 animate-spin" />
-                                </div>
-                            ) : updates.length > 0 ? (
-                                <div className="space-y-6">
-                                    {updates.map(update => (
-                                        <div key={update.id} className="flex items-start gap-4">
-                                            <div className="p-3 bg-primary/10 rounded-full mt-1">
-                                                <Bell className="h-5 w-5 text-primary"/>
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex justify-between items-baseline">
-                                                    <h3 className="font-semibold text-lg">{update.title}</h3>
-                                                     <p className="text-xs text-muted-foreground flex-shrink-0 ml-4">
-                                                        {update.createdAt ? formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true }) : ''}
-                                                    </p>
-                                                </div>
-                                                <p className="text-muted-foreground mt-1">{update.description}</p>
-                                                {update.link && (
-                                                    <Button asChild size="sm" className="mt-3">
-                                                        <a href={update.link} target="_blank" rel="noopener noreferrer">
-                                                            <ExternalLink className="mr-2 h-4 w-4" /> Open Link
-                                                        </a>
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center text-muted-foreground py-16">
-                                    <Bell className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                                    <p className="mt-4">No updates posted yet.</p>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+            <Suspense fallback={
+                <div className="flex-1 flex items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
-            </main>
+            }>
+                <UpdatesContent />
+            </Suspense>
             <Footer />
         </div>
     );
