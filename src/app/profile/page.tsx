@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Phone, CheckCircle2, Calculator } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
-import { ChartConfig, ChartContainer, RechartsPrimitive } from '@/components/ui/chart';
+import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import LoadingAnimation from '@/components/loading-animation';
@@ -159,21 +159,14 @@ export default function ProfilePage() {
                                                                 dataKey="value"
                                                                 tick={false}
                                                             />
-                                                            <RechartsPrimitive.RadialBar
+                                                            <RadialBar
                                                                 dataKey="value"
                                                                 background
                                                                 cornerRadius={10}
                                                                 className="fill-primary"
+                                                                isAnimationActive={true}
                                                             >
-                                                                <RechartsPrimitive.Animation
-                                                                    dataKey="value"
-                                                                    type="number"
-                                                                    from={0}
-                                                                    to={cgpaData.cgpa * 10}
-                                                                    duration={1500}
-                                                                    easing="ease"
-                                                                />
-                                                                <RechartsPrimitive.LabelList
+                                                                <LabelList
                                                                     position="center"
                                                                     content={({ viewBox }) => {
                                                                         if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
@@ -199,7 +192,7 @@ export default function ProfilePage() {
                                                                         return null;
                                                                     }}
                                                                 />
-                                                            </RechartsPrimitive.RadialBar>
+                                                            </RadialBar>
                                                         </RadialBarChart>
                                                     </ChartContainer>
                                                 </CardContent>
@@ -233,3 +226,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    
