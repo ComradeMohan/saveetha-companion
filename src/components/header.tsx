@@ -129,14 +129,10 @@ function UserNav() {
 
 
 export default function Header() {
-  const { user, setIsNavigating, isMobileMenuOpen, setMobileMenuOpen } = useAuth();
+  const { user, setIsNavigating } = useAuth();
   
   const handleNavLinkClick = () => {
     setIsNavigating(true);
-  };
-  
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!isMobileMenuOpen);
   };
   
   const desktopNavLinks = React.useMemo(() => {
@@ -161,14 +157,6 @@ export default function Header() {
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
        <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mx-auto max-w-5xl shadow-lg px-6">
         <div className="flex items-center gap-4">
-          {/* Mobile Nav Trigger */}
-           <div className="md:hidden">
-              <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
-                <Menu className={cn("h-6 w-6 transition-transform duration-300", isMobileMenuOpen && "rotate-90 scale-0")}/>
-                <X className={cn("h-6 w-6 absolute transition-transform duration-300", !isMobileMenuOpen && "-rotate-90 scale-0")}/>
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-           </div>
           {/* Logo */}
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />

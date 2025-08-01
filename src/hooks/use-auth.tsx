@@ -49,9 +49,7 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isNavigating: boolean;
-  isMobileMenuOpen: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
-  setMobileMenuOpen: (isOpen: boolean) => void;
   signInWithGoogle: () => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
@@ -111,7 +109,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -302,9 +299,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     isAdmin,
     isNavigating,
-    isMobileMenuOpen,
     setIsNavigating,
-    setMobileMenuOpen,
     signInWithGoogle,
     signUpWithEmailAndPassword,
     loginWithEmailAndPassword,

@@ -22,15 +22,16 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 export default function MobileNav() {
-  const { user, setIsNavigating, isMobileMenuOpen, setMobileMenuOpen } = useAuth();
+  const { user, setIsNavigating } = useAuth();
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const pathname = usePathname();
 
   const handleNavLinkClick = () => {
     setIsNavigating(true);
-    setMobileMenuOpen(false);
+    setMenuOpen(false);
   };
   
-  const toggleMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMenu = () => setMenuOpen(!isMenuOpen);
 
   const navLinks = React.useMemo(() => {
     const commonLinks = [
@@ -56,8 +57,8 @@ export default function MobileNav() {
 
   // Close menu on path change
   React.useEffect(() => {
-    if (isMobileMenuOpen) {
-      setMobileMenuOpen(false);
+    if (isMenuOpen) {
+      setMenuOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -65,7 +66,7 @@ export default function MobileNav() {
   return (
     <div className="md:hidden fixed bottom-0 inset-x-0 z-[40]">
        {/* Backdrop */}
-        {isMobileMenuOpen && (
+        {isMenuOpen && (
             <div
                 className="fixed inset-0 bg-black/40 backdrop-blur-sm"
                 onClick={toggleMenu}
@@ -74,16 +75,16 @@ export default function MobileNav() {
         
       <div className={cn(
           "absolute bottom-20 right-6 transition-all duration-300 ease-in-out",
-          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+          isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}>
           {navLinks.map((link, index) => {
             const angle = 90 + (index * (90 / (navLinks.length > 1 ? navLinks.length -1 : 1)));
             const style = {
-              transform: isMobileMenuOpen
+              transform: isMenuOpen
                 ? `rotate(${angle}deg) translate(7rem) rotate(-${angle}deg)`
                 : 'translate(0,0) scale(0.5)',
-              transitionDelay: isMobileMenuOpen ? `${index * 40}ms` : '0ms',
-              opacity: isMobileMenuOpen ? 1 : 0,
+              transitionDelay: isMenuOpen ? `${index * 40}ms` : '0ms',
+              opacity: isMenuOpen ? 1 : 0,
               transformOrigin: 'bottom right',
             };
 
@@ -106,7 +107,7 @@ export default function MobileNav() {
                     </Button>
                     <span className={cn(
                         "absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-md shadow-md whitespace-nowrap transition-opacity duration-200",
-                        isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                        isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                     )}>
                         {link.label}
                     </span>
@@ -120,17 +121,17 @@ export default function MobileNav() {
             <Button
                 className={cn(
                     "w-16 h-16 rounded-full shadow-lg relative transition-transform duration-300",
-                    isMobileMenuOpen ? "bg-destructive hover:bg-destructive/90" : ""
+                    isMenuOpen ? "bg-destructive hover:bg-destructive/90" : ""
                 )}
                 onClick={toggleMenu}
             >
                 <Menu className={cn(
                     "h-7 w-7 absolute transition-opacity,transform duration-300",
-                    isMobileMenuOpen ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+                    isMenuOpen ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
                 )} />
                 <X className={cn(
                     "h-7 w-7 absolute transition-opacity,transform duration-300",
-                    isMobileMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                    isMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
                 )} />
             </Button>
         </div>
