@@ -31,9 +31,9 @@ export default function AdminLayout({
   }
   
   return (
-    <div className="flex min-h-screen w-full bg-muted/40 group">
+    <div className="flex min-h-screen w-full bg-muted/40">
       <AdminSidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 flex-1 transition-all duration-300 ease-in-out group-hover:sm:pl-56">
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 lg:pl-56 flex-1">
         <AdminHeader />
         <main className="flex-1 overflow-auto p-4 sm:p-0">{children}</main>
       </div>
