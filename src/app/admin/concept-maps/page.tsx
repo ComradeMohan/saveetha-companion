@@ -122,7 +122,7 @@ export default function AdminConceptMapsPage() {
         
         toast({
             title: "Knowledge Feed Complete",
-            description: `Successfully processed ${successCount} documents. ${errorCount} failed.`
+            description: `Successfully processed ${successCount} documents. ${errorCount > 0 ? `${errorCount} failed.` : ''}`
         });
         setIsFeeding(false);
     };
@@ -151,7 +151,7 @@ export default function AdminConceptMapsPage() {
                     <CardHeader>
                         <CardTitle>Available Concept Maps</CardTitle>
                         <CardDescription>
-                            A list of all concept maps in the system. Use the "Feed Knowledge" button to update the AI's knowledge for this session.
+                            Use the "Feed Knowledge to AI" button to update the AI's knowledge base for the current user session.
                         </CardDescription>
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
