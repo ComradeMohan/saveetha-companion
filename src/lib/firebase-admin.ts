@@ -1,5 +1,8 @@
+import { config } from 'dotenv';
+// Running config here ensures environment variables are loaded for all server-side processes.
+config();
+
 import admin from 'firebase-admin';
-import 'dotenv/config';
 
 let app;
 
