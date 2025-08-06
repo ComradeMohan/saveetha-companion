@@ -9,6 +9,7 @@ import { ArrowRight, Bell, Calendar, Calculator, Book, Users, Lightbulb } from '
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import ShareCard from './share-card';
 
 function StatCardSkeleton() {
     return (
@@ -112,8 +113,8 @@ export default function Dashboard() {
                         </Card>
                     </div>
 
-                    {/* Column 3: Quick Links */}
-                    <div className="lg:col-span-1">
+                    {/* Column 3: Quick Links & Share */}
+                    <div className="lg:col-span-1 space-y-6">
                          <Card className="h-full">
                             <CardHeader>
                                 <CardTitle>Quick Links</CardTitle>
@@ -130,6 +131,7 @@ export default function Dashboard() {
                                 ))}
                             </CardContent>
                         </Card>
+                         <ShareCard />
                     </div>
                 </div>
             </div>
