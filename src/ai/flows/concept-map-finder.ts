@@ -33,14 +33,18 @@ export async function conceptMapFinder(input: ConceptMapFinderInput): Promise<Co
   return conceptMapFinderFlow(input);
 }
 
-const conceptMapSearchTool = ai.defineTool(
+export const conceptMapSearchTool = ai.defineTool(
   {
     name: 'conceptMapSearch',
-    description: 'Searches for concept maps related to a given query.',
+    description: 'Searches for concept maps related to a given query based on title and content keywords.',
     inputSchema: z.object({
       query: z.string().describe('The search query for a concept map.'),
     }),
-    outputSchema: z.array(ConceptMapSchema),
+    outputSchema: z.array(z.object({
+        title: z.string(),
+        url: z.string().url(),
+        description: z.string(),
+    })),
   },
   async (input) => {
     // Fetch concept maps from Firestore
@@ -61,7 +65,8 @@ const conceptMapSearchTool = ai.defineTool(
     // Filter the maps based on the query
     const lowercasedQuery = input.query.toLowerCase();
     const filteredMaps = allMaps.filter(map => 
-        map.title.toLowerCase().includes(lowercasedQuery)
+        map.title.toLowerCase().includes(lowercasedQuery) ||
+        (map.description && map.description.toLowerCase().includes(lowercasedQuery))
     );
     
     console.log(`Found ${filteredMaps.length} maps matching the query.`);
@@ -83,8 +88,8 @@ const prompt = ai.definePrompt({
   tools: [conceptMapSearchTool],
   prompt: `You are an AI assistant helping students find relevant concept maps.
 The student will provide a search query.
-1. Use the conceptMapSearch tool with the student's query to get a list of relevant concept maps. The tool has already filtered the maps.
-2. From that list, select up to 6 of the best concept maps. For each map, provide a very brief, one-sentence description based on its title if one isn't provided.
+1. Use the conceptMapSearch tool with the student's query to get a list of relevant concept maps.
+2. From that list, select up to 6 of the best concept maps.
 3. Return only the concept maps that you have selected.
 
 Query: {{{query}}}`,
