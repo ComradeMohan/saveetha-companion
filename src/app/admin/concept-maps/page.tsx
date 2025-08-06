@@ -92,28 +92,37 @@ export default function AdminConceptMapsPage() {
     };
     
     const handleFeedKnowledge = async () => {
+        if(conceptMaps.length === 0) {
+            toast({
+                title: "No Documents Found",
+                description: "Please add at least one concept map before feeding the AI.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         setIsFeeding(true);
         toast({
             title: "Starting AI Knowledge Feed",
             description: `Processing ${conceptMaps.length} documents. This may take a moment.`
         });
 
+        let successCount = 0;
+        let errorCount = 0;
+
         for (const map of conceptMaps) {
             try {
                 await feedKnowledge({ url: map.url });
+                successCount++;
             } catch(e) {
                 console.error(`Failed to feed ${map.title}`, e);
-                 toast({
-                    title: "Feed Error",
-                    description: `Failed to process: ${map.title}`,
-                    variant: "destructive"
-                });
+                errorCount++;
             }
         }
         
         toast({
             title: "Knowledge Feed Complete",
-            description: "The AI has processed all available concept maps for this session."
+            description: `Successfully processed ${successCount} documents. ${errorCount} failed.`
         });
         setIsFeeding(false);
     };

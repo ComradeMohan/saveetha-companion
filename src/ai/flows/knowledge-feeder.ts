@@ -35,6 +35,7 @@ export async function getPdfContent(url: string): Promise<string> {
         // Don't cache empty results to allow for retries
         if(data.text) {
           pdfCache.set(url, data.text);
+          console.log(`[Cache] Stored ${data.text.length} characters for ${url}`);
         }
         return data.text;
     } catch (error) {

@@ -35,36 +35,23 @@ export async function askTutor(input: TutorInput): Promise<TutorOutput> {
   return tutorFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'tutorPrompt',
-  input: { schema: TutorInputSchema },
-  output: { schema: TutorOutputSchema },
-  tools: [conceptMapSearchTool],
-  prompt: `You are an expert academic tutor for college students. Your knowledge base consists of a set of concept maps.
-A student will ask you a question. Your task is to provide a clear, concise, and helpful answer based *only* on the content of the provided documents.
-
-Follow these steps:
-1.  Use the 'conceptMapSearch' tool with the user's question as the query to find a list of relevant concept maps.
-2.  The full text content for each of the documents returned by the tool will be provided below under the 'DOCUMENTS' section.
-3.  Synthesize the information from the provided document content to formulate your answer.
-4.  **IMPORTANT:** Do not use any external knowledge. If the answer cannot be found in the documents, state that clearly. For example: "I could not find information about that topic in the available concept maps."
-5.  List the exact titles and URLs of the documents you used to formulate your answer in the 'sources' output field.
-
-User Question: {{{question}}}
-
-DOCUMENTS:
-{{#if tool_response.conceptMapSearch}}
-  {{#each tool_response.conceptMapSearch}}
----
-Document Title: {{this.title}}
-Document URL: {{this.url}}
+// Helper to create the dynamic prompt content
+async function buildPromptContent(documents: Array<{ title: string; url: string }>): Promise<string> {
+  let content = '';
+  for (const doc of documents) {
+    const pdfText = await getPdfContent(doc.url);
+    if (pdfText) {
+      content += `---
+Document Title: ${doc.title}
+Document URL: ${doc.url}
 Content:
-{{{embed "text" url=this.url}}}
+${pdfText.substring(0, 8000)} 
 ---
-  {{/each}}
-{{/if}}
-`,
-});
+`;
+    }
+  }
+  return content;
+}
 
 const tutorFlow = ai.defineFlow(
   {
@@ -73,27 +60,46 @@ const tutorFlow = ai.defineFlow(
     outputSchema: TutorOutputSchema,
   },
   async (input) => {
-      
-    const llmResponse = await prompt(input, {
-        embedder: async (text: {url: string}) => {
-            return {
-                content: await getPdfContent(text.url)
-            };
-        },
-    });
+    // 1. Use the tool to find relevant documents
+    const relevantDocs = await conceptMapSearchTool({ query: input.question });
+
+    if (!relevantDocs || relevantDocs.length === 0) {
+      return {
+        answer: "I couldn't find any relevant concept maps for your question. Please try a different query or make sure you have fed the AI the necessary knowledge.",
+        sources: [],
+      };
+    }
     
+    // 2. Build the dynamic content for the prompt by fetching PDF content
+    const documentsContent = await buildPromptContent(relevantDocs);
+
+    // 3. Define the final prompt with the fetched content
+    const finalPrompt = `You are an expert academic tutor for college students. Your knowledge base consists of a set of concept maps.
+A student will ask you a question. Your task is to provide a clear, concise, and helpful answer based *only* on the content of the provided documents.
+
+Follow these steps:
+1.  Synthesize the information from the provided document content to formulate your answer.
+2.  **IMPORTANT:** Do not use any external knowledge. If the answer cannot be found in the documents, state that clearly. For example: "I could not find information about that topic in the available concept maps."
+3.  List the exact titles and URLs of the documents you used to formulate your answer in the 'sources' output field.
+
+User Question: ${input.question}
+
+DOCUMENTS:
+${documentsContent}
+`;
+
+    // 4. Generate the response
+    const { output } = await ai.generate({
+      prompt: finalPrompt,
+      output: { schema: TutorOutputSchema },
+    });
+
     // Ensure the output includes sources, even if the LLM forgets.
-    const output = llmResponse.output!;
-    if (llmResponse.history && llmResponse.history.length > 0) {
-      const toolResponse = llmResponse.history[0].toolResponse[0]?.output;
-      if (Array.isArray(toolResponse) && toolResponse.length > 0) {
-        // If the LLM didn't populate sources, do it from the tool response
-        if (!output.sources || output.sources.length === 0) {
-           output.sources = toolResponse.map(doc => ({ title: doc.title, url: doc.url }));
-        }
-      }
+    const finalOutput = output!;
+    if ((!finalOutput.sources || finalOutput.sources.length === 0) && relevantDocs.length > 0) {
+      finalOutput.sources = relevantDocs.map(doc => ({ title: doc.title, url: doc.url }));
     }
 
-    return output;
+    return finalOutput;
   }
 );

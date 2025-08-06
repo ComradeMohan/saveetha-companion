@@ -67,7 +67,7 @@ export const conceptMapSearchTool = ai.defineTool(
     const filteredMaps = allMaps.filter(map => 
         map.title.toLowerCase().includes(lowercasedQuery) ||
         (map.description && map.description.toLowerCase().includes(lowercasedQuery))
-    );
+    ).slice(0, 6); // Limit to 6 results to avoid overwhelming the context
     
     console.log(`Found ${filteredMaps.length} maps matching the query.`);
     
@@ -89,7 +89,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI assistant helping students find relevant concept maps.
 The student will provide a search query.
 1. Use the conceptMapSearch tool with the student's query to get a list of relevant concept maps.
-2. From that list, select up to 6 of the best concept maps.
+2. From that list, select up to 6 of the most relevant concept maps.
 3. Return only the concept maps that you have selected.
 
 Query: {{{query}}}`,
