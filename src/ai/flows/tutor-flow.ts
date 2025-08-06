@@ -59,7 +59,7 @@ DOCUMENTS:
 Document Title: {{this.title}}
 Document URL: {{this.url}}
 Content:
-{{{embed "text" this.url}}}
+{{{embed "text" url=this.url}}}
 ---
   {{/each}}
 {{/if}}
@@ -75,9 +75,11 @@ const tutorFlow = ai.defineFlow(
   async (input) => {
       
     const llmResponse = await prompt(input, {
-        embedder: async (url: string) => ({
-            content: await getPdfContent(url),
-        }),
+        embedder: async (text: {url: string}) => {
+            return {
+                content: await getPdfContent(text.url)
+            };
+        },
     });
     
     // Ensure the output includes sources, even if the LLM forgets.
