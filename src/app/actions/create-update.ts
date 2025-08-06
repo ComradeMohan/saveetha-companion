@@ -35,8 +35,6 @@ export async function createUpdate(prevState: any, formData: FormData) {
             link: link || null, // Store null if link is empty
             createdAt: FieldValue.serverTimestamp(),
         });
-
-        // FCM functionality is removed.
         
         return { 
             type: 'success', 

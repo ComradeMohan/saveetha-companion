@@ -1,3 +1,4 @@
+'use server';
 import { config } from 'dotenv';
 // Running config here ensures environment variables are loaded for all server-side processes.
 config();
@@ -34,7 +35,5 @@ if (!admin.apps.length) {
 }
 
 const adminDb = admin.firestore();
-// Messaging has been removed.
-// const adminMessaging = admin.messaging();
 
 export { adminDb };
