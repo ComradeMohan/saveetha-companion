@@ -11,7 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { conceptMapSearchTool } from './concept-map-finder';
-import pdf from 'pdf-parse';
+import { pdfCache } from './knowledge-feeder'; // Import the shared cache
 
 
 // Define Zod schemas for input and output
@@ -36,30 +36,14 @@ export async function askTutor(input: TutorInput): Promise<TutorOutput> {
 }
 
 
-// In-memory cache for PDF content to avoid re-fetching on every call
-const pdfCache = new Map<string, string>();
-
-async function getPdfContent(url: string): Promise<string> {
+async function getCachedPdfContent(url: string): Promise<string> {
     if (pdfCache.has(url)) {
         return pdfCache.get(url)!;
     }
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch PDF from ${url}: ${response.statusText}`);
-        }
-        const buffer = await response.arrayBuffer();
-        const data = await pdf(buffer);
-        // Don't cache empty results to allow for retries
-        if(data.text) {
-          pdfCache.set(url, data.text);
-        }
-        return data.text;
-    } catch (error) {
-        console.error(`Error processing PDF from ${url}:`, error);
-        return ''; // Return empty string on error
-    }
+    // If not in cache, return an empty string or a message indicating it needs to be fed.
+    // The "Feed Knowledge" flow is responsible for populating the cache.
+    console.warn(`PDF content for ${url} not found in cache. Please run the knowledge feeder.`);
+    return `Content for this document is not currently in memory. An administrator may need to re-feed the knowledge base.`;
 }
 
 
@@ -104,7 +88,7 @@ const tutorFlow = ai.defineFlow(
       
     const llmResponse = await prompt(input, {
         embedder: async (url: string) => ({
-            content: await getPdfContent(url),
+            content: await getCachedPdfContent(url),
         }),
     });
     

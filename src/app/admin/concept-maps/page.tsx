@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, CheckCircle, FileText } from "lucide-react";
 import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -16,14 +16,17 @@ import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { feedKnowledge } from "@/ai/flows/knowledge-feeder";
 
+type MapWithStatus = ConceptMap & { feedStatus?: 'pending' | 'reading' | 'read' };
 
 export default function AdminConceptMapsPage() {
-    const [conceptMaps, setConceptMaps] = useState<ConceptMap[]>([]);
+    const [conceptMaps, setConceptMaps] = useState<MapWithStatus[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
     const [mapToDelete, setMapToDelete] = useState<ConceptMap | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isFeeding, setIsFeeding] = useState(false);
     const { toast } = useToast();
 
     const fetchConceptMaps = useCallback(async () => {
@@ -31,9 +34,9 @@ export default function AdminConceptMapsPage() {
         try {
             const q = query(collection(db, 'concept-maps'), orderBy('title'));
             const querySnapshot = await getDocs(q);
-            const data: ConceptMap[] = [];
+            const data: MapWithStatus[] = [];
             querySnapshot.forEach((doc) => {
-                data.push({ id: doc.id, ...doc.data() } as ConceptMap);
+                data.push({ id: doc.id, ...doc.data(), feedStatus: 'pending' } as MapWithStatus);
             });
             setConceptMaps(data);
         } catch (error) {
@@ -89,26 +92,57 @@ export default function AdminConceptMapsPage() {
             setMapToDelete(null);
         }
     };
+    
+    const handleFeedKnowledge = async () => {
+        setIsFeeding(true);
+        toast({
+            title: "Starting AI Knowledge Feed",
+            description: `Processing ${conceptMaps.length} documents. This may take a moment.`
+        });
+
+        for (const map of conceptMaps) {
+             setConceptMaps(prevMaps => prevMaps.map(m => m.id === map.id ? { ...m, feedStatus: 'reading' } : m));
+            try {
+                await feedKnowledge({ url: map.url });
+                 setConceptMaps(prevMaps => prevMaps.map(m => m.id === map.id ? { ...m, feedStatus: 'read' } : m));
+            } catch(e) {
+                console.error(`Failed to feed ${map.title}`, e);
+                // Optionally update status to 'failed'
+            }
+        }
+        
+        toast({
+            title: "Knowledge Feed Complete",
+            description: "The AI has processed all available concept maps."
+        });
+        setIsFeeding(false);
+    };
 
 
     return (
         <>
             <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">Concept Map Management</h2>
                         <p className="text-muted-foreground">
                             Add, edit, or remove concept maps available to users.
                         </p>
                     </div>
-                    <AddConceptMapDialog onMapAdded={fetchConceptMaps} />
+                    <div className="flex items-center gap-2">
+                         <Button onClick={handleFeedKnowledge} disabled={isFeeding || loading}>
+                            {isFeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
+                            {isFeeding ? 'Feeding...' : 'Feed Knowledge to AI'}
+                        </Button>
+                        <AddConceptMapDialog onMapAdded={fetchConceptMaps} />
+                    </div>
                 </div>
 
                 <Card>
                     <CardHeader>
                         <CardTitle>Available Concept Maps</CardTitle>
                         <CardDescription>
-                            A list of all concept maps in the system.
+                            A list of all concept maps in the system. Use the "Feed Knowledge" button to update the AI.
                         </CardDescription>
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -125,6 +159,7 @@ export default function AdminConceptMapsPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Name</TableHead>
+                                    <TableHead className="w-[120px] text-center">AI Status</TableHead>
                                     <TableHead className="w-[100px] text-center">Link</TableHead>
                                     <TableHead className="w-[100px] text-center">Actions</TableHead>
                                 </TableRow>
@@ -132,7 +167,7 @@ export default function AdminConceptMapsPage() {
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
@@ -141,6 +176,23 @@ export default function AdminConceptMapsPage() {
                                         <TableRow key={map.id}>
                                             <TableCell className="font-medium">
                                                 {map.title}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                {map.feedStatus === 'reading' && (
+                                                    <div className="flex items-center justify-center text-muted-foreground text-xs gap-1">
+                                                        <Loader2 className="h-3 w-3 animate-spin" /> Reading...
+                                                    </div>
+                                                )}
+                                                {map.feedStatus === 'read' && (
+                                                    <div className="flex items-center justify-center text-green-600 text-xs gap-1">
+                                                        <CheckCircle className="h-3 w-3" /> Read
+                                                    </div>
+                                                )}
+                                                {map.feedStatus === 'pending' && (
+                                                     <div className="flex items-center justify-center text-muted-foreground text-xs gap-1">
+                                                        <FileText className="h-3 w-3" /> Pending
+                                                    </div>
+                                                )}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <Button asChild variant="outline" size="icon">
@@ -180,7 +232,7 @@ export default function AdminConceptMapsPage() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             {searchTerm ? "No concept maps match your search." : "No concept maps found."}
                                         </TableCell>
                                     </TableRow>
