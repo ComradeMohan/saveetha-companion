@@ -24,6 +24,7 @@ import {
   Menu,
   Megaphone,
   BarChartHorizontal,
+  BrainCircuit,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -38,6 +39,7 @@ const adminNavLinks = [
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
+  { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
 ];
 
 export default function AdminHeader() {
@@ -45,7 +47,7 @@ export default function AdminHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 md:hidden">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
