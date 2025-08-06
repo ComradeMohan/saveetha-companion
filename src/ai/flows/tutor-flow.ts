@@ -11,7 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { conceptMapSearchTool } from './concept-map-finder';
-import { pdfCache } from './knowledge-feeder'; // Import the shared cache
+import { getPdfContent } from './knowledge-feeder'; 
 
 
 // Define Zod schemas for input and output
@@ -34,18 +34,6 @@ export type TutorOutput = z.infer<typeof TutorOutputSchema>;
 export async function askTutor(input: TutorInput): Promise<TutorOutput> {
   return tutorFlow(input);
 }
-
-
-async function getCachedPdfContent(url: string): Promise<string> {
-    if (pdfCache.has(url)) {
-        return pdfCache.get(url)!;
-    }
-    // If not in cache, return an empty string or a message indicating it needs to be fed.
-    // The "Feed Knowledge" flow is responsible for populating the cache.
-    console.warn(`PDF content for ${url} not found in cache. Please run the knowledge feeder.`);
-    return `Content for this document is not currently in memory. An administrator may need to re-feed the knowledge base.`;
-}
-
 
 const prompt = ai.definePrompt({
   name: 'tutorPrompt',
@@ -88,7 +76,7 @@ const tutorFlow = ai.defineFlow(
       
     const llmResponse = await prompt(input, {
         embedder: async (url: string) => ({
-            content: await getCachedPdfContent(url),
+            content: await getPdfContent(url),
         }),
     });
     

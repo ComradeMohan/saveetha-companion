@@ -6,7 +6,7 @@
  *
  * - feedKnowledge - A function that fetches, parses, and caches PDF content.
  * - KnowledgeFeederInput - The input type for the feedKnowledge function.
- * - pdfCache - An exported Map to be used as a shared in-memory cache.
+ * - getPdfContent - An exported function to retrieve cached PDF content.
  */
 
 import { ai } from '@/ai/genkit';
@@ -14,13 +14,15 @@ import { z } from 'genkit';
 import pdf from 'pdf-parse';
 
 // In-memory cache for PDF content to avoid re-fetching on every call
-// Exported so other flows can access the cached data.
-export const pdfCache = new Map<string, string>();
+// This is NOT exported directly to comply with 'use server' constraints.
+const pdfCache = new Map<string, string>();
 
-async function getPdfContent(url: string): Promise<string> {
+export async function getPdfContent(url: string): Promise<string> {
     if (pdfCache.has(url)) {
+        console.log(`[Cache] HIT for ${url}`);
         return pdfCache.get(url)!;
     }
+    console.log(`[Cache] MISS for ${url}. Fetching and parsing.`);
 
     try {
         const response = await fetch(url);
@@ -29,6 +31,7 @@ async function getPdfContent(url: string): Promise<string> {
         }
         const buffer = await response.arrayBuffer();
         const data = await pdf(buffer);
+        
         // Don't cache empty results to allow for retries
         if(data.text) {
           pdfCache.set(url, data.text);
