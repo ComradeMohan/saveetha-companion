@@ -87,7 +87,7 @@ DOCUMENTS:
 Document Title: {{this.title}}
 Document URL: {{this.url}}
 Content:
-{{{embed "text" (get "this.url")}}}
+{{{embed "text" this.url}}}
 ---
   {{/each}}
 {{/if}}
