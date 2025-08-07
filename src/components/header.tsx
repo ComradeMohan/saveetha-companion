@@ -29,7 +29,6 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
-import ShinyButton from './shiny-button';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -63,7 +62,9 @@ function UserNav() {
 
   if (!user) {
     return (
-        <ShinyButton href="/login" text="Login" />
+        <Button asChild size="sm">
+            <Link href="/login">Login</Link>
+        </Button>
     );
   }
   
