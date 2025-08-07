@@ -8,7 +8,6 @@ import { db } from '@/lib/firebase';
 import type { Project } from '@/lib/supabase';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import LoadingAnimation from '@/components/loading-animation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, Download, File as FileIcon } from 'lucide-react';
@@ -16,6 +15,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -24,6 +24,52 @@ function formatBytes(bytes: number, decimals = 2) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+function ProjectDetailsSkeleton() {
+    return (
+        <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1 py-12 md:py-16 mt-16">
+                <div className="container mx-auto px-4">
+                    <Skeleton className="h-10 w-48 mb-6" />
+                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2">
+                             <Card>
+                                <CardHeader className="p-0">
+                                    <Skeleton className="w-full h-96 rounded-t-xl" />
+                                </CardHeader>
+                                <CardContent className="p-6 space-y-3">
+                                    <Skeleton className="h-6 w-24 mb-2" />
+                                    <Skeleton className="h-8 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                    <div className="space-y-2 pt-4">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-5/6" />
+                                    </div>
+                                </CardContent>
+                             </Card>
+                        </div>
+                        <div className="lg:col-span-1">
+                             <Card>
+                                <CardHeader>
+                                    <Skeleton className="h-8 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                    <Skeleton className="h-16 w-full" />
+                                    <Skeleton className="h-16 w-full" />
+                                    <Skeleton className="h-16 w-full" />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <Footer />
+        </div>
+    )
 }
 
 
@@ -59,11 +105,7 @@ export default function ProjectDetailsPage() {
     }, [id, router]);
 
     if (loading) {
-        return (
-            <div className="flex h-screen w-full items-center justify-center">
-                <LoadingAnimation />
-            </div>
-        );
+        return <ProjectDetailsSkeleton />;
     }
     
     if (!project) {
@@ -143,5 +185,3 @@ export default function ProjectDetailsPage() {
         </div>
     )
 }
-
-    

@@ -12,7 +12,7 @@ import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
-import LoadingAnimation from '@/components/loading-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -66,6 +66,28 @@ export const metadata: Metadata = {
   },
 };
 
+function RootLayoutSkeleton() {
+    return (
+        <div className="flex h-screen w-full flex-col">
+            <header className="fixed top-4 left-0 right-0 z-50 px-4">
+                <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 px-6 shadow-lg">
+                    <Skeleton className="h-8 w-32" />
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-8 w-24 hidden md:block" />
+                        <Skeleton className="h-8 w-24 hidden md:block" />
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                    </div>
+                </div>
+            </header>
+            <main className="flex-1 pt-24">
+                <div className="container mx-auto px-4">
+                    <Skeleton className="h-[70vh] w-full" />
+                </div>
+            </main>
+        </div>
+    );
+}
+
 // Client-side provider wrapper
 function AppProviders({ children }: { children: React.ReactNode }) {
   'use client';
@@ -99,11 +121,7 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
         <ScrollProgress />
         <MouseSpotlight />
-        <Suspense fallback={
-            <div className="flex h-screen w-full items-center justify-center">
-                <LoadingAnimation />
-            </div>
-        }>
+        <Suspense fallback={<RootLayoutSkeleton />}>
             <AppProviders>{children}</AppProviders>
         </Suspense>
         

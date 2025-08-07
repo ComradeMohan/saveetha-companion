@@ -14,7 +14,7 @@ import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import LoadingAnimation from '@/components/loading-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface UserProfile {
   name: string;
@@ -28,6 +28,37 @@ interface UserProfile {
 interface CgpaData {
     cgpa: number;
     totalCredits: number;
+}
+
+function ProfilePageSkeleton() {
+    return (
+        <Card className="max-w-3xl mx-auto p-2 sm:p-0">
+            <CardHeader>
+                <Skeleton className="h-8 w-48 mb-2" />
+                <Skeleton className="h-4 w-72" />
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-6">
+                    <div className="flex items-center gap-4 border-b pb-6">
+                        <Skeleton className="h-20 w-20 rounded-full" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-8 w-40" />
+                            <Skeleton className="h-4 w-52" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
+                        <div className="space-y-4">
+                            <Skeleton className="h-16 w-full rounded-lg" />
+                            <Skeleton className="h-16 w-full rounded-lg" />
+                        </div>
+                        <div>
+                             <Skeleton className="h-64 w-full rounded-lg" />
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
 }
 
 export default function ProfilePage() {
@@ -92,17 +123,13 @@ export default function ProfilePage() {
         <Header />
         <main className="flex-1 py-12 md:py-16">
             <div className="container mx-auto px-4">
-                <Card className="max-w-3xl mx-auto p-2 sm:p-0">
-                    <CardHeader>
-                        <CardTitle className="text-2xl">Your Profile</CardTitle>
-                        <CardDescription>View your personal information and academic progress.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {loading || authLoading ? (
-                            <div className="flex justify-center items-center py-10">
-                                <LoadingAnimation />
-                            </div>
-                        ) : profile ? (
+                {loading || authLoading ? <ProfilePageSkeleton /> : profile ? (
+                    <Card className="max-w-3xl mx-auto p-2 sm:p-0">
+                        <CardHeader>
+                            <CardTitle className="text-2xl">Your Profile</CardTitle>
+                            <CardDescription>View your personal information and academic progress.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
                             <div className="space-y-6">
                                 <div className="flex items-center gap-4 border-b pb-6">
                                     <Avatar className="h-20 w-20">
@@ -213,18 +240,16 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
                             </div>
-                        ) : (
-                            <div className="text-center py-10">
-                                <p className="text-muted-foreground">Could not load profile information.</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="text-center py-10">
+                        <p className="text-muted-foreground">Could not load profile information.</p>
+                    </div>
+                )}
             </div>
         </main>
         <Footer />
     </div>
   );
 }
-
-    

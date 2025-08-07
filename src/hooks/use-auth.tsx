@@ -25,7 +25,7 @@ import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
-import LoadingAnimation from '@/components/loading-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 
@@ -308,11 +308,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
   };
 
-  const PageLoader = () => (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <LoadingAnimation />
-    </div>
-  );
+  function PageLoader() {
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            <div className="flex h-screen w-full flex-col p-4">
+                <header className="flex h-16 items-center justify-between rounded-full border bg-background/95 px-6 shadow-lg mb-4">
+                    <Skeleton className="h-8 w-32" />
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-8 w-24 hidden md:block" />
+                        <Skeleton className="h-8 w-24 hidden md:block" />
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                    </div>
+                </header>
+                <main className="flex-1">
+                    <Skeleton className="h-full w-full rounded-xl" />
+                </main>
+            </div>
+        </div>
+    );
+  }
 
   if (loading) {
     return <PageLoader />;

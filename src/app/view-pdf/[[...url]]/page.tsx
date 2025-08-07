@@ -4,10 +4,10 @@
 import { useParams } from 'next/navigation';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import LoadingAnimation from '@/components/loading-animation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PdfViewerPage() {
   const params = useParams();
@@ -44,9 +44,7 @@ export default function PdfViewerPage() {
               aria-label="PDF Viewer Content"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center">
-                <LoadingAnimation />
-            </div>
+            <Skeleton className="h-full w-full rounded-lg border" />
           )}
         </div>
       </main>
