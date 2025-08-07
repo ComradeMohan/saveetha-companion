@@ -53,7 +53,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
       <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
         <defs>
             <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
                 <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
             </linearGradient>
         </defs>
@@ -76,6 +76,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
           axisLine={false}
           tickFormatter={(value) => `${value}`}
           allowDecimals={false}
+          width={30}
         />
         <Tooltip
             contentStyle={{
@@ -84,9 +85,20 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
                 borderRadius: "var(--radius)",
                 color: "hsl(var(--foreground))"
             }}
-            cursor={{ fill: 'hsl(var(--accent))' }}
+            cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1.5 }}
+            labelStyle={{ fontWeight: 'bold' }}
+            formatter={(value) => [`${value} new users`, 'Signups']}
         />
-        <Area type="monotone" dataKey="total" stroke="hsl(var(--primary))" fill="url(#colorTotal)" fillOpacity={1} />
+        <Area 
+            type="monotone" 
+            dataKey="total" 
+            stroke="hsl(var(--primary))" 
+            strokeWidth={2}
+            fillOpacity={1} 
+            fill="url(#colorTotal)"
+            dot={{ r: 0 }}
+            activeDot={{ r: 6, strokeWidth: 1, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--background))' }}
+        />
       </AreaChart>
     </ResponsiveContainer>
   );

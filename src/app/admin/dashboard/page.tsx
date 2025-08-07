@@ -33,7 +33,7 @@ function StatCard({ title, value, icon: Icon, description, loading, href }: { ti
 
   if (href) {
     return (
-      <Link href={href} target="_blank" rel="noopener noreferrer">
+      <Link href={href} target="_blank" rel="noopener noreferrer" className="block">
         {cardContent}
       </Link>
     )
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
         <Card className="col-span-full">
             <CardHeader>
                 <CardTitle>Recent Signups</CardTitle>
-                <CardDescription>A chart of new users over the last 30 days.</CardDescription>
+                <CardDescription>A chart of new users over the last 30 days, mimicking the Active Users trend.</CardDescription>
             </CardHeader>
             <CardContent className="pl-2">
                 <RecentSignups userList={stats.userList} loading={loading} />
