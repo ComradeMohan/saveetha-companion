@@ -33,7 +33,7 @@ import { usePathname } from 'next/navigation';
 const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
-  { href: '/admin/projects', label: 'Projects', icon: Package },
+  { href: '/admin/projects', label: 'Ecommerce', icon: Package },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
@@ -99,3 +99,5 @@ export default function AdminHeader() {
     </header>
   );
 }
+
+    

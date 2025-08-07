@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Trash2, Search, Package, Image as ImageIcon } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Trash2, Search, Package, Image as ImageIcon, AlertTriangle } from "lucide-react";
 import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function AdminProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -97,13 +98,21 @@ export default function AdminProjectsPage() {
             <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight">Project Marketplace</h2>
+                        <h2 className="text-3xl font-bold tracking-tight">Ecommerce Marketplace</h2>
                         <p className="text-muted-foreground">
                             Add, edit, or remove projects available to students.
                         </p>
                     </div>
                     <AddProjectDialog onProjectAdded={fetchProjects} />
                 </div>
+
+                 <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Action Required</AlertTitle>
+                    <AlertDescription>
+                       To enable file uploads, you must create a Supabase Storage bucket named `project-files` and set it to be public.
+                    </AlertDescription>
+                </Alert>
 
                 <Card>
                     <CardHeader>
@@ -213,3 +222,5 @@ export default function AdminProjectsPage() {
         </>
     );
 }
+
+    

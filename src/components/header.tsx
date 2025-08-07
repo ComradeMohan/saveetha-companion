@@ -139,7 +139,7 @@ export default function Header() {
   const desktopNavLinks = React.useMemo(() => {
     if (user) {
        return [
-            { href: '/projects', label: 'Projects' },
+            { href: '/projects', label: 'Ecommerce' },
             { href: '/#calculators', label: 'Calculators' },
             { href: '/#concepts', label: 'Concepts' },
             { href: '/#faculty', label: 'Faculty' },
@@ -150,7 +150,7 @@ export default function Header() {
     }
     return [
         { href: '/#features', label: 'Features' },
-        { href: '/projects', label: 'Projects' },
+        { href: '/projects', label: 'Ecommerce' },
         { href: '/#stats', label: 'Stats' },
         { href: '/contact', label: 'Contact Us' },
     ];
@@ -185,3 +185,5 @@ export default function Header() {
     </header>
   );
 }
+
+    

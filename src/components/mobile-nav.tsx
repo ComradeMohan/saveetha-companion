@@ -37,7 +37,7 @@ export default function MobileNav() {
   const navLinks = React.useMemo(() => {
     const commonLinks = [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/projects', label: 'Projects', icon: Package },
+        { href: '/projects', label: 'Ecommerce', icon: Package },
         { href: '/#calculators', label: 'Calculators', icon: Calculator },
         { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
         { href: '/#faculty', label: 'Faculty', icon: Users },
@@ -52,7 +52,7 @@ export default function MobileNav() {
     return [
         { href: '/', label: 'Home', icon: Home },
         { href: '/#features', label: 'Features', icon: LayoutGrid },
-        { href: '/projects', label: 'Projects', icon: Package },
+        { href: '/projects', label: 'Ecommerce', icon: Package },
         { href: '/#stats', label: 'Stats', icon: BarChart3 },
         { href: '/contact', label: 'Contact Us', icon: Contact },
     ];
@@ -140,3 +140,5 @@ export default function MobileNav() {
     </div>
   );
 }
+
+    

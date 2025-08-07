@@ -78,7 +78,7 @@ export default function ProjectDetailsPage() {
                      <Button asChild variant="outline" className="mb-6">
                         <Link href="/projects">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to All Projects
+                            Back to Ecommerce
                         </Link>
                     </Button>
 
@@ -143,3 +143,5 @@ export default function ProjectDetailsPage() {
         </div>
     )
 }
+
+    

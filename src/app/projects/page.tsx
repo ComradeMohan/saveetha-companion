@@ -65,7 +65,7 @@ export default function ProjectsPage() {
             <main className="flex-1 py-12 md:py-16">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold tracking-tight">Projects Marketplace</h2>
+                        <h2 className="text-3xl font-bold tracking-tight">Ecommerce Marketplace</h2>
                         <p className="text-muted-foreground mt-2">
                             Explore projects, reports, and digital assets from students.
                         </p>
@@ -123,3 +123,5 @@ export default function ProjectsPage() {
         </div>
     );
 }
+
+    

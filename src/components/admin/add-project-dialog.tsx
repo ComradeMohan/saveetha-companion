@@ -257,3 +257,5 @@ export function AddProjectDialog({ onProjectAdded }: AddProjectDialogProps) {
     </Dialog>
   );
 }
+
+    
