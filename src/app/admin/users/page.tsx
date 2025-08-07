@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { generateVerificationLink } from "@/app/actions/send-verification-link";
+import { sendPasswordResetLink } from "@/app/actions/send-reset-email";
 
 interface User {
     id: string;
@@ -128,15 +128,15 @@ export default function AdminUsersPage() {
         });
     };
     
-    const handleSendVerification = async (user: User) => {
+    const handleSendReset = async (user: User) => {
         setIsSendingLink(user.id);
-        const result = await generateVerificationLink(user.email);
+        const result = await sendPasswordResetLink(user.email);
         
-        if (result.type === 'success' && result.link) {
-            await navigator.clipboard.writeText(result.link);
+        if (result.type === 'success' && result.mailto) {
+            window.location.href = result.mailto;
             toast({
-                title: 'Link Copied!',
-                description: `Verification link for ${user.email} is copied to your clipboard.`,
+                title: 'Email Client Opening',
+                description: `Your email client is opening with a pre-filled password reset email for ${user.email}.`,
             });
         } else {
             toast({
@@ -244,7 +244,7 @@ export default function AdminUsersPage() {
                                                 <Button 
                                                     variant="outline" 
                                                     size="sm"
-                                                    onClick={() => handleSendVerification(user)}
+                                                    onClick={() => handleSendReset(user)}
                                                     disabled={isSendingLink === user.id}
                                                 >
                                                     {isSendingLink === user.id ? (
@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
                                                     ) : (
                                                         <Send className="mr-2 h-4 w-4" />
                                                     )}
-                                                    Send Link
+                                                    Send Reset
                                                 </Button>
                                             )}
                                         </TableCell>
