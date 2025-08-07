@@ -10,9 +10,10 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { conceptMapSearchTool } from './concept-map-finder';
 import { getPdfContent } from './knowledge-feeder'; 
-
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { ConceptMap } from '@/lib/concept-map-data';
 
 // Define Zod schemas for input and output
 const TutorInputSchema = z.object({
@@ -60,31 +61,37 @@ const tutorFlow = ai.defineFlow(
     outputSchema: TutorOutputSchema,
   },
   async (input) => {
-    // 1. Use the tool to find relevant documents
-    const relevantDocs = await conceptMapSearchTool({ query: input.question });
+    // 1. Fetch ALL documents from Firestore to build context.
+    const mapsRef = collection(db, 'concept-maps');
+    const querySnapshot = await getDocs(mapsRef);
+    const allDocs: ConceptMap[] = [];
+    querySnapshot.forEach((doc) => {
+        allDocs.push({ id: doc.id, ...doc.data() } as ConceptMap);
+    });
 
-    if (!relevantDocs || relevantDocs.length === 0) {
+    if (!allDocs || allDocs.length === 0) {
       return {
-        answer: "I couldn't find any relevant concept maps for your question. Please try a different query or make sure you have fed the AI the necessary knowledge.",
+        answer: "I couldn't find any concept maps in the knowledge base. Please ask an administrator to add some.",
         sources: [],
       };
     }
     
     // 2. Build the dynamic content for the prompt by fetching PDF content
-    const documentsContent = await buildPromptContent(relevantDocs);
+    const documentsContent = await buildPromptContent(allDocs);
 
     // 3. Define the final prompt with the fetched content
     const finalPrompt = `You are an expert academic tutor for college students. Your knowledge base consists of a set of concept maps.
 A student will ask you a question. Your task is to provide a clear, concise, and helpful answer based *only* on the content of the provided documents.
 
 Follow these steps:
-1.  Synthesize the information from the provided document content to formulate your answer.
-2.  **IMPORTANT:** Do not use any external knowledge. If the answer cannot be found in the documents, state that clearly. For example: "I could not find information about that topic in the available concept maps."
-3.  List the exact titles and URLs of the documents you used to formulate your answer in the 'sources' output field.
+1.  Read the user's question and all the provided document content.
+2.  Synthesize the information from ALL documents to formulate your answer.
+3.  **IMPORTANT:** Do not use any external knowledge. If the answer cannot be found in the documents, state that clearly. For example: "I could not find information about that topic in the available concept maps."
+4.  After providing the answer, you **MUST** list the exact titles and URLs of the specific documents you used to formulate your answer in the 'sources' output field. Only list the documents that were actually relevant to your answer.
 
 User Question: ${input.question}
 
-DOCUMENTS:
+AVAILABLE DOCUMENTS:
 ${documentsContent}
 `;
 
@@ -93,13 +100,7 @@ ${documentsContent}
       prompt: finalPrompt,
       output: { schema: TutorOutputSchema },
     });
-
-    // Ensure the output includes sources, even if the LLM forgets.
-    const finalOutput = output!;
-    if ((!finalOutput.sources || finalOutput.sources.length === 0) && relevantDocs.length > 0) {
-      finalOutput.sources = relevantDocs.map(doc => ({ title: doc.title, url: doc.url }));
-    }
-
-    return finalOutput;
+    
+    return output!;
   }
 );

@@ -2,63 +2,59 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { File as FileIcon, Lightbulb, Search, FileText } from 'lucide-react';
+import { File as FileIcon, Lightbulb, Search, FileText, Loader2 } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { conceptMapFinder } from '@/ai/flows/concept-map-finder';
-import type { ConceptMapFinderOutput } from '@/ai/flows/concept-map-finder';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { ConceptMap } from '@/lib/concept-map-data';
 
 export default function ConceptMapFinder() {
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<ConceptMapFinderOutput>([]);
+  const [loading, setLoading] = useState(true);
+  const [allMaps, setAllMaps] = useState<ConceptMap[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
-  
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+
+  const fetchMaps = useCallback(async () => {
+    setLoading(true);
+    try {
+        const q = query(collection(db, 'concept-maps'), orderBy('title'));
+        const querySnapshot = await getDocs(q);
+        const mapsData: ConceptMap[] = [];
+        querySnapshot.forEach((doc) => {
+            mapsData.push({ id: doc.id, ...doc.data() } as ConceptMap);
+        });
+        setAllMaps(mapsData);
+    } catch (error) {
+        console.error("Error fetching concept maps:", error);
+    } finally {
+        setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-        setResults([]);
-        setHasSearched(false);
-        return;
+    fetchMaps();
+  }, [fetchMaps]);
+  
+  const filteredMaps = useMemo(() => {
+    if (!searchTerm) {
+        return allMaps;
     }
-
-    const handler = setTimeout(async () => {
-        setLoading(true);
-        setHasSearched(true);
-        const res = await conceptMapFinder({ query: searchTerm });
-        setResults(res);
-        setLoading(false);
-    }, 500); // Debounce search
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
+    const lowercasedFilter = searchTerm.toLowerCase();
+    return allMaps.filter(map => map.title.toLowerCase().includes(lowercasedFilter));
+  }, [searchTerm, allMaps]);
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold tracking-tight">Concept Map Library</h2>
         <p className="text-muted-foreground mt-2">
-          Use AI to find the most relevant concept maps for your subjects.
+          Find and view concept maps for your subjects and courses.
         </p>
          <p className="text-sm text-muted-foreground mt-2">
-          (Want to upload missing concept maps or files?{' '}
-          <a
-            href="https://saveetha-hub.netlify.app/file-manager"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline hover:text-primary/80"
-          >
-            Upload here
-          </a>
-          )
+          (Want to upload missing concept maps? Admins can add them in the dashboard.)
         </p>
       </div>
 
@@ -66,10 +62,10 @@ export default function ConceptMapFinder() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search for a concept, e.g., 'data structures'"
+          placeholder="Search by title..."
           className="pl-10 w-full"
           value={searchTerm}
-          onChange={handleSearchChange}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -83,8 +79,8 @@ export default function ConceptMapFinder() {
               </div>
             </Card>
           ))
-        ) : hasSearched && results.length > 0 ? (
-          results.map((map, index) => {
+        ) : filteredMaps.length > 0 ? (
+          filteredMaps.map((map) => {
             const isPdf = map.url.toLowerCase().endsWith('.pdf');
             const href = isPdf ? `/view-pdf/${encodeURIComponent(map.url)}` : map.url;
             const target = isPdf ? '_self' : '_blank';
@@ -92,7 +88,7 @@ export default function ConceptMapFinder() {
 
             return (
               <Link
-                key={map.title + index}
+                key={map.id}
                 href={href}
                 target={target}
                 rel={target === '_blank' ? 'noopener noreferrer' : ''}
@@ -114,7 +110,7 @@ export default function ConceptMapFinder() {
           <div className="col-span-full text-center py-10">
             <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
             <p className="mt-4 text-muted-foreground">
-              {hasSearched ? 'No concept maps match your search.' : 'Start typing to find concept maps.'}
+              {searchTerm ? 'No concept maps match your search.' : 'No concept maps available.'}
             </p>
           </div>
         )}
