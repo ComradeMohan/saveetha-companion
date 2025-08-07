@@ -26,7 +26,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Textarea } from './ui/textarea';
 
@@ -64,7 +64,7 @@ export function SuggestFacultyDialog({ onSuggestionAdded }: SuggestFacultyDialog
       await addDoc(collection(db, 'faculty-requests'), {
         ...values,
         status: 'pending',
-        createdAt: serverTimestamp(),
+        createdAt: new Date().toISOString(),
       });
 
       toast({

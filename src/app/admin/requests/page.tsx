@@ -18,10 +18,7 @@ interface FacultyRequest {
   department: string;
   roomNo?: string;
   status: 'pending';
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
+  createdAt: string; // Changed to string to match submitted data
 }
 
 export default function AdminFacultyRequestsPage() {
@@ -157,7 +154,7 @@ export default function AdminFacultyRequestsPage() {
                     <TableCell>{req.phone}</TableCell>
                     <TableCell>{req.department}</TableCell>
                     <TableCell>
-                      {req.createdAt ? formatDistanceToNow(new Date(req.createdAt.seconds * 1000), { addSuffix: true }) : 'N/A'}
+                      {req.createdAt ? formatDistanceToNow(new Date(req.createdAt), { addSuffix: true }) : 'N/A'}
                     </TableCell>
                     <TableCell className="text-center">
                       {processingId === req.id ? (
