@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, CheckCircle2, XCircle, Download } from "lucide-react";
+import { Loader2, Search, CheckCircle2, XCircle, Download, Send } from "lucide-react";
 import { collection, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { generateVerificationLink } from "@/app/actions/send-verification-link";
 
 interface User {
     id: string;
@@ -31,6 +32,7 @@ export default function AdminUsersPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState<"all" | "verified" | "unverified">("all");
+    const [isSendingLink, setIsSendingLink] = useState<string | null>(null);
     const { toast } = useToast();
 
     const fetchUsers = useCallback(async () => {
@@ -125,6 +127,26 @@ export default function AdminUsersPage() {
             description: `${filteredUsers.length} user records have been exported.`
         });
     };
+    
+    const handleSendVerification = async (user: User) => {
+        setIsSendingLink(user.id);
+        const result = await generateVerificationLink(user.email);
+        
+        if (result.type === 'success' && result.link) {
+            await navigator.clipboard.writeText(result.link);
+            toast({
+                title: 'Link Copied!',
+                description: `Verification link for ${user.email} is copied to your clipboard.`,
+            });
+        } else {
+            toast({
+                title: 'Error',
+                description: result.message,
+                variant: 'destructive',
+            });
+        }
+        setIsSendingLink(null);
+    };
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -172,12 +194,13 @@ export default function AdminUsersPage() {
                                 <TableHead>Contact</TableHead>
                                 <TableHead>Last Signed In</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead className="text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="h-24 text-center">
+                                    <TableCell colSpan={5} className="h-24 text-center">
                                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                     </TableCell>
                                 </TableRow>
@@ -216,11 +239,28 @@ export default function AdminUsersPage() {
                                                 {user.isVerified ? 'Verified' : 'Unverified'}
                                             </Badge>
                                         </TableCell>
+                                        <TableCell className="text-center">
+                                            {!user.isVerified && (
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm"
+                                                    onClick={() => handleSendVerification(user)}
+                                                    disabled={isSendingLink === user.id}
+                                                >
+                                                    {isSendingLink === user.id ? (
+                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <Send className="mr-2 h-4 w-4" />
+                                                    )}
+                                                    Send Link
+                                                </Button>
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="h-24 text-center">
+                                    <TableCell colSpan={5} className="h-24 text-center">
                                         {searchTerm || filterStatus !== 'all' ? "No users match your criteria." : "No users found."}
                                     </TableCell>
                                 </TableRow>

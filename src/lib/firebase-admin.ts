@@ -1,3 +1,4 @@
+
 import { config } from 'dotenv';
 // Running config here ensures environment variables are loaded for all server-side processes.
 config();
@@ -33,6 +34,16 @@ if (!admin.apps.length) {
     app = admin.app();
 }
 
-const adminDb = admin.firestore();
+const adminDb = app ? admin.firestore() : null;
+const adminAuth = app ? admin.auth() : null;
 
-export { adminDb };
+// Add a check to ensure db is not null before exporting
+if (!adminDb) {
+    // This will prevent the app from starting if admin SDK fails, which is safer
+    // for operations that absolutely depend on it.
+    // A more graceful fallback could be implemented if parts of the app can run without it.
+    throw new Error("Firestore Admin DB could not be initialized. Server actions will fail.");
+}
+
+
+export { adminDb, adminAuth };
