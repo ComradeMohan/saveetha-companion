@@ -1,6 +1,9 @@
 
 'use server';
 
+import { config } from 'dotenv';
+config(); // Ensure environment variables are loaded
+
 import { getAuth } from 'firebase-admin/auth';
 import { z } from 'zod';
 
