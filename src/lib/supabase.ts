@@ -19,3 +19,20 @@ export type FileUpload = {
   created_at: string;
   updated_at: string;
 };
+
+export interface ProjectFile {
+    name: string;
+    url: string;
+    type: string;
+    size: number;
+}
+
+export interface Project {
+    id: string;
+    title: string;
+    description: string;
+    category: 'Hardware' | 'Software' | 'Digital Asset';
+    thumbnailUrl: string;
+    files: ProjectFile[];
+    createdAt: string;
+}

@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -138,6 +139,7 @@ export default function Header() {
   const desktopNavLinks = React.useMemo(() => {
     if (user) {
        return [
+            { href: '/projects', label: 'Projects' },
             { href: '/#calculators', label: 'Calculators' },
             { href: '/#concepts', label: 'Concepts' },
             { href: '/#faculty', label: 'Faculty' },
@@ -148,6 +150,7 @@ export default function Header() {
     }
     return [
         { href: '/#features', label: 'Features' },
+        { href: '/projects', label: 'Projects' },
         { href: '/#stats', label: 'Stats' },
         { href: '/contact', label: 'Contact Us' },
     ];
