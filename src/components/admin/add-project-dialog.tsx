@@ -71,6 +71,8 @@ export function AddProjectDialog({ onProjectAdded }: AddProjectDialogProps) {
       title: '',
       description: '',
       files: [],
+      category: undefined,
+      thumbnail: undefined,
     },
   });
   
@@ -190,7 +192,7 @@ export function AddProjectDialog({ onProjectAdded }: AddProjectDialogProps) {
                 <FormField
                     control={form.control}
                     name="thumbnail"
-                    render={({ field: { onChange, ...rest } }) => (
+                    render={({ field: { onChange, value, ...rest } }) => (
                         <FormItem>
                             <FormLabel>Thumbnail Image</FormLabel>
                             <FormControl>
