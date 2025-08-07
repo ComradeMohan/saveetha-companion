@@ -5,13 +5,15 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Search, CheckCircle2, XCircle, Download } from "lucide-react";
 import { collection, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { format, formatDistanceToNow } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface User {
     id: string;
@@ -28,6 +30,7 @@ export default function AdminUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [filterStatus, setFilterStatus] = useState<"all" | "verified" | "unverified">("all");
     const { toast } = useToast();
 
     const fetchUsers = useCallback(async () => {
@@ -67,17 +70,61 @@ export default function AdminUsersPage() {
     }, [fetchUsers]);
 
     const filteredUsers = useMemo(() => {
-        if (!searchTerm) {
-            return users;
+        return users.filter(user => {
+            const searchMatch = !searchTerm ||
+                user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.regNo?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const statusMatch = filterStatus === 'all' ||
+                (filterStatus === 'verified' && user.isVerified) ||
+                (filterStatus === 'unverified' && !user.isVerified);
+
+            return searchMatch && statusMatch;
+        });
+    }, [searchTerm, users, filterStatus]);
+    
+    const exportToCsv = () => {
+        if (filteredUsers.length === 0) {
+            toast({
+                title: "No data to export",
+                description: "The current table is empty.",
+                variant: "destructive"
+            });
+            return;
         }
-        const lowercasedFilter = searchTerm.toLowerCase();
-        return users.filter(
-            user =>
-                user.name?.toLowerCase().includes(lowercasedFilter) ||
-                user.email?.toLowerCase().includes(lowercasedFilter) ||
-                user.regNo?.toLowerCase().includes(lowercasedFilter)
-        );
-    }, [searchTerm, users]);
+
+        const headers = ["Name", "Email", "Registration No.", "Phone", "Status", "Last Signed In"];
+        const csvRows = [headers.join(",")];
+
+        filteredUsers.forEach(user => {
+            const row = [
+                `"${user.name || 'N/A'}"`,
+                `"${user.email || 'N/A'}"`,
+                `"${user.regNo || 'Not Provided'}"`,
+                `"${user.phone || 'Not Provided'}"`,
+                user.isVerified ? 'Verified' : 'Unverified',
+                user.lastSignInTime ? `"${format(new Date(user.lastSignInTime), 'yyyy-MM-dd HH:mm:ss')}"` : 'N/A'
+            ];
+            csvRows.push(row.join(","));
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+            title: "Export Successful",
+            description: `${filteredUsers.length} user records have been exported.`
+        });
+    };
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -89,14 +136,32 @@ export default function AdminUsersPage() {
                     <CardDescription>
                         A list of all users who have signed up for the application.
                     </CardDescription>
-                    <div className="relative pt-2">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search by name, email, or registration no..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 w-full md:w-1/2 lg:w-1/3"
-                        />
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                        <div className="relative flex-grow">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search by name, email, or registration no..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10 w-full"
+                            />
+                        </div>
+                        <div className="flex gap-2">
+                             <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as any)}>
+                                <SelectTrigger className="w-full sm:w-[180px]">
+                                    <SelectValue placeholder="Filter by status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Users</SelectItem>
+                                    <SelectItem value="verified">Verified Only</SelectItem>
+                                    <SelectItem value="unverified">Unverified Only</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button variant="outline" onClick={exportToCsv}>
+                                <Download className="mr-2 h-4 w-4" />
+                                Export CSV
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -156,7 +221,7 @@ export default function AdminUsersPage() {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center">
-                                        {searchTerm ? "No users match your search." : "No users found."}
+                                        {searchTerm || filterStatus !== 'all' ? "No users match your criteria." : "No users found."}
                                     </TableCell>
                                 </TableRow>
                             )}
