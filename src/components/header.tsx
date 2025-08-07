@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
+import ShinyButton from './shiny-button';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -62,9 +63,7 @@ function UserNav() {
 
   if (!user) {
     return (
-      <Button asChild onClick={() => setIsNavigating(true)}>
-        <Link href="/login">Login</Link>
-      </Button>
+        <ShinyButton href="/login" text="Login" />
     );
   }
   
@@ -169,7 +168,7 @@ export default function Header() {
           </Link>
         </div>
         
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-4">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              {desktopNavLinks.map(link => (
@@ -185,5 +184,3 @@ export default function Header() {
     </header>
   );
 }
-
-    

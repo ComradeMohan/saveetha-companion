@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowDown } from 'lucide-react';
+import ShinyButton from '@/components/shiny-button';
 
 export default function Hero() {
   return (
@@ -14,10 +15,8 @@ export default function Hero() {
           Welcome to the Saveetha Companion. Calculate your CGPA, track attendance, find resources, and connect with faculty, all in one place.
         </p>
         <div className="mt-8 flex flex-col justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
-            <div className="flex flex-col sm:flex-row gap-4">
-                 <Button asChild size="lg">
-                    <Link href="/signup">Get Started</Link>
-                </Button>
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+                 <ShinyButton href="/signup" text="Get Started" />
                 <Button asChild size="lg" variant="outline">
                     <Link href="#calculators">Try the Calculators</Link>
                 </Button>
