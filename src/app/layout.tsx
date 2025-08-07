@@ -107,6 +107,27 @@ export default function RootLayout({
             <AppProviders>{children}</AppProviders>
         </Suspense>
         
+        {/* Brevo Scripts */}
+        <Script
+            src="https://cdn.brevo.com/js/sdk-loader.js"
+            strategy="afterInteractive"
+        ></Script>
+        <Script
+            id="brevo-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+                __html: `
+                    window.Brevo = window.Brevo || [];
+                    Brevo.push([
+                        "init",
+                        {
+                            client_key: "h2nonnfiuy1mwevmjw4t6vdq",
+                        }
+                    ]);
+                `,
+            }}
+        />
+        
         {/* Google Analytics Scripts - Moved to end of body */}
         <Script
           key="gtag-js"
