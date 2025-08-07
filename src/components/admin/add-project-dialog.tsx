@@ -80,10 +80,12 @@ export function AddProjectDialog({ onProjectAdded }: AddProjectDialogProps) {
 
   const uploadFile = async (file: File): Promise<string> => {
     if (!user) throw new Error("User not authenticated");
+    // Ensure the filepath includes the user's ID for proper RLS policy application
     const filePath = `projects/${user.uid}/${uuidv4()}-${file.name}`;
     const { error } = await supabase.storage.from('project-files').upload(filePath, file);
 
     if (error) {
+      // The error message from Supabase is now more likely to be about RLS.
       throw new Error(`Supabase upload error: ${error.message}`);
     }
 
@@ -257,5 +259,3 @@ export function AddProjectDialog({ onProjectAdded }: AddProjectDialogProps) {
     </Dialog>
   );
 }
-
-    
