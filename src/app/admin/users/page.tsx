@@ -101,8 +101,8 @@ export default function AdminUsersPage() {
             const row = [
                 `"${user.name || 'N/A'}"`,
                 `"${user.email || 'N/A'}"`,
-                `"${user.regNo || 'Not Provided'}"`,
-                `"${user.phone || 'Not Provided'}"`,
+                user.regNo ? `="\\"${user.regNo}\\""` : '"Not Provided"',
+                user.phone ? `="\\"${user.phone}\\""` : '"Not Provided"',
                 user.isVerified ? 'Verified' : 'Unverified',
                 user.lastSignInTime ? `"${format(new Date(user.lastSignInTime), 'yyyy-MM-dd HH:mm:ss')}"` : 'N/A'
             ];
