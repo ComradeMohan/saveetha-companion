@@ -61,58 +61,50 @@
     @apply bg-background text-foreground;
   }
 
-  body::before {
-    content: "";
-    position: fixed;
-    top: -150px;
-    right: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, hsl(var(--primary) / 0.1), transparent 70%);
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.8;
-    animation: blobMove 20s infinite ease-in-out;
-    z-index: -1;
+  .auth-panel-bg {
+    position: relative;
+    overflow: hidden;
   }
 
-  body::after {
-    content: "";
-    position: fixed;
-    bottom: -200px;
-    left: -200px;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, hsl(260 100% 90% / 0.2), transparent 70%);
+  .auth-panel-bg .shape {
+    position: absolute;
+    background-color: hsl(var(--primary) / 0.1);
     border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.7;
-    animation: blobMoveReverse 25s infinite ease-in-out;
-    z-index: -1;
+    animation: float 15s infinite ease-in-out;
   }
-  
-  .dark body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: radial-gradient(
-      80% 80% at 50% 50%,
-      rgba(120, 80, 228, 0.15) 0%, /* Purple Glow */
-      rgba(188, 170, 255, 0.05) 50%, /* Soft Purple Glow */
-      rgba(30, 27, 75, 0) 100%
-    ),
-    linear-gradient(135deg, hsl(222, 84%, 4.9%), hsl(240, 20%, 10%));
-    animation: dark-liquid-gradient 15s ease infinite;
-    background-size: 200% 200%;
+  .dark .auth-panel-bg .shape {
+    background-color: hsl(var(--primary) / 0.2);
   }
 
-   .dark body::after {
-    background: none;
-    animation: none;
+  .auth-panel-bg .shape1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 15%;
+    animation-duration: 17s;
+  }
+  .auth-panel-bg .shape2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    left: 70%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+  }
+  .auth-panel-bg .shape3 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    left: 80%;
+    animation-duration: 20s;
+    animation-delay: 4s;
+  }
+  .auth-panel-bg .shape4 {
+    width: 80px;
+    height: 80px;
+    top: 80%;
+    left: 10%;
+    animation-duration: 10s;
   }
 
   #spotlight {
@@ -130,24 +122,25 @@
     z-index: -1;
     transition: background 0.2s ease-out;
   }
-  
-  @keyframes blobMove {
-    0% { transform: translate(0px, 0px) scale(1); }
-    50% { transform: translate(20px, -30px) scale(1.1); }
-    100% { transform: translate(0px, 0px) scale(1); }
-  }
 
-  @keyframes blobMoveReverse {
-      0% { transform: translate(0px, 0px) scale(1); }
-      50% { transform: translate(-20px, 30px) scale(1.1); }
-      100% { transform: translate(0px, 0px) scale(1); }
-  }
-
-
-  @keyframes dark-liquid-gradient {
+  @keyframes text-gradient {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+
+  .animate-text-gradient {
+    background: linear-gradient(-45deg, hsl(var(--primary)), hsl(var(--secondary-foreground)), hsl(var(--primary)), hsl(var(--secondary-foreground)));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-gradient 8s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px) translateX(10px) scale(1.1); }
+    100% { transform: translateY(0px); }
   }
   
   @keyframes scroll-text {

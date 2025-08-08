@@ -18,7 +18,6 @@ import { LoginIssueDialog } from '@/components/login-issue-dialog';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -95,12 +94,15 @@ export default function LoginPage() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 p-4 pt-24">
-          <div className="hidden md:flex flex-col items-center justify-center gap-4 bg-secondary/50 rounded-lg p-8 text-center">
-              <div className="relative w-full max-w-sm aspect-square">
-                 <Image src="https://placehold.co/600x600.png" alt="Welcome illustration" data-ai-hint="student community" fill className="object-cover rounded-full" />
+          <div className="hidden md:flex flex-col items-center justify-center gap-4 bg-secondary/50 rounded-lg p-8 text-center auth-panel-bg">
+              <div className="shape1"></div>
+              <div className="shape2"></div>
+              <div className="shape3"></div>
+              <div className="shape4"></div>
+              <div className="relative z-10">
+                <h2 className="text-5xl font-extrabold tracking-tight animate-text-gradient">Welcome Back, Future Leader!</h2>
+                <p className="text-muted-foreground max-w-sm mt-4 text-lg">Sign in to access your dashboard, calculators, and exclusive resources.</p>
               </div>
-              <h2 className="text-3xl font-bold tracking-tight mt-4">Welcome Back, Future Leader!</h2>
-              <p className="text-muted-foreground max-w-sm">Sign in to access your dashboard, calculators, and exclusive resources.</p>
           </div>
           <div className="flex items-center justify-center">
             <Card className="w-full max-w-sm">
