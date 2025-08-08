@@ -93,7 +93,7 @@ export default function SignUpPage() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 p-4 pt-24">
-          <div className="hidden md:flex flex-col items-center justify-center gap-4 bg-secondary/50 rounded-lg p-8 text-center auth-panel-bg">
+          <div className="hidden md:flex flex-col items-center justify-center gap-4 p-8 text-center auth-panel-bg">
               <div className="shape shape1"></div>
               <div className="shape shape2"></div>
               <div className="shape shape3"></div>
