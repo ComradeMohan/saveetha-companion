@@ -94,10 +94,10 @@ export default function SignUpPage() {
         <Header />
         <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 p-4 pt-24">
           <div className="hidden md:flex flex-col items-center justify-center gap-4 bg-secondary/50 rounded-lg p-8 text-center auth-panel-bg">
-              <div className="shape1"></div>
-              <div className="shape2"></div>
-              <div className="shape3"></div>
-              <div className="shape4"></div>
+              <div className="shape shape1"></div>
+              <div className="shape shape2"></div>
+              <div className="shape shape3"></div>
+              <div className="shape shape4"></div>
               <div className="relative z-10">
                 <h2 className="text-5xl font-extrabold tracking-tight animate-text-gradient">Join a Community of Innovators</h2>
                 <p className="text-muted-foreground max-w-sm mt-4 text-lg">Create your account to unlock powerful tools and streamline your academic life.</p>
