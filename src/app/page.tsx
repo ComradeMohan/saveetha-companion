@@ -18,7 +18,7 @@ const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
   loading: () => <Skeleton className="w-full h-[400px]" />,
   ssr: false,
 });
-const AttendanceCalculator = dynamic(() => import('@/components/attendance-calculator'), {
+const SubjectWiseAttendanceCalculator = dynamic(() => import('@/components/subject-wise-attendance-calculator'), {
   loading: () => <Skeleton className="w-full h-[400px]" />,
   ssr: false,
 });
@@ -43,7 +43,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>
             <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
               <CgpaCalculator />
-              <AttendanceCalculator />
+              <SubjectWiseAttendanceCalculator />
             </div>
           </div>
         </section>
