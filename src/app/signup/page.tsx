@@ -18,6 +18,7 @@ import { LoginIssueDialog } from '@/components/login-issue-dialog';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import Image from 'next/image';
 
 export default function SignUpPage() {
   const [name, setName] = useState('');
@@ -92,114 +93,123 @@ export default function SignUpPage() {
     <>
       <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1 flex items-center justify-center p-4 pt-24">
-          <Card className="w-full max-w-sm">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Create an Account</CardTitle>
-              <CardDescription>Get started with your academic companion.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleEmailSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="John Doe"
-                    required
-                    value={name}
-                    onChange={(e) => { setName(e.target.value); onInputChange(); }}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="regNo">Registration Number</Label>
-                  <Input
-                    id="regNo"
-                    type="text"
-                    placeholder="19YYDDRRR"
-                    required
-                    value={regNo}
-                    onChange={(e) => { setRegNo(e.target.value); onInputChange(); }}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="9876543210"
-                    required
-                    value={phone}
-                    onChange={(e) => { setPhone(e.target.value); onInputChange(); }}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">College Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@saveetha.com"
-                    required
-                    value={email}
-                    onChange={(e) => { setEmail(e.target.value); onInputChange(); }}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2 relative">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    type={showPassword ? 'text' : 'password'}
-                    required 
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value); onInputChange(); }}
-                    minLength={6}
-                    disabled={loading}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-7 h-7 w-7"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
-                  </Button>
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
-                  Sign Up
-                </Button>
-              </form>
-              {error && (
-                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400">
-                      <AlertCircle className="h-4 w-4"/>
-                      <p>{error}</p>
-                  </div>
-              )}
-              <div className={cn("my-4 flex items-center", error && "mt-2")}>
-                <div className="flex-grow border-t border-muted" />
-                <span className="mx-4 text-xs uppercase text-muted-foreground">Or</span>
-                <div className="flex-grow border-t border-muted" />
+        <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 p-4 pt-24">
+          <div className="hidden md:flex flex-col items-center justify-center gap-4 bg-secondary/50 rounded-lg p-8 text-center">
+              <div className="relative w-full max-w-sm aspect-square">
+                 <Image src="https://placehold.co/600x600.png" alt="Welcome illustration" data-ai-hint="university campus" fill className="object-cover rounded-full" />
               </div>
-              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
-                <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
-                }
-                Sign up with Google
-              </Button>
-              <p className="mt-4 text-center text-sm text-muted-foreground">
-                Already have an account?{' '}
-                <Link href="/login" className="font-medium text-primary hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            </CardContent>
-          </Card>
+              <h2 className="text-3xl font-bold tracking-tight mt-4">Join a Community of Innovators</h2>
+              <p className="text-muted-foreground max-w-sm">Create your account to unlock powerful tools and streamline your academic life.</p>
+          </div>
+          <div className="flex items-center justify-center">
+            <Card className="w-full max-w-sm">
+                <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Create an Account</CardTitle>
+                <CardDescription>Get started with your academic companion.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                <form onSubmit={handleEmailSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        required
+                        value={name}
+                        onChange={(e) => { setName(e.target.value); onInputChange(); }}
+                        disabled={loading}
+                    />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="regNo">Registration Number</Label>
+                    <Input
+                        id="regNo"
+                        type="text"
+                        placeholder="19YYDDRRR"
+                        required
+                        value={regNo}
+                        onChange={(e) => { setRegNo(e.target.value); onInputChange(); }}
+                        disabled={loading}
+                    />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="9876543210"
+                        required
+                        value={phone}
+                        onChange={(e) => { setPhone(e.target.value); onInputChange(); }}
+                        disabled={loading}
+                    />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="email">College Email</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@saveetha.com"
+                        required
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); onInputChange(); }}
+                        disabled={loading}
+                    />
+                    </div>
+                    <div className="space-y-2 relative">
+                    <Label htmlFor="password">Password</Label>
+                    <Input 
+                        id="password" 
+                        type={showPassword ? 'text' : 'password'}
+                        required 
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value); onInputChange(); }}
+                        minLength={6}
+                        disabled={loading}
+                    />
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-7 h-7 w-7"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+                    </Button>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+                    Sign Up
+                    </Button>
+                </form>
+                {error && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400">
+                        <AlertCircle className="h-4 w-4"/>
+                        <p>{error}</p>
+                    </div>
+                )}
+                <div className={cn("my-4 flex items-center", error && "mt-2")}>
+                    <div className="flex-grow border-t border-muted" />
+                    <span className="mx-4 text-xs uppercase text-muted-foreground">Or</span>
+                    <div className="flex-grow border-t border-muted" />
+                </div>
+                <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
+                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
+                    }
+                    Sign up with Google
+                </Button>
+                <p className="mt-4 text-center text-sm text-muted-foreground">
+                    Already have an account?{' '}
+                    <Link href="/login" className="font-medium text-primary hover:underline">
+                    Sign in
+                    </Link>
+                </p>
+                </CardContent>
+            </Card>
+          </div>
         </main>
         <Footer />
       </div>
