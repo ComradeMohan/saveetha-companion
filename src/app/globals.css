@@ -233,17 +233,17 @@
 }
 
 /* From light to dark */
-.dark::view-transition-old(root) {
+::view-transition-old(root) {
   z-index: 1;
 }
-.dark::view-transition-new(root) {
+::view-transition-new(root) {
   z-index: 999;
 }
 
 /* From dark to light */
-::view-transition-old(root) {
+.dark::view-transition-old(root) {
   z-index: 999;
 }
-::view-transition-new(root) {
+.dark::view-transition-new(root) {
   z-index: 1;
 }
