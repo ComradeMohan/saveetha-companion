@@ -9,7 +9,6 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} comrademohan. All rights reserved.
             </p>
-            <a href="https://www.freecounterstat.com" title="free hit counter"><img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=mfpl9nzzuccg6ypscssr9uby174f1gj6" border="0" title="free hit counter" alt="free hit counter" /></a>
         </div>
         <div className="flex items-center gap-4">
           <Link
