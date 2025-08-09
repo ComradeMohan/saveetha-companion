@@ -162,7 +162,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
-       <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mx-auto max-w-5xl shadow-lg px-6">
+       <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 sm:px-6 liquid-glass-nav">
         <div className="flex items-center gap-4">
           {/* Logo */}
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">

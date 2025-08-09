@@ -233,10 +233,10 @@
 }
 
 /* From light to dark */
-::view-transition-old(root) {
+.light::view-transition-old(root) {
   z-index: 1;
 }
-::view-transition-new(root) {
+.light::view-transition-new(root) {
   z-index: 999;
 }
 
@@ -246,4 +246,22 @@
 }
 .dark::view-transition-new(root) {
   z-index: 1;
+}
+
+@keyframes liquid-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.liquid-glass-nav {
+  background: linear-gradient(270deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.2), hsl(var(--primary) / 0.1));
+  background-size: 200% 200%;
+  animation: liquid-gradient 10s ease infinite;
+}
+
+.dark .liquid-glass-nav {
+  background: linear-gradient(270deg, hsl(var(--primary) / 0.2), hsl(var(--secondary) / 0.3), hsl(var(--primary) / 0.2));
+  background-size: 200% 200%;
+  animation: liquid-gradient 10s ease infinite;
 }
