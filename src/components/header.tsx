@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
 
@@ -35,20 +35,23 @@ const NavLink = React.memo(function NavLink({
   children,
   className,
   onClick,
+  isActive,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  isActive?: boolean;
 }) {
   return (
     <Link href={href} passHref>
       <span
         onClick={onClick}
-        className={
-          'text-sm font-medium text-muted-foreground transition-colors hover:text-primary nav-link-hover ' +
+        className={cn(
+          'text-sm font-medium transition-colors hover:text-primary nav-link-hover',
+          isActive ? 'text-primary' : 'text-muted-foreground',
           className
-        }
+        )}
       >
         {children}
       </span>
@@ -131,6 +134,7 @@ function UserNav() {
 
 export default function Header() {
   const { user, setIsNavigating } = useAuth();
+  const pathname = usePathname();
   
   const handleNavLinkClick = () => {
     setIsNavigating(true);
@@ -172,11 +176,14 @@ export default function Header() {
         <div className="flex shrink-0 items-center gap-4">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             {desktopNavLinks.map(link => (
-              <NavLink key={link.href + link.label} href={link.href} onClick={handleNavLinkClick}>
-                {link.label}
-              </NavLink>
-            ))}
+             {desktopNavLinks.map(link => {
+              const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
+              return (
+                <NavLink key={link.href + link.label} href={link.href} onClick={handleNavLinkClick} isActive={isActive}>
+                  {link.label}
+                </NavLink>
+              );
+            })}
           </nav>
           <ThemeToggle />
           <UserNav />

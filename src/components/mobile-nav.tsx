@@ -88,6 +88,7 @@ export default function MobileNav() {
               transitionDelay: isMenuOpen ? `${index * 40}ms` : '0ms',
               opacity: isMenuOpen ? 1 : 0,
             };
+            const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
 
             return (
               <div
@@ -104,7 +105,7 @@ export default function MobileNav() {
                   </span>
                   <Button
                       asChild
-                      className="rounded-full w-12 h-12 shadow-lg"
+                      className={cn("rounded-full w-12 h-12 shadow-lg", isActive && "bg-primary text-primary-foreground")}
                       size="icon"
                       onClick={handleNavLinkClick}
                       aria-label={link.label}
