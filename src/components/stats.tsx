@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
+import Script from 'next/script';
 
 const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -115,6 +116,10 @@ export default function Stats() {
               <p className="text-muted-foreground mt-2">{stat.label}</p>
             </div>
           ))}
+        </div>
+        <div className="mt-12 flex justify-center">
+            <Script src="https://static.elfsight.com/platform/platform.js" data-use-service-core async />
+            <div className="elfsight-app-f2e51ea9-fcb5-4319-9bf0-9ddab978dc5e" data-elfsight-app-lazy></div>
         </div>
       </div>
     </section>
