@@ -8,16 +8,17 @@ import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import VerificationBanner from '@/components/verification-banner';
 import ScrollProgress from '@/components/scroll-progress';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const inter = Inter({ 
+const poppins = Poppins({ 
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-poppins',
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
 
 
@@ -115,7 +116,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("scroll-smooth", inter.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("scroll-smooth", poppins.variable)} suppressHydrationWarning>
       <head>
       </head>
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
