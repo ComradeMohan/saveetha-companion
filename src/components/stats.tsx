@@ -117,10 +117,6 @@ export default function Stats() {
             </div>
           ))}
         </div>
-        <div className="mt-12 flex justify-center">
-            <Script src="https://static.elfsight.com/platform/platform.js" data-use-service-core async />
-            <div className="elfsight-app-f2e51ea9-fcb5-4319-9bf0-9ddab978dc5e" data-elfsight-app-lazy></div>
-        </div>
       </div>
     </section>
   );

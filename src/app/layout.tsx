@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -20,7 +19,6 @@ const poppins = Poppins({
   variable: '--font-poppins',
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
-
 
 export const metadata: Metadata = {
   title: {
@@ -109,7 +107,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
   )
 }
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -126,7 +123,7 @@ export default function RootLayout({
             <AppProviders>{children}</AppProviders>
         </Suspense>
         
-        {/* Google Analytics Scripts - Moved to end of body */}
+        {/* Google Analytics Scripts */}
         <Script
           key="gtag-js"
           strategy="afterInteractive"
@@ -142,6 +139,163 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-SV60C81VTM');
+            `,
+          }}
+        />
+
+        {/* CM Console Experience Script */}
+        <Script
+          key="cm-console"
+          id="cm-console"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // THE ULTIMATE CM CONSOLE MASTERPIECE 🎨
+              console.clear();
+              
+              // 1. Welcome Animation
+              console.log('%c🎊 INITIALIZING CM CONSOLE EXPERIENCE... 🎊', 
+                  'color: #ff6b6b; fontsize: 16px; font-weight: bold; text-align: center;'
+              );
+              
+              setTimeout(() => {
+                  console.clear();
+                  
+                  // 2. Main CM Logo with Box Drawing
+                  console.log(\`%c
+              ╔══════════════════════════════════════════════════════════════╗
+              ║                                                              ║
+              ║   ██████╗ ███╗   ███╗    ██████╗ ███████╗██╗   ██╗  ███████╗ ║
+              ║  ██╔════╝ ████╗ ████║    ██╔══██╗██╔════╝██║   ██║  ██╔════╝ ║
+              ║  ██║      ██╔████╔██║    ██║  ██║█████╗  ██║   ██║  ███████╗ ║
+              ║  ██║      ██║╚██╔╝██║    ██║  ██║██╔══╝  ╚██╗ ██╔╝  ╚════██║ ║
+              ║  ╚██████╗ ██║ ╚═╝ ██║    ██████╔╝███████╗ ╚████╔╝   ███████║ ║
+              ║   ╚═════╝ ╚═╝     ╚═╝    ╚═════╝ ╚══════╝  ╚═══╝    ╚══════╝ ║
+              ║                                                              ║
+              ║                 🌟 WELCOME TO MY DIGITAL REALM 🌟            ║
+              ║                                                              ║
+              ╚══════════════════════════════════════════════════════════════╝
+              \`, 
+                  'color: #4ecdc4; font-family: monospace; font-size: 12px; line-height: 1.2;'
+                  );
+                  
+                  // 3. Colorful Welcome Message
+                  console.log('%c✨ Comrade Mohan DEVELOPER CONSOLE ✨', 
+                      'background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24); color: white; padding: 10px 20px; border-radius: 20px; font-size: 18px; font-weight: bold;'
+                  );
+                  
+                  // 4. Professional Info Cards
+                  setTimeout(() => {
+                      console.log('%c┌─────────────────────────────────────────┐', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c│  👨‍💻 DEVELOPER INFO                                  │', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c├─────────────────────___────────────────────┤', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c│  💼 Portfolio: https://comrademohan.rf.gd/          │', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c│  📧 Email: madhiremohanreddy@gmail.com              │', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c│  🐙 GitHub: https://github.com/ComradeMohan         │', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c│  💼 LinkedIn:https://www.linkedin.com/in/mmohanreddy│', 'color: #45b7d1; font-family: monospace;');
+                      console.log('%c└─────────────────────────────────────────┘', 'color: #45b7d1; font-family: monospace;');
+                  }, 500);
+                  
+                  // 5. Interactive Commands Setup
+                  setTimeout(() => {
+                      console.log('%c🎮 INTERACTIVE COMMANDS LOADED:', 'color: #f9ca24; font-size: 16px; font-weight: bold;');
+                      console.log('%c• CM.about() - Learn about me', 'color: #4ecdc4; font-size: 14px;');
+                      console.log('%c• CM.skills() - View my tech stack', 'color: #4ecdc4; font-size: 14px;');
+                      console.log('%c• CM.projects() - See my latest work', 'color: #4ecdc4; font-size: 14px;');
+                      console.log('%c• CM.contact() - Get in touch', 'color: #4ecdc4; font-size: 14px;');
+                      console.log('%c• CM.surprise() - Mystery command 🎉', 'color: #ff6b6b; font-size: 14px;');
+                      
+                      // 6. Setup Interactive Commands
+                      window.CM = {
+                          about: () => {
+                              console.log(\`%c
+                      ╭──────────────────────────────────────────────────╮
+                      │                   ABOUT CM                       │
+                      ├──────────────────────────────────────────────────┤
+                      │  🚀 Full-Stack Developer                         │
+                      │  🎨 UI/UX Designer                               │
+                      │  ☕ Coffee Enthusiast                            │
+                      │  🌍 Making the web beautiful, one site at a time │
+                      ╰──────────────────────────────────────────────────╯
+                      \`, 'color: #ff6b6b; font-family: monospace; font-size: 12px;');
+                          },
+                          
+                          skills: () => {
+                              const skills = ['JavaScript', 'React', 'Node.js', 'Python', 'CSS3', 'HTML5', 'MongoDB', 'Express'];
+                              console.log('%c🔧 TECH STACK:', 'color: #4ecdc4; font-size: 16px; font-weight: bold;');
+                              skills.forEach((skill, index) => {
+                                  setTimeout(() => {
+                                      console.log(\`%c▶ \${skill}\`, \`color: hsl(\${index * 45}, 70%, 60%); font-size: 14px; font-weight: bold;\`);
+                                  }, index * 200);
+                              });
+                          },
+                          
+                          projects: () => {
+                              console.log(\`%c
+                      🏆 FEATURED PROJECTS:
+                      ═══════════════════
+                      🌐 Saveetha Hub - React & Node.js
+                      📱 Mobile App UniVault - Kotlin with PHP  
+                      🎮 Campus Codex  - NextJs
+                      \`, 'color: #45b7d1; font-size: 14px; line-height: 1.5;');
+                          },
+                          
+                          contact: () => {
+                              console.log(\`%c
+                      ╔═══════════════════════════════════════╗
+                      ║            📞 CONTACT INFO            ║
+                      ╠═══════════════════════════════════════╣
+                      ║  📧 madhiremohanreddy@gmail.com           ║
+                      ║  🌐 https://comrademohan.rf.gd/         ║
+                      ║  📱 +91 6281359314               ║
+                      ║  📍 Available for remote work        ║
+                      ╚═══════════════════════════════════════╝
+                      \`, 'color: #f9ca24; font-family: monospace; font-size: 12px;');
+                          },
+                          
+                          surprise: () => {
+                              const messages = [
+                                  '🎉 You found the Easter egg!',
+                                  '🦄 Unicorns are real in code!',
+                                  '🍕 Pizza makes code better!',
+                                  '🎸 I code to rock music!',
+                                  '🌙 I sometimes code at 3 AM!'
+                              ];
+                              const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#ff9ff3'];
+                              const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                              const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                              
+                              console.log(\`%c\${randomMsg}\`, \`color: \${randomColor}; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);\`);
+                              
+                              // ASCII Art Surprise
+                              setTimeout(() => {
+                                  console.log(\`%c
+                          ╔═══════════════════════════════════╗
+                          ║   🎭 SURPRISE ASCII ART! 🎭      ║
+                          ╠═══════════════════════════════════╣
+                          ║      /\\_/\\                        ║
+                          ║     ( o.o )                       ║
+                          ║      > ^ <   CM SAYS HELLO!       ║
+                          ╚═══════════════════════════════════╝
+                          \`, 'color: #ff9ff3; font-family: monospace; font-size: 12px;');
+                              }, 500);
+                          }
+                      };
+                  }, 1000);
+                  
+                  // 7. Fun Footer
+                  setTimeout(() => {
+                      console.log('\\n');
+                      console.log('%c🎯 PRO TIP: Type "CM." and press Tab to see all available commands!', 
+                          'background: #2c3e50; color: #ecf0f1; padding: 8px 15px; border-radius: 15px; font-size: 13px;'
+                      );
+                      console.log('%c💡 Enjoying this console experience? Let\\'s build something amazing together!', 
+                          'color: #e74c3c; font-size: 14px; font-style: italic;'
+                      );
+                      console.log('%c────────────────────────────────────────────────────────────────', 'color: #34495e;');
+                  }, 1500);
+                  
+              }, 1000);
             `,
           }}
         />
