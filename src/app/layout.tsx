@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import VisitTracker from '@/components/visit-tracker';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -99,6 +100,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     >
       <AuthProvider>
           <VerificationBanner key="verification-banner" />
+          <VisitTracker />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
           <MobileNav />
@@ -115,38 +117,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("scroll-smooth", poppins.variable)} suppressHydrationWarning>
       <head>
-      </head>
-      <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
-        <ScrollProgress />
-        <MouseSpotlight />
-        <Suspense fallback={<RootLayoutSkeleton />}>
-            <AppProviders>{children}</AppProviders>
-        </Suspense>
-        
-        {/* Google Analytics Scripts */}
-        <Script
-          key="gtag-js"
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-SV60C81VTM"
-        />
-        <Script
-          key="gtag-init"
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-SV60C81VTM');
-            `,
-          }}
-        />
-
-        {/* CM Console Experience Script */}
-        <Script
-          key="cm-console"
-          id="cm-console"
+         <script
+          id="cm-console-script"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
@@ -296,6 +268,33 @@ export default function RootLayout({
                   }, 1500);
                   
               }, 1000);
+            `,
+          }}
+        />
+      </head>
+      <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
+        <ScrollProgress />
+        <MouseSpotlight />
+        <Suspense fallback={<RootLayoutSkeleton />}>
+            <AppProviders>{children}</AppProviders>
+        </Suspense>
+        
+        {/* Google Analytics Scripts */}
+        <Script
+          key="gtag-js"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-SV60C81VTM"
+        />
+        <Script
+          key="gtag-init"
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-SV60C81VTM');
             `,
           }}
         />

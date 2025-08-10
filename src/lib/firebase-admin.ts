@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 config();
 
 import admin from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 let app;
 
@@ -46,4 +47,4 @@ if (!adminDb) {
 }
 
 
-export { adminDb, adminAuth };
+export { adminDb, adminAuth, FieldValue };
