@@ -10,26 +10,31 @@ let app;
 
 if (!admin.apps.length) {
   try {
-    const serviceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    };
+    let serviceAccount;
+    // Prefer using a single service account JSON from env vars for robustness.
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } else {
+        // Fallback to individual variables if the single one isn't provided.
+        serviceAccount = {
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        };
+    }
 
     if (!serviceAccount.projectId || !serviceAccount.privateKey || !serviceAccount.clientEmail) {
-      throw new Error('Firebase Admin SDK environment variables are not set. Please check your .env file.');
+      throw new Error('Firebase Admin SDK service account credentials are not set. Please check your .env file for FIREBASE_SERVICE_ACCOUNT or individual keys.');
     }
 
     app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as any),
     });
-    console.log('Firebase Admin SDK initialized successfully from environment variables.');
+    console.log('Firebase Admin SDK initialized successfully.');
 
   } catch (error: any)
    {
     console.error('Firebase Admin SDK initialization error:', error.message);
-    // Avoid throwing an error that crashes the server if the SDK is not needed for all parts.
-    // Instead, the services will fail if used without proper initialization.
   }
 } else {
     app = admin.app();
@@ -42,7 +47,6 @@ const adminAuth = app ? admin.auth() : null;
 if (!adminDb) {
     // This will prevent the app from starting if admin SDK fails, which is safer
     // for operations that absolutely depend on it.
-    // A more graceful fallback could be implemented if parts of the app can run without it.
     throw new Error("Firestore Admin DB could not be initialized. Server actions will fail.");
 }
 
