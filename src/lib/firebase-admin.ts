@@ -1,54 +1,55 @@
 
 import { config } from 'dotenv';
-// Running config here ensures environment variables are loaded for all server-side processes.
-config();
+config(); // Load environment variables from .env file
 
 import admin from 'firebase-admin';
+import { getApps } from 'firebase-admin/app';
 import { FieldValue } from 'firebase-admin/firestore';
 
-let app;
+const createServiceAccount = () => {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      return JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } catch (e) {
+      console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', e);
+    }
+  }
 
-if (!admin.apps.length) {
+  // Fallback to individual variables if the single one isn't provided or fails to parse.
+  return {
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  };
+};
+
+const serviceAccount = createServiceAccount();
+
+export const initializeAdminApp = async () => {
+  if (getApps().length > 0) {
+    return {
+      adminDb: admin.firestore(),
+      adminAuth: admin.auth(),
+    };
+  }
+
   try {
-    let serviceAccount;
-    // Prefer using a single service account JSON from env vars for robustness.
-    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    } else {
-        // Fallback to individual variables if the single one isn't provided.
-        serviceAccount = {
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        };
-    }
-
-    if (!serviceAccount.projectId || !serviceAccount.privateKey || !serviceAccount.clientEmail) {
-      throw new Error('Firebase Admin SDK service account credentials are not set. Please check your .env file for FIREBASE_SERVICE_ACCOUNT or individual keys.');
-    }
-
-    app = admin.initializeApp({
+     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as any),
     });
     console.log('Firebase Admin SDK initialized successfully.');
-
-  } catch (error: any)
-   {
+  } catch (error: any) {
     console.error('Firebase Admin SDK initialization error:', error.message);
+    // Rethrow or handle as appropriate. For now, we'll let it fail loudly
+    // so downstream consumers know there's a problem.
+    throw new Error('Firebase Admin SDK could not be initialized. Check server logs.');
   }
-} else {
-    app = admin.app();
-}
 
-const adminDb = app ? admin.firestore() : null;
-const adminAuth = app ? admin.auth() : null;
+  return {
+    adminDb: admin.firestore(),
+    adminAuth: admin.auth(),
+  };
+};
 
-// Add a check to ensure db is not null before exporting
-if (!adminDb) {
-    // This will prevent the app from starting if admin SDK fails, which is safer
-    // for operations that absolutely depend on it.
-    console.warn("Firestore Admin DB could not be initialized. Server actions depending on it might fail.");
-}
-
-
-export { adminDb, adminAuth, FieldValue };
+// Export FieldValue for use in server actions
+export { FieldValue };
