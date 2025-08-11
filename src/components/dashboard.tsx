@@ -32,8 +32,8 @@ export default function Dashboard() {
     const quickLinks = [
         { href: '/#calculators', label: 'Calculators', icon: Calculator },
         { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
-        { href: '/#faculty', label: 'Faculty Directory', icon: Users },
         { href: '/calendar', label: 'Events Calendar', icon: Calendar },
+        { href: '/updates', label: 'Updates', icon: Bell },
     ];
 
     return (

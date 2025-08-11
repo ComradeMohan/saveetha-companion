@@ -23,9 +23,6 @@ const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
 const ConceptMapFinder = dynamic(() => import('@/components/concept-map-finder'), {
   loading: () => <Skeleton className="w-full h-[200px]" />,
 });
-const FacultyDirectory = dynamic(() => import('@/components/faculty-directory'), {
-  loading: () => <Skeleton className="w-full h-[200px]" />,
-});
 
 export default function Home() {
   const { user } = useAuth();
@@ -49,12 +46,6 @@ export default function Home() {
         <section id="concepts" className="py-12 md:py-16 bg-card/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <div className="container mx-auto px-4">
             <ConceptMapFinder />
-          </div>
-        </section>
-
-        <section id="faculty" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <div className="container mx-auto px-4">
-            <FacultyDirectory />
           </div>
         </section>
         

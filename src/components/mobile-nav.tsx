@@ -40,7 +40,6 @@ export default function MobileNav() {
         { href: '/projects', label: 'Ecommerce', icon: Package },
         { href: '/#calculators', label: 'Calculators', icon: Calculator },
         { href: '/#concepts', label: 'Concepts', icon: Lightbulb },
-        { href: '/#faculty', label: 'Faculty', icon: Users },
         { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
     ];
     if (user) {

@@ -146,7 +146,6 @@ export default function Header() {
             { href: '/projects', label: 'Ecommerce' },
             { href: '/#calculators', label: 'Calculators' },
             { href: '/#concepts', label: 'Concepts' },
-            { href: '/#faculty', label: 'Faculty' },
             { href: '/calendar', label: 'Calendar' },
             { href: '/updates', label: 'Updates' },
             { href: '/contact', label: 'Contact Us' },
