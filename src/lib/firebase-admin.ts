@@ -3,53 +3,34 @@ import { config } from 'dotenv';
 config(); // Load environment variables from .env file
 
 import admin from 'firebase-admin';
-import { getApps } from 'firebase-admin/app';
-import { FieldValue } from 'firebase-admin/firestore';
+import { getApps, App } from 'firebase-admin/app';
+import { getFirestore, Firestore, FieldValue } from 'firebase-admin/firestore';
 
-const createServiceAccount = () => {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    try {
-      return JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    } catch (e) {
-      console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', e);
-    }
-  }
+let adminApp: App;
+let adminDb: Firestore;
 
-  // Fallback to individual variables if the single one isn't provided or fails to parse.
-  return {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  };
-};
-
-const serviceAccount = createServiceAccount();
-
-export const initializeAdminApp = async () => {
-  if (getApps().length > 0) {
-    return {
-      adminDb: admin.firestore(),
-      adminAuth: admin.auth(),
+if (!getApps().length) {
+    const serviceAccount = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     };
-  }
 
-  try {
-     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as any),
-    });
-    console.log('Firebase Admin SDK initialized successfully.');
-  } catch (error: any) {
-    console.error('Firebase Admin SDK initialization error:', error.message);
-    // Rethrow or handle as appropriate. For now, we'll let it fail loudly
-    // so downstream consumers know there's a problem.
-    throw new Error('Firebase Admin SDK could not be initialized. Check server logs.');
-  }
+    try {
+        adminApp = admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount as any),
+        });
+        adminDb = getFirestore(adminApp);
+        console.log('Firebase Admin SDK initialized successfully.');
+    } catch (error: any) {
+        console.error('Firebase Admin SDK initialization error:', error.message);
+        // This will prevent the app from starting if the admin SDK fails to initialize
+        throw new Error('Firebase Admin SDK could not be initialized. Check server logs and environment variables.');
+    }
+} else {
+    adminApp = getApps()[0];
+    adminDb = getFirestore(adminApp);
+}
 
-  return {
-    adminDb: admin.firestore(),
-    adminAuth: admin.auth(),
-  };
-};
-
-// Export FieldValue for use in server actions
-export { FieldValue };
+// Export the initialized admin DB and FieldValue for use in server actions
+export { adminDb, FieldValue };

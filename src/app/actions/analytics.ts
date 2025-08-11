@@ -1,7 +1,7 @@
 
 'use server';
 
-import { initializeAdminApp } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { collection, getDocs, Timestamp, addDoc, FieldValue } from 'firebase-admin/firestore';
 import { unstable_cache } from 'next/cache';
 
@@ -30,7 +30,6 @@ interface AnalyticsData {
  */
 export async function trackVisit(): Promise<void> {
   try {
-    const { adminDb } = await initializeAdminApp();
     await addDoc(collection(adminDb, 'page_visits'), {
       timestamp: FieldValue.serverTimestamp(),
     });
@@ -47,7 +46,6 @@ export async function trackVisit(): Promise<void> {
  */
 export const getVisitAnalytics = unstable_cache(
   async (): Promise<AnalyticsData> => {
-    const { adminDb } = await initializeAdminApp();
     if (!adminDb) {
       throw new Error('Firestore is not initialized.');
     }
