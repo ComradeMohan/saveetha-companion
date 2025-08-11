@@ -14,6 +14,7 @@ export default function ShinyButton({ href, text, className }: ShinyButtonProps)
       className={cn(
         'relative inline-flex items-center justify-center p-0.5 rounded-xl overflow-hidden group',
         'bg-[radial-gradient(circle_at_80%_-10%,_hsl(var(--card)),_hsl(var(--background))_80%)]',
+        'dark:bg-[radial-gradient(circle_at_80%_-10%,_hsl(var(--primary)_/_0.1),_hsl(var(--background))_80%)]',
         className
       )}
     >
@@ -29,7 +30,7 @@ export default function ShinyButton({ href, text, className }: ShinyButtonProps)
         {/* Inner content */}
         <span
             className={cn(
-                'relative z-10 block px-6 py-2.5 text-sm font-medium text-white',
+                'relative z-10 block px-6 py-2.5 text-sm font-medium text-foreground',
                 'bg-background/90 rounded-[10px]',
                 'transition-colors duration-300 group-hover:bg-background/80'
             )}
