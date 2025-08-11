@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, CheckCircle2, XCircle, Download, Send } from "lucide-react";
+import { Loader2, Search, CheckCircle2, XCircle, Download, ArrowUpDown } from "lucide-react";
 import { collection, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { sendPasswordResetLink } from "@/app/actions/send-reset-email";
 
 interface User {
     id: string;
@@ -27,12 +26,15 @@ interface User {
     photoURL?: string;
 }
 
+type SortKey = 'name' | 'contact' | 'status';
+type SortDirection = 'asc' | 'desc';
+
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState<"all" | "verified" | "unverified">("all");
-    const [isSendingLink, setIsSendingLink] = useState<string | null>(null);
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({ key: 'name', direction: 'asc' });
     const { toast } = useToast();
 
     const fetchUsers = useCallback(async () => {
@@ -70,9 +72,24 @@ export default function AdminUsersPage() {
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
+    
+    const handleSort = (key: SortKey) => {
+        let direction: SortDirection = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
 
-    const filteredUsers = useMemo(() => {
-        return users.filter(user => {
+    const getSortIcon = (key: SortKey) => {
+        if (sortConfig.key !== key) {
+            return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />;
+        }
+        return sortConfig.direction === 'asc' ? '▲' : '▼';
+    }
+
+    const filteredAndSortedUsers = useMemo(() => {
+        let filtered = users.filter(user => {
             const searchMatch = !searchTerm ||
                 user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,10 +101,32 @@ export default function AdminUsersPage() {
 
             return searchMatch && statusMatch;
         });
-    }, [searchTerm, users, filterStatus]);
+
+        return filtered.sort((a, b) => {
+            let aValue: string | boolean, bValue: string | boolean;
+
+            switch(sortConfig.key) {
+                case 'contact':
+                    aValue = `${a.regNo || ''}${a.phone || ''}`;
+                    bValue = `${b.regNo || ''}${b.phone || ''}`;
+                    break;
+                case 'status':
+                    aValue = a.isVerified;
+                    bValue = b.isVerified;
+                    break;
+                default: // name
+                    aValue = a.name ?? '';
+                    bValue = b.name ?? '';
+            }
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [searchTerm, users, filterStatus, sortConfig]);
     
     const exportToCsv = () => {
-        if (filteredUsers.length === 0) {
+        if (filteredAndSortedUsers.length === 0) {
             toast({
                 title: "No data to export",
                 description: "The current table is empty.",
@@ -96,11 +135,12 @@ export default function AdminUsersPage() {
             return;
         }
 
-        const headers = ["Name", "Email", "Registration No.", "Phone", "Status", "Last Signed In"];
+        const headers = ["S.No.", "Name", "Email", "Registration No.", "Phone", "Status", "Last Signed In"];
         const csvRows = [headers.join(",")];
 
-        filteredUsers.forEach(user => {
+        filteredAndSortedUsers.forEach((user, index) => {
             const row = [
+                index + 1,
                 `"${user.name || 'N/A'}"`,
                 `"${user.email || 'N/A'}"`,
                 user.regNo ? `="\\"${user.regNo}\\""` : '"Not Provided"',
@@ -124,28 +164,8 @@ export default function AdminUsersPage() {
 
         toast({
             title: "Export Successful",
-            description: `${filteredUsers.length} user records have been exported.`
+            description: `${filteredAndSortedUsers.length} user records have been exported.`
         });
-    };
-    
-    const handleSendReset = async (user: User) => {
-        setIsSendingLink(user.id);
-        const result = await sendPasswordResetLink(user.email);
-        
-        if (result.type === 'success' && result.mailto) {
-            window.location.href = result.mailto;
-            toast({
-                title: 'Email Client Opening',
-                description: `Your email client is opening with a pre-filled password reset email for ${user.email}.`,
-            });
-        } else {
-            toast({
-                title: 'Error',
-                description: result.message,
-                variant: 'destructive',
-            });
-        }
-        setIsSendingLink(null);
     };
 
     return (
@@ -190,11 +210,23 @@ export default function AdminUsersPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>User</TableHead>
-                                <TableHead>Contact</TableHead>
+                                <TableHead className="w-[80px]">S.No.</TableHead>
+                                <TableHead>
+                                    <Button variant="ghost" onClick={() => handleSort('name')} className="px-0">
+                                        User {getSortIcon('name')}
+                                    </Button>
+                                </TableHead>
+                                <TableHead>
+                                    <Button variant="ghost" onClick={() => handleSort('contact')} className="px-0">
+                                        Contact {getSortIcon('contact')}
+                                    </Button>
+                                </TableHead>
                                 <TableHead>Last Signed In</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-center">Actions</TableHead>
+                                <TableHead>
+                                    <Button variant="ghost" onClick={() => handleSort('status')} className="px-0">
+                                        Status {getSortIcon('status')}
+                                    </Button>
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -204,9 +236,10 @@ export default function AdminUsersPage() {
                                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                     </TableCell>
                                 </TableRow>
-                            ) : filteredUsers.length > 0 ? (
-                                filteredUsers.map((user) => (
+                            ) : filteredAndSortedUsers.length > 0 ? (
+                                filteredAndSortedUsers.map((user, index) => (
                                     <TableRow key={user.id}>
+                                        <TableCell>{index + 1}</TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-9 w-9">
@@ -220,8 +253,8 @@ export default function AdminUsersPage() {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <div>{user.regNo || 'Not Provided'}</div>
-                                            <div className="text-sm text-muted-foreground">{user.phone || 'Not Provided'}</div>
+                                            <div className="font-mono text-sm">{user.regNo || 'Reg: Not Provided'}</div>
+                                            <div className="text-sm text-muted-foreground">{user.phone || 'Phone: Not Provided'}</div>
                                         </TableCell>
                                         <TableCell>
                                             {user.lastSignInTime ? (
@@ -238,23 +271,6 @@ export default function AdminUsersPage() {
                                                 {user.isVerified ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
                                                 {user.isVerified ? 'Verified' : 'Unverified'}
                                             </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            {!user.isVerified && (
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm"
-                                                    onClick={() => handleSendReset(user)}
-                                                    disabled={isSendingLink === user.id}
-                                                >
-                                                    {isSendingLink === user.id ? (
-                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        <Send className="mr-2 h-4 w-4" />
-                                                    )}
-                                                    Send Reset
-                                                </Button>
-                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))
