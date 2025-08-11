@@ -30,6 +30,10 @@ interface AnalyticsData {
  */
 export async function trackVisit(): Promise<void> {
   try {
+     if (!adminDb.collection) {
+        console.warn("Analytics: Firestore Admin not initialized, skipping trackVisit.");
+        return;
+    }
     await addDoc(collection(adminDb, 'page_visits'), {
       timestamp: FieldValue.serverTimestamp(),
     });
@@ -46,8 +50,14 @@ export async function trackVisit(): Promise<void> {
  */
 export const getVisitAnalytics = unstable_cache(
   async (): Promise<AnalyticsData> => {
-    if (!adminDb) {
-      throw new Error('Firestore is not initialized.');
+    if (!adminDb.collection) {
+      console.warn("Analytics: Firestore Admin not initialized, returning empty data.");
+      return {
+        totalVisits: 0,
+        yesterdayVisits: 0,
+        busiestDay: { date: 'N/A', count: 0 },
+        chartData: [],
+      };
     }
 
     const visitsCol = collection(adminDb, 'page_visits');
