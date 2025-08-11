@@ -4,7 +4,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Users, BookOpen, GraduationCap, BrainCircuit, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
@@ -92,7 +91,6 @@ export default function Stats() {
     const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
     const statsRef = useRef<HTMLDivElement>(null);
-    const { user } = useAuth();
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
