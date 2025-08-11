@@ -10,18 +10,13 @@ const features = [
   },
   {
     icon: Percent,
-    title: 'Attendance Tracker',
+    title: 'Attendance Calculator',
     description: 'Keep track of your attendance to know exactly where you stand in each course.',
   },
   {
     icon: Lightbulb,
     title: 'Concept Map Library',
     description: 'Find concept maps to visualize and understand complex topics.',
-  },
-  {
-    icon: Users,
-    title: 'Faculty Directory',
-    description: 'Easily access contact information for all your professors and faculty members.',
   },
   {
     icon: Bell,
