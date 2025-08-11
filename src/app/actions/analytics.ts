@@ -1,7 +1,8 @@
+
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import { collection, getDocs, Timestamp, addDoc } from 'firebase-admin/firestore';
+import { collection, getDocs, Timestamp, addDoc, FieldValue } from 'firebase-admin/firestore';
 import { unstable_cache } from 'next/cache';
 
 /**
@@ -53,7 +54,8 @@ export const getVisitAnalytics = unstable_cache(
 
     const visitsCol = collection(adminDb, 'page_visits');
     const visitSnapshot = await getDocs(visitsCol);
-    const visits: Visit[] = visitSnapshot.docs.map(doc => doc.data() as Visit);
+    const visits: Visit[] = visitSnapshot.docs.map(doc => doc.data() as Visit).filter(v => v.timestamp);
+
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

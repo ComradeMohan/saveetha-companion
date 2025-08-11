@@ -47,7 +47,7 @@ const adminAuth = app ? admin.auth() : null;
 if (!adminDb) {
     // This will prevent the app from starting if admin SDK fails, which is safer
     // for operations that absolutely depend on it.
-    throw new Error("Firestore Admin DB could not be initialized. Server actions will fail.");
+    console.warn("Firestore Admin DB could not be initialized. Server actions depending on it might fail.");
 }
 
 
