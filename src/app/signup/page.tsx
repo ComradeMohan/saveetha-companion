@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
@@ -41,8 +41,9 @@ export default function SignUpPage() {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signUpWithEmailAndPassword } = useAuth();
+  const { user, signUpWithEmailAndPassword, signInWithGoogle, completeUserProfile } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -50,7 +51,17 @@ export default function SignUpPage() {
     resolver: zodResolver(step === 1 ? step1Schema : formSchema),
     mode: 'onChange',
   });
-  const { trigger, getValues } = form;
+  const { trigger, getValues, setValue } = form;
+
+  // Effect to move to step 2 after Google sign-in
+  useEffect(() => {
+    if (user) {
+      setValue('name', user.displayName || '');
+      setValue('email', user.email || '');
+      setStep(2);
+      setGoogleLoading(false);
+    }
+  }, [user, setValue]);
 
   const onInputChange = () => {
     if (error) {
@@ -69,20 +80,44 @@ export default function SignUpPage() {
     setStep(1);
   }
 
-  const handleEmailSignUp = async (data: SignUpFormValues) => {
+  const handleFormSubmit = async (data: SignUpFormValues) => {
     setLoading(true);
     setError(null);
     try {
-      await signUpWithEmailAndPassword(data);
-      toast({ 
-        title: 'Verification Email Sent!',
-        description: `We've sent a verification link to ${data.email}. Please check your inbox.`,
-      });
-      router.push('/login');
+      if (user) { // Case: Signed in with Google, now completing profile
+        await completeUserProfile({
+          regNo: data.regNo,
+          phone: data.phone,
+        });
+        toast({ 
+          title: 'Profile Completed!',
+          description: 'Your account is all set up.',
+        });
+        router.push('/');
+      } else { // Case: Standard email/password signup
+        await signUpWithEmailAndPassword(data);
+        toast({ 
+          title: 'Verification Email Sent!',
+          description: `We've sent a verification link to ${data.email}. Please check your inbox.`,
+        });
+        router.push('/login');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
         setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setGoogleLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle(true); // Pass true to indicate sign-up flow
+      // The useEffect will handle moving to the next step
+    } catch (err: any) {
+      setError(err.message);
+      setGoogleLoading(false);
     }
   };
 
@@ -120,7 +155,7 @@ export default function SignUpPage() {
                       </div>
                   </div>
 
-                <form onSubmit={form.handleSubmit(handleEmailSignUp)} className="space-y-4">
+                <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
                   {step === 1 && (
                     <>
                       <div className="space-y-2">
@@ -131,7 +166,7 @@ export default function SignUpPage() {
                             placeholder="John Doe"
                             {...form.register('name')}
                             onChange={(e) => { form.setValue('name', e.target.value); onInputChange(); }}
-                            disabled={loading}
+                            disabled={loading || googleLoading}
                         />
                          {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
                       </div>
@@ -143,7 +178,7 @@ export default function SignUpPage() {
                             placeholder="you@saveetha.com"
                             {...form.register('email')}
                             onChange={(e) => { form.setValue('email', e.target.value); onInputChange(); }}
-                            disabled={loading}
+                            disabled={loading || googleLoading}
                         />
                          {form.formState.errors.email && <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>}
                       </div>
@@ -155,7 +190,7 @@ export default function SignUpPage() {
                             {...form.register('password')}
                             onChange={(e) => { form.setValue('password', e.target.value); onInputChange(); }}
                             minLength={6}
-                            disabled={loading}
+                            disabled={loading || googleLoading}
                         />
                         <Button
                             type="button"
@@ -169,9 +204,20 @@ export default function SignUpPage() {
                         </Button>
                          {form.formState.errors.password && <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>}
                       </div>
-                       <Button type="button" className="w-full" onClick={handleNextStep}>
+                       <Button type="button" className="w-full" onClick={handleNextStep} disabled={loading || googleLoading}>
                          Next
                        </Button>
+                        <div className="my-4 flex items-center">
+                            <div className="flex-grow border-t border-muted" />
+                            <span className="mx-4 text-xs uppercase text-muted-foreground">Or</span>
+                            <div className="flex-grow border-t border-muted" />
+                        </div>
+                        <Button variant="outline" className="w-full" onClick={handleGoogleSignUp} disabled={loading || googleLoading}>
+                            {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 
+                            <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
+                            }
+                            Sign up with Google
+                        </Button>
                     </>
                   )}
 
@@ -207,7 +253,7 @@ export default function SignUpPage() {
                         </Button>
                         <Button type="submit" className="w-2/3" disabled={loading}>
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
-                            Sign Up
+                            {user ? 'Complete Profile' : 'Sign Up'}
                         </Button>
                       </div>
                     </>

@@ -50,7 +50,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (isSignUp?: boolean) => Promise<void>;
   signUpWithEmailAndPassword: (profile: SignUpProfile) => Promise<any>;
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
   sendPasswordReset: (email: string) => Promise<void>;
@@ -160,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       'hd': 'saveetha.com'
@@ -181,11 +181,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastSignInTime: user.metadata.lastSignInTime,
           photoURL: user.photoURL,
         });
-        // User is new and authenticated with Google, they need to complete their profile
-        router.push('/complete-profile');
+        
+        if (!isSignUp) {
+            router.push('/complete-profile');
+        }
+        // If it is a sign-up, the useEffect on the signup page will handle the redirect to step 2.
       } else {
-        // Existing user, go to dashboard
-        router.push('/');
+        if (!isSignUp) {
+            router.push('/');
+        }
+        // If it is a sign-up, but the user exists, the useEffect on the signup page will take them to step 2 anyway.
       }
 
     } catch (error: any) {
