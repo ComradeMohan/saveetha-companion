@@ -14,7 +14,6 @@ import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import Dashboard from '@/components/dashboard';
 import AttendanceCalculator from '@/components/attendance-calculator';
-import VisitorAnalytics from '@/components/visitor-analytics';
 
 const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
   loading: () => <Skeleton className="w-full h-[400px]" />,
@@ -53,7 +52,6 @@ export default function Home() {
             <>
                 <Features />
                 <Stats />
-                <VisitorAnalytics />
                 <section id="contact" className="py-12 md:py-16 text-center">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl font-bold tracking-tight">Need Help?</h2>
