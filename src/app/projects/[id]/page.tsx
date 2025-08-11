@@ -30,7 +30,7 @@ function ProjectDetailsSkeleton() {
     return (
         <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 py-12 md:py-16 mt-16">
+            <main className="flex-1 py-12 md:py-16 pt-24">
                 <div className="container mx-auto px-4">
                     <Skeleton className="h-10 w-48 mb-6" />
                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -115,7 +115,7 @@ export default function ProjectDetailsPage() {
     return (
          <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 py-12 md:py-16 mt-16">
+            <main className="flex-1 py-12 md:py-16 pt-24">
                 <div className="container mx-auto px-4">
                      <Button asChild variant="outline" className="mb-6">
                         <Link href="/projects">

@@ -26,7 +26,7 @@ export default function PdfViewerPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 pt-24 md:pt-28">
+      <main className="flex-1 pt-24">
         <div className="container mx-auto px-4">
             <Button asChild variant="outline" className="mb-4">
                 <Link href="/#concepts">

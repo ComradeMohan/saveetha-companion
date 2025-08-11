@@ -62,7 +62,7 @@ export default function ProjectsPage() {
     return (
         <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 py-12 md:py-16">
+            <main className="flex-1 py-12 md:py-16 pt-24">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold tracking-tight">Ecommerce Marketplace</h2>
