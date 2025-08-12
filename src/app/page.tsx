@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         {user ? <Dashboard /> : <Hero />}
 
         <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
