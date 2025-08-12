@@ -32,7 +32,7 @@ export default function Home() {
       <main className="flex-1 flex flex-col">
         {user ? <Dashboard /> : <Hero />}
 
-        <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <section id="calculators" className="pt-20 pb-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>
             <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
@@ -42,7 +42,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="concepts" className="py-12 md:py-16 bg-card/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <section id="concepts" className="pt-20 pb-12 md:py-16 bg-card/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <div className="container mx-auto px-4">
             <ConceptMapFinder />
           </div>
@@ -51,7 +51,7 @@ export default function Home() {
         {!user && <Features />}
         <Stats />
 
-        <section id="contact" className="py-12 md:py-16 text-center">
+        <section id="contact" className="pt-20 pb-12 md:py-16 text-center">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold tracking-tight">Need Help?</h2>
                 <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">

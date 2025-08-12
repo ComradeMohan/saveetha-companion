@@ -121,7 +121,7 @@ export default function ProfilePage() {
   return (
     <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1 py-12 md:py-16">
+        <main className="flex-1 pt-20 pb-12 md:py-16">
             <div className="container mx-auto px-4">
                 {loading || authLoading ? <ProfilePageSkeleton /> : profile ? (
                     <Card className="max-w-3xl mx-auto p-2 sm:p-0">

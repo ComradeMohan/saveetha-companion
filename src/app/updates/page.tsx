@@ -54,7 +54,7 @@ export default function UpdatesPage() {
     return (
         <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1 py-12 md:py-16">
+            <main className="flex-1 pt-20 pb-12 md:py-16">
                 <div className="container mx-auto px-4 max-w-3xl">
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold tracking-tight">Updates & Announcements</h2>
@@ -115,4 +115,3 @@ export default function UpdatesPage() {
         </div>
     );
 }
-
