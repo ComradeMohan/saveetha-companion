@@ -29,19 +29,15 @@ export default function MobileNav() {
     return [];
   }, [user]);
   
-  const [activeIndex, setActiveIndex] = React.useState(0);
-
-  React.useEffect(() => {
+  const activeIndex = React.useMemo(() => {
     const activeLinkIndex = navLinks.findIndex(link => pathname === link.href);
-    if (activeLinkIndex !== -1) {
-      setActiveIndex(activeLinkIndex);
-    }
+    // Default to home if no match is found, e.g. on nested pages
+    return activeLinkIndex !== -1 ? activeLinkIndex : 0;
   }, [pathname, navLinks]);
 
 
-  const handleNavLinkClick = (index: number) => {
+  const handleNavLinkClick = () => {
     setIsNavigating(true);
-    setActiveIndex(index);
   };
 
   if (!user) return null;
@@ -55,7 +51,7 @@ export default function MobileNav() {
                 return (
                     <Link key={link.href} href={link.href} passHref>
                         <button
-                            onClick={() => handleNavLinkClick(index)}
+                            onClick={handleNavLinkClick}
                             className={cn(
                                 "relative z-10 flex flex-col items-center justify-center gap-1 w-16 h-full text-xs font-medium transition-colors duration-300",
                                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'
@@ -70,7 +66,7 @@ export default function MobileNav() {
          </nav>
          <div 
             className="absolute top-0 left-0 h-full w-16 flex items-center justify-center transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(${activeIndex * 100}%)` }}
+            style={{ transform: `translateX(calc(${activeIndex} * 100%))` }}
         >
             <div className="h-16 w-16 rounded-full bg-primary/10 backdrop-blur-sm border-t border-primary/20"></div>
         </div>
