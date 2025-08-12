@@ -139,7 +139,7 @@ export default function ProfilePage() {
                                     <div className="min-w-0">
                                         <h2 className="text-2xl font-bold truncate">{profile.name}</h2>
                                         <div className="flex items-center gap-2">
-                                            <p className="text-muted-foreground break-words">{profile.email}</p>
+                                            <p className="text-muted-foreground truncate">{profile.email}</p>
                                             {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
                                         </div>
                                     </div>
