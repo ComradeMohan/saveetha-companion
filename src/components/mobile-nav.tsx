@@ -17,10 +17,6 @@ export default function MobileNav() {
   const { user, setIsNavigating } = useAuth();
   const pathname = usePathname();
 
-  const handleNavLinkClick = () => {
-    setIsNavigating(true);
-  };
-  
   const navLinks = React.useMemo(() => {
     if (user) {
        return [
@@ -30,22 +26,38 @@ export default function MobileNav() {
             { href: '/profile', label: 'Profile', icon: User },
         ];
     }
-    return []; // No nav bar for logged-out users on mobile
+    return [];
   }, [user]);
+  
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const activeLinkIndex = navLinks.findIndex(link => pathname === link.href);
+    if (activeLinkIndex !== -1) {
+      setActiveIndex(activeLinkIndex);
+    }
+  }, [pathname, navLinks]);
+
+
+  const handleNavLinkClick = (index: number) => {
+    setIsNavigating(true);
+    setActiveIndex(index);
+  };
 
   if (!user) return null;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/80 backdrop-blur-lg animate-slide-in-from-bottom">
-       <nav className="flex items-center justify-around h-full">
-            {navLinks.map((link) => {
-                const isActive = (pathname === link.href) || (pathname === '/' && link.href === '/');
+    <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 h-16 animate-slide-in-from-bottom">
+      <div className="relative mx-auto max-w-sm h-full rounded-full border border-black/5 bg-background/30 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
+         <nav className="flex items-center justify-around h-full">
+            {navLinks.map((link, index) => {
+                const isActive = activeIndex === index;
                 return (
                     <Link key={link.href} href={link.href} passHref>
                         <button
-                            onClick={handleNavLinkClick}
+                            onClick={() => handleNavLinkClick(index)}
                             className={cn(
-                                "flex flex-col items-center justify-center gap-1 w-20 h-full text-xs font-medium transition-colors",
+                                "relative z-10 flex flex-col items-center justify-center gap-1 w-16 h-full text-xs font-medium transition-colors duration-300",
                                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                             )}
                         >
@@ -55,7 +67,14 @@ export default function MobileNav() {
                     </Link>
                 );
             })}
-       </nav>
+         </nav>
+         <div 
+            className="absolute top-0 left-0 h-full w-16 flex items-center justify-center transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(${activeIndex * 100}%)` }}
+        >
+            <div className="h-16 w-16 rounded-full bg-primary/10 backdrop-blur-sm border-t border-primary/20"></div>
+        </div>
+      </div>
     </div>
   );
 }
