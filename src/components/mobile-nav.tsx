@@ -30,9 +30,20 @@ export default function MobileNav() {
   }, [user]);
   
   const activeIndex = React.useMemo(() => {
-    const activeLinkIndex = navLinks.findIndex(link => pathname === link.href);
-    // Default to home if no match is found, e.g. on nested pages
-    return activeLinkIndex !== -1 ? activeLinkIndex : 0;
+    // Find the best match for the current path
+    const exactMatchIndex = navLinks.findIndex(link => pathname === link.href);
+    if (exactMatchIndex !== -1) return exactMatchIndex;
+
+    // Handle nested routes, e.g., /projects/some-id should still highlight a main nav item if applicable
+    // For this app, we can default to 'Home' if no other direct match is found
+    if (pathname.startsWith('/admin')) return -1; // Don't highlight anything for admin
+    if (pathname === '/') return 0;
+    
+    // Find the first link whose href is a prefix of the current path
+    const prefixMatchIndex = navLinks.map(l => l.href).sort((a,b) => b.length - a.length).findIndex(href => href !== '/' && pathname.startsWith(href));
+    if (prefixMatchIndex !== -1) return navLinks.findIndex(l => l.href === navLinks.map(l => l.href).sort((a,b) => b.length - a.length)[prefixMatchIndex]);
+
+    return 0; // Default to home
   }, [pathname, navLinks]);
 
 
@@ -40,20 +51,20 @@ export default function MobileNav() {
     setIsNavigating(true);
   };
 
-  if (!user) return null;
+  if (!user || pathname.startsWith('/admin')) return null;
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 h-16 animate-slide-in-from-bottom">
-      <div className="relative mx-auto max-w-sm h-full rounded-full border border-black/5 bg-background/30 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
-         <nav className="flex items-center justify-around h-full">
+      <div className="relative mx-auto max-w-xs h-full rounded-full border border-black/5 bg-background/30 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
+         <nav className="flex items-center h-full">
             {navLinks.map((link, index) => {
                 const isActive = activeIndex === index;
                 return (
-                    <Link key={link.href} href={link.href} passHref>
+                    <Link key={link.href} href={link.href} className="w-1/4 h-full">
                         <button
                             onClick={handleNavLinkClick}
                             className={cn(
-                                "relative z-10 flex flex-col items-center justify-center gap-1 w-16 h-full text-xs font-medium transition-colors duration-300",
+                                "relative z-10 flex flex-col items-center justify-center gap-1 w-full h-full text-xs font-medium transition-colors duration-300",
                                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                             )}
                         >
@@ -65,10 +76,10 @@ export default function MobileNav() {
             })}
          </nav>
          <div 
-            className="absolute top-0 left-0 h-full w-16 flex items-center justify-center transition-transform duration-500 ease-in-out"
+            className="absolute top-0 left-0 h-full w-1/4 flex items-center justify-center transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(calc(${activeIndex} * 100%))` }}
         >
-            <div className="h-16 w-16 rounded-full bg-primary/10 backdrop-blur-sm border-t border-primary/20"></div>
+            <div className="h-14 w-14 rounded-full bg-primary/10 backdrop-blur-sm border-t border-primary/20"></div>
         </div>
       </div>
     </div>
