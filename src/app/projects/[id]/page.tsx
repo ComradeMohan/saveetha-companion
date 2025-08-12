@@ -132,9 +132,8 @@ export default function ProjectDetailsPage() {
                                         <Image
                                             src={project.thumbnailUrl}
                                             alt={project.title}
-                                            layout="fill"
-                                            objectFit="cover"
-                                            className="rounded-t-xl"
+                                            fill
+                                            className="rounded-t-xl object-cover"
                                         />
                                     </div>
                                 </CardHeader>

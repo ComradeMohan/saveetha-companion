@@ -96,9 +96,8 @@ export default function ProjectsPage() {
                                                 <Image
                                                     src={project.thumbnailUrl}
                                                     alt={project.title}
-                                                    layout="fill"
-                                                    objectFit="cover"
-                                                    className="transition-transform duration-300 group-hover:scale-105"
+                                                    fill
+                                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
                                             </div>
                                         </CardHeader>

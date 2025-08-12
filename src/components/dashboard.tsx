@@ -32,12 +32,12 @@ export default function Dashboard() {
     const quickLinks = [
         { href: '/#calculators', label: 'Calculators', icon: Calculator },
         { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
-        { href: '/calendar', label: 'Events Calendar', icon: Calendar },
+        { href: '/calendar', label: 'Calendar', icon: Calendar },
         { href: '/updates', label: 'Updates', icon: Bell },
     ];
 
     return (
-        <section className="py-12 md:py-16 lg:pb-16 animate-fade-in">
+        <section className="py-12 md:py-16 lg:pb-16 animate-fade-in pt-16">
             <div className="container mx-auto px-4">
                 <div className="mb-10">
                     <h1 className="text-3xl font-bold tracking-tight">
