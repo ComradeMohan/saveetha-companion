@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowDown } from 'lucide-react';
-import ShinyButton from '@/components/shiny-button';
-import StarButton from '@/components/star-button';
+import { Button } from '@/components/ui/button';
 
 export default function Hero() {
   return (
@@ -15,8 +14,12 @@ export default function Hero() {
         </p>
         <div className="mt-8 flex flex-col justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex flex-col sm:flex-row gap-4">
-                <StarButton href="/signup" text="Get Started" />
-                <ShinyButton href="#calculators" text="Try the Calculators" />
+                <Button asChild size="lg">
+                    <Link href="/signup">Get Started</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                    <Link href="#calculators">Try the Calculators</Link>
+                </Button>
             </div>
         </div>
       </div>
