@@ -136,11 +136,11 @@ export default function ProfilePage() {
                                         <AvatarImage src={profile.photoURL} alt={profile.name} />
                                         <AvatarFallback className="text-2xl">{userInitials}</AvatarFallback>
                                     </Avatar>
-                                    <div>
-                                        <h2 className="text-2xl font-bold">{profile.name}</h2>
+                                    <div className="min-w-0">
+                                        <h2 className="text-2xl font-bold truncate">{profile.name}</h2>
                                         <div className="flex items-center gap-2">
-                                            <p className="text-muted-foreground">{profile.email}</p>
-                                            {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                            <p className="text-muted-foreground break-words">{profile.email}</p>
+                                            {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
                                         </div>
                                     </div>
                                 </div>
