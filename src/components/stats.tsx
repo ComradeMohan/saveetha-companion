@@ -194,6 +194,7 @@ export default function Stats() {
                                         axisLine={false}
                                         tickFormatter={(value) => `${value}`}
                                         allowDecimals={false}
+                                        domain={[0, 1000]}
                                     />
                                     <Tooltip
                                         contentStyle={{
