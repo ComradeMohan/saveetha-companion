@@ -15,8 +15,8 @@ export default function Hero() {
         </p>
         <div className="mt-8 flex flex-col justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex flex-col sm:flex-row gap-4">
-                <ShinyButton href="/signup" text="Get Started" />
-                <StarButton href="#calculators" text="Try the Calculators" />
+                <StarButton href="/signup" text="Get Started" />
+                <ShinyButton href="#calculators" text="Try the Calculators" />
             </div>
         </div>
       </div>
