@@ -4,7 +4,7 @@ import { ArrowDown } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section id="home" className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center py-20 md:py-32 animate-fade-in mt-16 md:mt-0">
+    <section id="home" className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center animate-fade-in mt-16 md:mt-0">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
           Your All-in-One Academic Hub
