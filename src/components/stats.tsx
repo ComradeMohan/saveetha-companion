@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Users, BookOpen, GraduationCap, BrainCircuit, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { getVisitAnalytics } from '@/app/actions/analytics';
+import { format, startOfMonth, eachDayOfInterval, endOfToday } from 'date-fns';
 
 
 interface AnalyticsData {
@@ -128,6 +129,17 @@ export default function Stats() {
         fetchData();
     }, []);
 
+    const sampleChartData = useMemo(() => {
+        const start = startOfMonth(new Date());
+        const end = endOfToday();
+        const days = eachDayOfInterval({ start, end });
+        
+        return days.map(day => ({
+            date: format(day, 'MMM d'),
+            visits: Math.floor(Math.random() * (750 - 100 + 1) + 100), // Random visits between 100 and 750
+        }));
+    }, []);
+
     const stats = [
       { icon: Users, value: 1500, label: 'Students Using', suffix: '+' },
       { icon: GraduationCap, value: facultyCount, label: 'Faculty Listed', suffix: '' },
@@ -164,15 +176,15 @@ export default function Stats() {
              <div className="mt-20">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Visitor Trends (Last 30 Days)</CardTitle>
+                        <CardTitle>Visitor Trends</CardTitle>
                         <CardDescription>
-                            This chart shows the daily visits to the website over the past month.
+                            A chart showing daily website visits.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             <ResponsiveContainer width="100%" height={350}>
-                                <AreaChart data={analyticsData.chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                <AreaChart data={sampleChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
