@@ -37,7 +37,7 @@ export default function Dashboard() {
     ];
 
     return (
-        <section className="py-12 md:py-16 lg:pb-16 animate-fade-in pt-16">
+        <section className="py-12 md:py-20 lg:pb-16 animate-fade-in">
             <div className="container mx-auto px-4">
                 <div className="mb-10">
                     <h1 className="text-3xl font-bold tracking-tight">
