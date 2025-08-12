@@ -3,7 +3,7 @@
 
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import Hero from '@/components/hero';
+import Hero from '@/app/hero';
 import { useAuth } from '@/hooks/use-auth';
 import Features from '@/components/features';
 import Stats from '@/components/stats';
@@ -48,7 +48,7 @@ export default function Home() {
           </div>
         </section>
         
-        <Features />
+        {!user && <Features />}
         <Stats />
 
         {!user && (
