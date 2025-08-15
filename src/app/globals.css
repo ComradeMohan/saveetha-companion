@@ -5,25 +5,25 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 30 100% 98%; /* Very light saffron/orange tint */
     --foreground: 228 20% 5.1%;
-    --card: 210 40% 100%;
+    --card: 30 100% 100%;
     --card-foreground: 228 20% 5.1%;
-    --popover: 210 40% 100%;
+    --popover: 30 100% 100%;
     --popover-foreground: 228 20% 5.1%;
-    --primary: 262 80% 56%; /* New Vibrant Purple */
+    --primary: 25 95% 53%; /* Saffron (Orange) */
     --primary-foreground: 210 40% 98%;
-    --secondary: 260 100% 97%; /* Soft Lavender */
-    --secondary-foreground: 260 20% 20%;
+    --secondary: 145 60% 96%; /* Light Green */
+    --secondary-foreground: 145 63% 22%;
     --muted: 220 20% 93%;
     --muted-foreground: 232 13% 41%;
-    --accent: 260 100% 97%;
-    --accent-foreground: 260 20% 20%;
+    --accent: 145 60% 96%;
+    --accent-foreground: 145 63% 22%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
     --border: 226 50% 91%;
     --input: 226 50% 91%;
-    --ring: 262 80% 56%;
+    --ring: 25 95% 53%;
     --radius: 0.75rem;
 
     --spotlight-color: hsl(var(--primary) / 0.1);
@@ -36,19 +36,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262 80% 56%; /* New Vibrant Purple */
+    --primary: 25 95% 53%; /* Saffron (Orange) */
     --primary-foreground: 210 40% 98%;
-    --secondary: 217 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 145 63% 15%; /* Dark Green */
+    --secondary-foreground: 145 60% 90%;
     --muted: 217 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 145 63% 15%;
+    --accent-foreground: 145 60% 90%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 32.6% 17.5%;
     --input: 217 32.6% 17.5%;
-    --ring: 262 80% 56%;
+    --ring: 25 95% 53%;
 
     --spotlight-color: hsl(var(--primary) / 0.08);
   }
