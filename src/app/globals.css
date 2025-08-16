@@ -299,7 +299,7 @@
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: #f00; /* Fallback color */
+  background-color: #00A5C6; /* Fallback color */
   opacity: 0.7;
   animation: fall 5s linear forwards;
 }
