@@ -26,6 +26,10 @@ const Confetti = () => {
 export default function JanmashtamiMessage() {
   const [showModal, setShowModal] = useState(false);
 
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
   useEffect(() => {
     const lastSeen = localStorage.getItem(STORAGE_KEY);
     const now = Date.now();
@@ -35,7 +39,7 @@ export default function JanmashtamiMessage() {
       localStorage.setItem(STORAGE_KEY, now.toString());
 
       const timer = setTimeout(() => {
-        setShowModal(false);
+        handleClose();
       }, 6000); // Hide after 6 seconds
 
       return () => clearTimeout(timer);
@@ -47,13 +51,18 @@ export default function JanmashtamiMessage() {
   }
 
   return (
-    <div className={cn(
-        "fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm",
-        "animate-in fade-in-0 duration-500",
-        !showModal && "animate-out fade-out-0 duration-500 fill-mode-forwards"
-    )}>
+    <div 
+        className={cn(
+            "fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm",
+            "animate-in fade-in-0 duration-500"
+        )}
+        onClick={handleClose}
+    >
         <Confetti />
-        <div className="relative text-center text-white p-8 animate-in zoom-in-75 duration-700">
+        <div 
+            className="relative text-center text-white p-8 animate-in zoom-in-75 duration-700"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the message itself
+        >
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
                 Happy Sri Krishna Janmashtami!
             </h1>
