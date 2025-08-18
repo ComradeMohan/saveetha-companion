@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Github } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -10,16 +9,6 @@ export default function Footer() {
             © {new Date().getFullYear()} comrademohan. All rights reserved.
             </p>
             <div id="sfcadksnu2ump83qwcwzh26l4xencer99mf"></div><script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=adksnu2ump83qwcwzh26l4xencer99mf&down=async" async></script><noscript><a href="https://www.freecounterstat.com" title="web hit counter"><img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=adksnu2ump83qwcwzh26l4xencer99mf" border="0" title="web hit counter" alt="web hit counter"/></a></noscript>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="https://github.com/comrademohan"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub Profile"
-          >
-            <Github className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
         </div>
       </div>
     </footer>

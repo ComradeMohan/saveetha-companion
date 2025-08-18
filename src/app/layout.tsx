@@ -14,7 +14,6 @@ import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import VisitTracker from '@/components/visit-tracker';
-import JanmashtamiMessage from '@/components/janmashtami-message';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -101,7 +100,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <AuthProvider>
-          <JanmashtamiMessage />
           <VerificationBanner key="verification-banner" />
           <VisitTracker />
           <main key="main-content">{children}</main>
