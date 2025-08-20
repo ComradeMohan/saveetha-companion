@@ -130,7 +130,7 @@ export default function RootLayout({
         <Script
           key="gtag-js"
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-SV60C81VTM"
+          src="https://www.googletagmanager.com/gtag/js?id=G-LCXQ8TNCNP"
         />
         <Script
           key="gtag-init"
@@ -141,7 +141,7 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-SV60C81VTM');
+              gtag('config', 'G-LCXQ8TNCNP');
             `,
           }}
         />
