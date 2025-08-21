@@ -7,7 +7,7 @@ import type { Timestamp, DocumentData } from 'firebase-admin/firestore';
 
 /**
  * @fileOverview Server actions for handling website analytics.
- * - trackVisit: Increments the master visitor counter.
+ * - updateVisitCount: Sets the master visitor counter to a specific value.
  * - getVisitAnalytics: Retrieves and processes visit data to provide key metrics and chart data.
  * - getVisitorCount: Retrieves the total visitor count from the 'counter' collection.
  */
@@ -27,26 +27,18 @@ interface AnalyticsData {
 }
 
 /**
- * Increments a single counter document in the 'counter' collection.
+ * Sets the counter document in the 'counter' collection to a specific value.
  */
-export async function trackVisit(): Promise<void> {
+export async function updateVisitCount(newCount: number): Promise<void> {
   try {
      if (!adminDb.collection) {
-        console.warn("Analytics: Firestore Admin not initialized, skipping trackVisit.");
+        console.warn("Analytics: Firestore Admin not initialized, skipping updateVisitCount.");
         return;
     }
     const counterRef = adminDb.collection('counter').doc('visits');
-    await counterRef.update({
-        count: adminDb.FieldValue.increment(1)
-    });
+    await counterRef.set({ count: newCount });
   } catch (error: any) {
-    // If the document doesn't exist, create it.
-    if (error.code === 5) { // 5 = NOT_FOUND
-         const counterRef = adminDb.collection('counter').doc('visits');
-         await counterRef.set({ count: 1 });
-    } else {
-        console.error("Error tracking visit:", error);
-    }
+    console.error("Error updating visit count:", error);
     // Fail silently to not impact user experience
   }
 }

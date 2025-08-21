@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import VisitTracker from '@/components/visit-tracker';
 import FeedbackDialog from '@/components/feedback-dialog';
 
 const poppins = Poppins({ 
@@ -102,7 +101,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     >
       <AuthProvider>
           <VerificationBanner key="verification-banner" />
-          <VisitTracker />
           <FeedbackDialog />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
