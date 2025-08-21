@@ -1,8 +1,9 @@
+
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
-import { FieldValue } from 'firebase-admin/firestore';
+import * as firestore from 'firebase-admin/firestore';
 
 const updateSchema = z.object({
     title: z.string().min(1, { message: 'Title is required.' }),
@@ -29,11 +30,11 @@ export async function createUpdate(prevState: any, formData: FormData) {
 
     try {
         // Save the update to Firestore
-        await adminDb.collection('updates').add({
+        await firestore.addDoc(firestore.collection(adminDb, 'updates'), {
             title,
             description,
             link: link || null, // Store null if link is empty
-            createdAt: FieldValue.serverTimestamp(),
+            createdAt: firestore.FieldValue.serverTimestamp(),
         });
         
         return { 

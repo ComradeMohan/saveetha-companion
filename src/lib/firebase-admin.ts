@@ -1,6 +1,6 @@
 
 import admin from 'firebase-admin';
-import { getApps, App, initializeApp, cert } from 'firebase-admin/app';
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
 let adminDb: Firestore;
@@ -40,6 +40,5 @@ if (hasRequiredEnvVars) {
 }
 
 
-// Export the initialized admin DB and FieldValue for use in server actions
+// Export the initialized admin DB for use in server actions
 export { adminDb };
-export { FieldValue } from 'firebase-admin/firestore';

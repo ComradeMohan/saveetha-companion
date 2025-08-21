@@ -4,6 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import * as firestore from 'firebase-admin/firestore';
 
 const deleteSchema = z.object({
     id: z.string().min(1, { message: 'Update ID is required.' }),
@@ -22,7 +23,7 @@ export async function deleteUpdate(updateId: string) {
     const { id } = validatedFields.data;
 
     try {
-        await adminDb.collection('updates').doc(id).delete();
+        await firestore.doc(adminDb, 'updates', id).delete();
         
         revalidatePath('/admin/updates'); // Revalidate the admin page
         revalidatePath('/updates'); // Revalidate the public updates page

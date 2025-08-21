@@ -2,7 +2,7 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import { collection, getDocs, Timestamp, addDoc, FieldValue } from 'firebase-admin/firestore';
+import * as firestore from 'firebase-admin/firestore';
 import { unstable_cache } from 'next/cache';
 
 /**
@@ -12,7 +12,7 @@ import { unstable_cache } from 'next/cache';
  */
 
 interface Visit {
-  timestamp: Timestamp;
+  timestamp: firestore.Timestamp;
 }
 
 interface AnalyticsData {
@@ -34,8 +34,8 @@ export async function trackVisit(): Promise<void> {
         console.warn("Analytics: Firestore Admin not initialized, skipping trackVisit.");
         return;
     }
-    await addDoc(collection(adminDb, 'page_visits'), {
-      timestamp: FieldValue.serverTimestamp(),
+    await firestore.addDoc(firestore.collection(adminDb, 'page_visits'), {
+      timestamp: firestore.FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error("Error tracking visit:", error);
@@ -60,8 +60,8 @@ export const getVisitAnalytics = unstable_cache(
       };
     }
 
-    const visitsCol = collection(adminDb, 'page_visits');
-    const visitSnapshot = await getDocs(visitsCol);
+    const visitsCol = firestore.collection(adminDb, 'page_visits');
+    const visitSnapshot = await firestore.getDocs(visitsCol);
     const visits: Visit[] = visitSnapshot.docs.map(doc => doc.data() as Visit).filter(v => v.timestamp);
 
 
