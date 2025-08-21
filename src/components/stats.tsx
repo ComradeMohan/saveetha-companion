@@ -8,7 +8,7 @@ import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianG
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { updateAndGetAnalytics, getVisitAnalytics } from '@/app/actions/analytics';
-import { format, startOfMonth, eachDayOfInterval, endOfToday, subDays } from 'date-fns';
+import { format, endOfToday, eachDayOfInterval, subDays } from 'date-fns';
 
 
 interface AnalyticsData {
@@ -93,7 +93,6 @@ export default function Stats() {
     const [analyticsData, setAnalyticsData] = useState<Partial<AnalyticsData>>({});
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
     const statsRef = useRef<HTMLDivElement>(null);
-    const effectRan = useRef(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -118,35 +117,35 @@ export default function Stats() {
     }, []);
 
     useEffect(() => {
-        // This ref check prevents the double-increment in React StrictMode (dev)
-        // while allowing it to run on every component mount (page refresh)
-        if (process.env.NODE_ENV === 'development' && effectRan.current) {
-            // In dev, if the effect has already run, fetch non-incrementing data
-            getVisitAnalytics().then(data => {
+        const sessionKey = 'session_visited';
+        const sessionVisited = sessionStorage.getItem(sessionKey);
+
+        const fetchAnalytics = async () => {
+            setAnalyticsLoading(true);
+            try {
+                let data;
+                if (!sessionVisited) {
+                    data = await updateAndGetAnalytics();
+                    sessionStorage.setItem(sessionKey, 'true');
+                } else {
+                    data = await getVisitAnalytics();
+                }
                 setAnalyticsData(data);
+            } catch (error) {
+                console.error("Failed to fetch analytics", error);
+                // Attempt to fetch non-incrementing data as a fallback
+                try {
+                    const fallbackData = await getVisitAnalytics();
+                    setAnalyticsData(fallbackData);
+                } catch (fallbackError) {
+                    console.error("Failed to fetch fallback analytics", fallbackError);
+                }
+            } finally {
                 setAnalyticsLoading(false);
-            });
-            return;
-        }
-
-        async function fetchData() {
-          try {
-            const data = await updateAndGetAnalytics();
-            setAnalyticsData(data);
-          } catch (error) {
-            console.error("Failed to fetch analytics", error);
-          } finally {
-            setAnalyticsLoading(false);
-          }
-        }
-        
-        fetchData();
-
-        return () => {
-            if (process.env.NODE_ENV === 'development') {
-                effectRan.current = true;
             }
         };
+
+        fetchAnalytics();
     }, []);
 
     const chartData = useMemo(() => {

@@ -2,7 +2,6 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import { unstable_cache } from 'next/cache';
 import { startOfToday, isSameDay } from 'date-fns';
 
 /**
@@ -25,10 +24,9 @@ interface AnalyticsData {
 
 /**
  * Fetches and processes all visit data to generate analytics.
- * This function is cached for performance and does NOT increment the count.
+ * This function does NOT increment the count. It is intended for display purposes when an increment is not needed.
  */
-export const getVisitAnalytics = unstable_cache(
-  async (): Promise<Partial<AnalyticsData>> => {
+export const getVisitAnalytics = async (): Promise<Partial<AnalyticsData>> => {
     if (!adminDb.collection) {
       console.warn("Analytics: Firestore Admin not initialized, returning empty data.");
       return {};
@@ -45,10 +43,7 @@ export const getVisitAnalytics = unstable_cache(
       console.error("Error fetching analytics data:", error);
       return {};
     }
-  },
-  ['visit_analytics'],
-  { revalidate: 3600 } // Revalidate cache every hour
-);
+};
 
 /**
  * Fetches the total visitor count from the 'counter' collection for display purposes.
