@@ -14,7 +14,6 @@ export default function VisitorCounter() {
         const fetchCount = async () => {
             setLoading(true);
             try {
-                // This function is cached and only reads data.
                 const visitorCount = await getVisitorCount();
                 setCount(visitorCount);
             } catch (error) {
@@ -34,7 +33,7 @@ export default function VisitorCounter() {
             {loading ? (
                 <Skeleton className="h-4 w-32" />
             ) : count !== null ? (
-                <span>Total Visitors: {count.toLocaleString()}</span>
+                <span>Live Visitors: {count.toLocaleString()}</span>
             ) : (
                  <span>Error loading count</span>
             )}

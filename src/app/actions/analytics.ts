@@ -53,32 +53,27 @@ export const getVisitAnalytics = unstable_cache(
 /**
  * Fetches the total visitor count from the 'counter' collection for display purposes.
  * Does not increment the count.
- * Caches the result for 1 hour.
  */
-export const getVisitorCount = unstable_cache(
-    async (): Promise<number> => {
-        if (!adminDb.collection) {
-            console.warn("Analytics: Firestore Admin not initialized, returning 0.");
-            return 0;
-        }
+export const getVisitorCount = async (): Promise<number> => {
+    if (!adminDb.collection) {
+        console.warn("Analytics: Firestore Admin not initialized, returning 0.");
+        return 0;
+    }
 
-        try {
-            const counterRef = adminDb.collection('counter').doc('visits');
-            const counterDoc = await counterRef.get();
+    try {
+        const counterRef = adminDb.collection('counter').doc('visits');
+        const counterDoc = await counterRef.get();
 
-            if (counterDoc.exists) {
-                return counterDoc.data()?.total || 0;
-            }
-            return 0;
-            
-        } catch (error) {
-            console.error("Error fetching visitor count:", error);
-            return 0; 
+        if (counterDoc.exists) {
+            return counterDoc.data()?.total || 0;
         }
-    },
-    ['visitor_count'],
-    { revalidate: 3600 }
-);
+        return 0;
+        
+    } catch (error) {
+        console.error("Error fetching visitor count:", error);
+        return 0; 
+    }
+};
 
 
 /**
