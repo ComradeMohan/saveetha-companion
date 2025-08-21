@@ -8,7 +8,6 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} comrademohan. All rights reserved.
             </p>
-            <div id="sfcadksnu2ump83qwcwzh26l4xencer99mf"></div><script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=adksnu2ump83qwcwzh26l4xencer99mf&down=async" async></script><noscript><a href="https://www.freecounterstat.com" title="web hit counter"><img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=adksnu2ump83qwcwzh26l4xencer99mf" border="0" title="web hit counter" alt="web hit counter"/></a></noscript>
         </div>
       </div>
     </footer>
