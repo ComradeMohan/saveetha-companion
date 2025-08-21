@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import VisitorCounter from './visitor-counter';
 
 export default function Footer() {
   return (
@@ -9,6 +10,7 @@ export default function Footer() {
             © {new Date().getFullYear()} comrademohan. All rights reserved.
             </p>
         </div>
+        <VisitorCounter />
       </div>
     </footer>
   );

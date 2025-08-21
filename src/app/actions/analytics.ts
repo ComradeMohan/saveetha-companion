@@ -9,6 +9,7 @@ import type { Timestamp, DocumentData } from 'firebase-admin/firestore';
  * @fileOverview Server actions for handling website analytics.
  * - trackVisit: Records a new page visit with a timestamp.
  * - getVisitAnalytics: Retrieves and processes visit data to provide key metrics and chart data.
+ * - getVisitorCount: Retrieves the total visitor count from the 'counter' collection.
  */
 
 interface Visit {
@@ -113,4 +114,36 @@ export const getVisitAnalytics = unstable_cache(
   },
   ['visit_analytics'],
   { revalidate: 3600 } // Revalidate every hour
+);
+
+/**
+ * Fetches the total visitor count from the 'counter' collection.
+ * Caches the result for 1 hour.
+ */
+export const getVisitorCount = unstable_cache(
+    async (): Promise<number> => {
+        if (!adminDb.collection) {
+            console.warn("Analytics: Firestore Admin not initialized, returning 0.");
+            return 0;
+        }
+
+        try {
+            const counterRef = adminDb.collection('counter').doc('visits');
+            const counterDoc = await counterRef.get();
+
+            if (counterDoc.exists) {
+                return counterDoc.data()?.count || 0;
+            }
+
+            const visitsCol = adminDb.collection('page_visits');
+            const visitSnapshot = await visitsCol.count().get();
+            return visitSnapshot.data().count;
+            
+        } catch (error) {
+            console.error("Error fetching visitor count:", error);
+            return 0; // Return 0 on error
+        }
+    },
+    ['visitor_count'],
+    { revalidate: 3600 } // Revalidate every hour
 );
