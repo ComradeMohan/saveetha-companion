@@ -3,7 +3,6 @@
 
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
-import * as firestore from 'firebase-admin/firestore';
 
 const updateSchema = z.object({
     title: z.string().min(1, { message: 'Title is required.' }),
@@ -30,11 +29,11 @@ export async function createUpdate(prevState: any, formData: FormData) {
 
     try {
         // Save the update to Firestore
-        await firestore.addDoc(firestore.collection(adminDb, 'updates'), {
+        await adminDb.collection('updates').add({
             title,
             description,
             link: link || null, // Store null if link is empty
-            createdAt: firestore.FieldValue.serverTimestamp(),
+            createdAt: adminDb.FieldValue.serverTimestamp(),
         });
         
         return { 

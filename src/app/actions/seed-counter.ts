@@ -2,7 +2,6 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import * as firestore from 'firebase-admin/firestore';
 
 /**
  * @fileOverview Server action for seeding the initial visitor count.
@@ -17,9 +16,9 @@ export async function seedInitialCount(): Promise<{ type: 'success' | 'error', m
     }
 
     // Use a specific document ID, e.g., 'visits', for easy retrieval.
-    const counterRef = firestore.doc(adminDb, 'counter', 'visits');
+    const counterRef = adminDb.collection('counter').doc('visits');
     
-    await firestore.setDoc(counterRef, {
+    await counterRef.set({
       count: 4147
     });
 

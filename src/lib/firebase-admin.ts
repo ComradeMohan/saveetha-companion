@@ -1,9 +1,9 @@
 
 import admin from 'firebase-admin';
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore, Firestore } from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 
-let adminDb: Firestore;
+let adminDb: admin.firestore.Firestore;
 
 // Check if the required environment variables are set
 const hasRequiredEnvVars = 
@@ -36,7 +36,7 @@ if (hasRequiredEnvVars) {
       'Firebase Admin environment variables are not set. Skipping Admin SDK initialization. Server-side actions requiring admin privileges will fail.'
     );
     // Assign a dummy object to prevent crashes on import, though operations will fail.
-    adminDb = {} as Firestore;
+    adminDb = {} as admin.firestore.Firestore;
 }
 
 
