@@ -7,6 +7,9 @@ import useDashboardStats from '@/hooks/use-dashboard-stats';
 import { Skeleton } from '@/components/ui/skeleton';
 import RecentSignups from '@/components/admin/recent-signups';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { seedInitialCount } from '@/app/actions/seed-counter';
+import { useToast } from '@/hooks/use-toast';
 
 function StatCard({ title, value, icon: Icon, description, loading, href }: { title: string, value: number | string, icon: React.ElementType, description: string, loading: boolean, href?: string }) {
   const cardContent = (
@@ -44,10 +47,23 @@ function StatCard({ title, value, icon: Icon, description, loading, href }: { ti
 
 export default function AdminDashboard() {
   const { stats, loading } = useDashboardStats();
+  const { toast } = useToast();
+
+  const handleSeed = async () => {
+    const result = await seedInitialCount();
+    toast({
+        title: result.type === 'success' ? 'Success' : 'Error',
+        description: result.message,
+        variant: result.type === 'error' ? 'destructive' : 'default',
+    })
+  }
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <Button onClick={handleSeed} variant="outline">Seed Visitor Count</Button>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           title="Total Users"
