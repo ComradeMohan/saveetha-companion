@@ -2,23 +2,24 @@
 'use client';
 
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { Users, BookOpen, GraduationCap, BrainCircuit, TrendingUp, Calendar } from 'lucide-react';
+import { Users, BookOpen, GraduationCap, BrainCircuit, TrendingUp, Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
-import { getVisitAnalytics } from '@/app/actions/analytics';
-import { format, startOfMonth, eachDayOfInterval, endOfToday } from 'date-fns';
+import { updateAndGetAnalytics } from '@/app/actions/analytics';
+import { format, startOfMonth, eachDayOfInterval, endOfToday, subDays } from 'date-fns';
 
 
 interface AnalyticsData {
-  totalVisits: number;
-  yesterdayVisits: number;
+  total: number;
+  today: number;
+  yesterday: number;
   busiestDay: {
     date: string;
     count: number;
   };
-  chartData: { date: string; visits: number }[];
+  daily: Record<string, number>;
 }
 
 const AnimatedCounter = ({ value, suffix = '' }: { value: number; suffix?: string }) => {
@@ -89,7 +90,7 @@ export default function Stats() {
     const [isVisible, setIsVisible] = useState(false);
     const [facultyCount, setFacultyCount] = useState(75);
     const [conceptMapCount, setConceptMapCount] = useState(20);
-    const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+    const [analyticsData, setAnalyticsData] = useState<Partial<AnalyticsData>>({});
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
     const statsRef = useRef<HTMLDivElement>(null);
 
@@ -118,7 +119,8 @@ export default function Stats() {
     useEffect(() => {
         async function fetchData() {
           try {
-            const data = await getVisitAnalytics();
+            // This now increments and fetches in one go
+            const data = await updateAndGetAnalytics();
             setAnalyticsData(data);
           } catch (error) {
             console.error("Failed to fetch analytics", error);
@@ -126,19 +128,42 @@ export default function Stats() {
             setAnalyticsLoading(false);
           }
         }
-        fetchData();
+        
+        const sessionVisited = sessionStorage.getItem('stats_updated_session');
+        if (!sessionVisited) {
+            fetchData();
+            sessionStorage.setItem('stats_updated_session', 'true');
+        } else {
+             // If already visited, just fetch without updating (or use cached data if available)
+             // For simplicity, we'll just show potentially stale data from first load
+             setAnalyticsLoading(false); 
+        }
+
     }, []);
 
-    const sampleChartData = useMemo(() => {
-        const start = startOfMonth(new Date());
+    const chartData = useMemo(() => {
+        if (!analyticsData?.daily) {
+             const end = endOfToday();
+             const start = subDays(end, 29);
+             const days = eachDayOfInterval({ start, end });
+             return days.map(day => ({
+                date: format(day, 'MMM d'),
+                visits: 0
+             }))
+        }
+        
         const end = endOfToday();
+        const start = subDays(end, 29);
         const days = eachDayOfInterval({ start, end });
         
-        return days.map(day => ({
-            date: format(day, 'MMM d'),
-            visits: Math.floor(Math.random() * (750 - 100 + 1) + 100), // Random visits between 100 and 750
-        }));
-    }, []);
+        return days.map(day => {
+            const dateKey = format(day, 'yyyy-MM-dd');
+            return {
+                date: format(day, 'MMM d'),
+                visits: analyticsData.daily?.[dateKey] || 0
+            }
+        })
+    }, [analyticsData]);
 
     const stats = [
       { icon: Users, value: 1500, label: 'Students Using', suffix: '+' },
@@ -178,13 +203,13 @@ export default function Stats() {
                     <CardHeader>
                         <CardTitle>Visitor Trends</CardTitle>
                         <CardDescription>
-                            A chart showing daily website visits.
+                            A chart showing daily website visits over the last 30 days.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             <ResponsiveContainer width="100%" height={350}>
-                                <AreaChart data={sampleChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -206,7 +231,7 @@ export default function Stats() {
                                         axisLine={false}
                                         tickFormatter={(value) => `${value}`}
                                         allowDecimals={false}
-                                        domain={[0, 1000]}
+                                        domain={[0, 'dataMax + 100']}
                                     />
                                     <Tooltip
                                         contentStyle={{
@@ -231,9 +256,16 @@ export default function Stats() {
                             </ResponsiveContainer>
                         </div>
                         <div className="flex flex-col justify-center gap-4">
-                            <StatCard title="Total Visits" value={analyticsData?.totalVisits || 12345} icon={Users} />
-                            <StatCard title="Yesterday's Visits" value={analyticsData?.yesterdayVisits || 689} icon={Calendar} />
-                            <StatCard title="Busiest Day" value={analyticsData?.busiestDay?.count || 976} icon={TrendingUp} />
+                            <StatCard title="Total Visits" value={analyticsData.total || 0} icon={Users} />
+                            <StatCard title="Today's Visits" value={analyticsData.today || 0} icon={Clock} />
+                            <StatCard title="Yesterday's Visits" value={analyticsData.yesterday || 0} icon={Calendar} />
+                             {analyticsData.busiestDay?.date && (
+                                <StatCard 
+                                    title="Busiest Day" 
+                                    value={`${analyticsData.busiestDay.count} (on ${format(new Date(analyticsData.busiestDay.date), 'MMM d')})`} 
+                                    icon={TrendingUp} 
+                                />
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -243,3 +275,4 @@ export default function Stats() {
     </section>
   );
 }
+

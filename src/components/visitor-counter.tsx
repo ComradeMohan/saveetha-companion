@@ -1,7 +1,7 @@
 
 'use client';
 
-import { incrementAndGetVisitorCount } from '@/app/actions/analytics';
+import { getVisitorCount } from '@/app/actions/analytics';
 import { useEffect, useState } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Eye } from 'lucide-react';
@@ -11,28 +11,22 @@ export default function VisitorCounter() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const processVisit = async () => {
+        const fetchCount = async () => {
             setLoading(true);
             try {
-                // Always increment the count on component mount (page load/refresh)
-                const newCount = await incrementAndGetVisitorCount();
-                setCount(newCount);
+                // This function is now cached and won't increment the count.
+                // The incrementing happens on the main stats component.
+                const currentCount = await getVisitorCount();
+                setCount(currentCount);
             } catch (error) {
-                console.error("Failed to increment visitor count:", error);
-                // If increment fails, try to just get the last known count
-                try {
-                    // This function is not available in the current context of analytics.ts, so we will just show an error state.
-                    // For a real-world scenario, you might want a get-only function.
-                    setCount(null); // Indicate an error state
-                } catch (e) {
-                     console.error("Failed to get stale visitor count:", e);
-                }
+                console.error("Failed to fetch visitor count:", error);
+                setCount(null);
             } finally {
                 setLoading(false);
             }
         };
 
-        processVisit();
+        fetchCount();
     }, []);
 
     return (

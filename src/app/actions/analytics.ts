@@ -3,6 +3,7 @@
 
 import { adminDb } from '@/lib/firebase-admin';
 import { unstable_cache } from 'next/cache';
+import { startOfToday, isSameDay } from 'date-fns';
 
 /**
  * @fileOverview Server actions for handling website analytics.
@@ -11,42 +12,40 @@ import { unstable_cache } from 'next/cache';
  */
 
 interface AnalyticsData {
-  totalVisits: number;
-  yesterdayVisits: number;
+  total: number;
+  today: number;
+  yesterday: number;
   busiestDay: {
     date: string;
     count: number;
   };
-  chartData: { date: string; visits: number }[];
+  daily: Record<string, number>;
+  lastUpdate: string;
 }
 
 /**
  * Fetches and processes all visit data to generate analytics.
- * Caches the result for 1 hour to improve performance.
- * NOTE: This function currently uses placeholder data.
+ * This function is now more of a fallback or for display-only purposes.
+ * The main logic is in updateAndGetAnalytics.
  */
 export const getVisitAnalytics = unstable_cache(
-  async (): Promise<AnalyticsData> => {
-    
-    const totalVisits = await getVisitorCount();
-    
-    const chartData: { date: string; visits: number }[] = [];
-    const today = new Date();
-    for (let i = 29; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(today.getDate() - i);
-        chartData.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            visits: Math.floor(Math.random() * (500 - 50 + 1) + 50),
-        });
+  async (): Promise<Partial<AnalyticsData>> => {
+    if (!adminDb.collection) {
+      console.warn("Analytics: Firestore Admin not initialized, returning empty data.");
+      return {};
     }
 
-    return {
-      totalVisits: totalVisits,
-      yesterdayVisits: 689, 
-      busiestDay: { date: 'N/A', count: 0 },
-      chartData: chartData,
-    };
+    try {
+      const analyticsRef = adminDb.collection('counter').doc('visits');
+      const doc = await analyticsRef.get();
+      if (!doc.exists) {
+        return { total: 0, today: 0, yesterday: 0, busiestDay: { date: '', count: 0 } };
+      }
+      return doc.data() as Partial<AnalyticsData>;
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      return {};
+    }
   },
   ['visit_analytics'],
   { revalidate: 3600 }
@@ -69,7 +68,7 @@ export const getVisitorCount = unstable_cache(
             const counterDoc = await counterRef.get();
 
             if (counterDoc.exists) {
-                return counterDoc.data()?.count || 0;
+                return counterDoc.data()?.total || 0;
             }
             return 0;
             
@@ -84,37 +83,69 @@ export const getVisitorCount = unstable_cache(
 
 
 /**
- * Atomically increments the visitor count in Firestore and returns the new count.
+ * Atomically increments the visitor count and updates daily analytics in Firestore.
  * Uses a transaction to prevent race conditions.
  */
-export async function incrementAndGetVisitorCount(): Promise<number> {
+export async function updateAndGetAnalytics(): Promise<Partial<AnalyticsData>> {
   if (!adminDb.runTransaction) {
     console.warn("Analytics: Firestore Admin not initialized, cannot increment count.");
-    // Attempt to just fetch the count as a fallback
-    return getVisitorCount();
+    return getVisitAnalytics();
   }
 
-  const counterRef = adminDb.collection('counter').doc('visits');
+  const analyticsRef = adminDb.collection('counter').doc('visits');
 
   try {
-    const newCount = await adminDb.runTransaction(async (transaction) => {
-      const counterDoc = await transaction.get(counterRef);
-      
-      let currentCount = 0;
-      if (counterDoc.exists) {
-        currentCount = counterDoc.data()?.count || 0;
+    const updatedData = await adminDb.runTransaction(async (transaction) => {
+      const doc = await transaction.get(analyticsRef);
+      const today = startOfToday();
+      const todayKey = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+      if (!doc.exists) {
+        const initialData: AnalyticsData = {
+          total: 1,
+          today: 1,
+          yesterday: 0,
+          daily: { [todayKey]: 1 },
+          busiestDay: { date: todayKey, count: 1 },
+          lastUpdate: today.toISOString(),
+        };
+        transaction.set(analyticsRef, initialData);
+        return initialData;
+      }
+
+      const data = doc.data() as AnalyticsData;
+      const lastUpdateDate = new Date(data.lastUpdate);
+
+      // Increment total count
+      data.total = (data.total || 0) + 1;
+
+      // Update daily count
+      if (isSameDay(today, lastUpdateDate)) {
+        data.today = (data.today || 0) + 1;
+      } else {
+        // Day has rolled over
+        data.yesterday = data.today || 0; // Yesterday's count is the last known 'today' count
+        data.today = 1; // Reset today's count
       }
       
-      const newCount = currentCount + 1;
+      data.daily = data.daily || {};
+      data.daily[todayKey] = (data.daily[todayKey] || 0) + 1;
+
+      // Update busiest day
+      if (!data.busiestDay || data.daily[todayKey] > data.busiestDay.count) {
+        data.busiestDay = { date: todayKey, count: data.daily[todayKey] };
+      }
       
-      transaction.set(counterRef, { count: newCount }, { merge: true });
-      
-      return newCount;
+      data.lastUpdate = today.toISOString();
+
+      transaction.update(analyticsRef, { ...data });
+      return data;
     });
-    return newCount;
+
+    return updatedData;
+
   } catch (error) {
-    console.error("Transaction to increment visitor count failed:", error);
-    // If transaction fails, return the last known good count
-    return getVisitorCount();
+    console.error("Transaction to update analytics failed:", error);
+    return getVisitAnalytics();
   }
 }
