@@ -3,18 +3,12 @@
 
 import { adminDb } from '@/lib/firebase-admin';
 import { unstable_cache } from 'next/cache';
-import type { Timestamp, DocumentData } from 'firebase-admin/firestore';
 
 /**
  * @fileOverview Server actions for handling website analytics.
- * - updateVisitCount: Sets the master visitor counter to a specific value.
  * - getVisitAnalytics: Retrieves and processes visit data to provide key metrics and chart data.
- * - getVisitorCount: Retrieves the total visitor count from the 'counter' collection.
+ * - incrementAndGetVisitorCount: Atomically increments the visitor count and returns the new value.
  */
-
-interface Visit {
-  timestamp: Timestamp;
-}
 
 interface AnalyticsData {
   totalVisits: number;
@@ -27,38 +21,15 @@ interface AnalyticsData {
 }
 
 /**
- * Sets the counter document in the 'counter' collection to a specific value.
- */
-export async function updateVisitCount(newCount: number): Promise<void> {
-  try {
-     if (!adminDb.collection) {
-        console.warn("Analytics: Firestore Admin not initialized, skipping updateVisitCount.");
-        return;
-    }
-    const counterRef = adminDb.collection('counter').doc('visits');
-    await counterRef.set({ count: newCount });
-  } catch (error: any) {
-    console.error("Error updating visit count:", error);
-    // Fail silently to not impact user experience
-  }
-}
-
-
-/**
  * Fetches and processes all visit data to generate analytics.
  * Caches the result for 1 hour to improve performance.
- * NOTE: This function currently uses placeholder data as individual visit tracking was removed.
+ * NOTE: This function currently uses placeholder data.
  */
 export const getVisitAnalytics = unstable_cache(
   async (): Promise<AnalyticsData> => {
     
     const totalVisits = await getVisitorCount();
     
-    // Since we are no longer tracking individual visits, we cannot calculate
-    // "yesterday's visits" or "busiest day" accurately from the database.
-    // We will return static or placeholder data for these metrics.
-    // A more advanced analytics solution (like Google Analytics) would be needed for this.
-
     const chartData: { date: string; visits: number }[] = [];
     const today = new Date();
     for (let i = 29; i >= 0; i--) {
@@ -66,24 +37,24 @@ export const getVisitAnalytics = unstable_cache(
         date.setDate(today.getDate() - i);
         chartData.push({
             date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            // Placeholder data for chart
             visits: Math.floor(Math.random() * (500 - 50 + 1) + 50),
         });
     }
 
     return {
       totalVisits: totalVisits,
-      yesterdayVisits: 689, // Placeholder
-      busiestDay: { date: 'N/A', count: 0 }, // Placeholder
+      yesterdayVisits: 689, 
+      busiestDay: { date: 'N/A', count: 0 },
       chartData: chartData,
     };
   },
   ['visit_analytics'],
-  { revalidate: 3600 } // Revalidate every hour
+  { revalidate: 3600 }
 );
 
 /**
- * Fetches the total visitor count from the 'counter' collection.
+ * Fetches the total visitor count from the 'counter' collection for display purposes.
+ * Does not increment the count.
  * Caches the result for 1 hour.
  */
 export const getVisitorCount = unstable_cache(
@@ -100,15 +71,50 @@ export const getVisitorCount = unstable_cache(
             if (counterDoc.exists) {
                 return counterDoc.data()?.count || 0;
             }
-
-            // Fallback for safety, though it should not be needed if seeding is done.
             return 0;
             
         } catch (error) {
             console.error("Error fetching visitor count:", error);
-            return 0; // Return 0 on error
+            return 0; 
         }
     },
     ['visitor_count'],
-    { revalidate: 3600 } // Revalidate every hour
+    { revalidate: 3600 }
 );
+
+
+/**
+ * Atomically increments the visitor count in Firestore and returns the new count.
+ * Uses a transaction to prevent race conditions.
+ */
+export async function incrementAndGetVisitorCount(): Promise<number> {
+  if (!adminDb.runTransaction) {
+    console.warn("Analytics: Firestore Admin not initialized, cannot increment count.");
+    // Attempt to just fetch the count as a fallback
+    return getVisitorCount();
+  }
+
+  const counterRef = adminDb.collection('counter').doc('visits');
+
+  try {
+    const newCount = await adminDb.runTransaction(async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
+      
+      let currentCount = 0;
+      if (counterDoc.exists) {
+        currentCount = counterDoc.data()?.count || 0;
+      }
+      
+      const newCount = currentCount + 1;
+      
+      transaction.set(counterRef, { count: newCount }, { merge: true });
+      
+      return newCount;
+    });
+    return newCount;
+  } catch (error) {
+    console.error("Transaction to increment visitor count failed:", error);
+    // If transaction fails, return the last known good count
+    return getVisitorCount();
+  }
+}

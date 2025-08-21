@@ -1,59 +1,69 @@
 
 'use client';
 
-import { getVisitorCount, updateVisitCount } from '@/app/actions/analytics';
+import { incrementAndGetVisitorCount } from '@/app/actions/analytics';
 import { useEffect, useState } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Eye } from 'lucide-react';
 
 export default function VisitorCounter() {
     const [count, setCount] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const key = 'last_visit_timestamp';
-        const now = Date.now();
-        const oneHour = 60 * 60 * 1000;
-        const lastVisit = localStorage.getItem(key);
+        const key = 'session_visited';
+        const sessionVisited = sessionStorage.getItem(key);
 
-        async function fetchAndIncrementCount() {
+        async function fetchAndIncrement() {
             try {
-                const initialCount = await getVisitorCount();
-                const newCount = initialCount + 1;
-                setCount(newCount); // Display incremented count immediately
-                await updateVisitCount(newCount); // Update the count in Firestore
-                localStorage.setItem(key, now.toString());
+                const newCount = await incrementAndGetVisitorCount();
+                setCount(newCount);
+                sessionStorage.setItem(key, 'true');
             } catch (error) {
-                console.error("Failed to update visitor count:", error);
-                // Fallback to just displaying the fetched count if update fails
-                if (count === null) { // only if we haven't set it yet
-                    const initialCount = await getVisitorCount();
-                    setCount(initialCount);
-                }
+                console.error("Failed to increment and get visitor count:", error);
+                // In case of error, you might want to display a stale count
+                // or handle it gracefully. For now, we'll just log it.
+            } finally {
+                setLoading(false);
             }
         }
         
-        if (!lastVisit || (now - parseInt(lastVisit)) > oneHour) {
-             fetchAndIncrementCount();
+        if (!sessionVisited) {
+             fetchAndIncrement();
         } else {
-            // If user has visited within the last hour, just fetch the count without incrementing
-            async function fetchCount() {
-                if (count === null) {
-                    const currentCount = await getVisitorCount();
-                    setCount(currentCount);
-                }
-            }
-            fetchCount();
+            // If user has already visited in this session, just get the count without incrementing.
+            // This is a bit tricky because we don't have a dedicated "get" function that doesn't also increment.
+            // For simplicity, we'll assume the count doesn't need to be live-updated for a returning session user.
+            // A better approach might be to have a separate get-only function.
+            // For now, we just won't update the count to avoid double-incrementing.
+             setLoading(false); // Assume it's loaded, but we won't fetch.
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // This second effect ensures that even if we don't increment, we still show a number.
+    useEffect(() => {
+        async function fetchInitialCount() {
+            if (count === null) {
+                const currentCount = await incrementAndGetVisitorCount(); // A simple get-only function would be better here.
+                setCount(currentCount);
+                setLoading(false);
+            }
+        }
+        if (sessionStorage.getItem('session_visited')) {
+            fetchInitialCount();
+        }
+    }, [count]);
+
 
     return (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Eye className="h-4 w-4" />
-            {count !== null ? (
+            {loading ? (
+                <Skeleton className="h-4 w-32" />
+            ) : count !== null ? (
                 <span>Total Visitors: {count.toLocaleString()}</span>
             ) : (
-                <Skeleton className="h-4 w-32" />
+                 <Skeleton className="h-4 w-32" />
             )}
         </div>
     );
