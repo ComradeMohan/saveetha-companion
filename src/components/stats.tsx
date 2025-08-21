@@ -93,6 +93,7 @@ export default function Stats() {
     const [analyticsData, setAnalyticsData] = useState<Partial<AnalyticsData>>({});
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
     const statsRef = useRef<HTMLDivElement>(null);
+    const effectRan = useRef(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -117,16 +118,20 @@ export default function Stats() {
     }, []);
 
     useEffect(() => {
+        // This ref check prevents the double-increment in React StrictMode (dev)
+        // while allowing it to run on every component mount (page refresh)
+        if (process.env.NODE_ENV === 'development' && effectRan.current) {
+            // In dev, if the effect has already run, fetch non-incrementing data
+            getVisitAnalytics().then(data => {
+                setAnalyticsData(data);
+                setAnalyticsLoading(false);
+            });
+            return;
+        }
+
         async function fetchData() {
           try {
-            const sessionVisited = sessionStorage.getItem('stats_updated_session');
-            let data;
-            if (!sessionVisited) {
-                data = await updateAndGetAnalytics();
-                sessionStorage.setItem('stats_updated_session', 'true');
-            } else {
-                data = await getVisitAnalytics();
-            }
+            const data = await updateAndGetAnalytics();
             setAnalyticsData(data);
           } catch (error) {
             console.error("Failed to fetch analytics", error);
@@ -136,6 +141,12 @@ export default function Stats() {
         }
         
         fetchData();
+
+        return () => {
+            if (process.env.NODE_ENV === 'development') {
+                effectRan.current = true;
+            }
+        };
     }, []);
 
     const chartData = useMemo(() => {

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { getVisitorCount } from '@/app/actions/analytics';
+import { getVisitAnalytics } from '@/app/actions/analytics';
 import { useEffect, useState } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Eye } from 'lucide-react';
@@ -14,10 +14,10 @@ export default function VisitorCounter() {
         const fetchCount = async () => {
             setLoading(true);
             try {
-                // This function is now cached and won't increment the count.
-                // The incrementing happens on the main stats component.
-                const currentCount = await getVisitorCount();
-                setCount(currentCount);
+                // This function is cached and only reads data.
+                // The incrementing happens in the main Stats component.
+                const analytics = await getVisitAnalytics();
+                setCount(analytics.total || 0);
             } catch (error) {
                 console.error("Failed to fetch visitor count:", error);
                 setCount(null);
