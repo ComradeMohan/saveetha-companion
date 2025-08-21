@@ -8,7 +8,7 @@ import { startOfToday, isSameDay } from 'date-fns';
 /**
  * @fileOverview Server actions for handling website analytics.
  * - getVisitAnalytics: Retrieves and processes visit data to provide key metrics and chart data.
- * - incrementAndGetVisitorCount: Atomically increments the visitor count and returns the new value.
+ * - updateAndGetAnalytics: Atomically increments the visitor count and returns the new value.
  */
 
 interface AnalyticsData {
@@ -25,8 +25,7 @@ interface AnalyticsData {
 
 /**
  * Fetches and processes all visit data to generate analytics.
- * This function is now more of a fallback or for display-only purposes.
- * The main logic is in updateAndGetAnalytics.
+ * This function is cached for performance and does NOT increment the count.
  */
 export const getVisitAnalytics = unstable_cache(
   async (): Promise<Partial<AnalyticsData>> => {
@@ -48,7 +47,7 @@ export const getVisitAnalytics = unstable_cache(
     }
   },
   ['visit_analytics'],
-  { revalidate: 3600 }
+  { revalidate: 3600 } // Revalidate cache every hour
 );
 
 /**

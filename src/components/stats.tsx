@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
-import { updateAndGetAnalytics } from '@/app/actions/analytics';
+import { updateAndGetAnalytics, getVisitAnalytics } from '@/app/actions/analytics';
 import { format, startOfMonth, eachDayOfInterval, endOfToday, subDays } from 'date-fns';
 
 
@@ -119,8 +119,14 @@ export default function Stats() {
     useEffect(() => {
         async function fetchData() {
           try {
-            // This now increments and fetches in one go
-            const data = await updateAndGetAnalytics();
+            const sessionVisited = sessionStorage.getItem('stats_updated_session');
+            let data;
+            if (!sessionVisited) {
+                data = await updateAndGetAnalytics();
+                sessionStorage.setItem('stats_updated_session', 'true');
+            } else {
+                data = await getVisitAnalytics();
+            }
             setAnalyticsData(data);
           } catch (error) {
             console.error("Failed to fetch analytics", error);
@@ -129,16 +135,7 @@ export default function Stats() {
           }
         }
         
-        const sessionVisited = sessionStorage.getItem('stats_updated_session');
-        if (!sessionVisited) {
-            fetchData();
-            sessionStorage.setItem('stats_updated_session', 'true');
-        } else {
-             // If already visited, just fetch without updating (or use cached data if available)
-             // For simplicity, we'll just show potentially stale data from first load
-             setAnalyticsLoading(false); 
-        }
-
+        fetchData();
     }, []);
 
     const chartData = useMemo(() => {
@@ -275,4 +272,3 @@ export default function Stats() {
     </section>
   );
 }
-
