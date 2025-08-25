@@ -230,6 +230,7 @@ export default function Stats() {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
+                                        interval={6}
                                     />
                                     <YAxis
                                         stroke="hsl(var(--muted-foreground))"

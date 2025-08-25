@@ -64,10 +64,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value, index) => {
-            // Show tick for every 5th day to avoid clutter
-            return index % 5 === 0 ? value : '';
-          }}
+          interval={6}
         />
         <YAxis
           stroke="hsl(var(--muted-foreground))"
