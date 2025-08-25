@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/
 import { Skeleton } from './ui/skeleton';
 import { updateAndGetAnalytics, getVisitAnalytics } from '@/app/actions/analytics';
 import { format, endOfToday, eachDayOfInterval, subDays } from 'date-fns';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 
 interface AnalyticsData {
@@ -93,6 +94,7 @@ export default function Stats() {
     const [analyticsData, setAnalyticsData] = useState<Partial<AnalyticsData>>({});
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
     const statsRef = useRef<HTMLDivElement>(null);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -149,9 +151,11 @@ export default function Stats() {
     }, []);
 
     const chartData = useMemo(() => {
+        const daysToShow = isMobile ? 15 : 30;
+
         if (!analyticsData?.daily) {
              const end = endOfToday();
-             const start = subDays(end, 29);
+             const start = subDays(end, daysToShow - 1);
              const days = eachDayOfInterval({ start, end });
              return days.map(day => ({
                 date: format(day, 'MMM d'),
@@ -160,7 +164,7 @@ export default function Stats() {
         }
         
         const end = endOfToday();
-        const start = subDays(end, 29);
+        const start = subDays(end, daysToShow - 1);
         const days = eachDayOfInterval({ start, end });
         
         return days.map(day => {
@@ -170,7 +174,7 @@ export default function Stats() {
                 visits: analyticsData.daily?.[dateKey] || 0
             }
         })
-    }, [analyticsData]);
+    }, [analyticsData, isMobile]);
 
     const stats = [
       { icon: Users, value: 1500, label: 'Students Using', suffix: '+' },
@@ -210,7 +214,7 @@ export default function Stats() {
                     <CardHeader>
                         <CardTitle>Visitor Trends</CardTitle>
                         <CardDescription>
-                            A chart showing daily website visits over the last 30 days.
+                            A chart showing daily website visits over the last {isMobile ? 15 : 30} days.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -230,7 +234,7 @@ export default function Stats() {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        interval={6}
+                                        interval={isMobile ? 3 : 6}
                                     />
                                     <YAxis
                                         stroke="hsl(var(--muted-foreground))"

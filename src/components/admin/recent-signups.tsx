@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { format, subDays, startOfDay } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface User {
   createdAt?: string;
@@ -17,8 +18,11 @@ interface RecentSignupsProps {
 }
 
 export default function RecentSignups({ userList, loading }: RecentSignupsProps) {
+  const isMobile = useIsMobile();
+
   const chartData = useMemo(() => {
-    const last30Days = Array.from({ length: 30 }, (_, i) => {
+    const daysToShow = isMobile ? 15 : 30;
+    const lastDays = Array.from({ length: daysToShow }, (_, i) => {
       const date = startOfDay(subDays(new Date(), i));
       return {
         name: format(date, 'MMM d'),
@@ -31,7 +35,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
       userList.forEach(user => {
         if (user.createdAt) {
           const signupDate = startOfDay(new Date(user.createdAt));
-          const dayEntry = last30Days.find(
+          const dayEntry = lastDays.find(
             day => day.date.getTime() === signupDate.getTime()
           );
           if (dayEntry) {
@@ -41,8 +45,8 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
       });
     }
 
-    return last30Days;
-  }, [userList, loading]);
+    return lastDays;
+  }, [userList, loading, isMobile]);
 
   if (loading) {
     return <Skeleton className="h-[350px] w-full" />;
@@ -64,7 +68,7 @@ export default function RecentSignups({ userList, loading }: RecentSignupsProps)
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          interval={6}
+          interval={isMobile ? 3 : 6}
         />
         <YAxis
           stroke="hsl(var(--muted-foreground))"
