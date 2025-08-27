@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -26,6 +27,21 @@ service cloud.firestore {
     match /companies/{docId} {
         allow write: if isAdmin();
     }
+    match /certifications/{docId} {
+      allow write: if isAdmin();
+    }
+     match /faculty/{docId} {
+      allow write: if isAdmin();
+    }
+     match /events/{docId} {
+      allow write: if isAdmin();
+    }
+     match /concept-maps/{docId} {
+      allow write: if isAdmin();
+    }
+    match /updates/{docId} {
+      allow write: if isAdmin();
+    }
 
     // Allow anyone to read public data.
     match /faculty/{docId} {
@@ -43,9 +59,10 @@ service cloud.firestore {
      match /projects/{projectId} {
       allow read: if true;
     }
-     match /certifications/{certId} {
+    match /certifications/{docId} {
       allow read: if true;
     }
+
 
     // Allow authenticated users to manage their own data.
     match /users/{userId} {
@@ -68,12 +85,9 @@ service cloud.firestore {
       allow create: if request.auth != null;
     }
 
-    // --- Admin-only write access ---
-    match /certifications/{certId} {
-      allow write: if isAdmin();
-    }
+    // Fallback rule: Deny all other access
     match /{document=**} {
-      allow write: if isAdmin();
+      allow read, write: if false;
     }
   }
 }
