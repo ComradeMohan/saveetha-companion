@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -20,26 +19,14 @@ service cloud.firestore {
     }
     // --- END: NEW RULE FOR VISITOR ANALYTICS ---
 
-    // Give admin full access if they are verified.
-    match /placement-resources/{docId} {
-       allow write: if isAdmin();
+    // Give admin full access if they are verified. THIS IS THE CRITICAL RULE.
+    match /{document=**} {
+      allow read, write: if isAdmin();
     }
-    match /companies/{docId} {
-        allow write: if isAdmin();
-    }
+    
+    // Explicit rule for certifications to allow public reading
     match /certifications/{docId} {
-      allow write: if isAdmin();
-    }
-     match /faculty/{docId} {
-      allow write: if isAdmin();
-    }
-     match /events/{docId} {
-      allow write: if isAdmin();
-    }
-     match /concept-maps/{docId} {
-      allow write: if isAdmin();
-    }
-    match /updates/{docId} {
+      allow read: if true;
       allow write: if isAdmin();
     }
 
@@ -59,10 +46,6 @@ service cloud.firestore {
      match /projects/{projectId} {
       allow read: if true;
     }
-    match /certifications/{docId} {
-      allow read: if true;
-    }
-
 
     // Allow authenticated users to manage their own data.
     match /users/{userId} {
@@ -83,11 +66,6 @@ service cloud.firestore {
     }
     match /faculty-requests/{requestId} {
       allow create: if request.auth != null;
-    }
-
-    // Fallback rule: Deny all other access
-    match /{document=**} {
-      allow read, write: if false;
     }
   }
 }
