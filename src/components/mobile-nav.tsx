@@ -10,6 +10,7 @@ import {
   User,
   Calculator,
   Package,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -23,14 +24,14 @@ export default function MobileNav() {
     if (user) {
        return [
             { href: '/', label: 'Home', icon: Home },
+            { href: '/certifications', label: 'Certs', icon: Award },
             { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
-            { href: '/updates', label: 'Updates', icon: Bell },
             { href: '/profile', label: 'Profile', icon: User },
         ];
     }
     return [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/#calculators', label: 'Calculate', icon: Calculator },
+        { href: '/certifications', label: 'Certs', icon: Award },
         { href: '/projects', label: 'Projects', icon: Package },
         { href: '/login', label: 'Login', icon: User },
     ];

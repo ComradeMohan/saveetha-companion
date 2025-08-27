@@ -26,6 +26,7 @@ import {
   BarChartHorizontal,
   BrainCircuit,
   Package,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -39,6 +40,7 @@ const adminNavLinks = [
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
+  { href: '/admin/certifications', label: 'Certifications', icon: Award },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
@@ -99,5 +101,3 @@ export default function AdminHeader() {
     </header>
   );
 }
-
-    

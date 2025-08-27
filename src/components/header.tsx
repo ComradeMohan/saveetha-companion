@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Package,
+  Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -141,11 +142,16 @@ export default function Header() {
   };
   
   const desktopNavLinks = React.useMemo(() => {
+    const baseLinks = [
+        { href: '/#calculators', label: 'Calculators' },
+        { href: '/#concepts', label: 'Concepts' },
+        { href: '/certifications', label: 'Certifications', icon: Award },
+        { href: '/projects', label: 'Ecommerce' },
+    ];
+
     if (user) {
        return [
-            { href: '/projects', label: 'Ecommerce' },
-            { href: '/#calculators', label: 'Calculators' },
-            { href: '/#concepts', label: 'Concepts' },
+            ...baseLinks,
             { href: '/calendar', label: 'Calendar' },
             { href: '/updates', label: 'Updates' },
             { href: '/contact', label: 'Contact Us' },
@@ -153,7 +159,7 @@ export default function Header() {
     }
     return [
         { href: '/#features', label: 'Features' },
-        { href: '/projects', label: 'Ecommerce' },
+        ...baseLinks,
         { href: '/#stats', label: 'Stats' },
         { href: '/contact', label: 'Contact Us' },
     ];
