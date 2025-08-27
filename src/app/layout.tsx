@@ -25,15 +25,15 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: {
     template: '%s | Saveetha Companion',
-    default: 'Saveetha Companion - Your All-in-One Academic Hub',
+    default: 'Saveetha CGPA Calculator & Companion',
   },
-  description: 'Your all-in-one academic hub for Saveetha Engineering College. Calculate CGPA, track attendance, find resources, and connect with faculty, all in one place.',
-  keywords: ['Saveetha', 'CGPA Calculator', 'Attendance Tracker', 'Faculty Directory', 'Student Companion', 'SEC'],
+  description: 'The best Saveetha CGPA Calculator. Your all-in-one academic hub for Saveetha Engineering College. Calculate CGPA, track attendance, find resources, and connect with faculty.',
+  keywords: ['Saveetha CGPA', 'Saveetha', 'CGPA Calculator', 'Attendance Tracker', 'Faculty Directory', 'Student Companion', 'SEC'],
   authors: [{ name: 'comrademohan', url: 'https://github.com/comrademohan' }],
   creator: 'comrademohan',
   openGraph: {
-    title: 'Saveetha Companion - Your All-in-One Academic Hub',
-    description: 'Calculate CGPA, track attendance, find concept maps, and get important updates for Saveetha Engineering College.',
+    title: 'Saveetha CGPA Calculator & Companion',
+    description: 'Calculate your Saveetha CGPA, track attendance, find concept maps, and get important updates for Saveetha Engineering College.',
     url: 'https://saveetha-companion.web.app', // Replace with your actual domain
     siteName: 'Saveetha Companion',
     images: [
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Saveetha Companion - Your All-in-One Academic Hub',
+    title: 'Saveetha CGPA Calculator & Companion',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     // creator: '@yourtwitterhandle', // Optional: Replace with your Twitter handle
     images: ['https://placehold.co/1200x630.png'], // Replace with your Twitter card image URL
