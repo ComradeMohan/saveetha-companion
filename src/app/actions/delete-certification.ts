@@ -22,6 +22,9 @@ export async function deleteCertification(certificationId: string) {
     const { id } = validatedFields.data;
 
     try {
+         if (!adminDb) {
+             throw new Error('Firebase Admin not initialized. Check server logs.');
+        }
         await adminDb.collection('certifications').doc(id).delete();
         
         revalidatePath('/admin/certifications');
