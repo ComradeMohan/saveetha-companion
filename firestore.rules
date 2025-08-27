@@ -10,9 +10,21 @@ service cloud.firestore {
              request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
     }
 
+    // --- START: NEW RULE FOR VISITOR ANALYTICS ---
+    // This rule is for clarity. The server-side code uses Admin access,
+    // which bypasses these rules, but it's good practice to define access.
+    // This rule effectively blocks any direct client-side access.
+    match /page_visits/{visitId} {
+      allow read, write: if false;
+    }
+    // --- END: NEW RULE FOR VISITOR ANALYTICS ---
+
     // Give admin full access if they are verified.
-    match /{document=**} {
-      allow read, write: if isAdmin();
+    match /placement-resources/{docId} {
+       allow write: if isAdmin();
+    }
+    match /companies/{docId} {
+        allow write: if isAdmin();
     }
 
     // Allow anyone to read public data.
@@ -28,6 +40,12 @@ service cloud.firestore {
     match /events/{docId} {
       allow read: if true;
     }
+     match /projects/{projectId} {
+      allow read: if true;
+    }
+     match /certifications/{certId} {
+      allow read: if true;
+    }
 
     // Allow authenticated users to manage their own data.
     match /users/{userId} {
@@ -37,6 +55,7 @@ service cloud.firestore {
     match /students_cgpa/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+    
 
     // Allow anyone to submit forms (contact, issues, suggestions).
      match /contact-messages/{messageId} {
@@ -47,6 +66,14 @@ service cloud.firestore {
     }
     match /faculty-requests/{requestId} {
       allow create: if request.auth != null;
+    }
+
+    // --- Admin-only write access ---
+    match /certifications/{certId} {
+      allow write: if isAdmin();
+    }
+    match /{document=**} {
+      allow write: if isAdmin();
     }
   }
 }
