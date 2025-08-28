@@ -14,6 +14,7 @@ import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
+import SupportButton from '@/components/support-button';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -24,24 +25,24 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Saveetha Companion',
-    default: 'Saveetha CGPA & Attendance Calculator | Student Companion',
+    template: '%s | Saveetha Calculator',
+    default: 'Saveetha Calculator: CGPA & Attendance',
   },
   description: 'The ultimate tool for Saveetha Engineering College students. Instantly calculate your Saveetha CGPA and attendance percentage. Find faculty info, concept maps, and important university updates all in one place.',
-  keywords: ['Saveetha CGPA', 'Saveetha CGPA calculator', 'Saveetha attendance', 'Saveetha attendance calculator', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
+  keywords: ['Saveetha CGPA', 'Saveetha attendance calculator', 'Saveetha Calculator', 'Saveetha attendance', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
   authors: [{ name: 'comrademohan', url: 'https://github.com/comrademohan' }],
   creator: 'comrademohan',
   openGraph: {
-    title: 'Saveetha CGPA & Attendance Calculator | Student Companion',
+    title: 'Saveetha Calculator: CGPA & Attendance',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     url: 'https://saveetha-companion.web.app', // Replace with your actual domain
-    siteName: 'Saveetha Companion',
+    siteName: 'Saveetha Calculator',
     images: [
       {
         url: 'https://placehold.co/1200x630.png', // Replace with a specific OG image URL
         width: 1200,
         height: 630,
-        alt: 'Saveetha Companion App Interface',
+        alt: 'Saveetha Calculator App Interface',
       },
     ],
     locale: 'en_US',
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Saveetha CGPA & Attendance Calculator | Student Companion',
+    title: 'Saveetha Calculator: CGPA & Attendance',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     // creator: '@yourtwitterhandle', // Optional: Replace with your Twitter handle
     images: ['https://placehold.co/1200x630.png'], // Replace with your Twitter card image URL
@@ -105,6 +106,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
           <MobileNav />
+          <SupportButton />
       </AuthProvider>
     </ThemeProvider>
   )

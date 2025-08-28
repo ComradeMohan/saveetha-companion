@@ -11,7 +11,7 @@ export default function Hero() {
           Your All-in-One Academic Hub
         </h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
-          Welcome to the Saveetha Companion. Calculate your CGPA, track attendance, find resources, and connect with faculty, all in one place.
+          Welcome to the Saveetha Calculator. Calculate your CGPA, track attendance, find resources, and connect with faculty, all in one place.
         </p>
         <div className="mt-8 flex flex-col justify-center items-center gap-4 animate-slide-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex flex-col sm:flex-row gap-4">

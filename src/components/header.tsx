@@ -173,7 +173,7 @@ export default function Header() {
           <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block">
-              Saveetha Companion
+              Saveetha Calculator
             </span>
           </Link>
         </div>

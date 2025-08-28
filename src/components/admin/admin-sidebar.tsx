@@ -39,7 +39,7 @@ export default function AdminSidebar() {
                     >
                         <GraduationCap className="h-4 w-4 transition-all group-hover:scale-110 lg:h-5 lg:w-5" />
                         <span className="hidden lg:inline-block font-bold">Saveetha</span>
-                        <span className="sr-only">Saveetha Companion</span>
+                        <span className="sr-only">Saveetha Calculator</span>
                     </Link>
                 </nav>
             </div>
