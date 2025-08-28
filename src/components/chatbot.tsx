@@ -2,10 +2,10 @@
 'use client';
 
 import { useState } from 'react';
-import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from './ui/dialog';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Loader2, Send, Bot, User } from 'lucide-react';
+import { Loader2, Send, Bot, User, X } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { askAssistant } from '@/ai/flows/assistant-flow';
@@ -52,17 +52,21 @@ export default function Chatbot() {
   };
 
   return (
-    <DialogContent className="sm:max-w-md h-[70vh] flex flex-col">
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2">
-            <Bot /> AI Assistant
-        </DialogTitle>
-        <DialogDescription>
-          Ask questions and get help navigating the site.
-        </DialogDescription>
-      </DialogHeader>
+    <DialogContent className="sm:max-w-md h-[70vh] flex flex-col p-0">
+        <DialogHeader className="p-4 border-b">
+            <div className="flex justify-between items-center">
+                <DialogTitle className="flex items-center gap-2">
+                    <Bot /> AI Assistant
+                </DialogTitle>
+                <DialogClose asChild>
+                     <Button variant="ghost" size="icon">
+                        <X className="h-4 w-4" />
+                    </Button>
+                </DialogClose>
+            </div>
+        </DialogHeader>
       
-      <ScrollArea className="flex-1 pr-4 -mr-4">
+      <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message, index) => (
             <div key={index} className={`flex items-start gap-3 ${message.role === 'user' ? 'justify-end' : ''}`}>
@@ -95,20 +99,22 @@ export default function Chatbot() {
         </div>
       </ScrollArea>
 
-      <form onSubmit={handleSendMessage} className="flex items-center gap-2 border-t pt-4">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question..."
-          className="flex-1"
-          disabled={loading}
-          autoComplete="off"
-        />
-        <Button type="submit" size="icon" disabled={loading || !input.trim()}>
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          <span className="sr-only">Send</span>
-        </Button>
-      </form>
+      <div className="p-4 border-t">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+            <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask a question..."
+            className="flex-1"
+            disabled={loading}
+            autoComplete="off"
+            />
+            <Button type="submit" size="icon" disabled={loading || !input.trim()}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            <span className="sr-only">Send</span>
+            </Button>
+        </form>
+      </div>
     </DialogContent>
   );
 }
