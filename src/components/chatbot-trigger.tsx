@@ -15,7 +15,7 @@ export default function ChatbotTrigger() {
             <Tooltip>
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
-                        <Button size="icon" className="rounded-full h-14 w-14 shadow-lg animate-bounce">
+                        <Button size="icon" className="rounded-full h-14 w-14 shadow-lg">
                             <MessageSquare className="h-7 w-7" />
                             <span className="sr-only">Open Chatbot</span>
                         </Button>
