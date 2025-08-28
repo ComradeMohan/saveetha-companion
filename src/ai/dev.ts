@@ -4,3 +4,4 @@ config();
 
 import '@/ai/flows/tutor-flow.ts';
 import '@/ai/flows/knowledge-feeder.ts';
+import '@/ai/flows/assistant-flow.ts';
