@@ -15,6 +15,7 @@ import {
   X,
   Package,
   Award,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -141,29 +142,32 @@ export default function Header() {
     setIsNavigating(true);
   };
   
-  const desktopNavLinks = React.useMemo(() => {
-    const baseLinks = [
-        { href: '/#calculators', label: 'Calculators' },
-        { href: '/#concepts', label: 'Concepts' },
-        { href: '/certifications', label: 'Certifications', icon: Award },
-        { href: '/projects', label: 'Ecommerce' },
-    ];
-
+  const mainNavLinks = React.useMemo(() => {
     if (user) {
        return [
-            ...baseLinks,
+            { href: '/#calculators', label: 'Calculators' },
+            { href: '/#concepts', label: 'Concepts' },
+            { href: '/certifications', label: 'Certifications' },
+            { href: '/projects', label: 'Ecommerce' },
             { href: '/calendar', label: 'Calendar' },
             { href: '/updates', label: 'Updates' },
             { href: '/contact', label: 'Contact Us' },
         ];
     }
+    // Links for logged-out users, excluding the dropdown items
     return [
-        { href: '/#features', label: 'Features' },
-        ...baseLinks,
-        { href: '/#stats', label: 'Stats' },
+        { href: '/certifications', label: 'Certifications' },
+        { href: '/projects', label: 'Ecommerce' },
         { href: '/contact', label: 'Contact Us' },
     ];
   }, [user]);
+
+  const featuresDropdownLinks = [
+      { href: '/#features', label: 'Key Features' },
+      { href: '/#calculators', label: 'Calculators' },
+      { href: '/#concepts', label: 'Concept Maps' },
+      { href: '/#stats', label: 'Site Stats' },
+  ];
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
@@ -181,7 +185,23 @@ export default function Header() {
         <div className="flex shrink-0 items-center gap-4">
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             {desktopNavLinks.map(link => {
+             {!user && (
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                           Features <ChevronDown className="ml-1 h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        {featuresDropdownLinks.map(link => (
+                            <DropdownMenuItem key={link.href} asChild>
+                                <Link href={link.href} onClick={handleNavLinkClick}>{link.label}</Link>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                 </DropdownMenu>
+             )}
+             {mainNavLinks.map(link => {
               const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
               return (
                 <NavLink key={link.href + link.label} href={link.href} onClick={handleNavLinkClick} isActive={isActive}>
