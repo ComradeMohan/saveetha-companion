@@ -14,7 +14,6 @@ import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
-import ChatbotTrigger from '@/components/chatbot-trigger';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -106,7 +105,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
           <MobileNav />
-          <ChatbotTrigger />
       </AuthProvider>
     </ThemeProvider>
   )
