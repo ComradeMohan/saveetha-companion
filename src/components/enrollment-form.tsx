@@ -55,7 +55,7 @@ function SubmitButton() {
         </>
       ) : (
         <>
-          <Send className="mr-2 h-4 w-4" /> Submit Enrollment
+          <Send className="mr-2 h-4 w-4" /> Submit Alert
         </>
       )}
     </Button>
@@ -117,7 +117,7 @@ export default function EnrollmentForm() {
           <Card className="max-w-2xl mx-auto text-center">
               <CardHeader>
                   <CardTitle>Login Required</CardTitle>
-                  <CardDescription>You must be logged in to enroll in a course.</CardDescription>
+                  <CardDescription>You must be logged in to use the alert system.</CardDescription>
               </CardHeader>
               <CardContent>
                   <Button asChild>
@@ -132,15 +132,15 @@ export default function EnrollmentForm() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight">Course Enrollment</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Course Enrollment Alert System</h2>
         <p className="text-muted-foreground mt-2">
-          Select your slot and enter the course code to enroll.
+          Select your slot and enter the course code to set up an alert.
         </p>
       </div>
       <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="h-6 w-6 text-primary" /> Enrollment Form
+            <ClipboardList className="h-6 w-6 text-primary" /> Enrollment Alert Form
           </CardTitle>
           <CardDescription>Your name and email are pre-filled from your profile.</CardDescription>
         </CardHeader>
@@ -163,7 +163,7 @@ export default function EnrollmentForm() {
                             <SelectValue placeholder="Select a slot" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent position="popper">
                           {slots.map(slot => (
                             <SelectItem key={slot} value={slot}>{slot}</SelectItem>
                           ))}

@@ -25,7 +25,7 @@ export default function MobileNav() {
     if (user) {
        return [
             { href: '/', label: 'Home', icon: Home },
-            { href: '/course-enrollment', label: 'Enroll', icon: ClipboardList },
+            { href: '/course-enrollment', label: 'Alerts', icon: ClipboardList },
             { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
             { href: '/profile', label: 'Profile', icon: User },
         ];

@@ -67,15 +67,15 @@ export default function AdminEnrollmentsPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <h2 className="text-3xl font-bold tracking-tight">Course Enrollments</h2>
+      <h2 className="text-3xl font-bold tracking-tight">Enrollment Alerts</h2>
       <p className="text-muted-foreground">
-        View all student course enrollments submitted through the portal.
+        View all student course enrollment alerts submitted through the portal.
       </p>
 
       <Card>
         <CardHeader>
           <CardTitle>Enrollment Submissions</CardTitle>
-          <CardDescription>A list of all course enrollments.</CardDescription>
+          <CardDescription>A list of all submitted course enrollment alerts.</CardDescription>
           <div className="relative pt-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -94,7 +94,7 @@ export default function AdminEnrollmentsPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Course Code</TableHead>
                 <TableHead>Slot</TableHead>
-                <TableHead>Enrolled On</TableHead>
+                <TableHead>Submitted On</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

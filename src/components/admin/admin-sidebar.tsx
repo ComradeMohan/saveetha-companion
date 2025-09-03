@@ -14,7 +14,7 @@ const adminNavLinks = [
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/projects', label: 'Ecommerce', icon: Package },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
-  { href: '/admin/enrollments', label: 'Enrollments', icon: ClipboardList },
+  { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
