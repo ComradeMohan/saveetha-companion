@@ -14,6 +14,7 @@ import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
+import SupportButton from '@/components/support-button';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -105,6 +106,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
           <MobileNav />
+          <SupportButton />
       </AuthProvider>
     </ThemeProvider>
   )
