@@ -27,6 +27,7 @@ import {
   BrainCircuit,
   Package,
   Award,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -36,6 +37,7 @@ const adminNavLinks = [
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/projects', label: 'Ecommerce', icon: Package },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
+  { href: '/admin/enrollments', label: 'Enrollments', icon: ClipboardList },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },

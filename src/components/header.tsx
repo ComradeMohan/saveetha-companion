@@ -16,6 +16,7 @@ import {
   Package,
   Award,
   ChevronDown,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -147,6 +148,7 @@ export default function Header() {
        return [
             { href: '/#calculators', label: 'Calculators' },
             { href: '/#concepts', label: 'Concepts' },
+            { href: '/course-enrollment', label: 'Enrollment', icon: ClipboardList },
             { href: '/certifications', label: 'Certifications' },
             { href: '/projects', label: 'Ecommerce' },
             { href: '/calendar', label: 'Calendar' },

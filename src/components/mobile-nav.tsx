@@ -11,6 +11,7 @@ import {
   Calculator,
   Package,
   Award,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,7 @@ export default function MobileNav() {
     if (user) {
        return [
             { href: '/', label: 'Home', icon: Home },
-            { href: '/certifications', label: 'Certs', icon: Award },
+            { href: '/course-enrollment', label: 'Enroll', icon: ClipboardList },
             { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
             { href: '/profile', label: 'Profile', icon: User },
         ];
