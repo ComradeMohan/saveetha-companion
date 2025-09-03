@@ -103,7 +103,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     >
       <AuthProvider>
           <VerificationBanner key="verification-banner" />
-          <FeatureAnnouncementBanner key="feature-announcement-banner" />
           <FeedbackDialog />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
@@ -127,7 +126,10 @@ export default function RootLayout({
         <ScrollProgress />
         <MouseSpotlight />
         <Suspense fallback={<RootLayoutSkeleton />}>
-            <AppProviders>{children}</AppProviders>
+            <AppProviders>
+              <FeatureAnnouncementBanner key="feature-announcement-banner" />
+              {children}
+            </AppProviders>
         </Suspense>
         
         {/* Google Analytics Scripts */}
