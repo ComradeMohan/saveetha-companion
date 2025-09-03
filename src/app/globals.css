@@ -314,3 +314,17 @@
     opacity: 0;
   }
 }
+
+/* Ticker Animation */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 10s linear infinite;
+}

@@ -15,6 +15,7 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
 import SupportButton from '@/components/support-button';
+import FeatureAnnouncementBanner from '@/components/feature-announcement-banner';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -102,6 +103,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     >
       <AuthProvider>
           <VerificationBanner key="verification-banner" />
+          <FeatureAnnouncementBanner key="feature-announcement-banner" />
           <FeedbackDialog />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
