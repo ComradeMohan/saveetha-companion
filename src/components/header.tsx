@@ -32,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
+import FeatureAnnouncementBanner from './feature-announcement-banner';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -173,6 +174,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
+       <FeatureAnnouncementBanner key="feature-announcement-banner" />
        <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 sm:px-6 liquid-glass-nav">
         <div className="flex items-center gap-4">
           {/* Logo */}

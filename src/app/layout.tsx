@@ -15,7 +15,6 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
 import SupportButton from '@/components/support-button';
-import FeatureAnnouncementBanner from '@/components/feature-announcement-banner';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -127,7 +126,6 @@ export default function RootLayout({
         <MouseSpotlight />
         <Suspense fallback={<RootLayoutSkeleton />}>
             <AppProviders>
-              <FeatureAnnouncementBanner key="feature-announcement-banner" />
               {children}
             </AppProviders>
         </Suspense>
