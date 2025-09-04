@@ -1,4 +1,3 @@
-
 'use server';
 
 import { db } from '@/lib/firebase';
@@ -47,6 +46,9 @@ export async function enrollInCourse(prevState: any, formData: FormData) {
     };
   } catch (error: any) {
     console.error('Error creating enrollment:', error);
+    if (error.code === 'permission-denied') {
+        return { type: 'error', message: 'Permission Denied. Please check your Firestore security rules.' };
+    }
     return { type: 'error', message: 'An unexpected error occurred while enrolling.' };
   }
 }
