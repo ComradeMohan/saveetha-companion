@@ -76,6 +76,8 @@ export default function EnrollmentForm() {
     },
   });
 
+  const slotValue = form.watch('slot');
+
   useEffect(() => {
     if (user) {
       form.setValue('name', user.displayName || '');
@@ -148,6 +150,7 @@ export default function EnrollmentForm() {
             <form action={formAction} className="space-y-6">
               <input type="hidden" {...form.register('name')} />
               <input type="hidden" {...form.register('email')} />
+              <input type="hidden" name="slot" value={slotValue} />
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
@@ -156,7 +159,7 @@ export default function EnrollmentForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Slot</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a slot" />
@@ -179,7 +182,13 @@ export default function EnrollmentForm() {
                     <FormItem>
                       <FormLabel>Course Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., CSE101" {...field} />
+                        <Input 
+                            placeholder="e.g., CSE101" 
+                            {...field} 
+                            onChange={(e) => {
+                                field.onChange(e.target.value.toUpperCase())
+                            }}
+                        />
                       </FormControl>
                       <FormMessage>{state.errors?.courseCode?.[0]}</FormMessage>
                     </FormItem>
