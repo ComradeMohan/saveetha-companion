@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -163,7 +162,7 @@ export default function EnrollmentForm() {
                             <SelectValue placeholder="Select a slot" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent position="popper">
+                        <SelectContent>
                           {slots.map(slot => (
                             <SelectItem key={slot} value={slot}>{slot}</SelectItem>
                           ))}
