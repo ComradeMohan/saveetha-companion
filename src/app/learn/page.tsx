@@ -32,6 +32,8 @@ const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
         { name: "Advanced Computing Theory", codes: ['CSA13', 'CSA14', 'CSA07', 'UBA09'] },
         { name: "Specialization & AI", codes: ['CSA17', 'CSA15', 'CSA16', 'UBA33'] },
         { name: "Security & Electives", codes: ['CSA51', 'ITA14', 'UBA28', 'SPIC1'] },
+        // Added remaining courses to logical groups
+        { name: "Additional Core Subjects", codes: ['UBA05', 'SPIC1', 'UBA10', 'ECA14', 'CSA43', 'CSA11', 'CSA57', 'BTA01'] }
     ];
 
     const stages: Stage[] = stagesConfig.map(stageConfig => ({
@@ -41,17 +43,6 @@ const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
             .filter((course): course is Course => !!course) // Filter out undefined courses
     }));
     
-    // Add any remaining courses to a final stage
-    const mappedCodes = new Set(stagesConfig.flatMap(s => s.codes));
-    const remainingCourses = courses.filter(c => !mappedCodes.has(c.id));
-
-    if (remainingCourses.length > 0) {
-        stages.push({
-            name: "Further Electives",
-            courses: remainingCourses
-        });
-    }
-
     return stages.filter(stage => stage.courses.length > 0);
 };
 
@@ -183,3 +174,5 @@ export default function LearnHomePage() {
     </>
   )
 }
+
+    
