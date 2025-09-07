@@ -146,14 +146,15 @@ export default function Header() {
   const [isProfileDialogOpen, setProfileDialogOpen] = React.useState(false);
 
   const handleLearnClick = () => {
-    setIsNavigating(true);
     if (user) {
         if (profile?.department && profile?.college) {
+            setIsNavigating(true);
             router.push('/faq');
         } else {
             setProfileDialogOpen(true);
         }
     } else {
+        setIsNavigating(true);
         router.push('/login');
     }
   };
