@@ -6,6 +6,8 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetHeader,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
@@ -68,14 +70,18 @@ export default function AdminHeader() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
-            <Link
-              href="/"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-            >
-              <GraduationCap className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Saveetha Companion</span>
-            </Link>
+            <SheetHeader className="text-left">
+                <SheetTitle>
+                    <Link
+                        href="/"
+                        className="group flex items-center gap-2 font-semibold"
+                    >
+                        <GraduationCap className="h-6 w-6 text-primary transition-all group-hover:scale-110" />
+                        <span className="font-bold">{siteTitle}</span>
+                    </Link>
+                </SheetTitle>
+            </SheetHeader>
+          <nav className="grid gap-2 text-lg font-medium mt-4">
             {links.map(link => (
               <Link
                 key={link.href}
