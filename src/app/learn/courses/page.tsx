@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
-import { getCourses } from '../actions/manage-courses';
+import { getCourses } from '@/app/actions/manage-courses';
 
 type Course = {
   id: string;

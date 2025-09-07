@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
-import { getCourses } from '../actions/manage-courses';
+import { getCourses } from '@/app/actions/manage-courses';
 
 type Course = {
   id: string;
