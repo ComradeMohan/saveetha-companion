@@ -19,28 +19,38 @@ type Stage = {
   courses: Course[];
 };
 
-// This function attempts to group courses into logical semester-based stages.
-// It's an approximation and can be refined if more detailed semester data is stored per course.
+// This function attempts to group courses into logical stages based on common curriculum progression.
 const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
     const courseMap = new Map(courses.map(c => [c.id, c]));
-    const stages: Stage[] = [
-        { name: "Semester 1 & 2: Foundational Knowledge", courses: [] },
-        { name: "Semester 3 & 4: Core Concepts", courses: [] },
-        { name: "Semester 5 & 6: Advanced Topics & Specialization", courses: [] },
-        { name: "Semester 7 & 8: Electives & Projects", courses: [] },
+    
+    // Define the structured roadmap
+    const stagesConfig = [
+        { name: "Foundational Knowledge", codes: ['UBA01', 'UBA48', 'UBA49', 'CSA02'] },
+        { name: "Core Engineering & Logic", codes: ['EEA01', 'ECA47', 'UBA04', 'CSA03'] },
+        { name: "Core Programming & OS", codes: ['DSA01', 'CSA09', 'CSA05', 'CSA04'] },
+        { name: "Algorithms & Architecture", codes: ['CSA06', 'ECA10', 'CSA12', 'CSA10'] },
+        { name: "Advanced Computing Theory", codes: ['CSA13', 'CSA14', 'CSA07', 'UBA09'] },
+        { name: "Specialization & AI", codes: ['CSA17', 'CSA15', 'CSA16', 'UBA33'] },
+        { name: "Security & Electives", codes: ['CSA51', 'ITA14', 'UBA28', 'SPIC1'] },
     ];
 
-    const courseToStage: { [key: string]: number } = {
-        'UBA01': 0, 'UBA05': 0, 'UBA48': 0, 'UBA49': 0, 'CSA02': 0, 'EEA01': 0, 'BTA01': 0,
-        'UBA04': 1, 'CSA03': 1, 'ECA47': 1, 'CSA04': 1, 'CSA05': 1, 'CSA06': 1, 'ECA10': 1,
-        'CSA07': 2, 'CSA09': 2, 'CSA10': 2, 'CSA11': 2, 'CSA12': 2, 'CSA13': 2, 'CSA14': 2, 'CSA17': 2,
-        'UBA33': 3, 'UBA28': 3, 'CSA15': 3, 'CSA51': 3, 'CSA16': 3, 'ITA14': 3, 'SPIC1': 3
-    };
+    const stages: Stage[] = stagesConfig.map(stageConfig => ({
+        name: stageConfig.name,
+        courses: stageConfig.codes
+            .map(code => courseMap.get(code))
+            .filter((course): course is Course => !!course) // Filter out undefined courses
+    }));
+    
+    // Add any remaining courses to a final stage
+    const mappedCodes = new Set(stagesConfig.flatMap(s => s.codes));
+    const remainingCourses = courses.filter(c => !mappedCodes.has(c.id));
 
-    courses.forEach(course => {
-        const stageIndex = courseToStage[course.id] ?? 3; // Default to final stage if not mapped
-        stages[stageIndex].courses.push(course);
-    });
+    if (remainingCourses.length > 0) {
+        stages.push({
+            name: "Further Electives",
+            courses: remainingCourses
+        });
+    }
 
     return stages.filter(stage => stage.courses.length > 0);
 };
