@@ -26,13 +26,15 @@ export function AiChatPopover() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+    if (viewportRef.current) {
+        viewportRef.current.scrollTo({
+            top: viewportRef.current.scrollHeight,
+            behavior: 'smooth',
+        });
     }
   }, [messages, loading]);
   
@@ -99,7 +101,7 @@ export function AiChatPopover() {
                 <X className="h-4 w-4"/>
              </Button>
           </div>
-          <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+          <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
              <div className="space-y-6">
               {messages.map((message, index) => (
                 <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
