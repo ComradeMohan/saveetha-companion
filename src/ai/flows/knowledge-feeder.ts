@@ -2,28 +2,44 @@
 'use server';
 
 /**
- * @fileOverview A flow to feed PDF knowledge into an in-memory cache.
+ * @fileOverview A flow to feed PDF knowledge into a persistent Firestore cache.
  *
- * - feedKnowledge - A function that fetches, parses, and caches PDF content.
+ * - feedKnowledge - A function that fetches, parses, and caches PDF content into Firestore.
  * - KnowledgeFeederInput - The input type for the feedKnowledge function.
- * - getPdfContent - An exported function to retrieve cached PDF content.
+ * - getPdfContent - An exported function to retrieve cached PDF content from Firestore.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import pdf from 'pdf-parse';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
-// In-memory cache for PDF content to avoid re-fetching on every call
-// This is NOT exported directly to comply with 'use server' constraints.
-const pdfCache = new Map<string, string>();
+// Helper to create a safe document ID from a URL
+const urlToDocId = (url: string) => encodeURIComponent(url);
 
-export async function getPdfContent(url: string): Promise<string> {
-    if (pdfCache.has(url)) {
-        console.log(`[Cache] HIT for ${url}`);
-        return pdfCache.get(url)!;
+/**
+ * Retrieves PDF content. It first checks a persistent Firestore cache.
+ * If not found, it fetches the PDF, parses it, and stores the content
+ * in the cache for future use.
+ * @param url The URL of the PDF to retrieve.
+ * @returns The text content of the PDF.
+ */
+export async function getPdfContent(url:string): Promise<string> {
+    const docId = urlToDocId(url);
+    const cacheRef = doc(db, 'pdf-knowledge-cache', docId);
+
+    try {
+        const docSnap = await getDoc(cacheRef);
+        if (docSnap.exists()) {
+            console.log(`[Cache] FIRESTORE HIT for ${url}`);
+            return docSnap.data().content;
+        }
+    } catch (e) {
+        console.error("Firestore cache read failed, proceeding to fetch.", e);
     }
-    console.log(`[Cache] MISS for ${url}. Fetching and parsing.`);
-
+    
+    console.log(`[Cache] MISS for ${url}. Fetching, parsing, and caching.`);
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -32,10 +48,9 @@ export async function getPdfContent(url: string): Promise<string> {
         const buffer = await response.arrayBuffer();
         const data = await pdf(buffer);
         
-        // Don't cache empty results to allow for retries
-        if(data.text) {
-          pdfCache.set(url, data.text);
-          console.log(`[Cache] Stored ${data.text.length} characters for ${url}`);
+        if (data.text) {
+          await setDoc(cacheRef, { content: data.text, cachedAt: new Date().toISOString() });
+          console.log(`[Cache] Stored ${data.text.length} characters in Firestore for ${url}`);
         }
         return data.text;
     } catch (error) {
@@ -70,6 +85,7 @@ const knowledgeFeederFlow = ai.defineFlow(
   async (input) => {
     try {
       console.log(`Feeding knowledge from: ${input.url}`);
+      // This will fetch, parse, and store the content in the Firestore cache.
       await getPdfContent(input.url);
       console.log(`Successfully fed and cached: ${input.url}`);
       return {

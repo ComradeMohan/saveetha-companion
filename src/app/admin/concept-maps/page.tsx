@@ -104,7 +104,7 @@ export default function AdminConceptMapsPage() {
         setIsFeeding(true);
         toast({
             title: "Starting AI Knowledge Feed",
-            description: `Processing ${conceptMaps.length} documents. This may take a moment.`
+            description: `Caching ${conceptMaps.length} documents into the database. This may take a moment.`
         });
 
         let successCount = 0;
@@ -151,7 +151,7 @@ export default function AdminConceptMapsPage() {
                     <CardHeader>
                         <CardTitle>Available Concept Maps</CardTitle>
                         <CardDescription>
-                            Use the "Feed Knowledge to AI" button to update the AI's knowledge base for the current user session.
+                            Use the "Feed Knowledge to AI" button to cache document content in the database for faster AI responses.
                         </CardDescription>
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
