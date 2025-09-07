@@ -97,20 +97,19 @@ export default function CoursesPage() {
         try {
             const docRef = doc(db, 'student_grades', user.uid);
             
-            // Create a new map to ensure we trigger a re-render.
             const newGrades = { ...studentGrades };
 
             if (selectedGrade !== 'none') {
                 newGrades[selectedCourse] = selectedGrade;
             } else {
-                // This logic allows clearing a grade, which might contradict "non-editable"
-                // For now, let's assume 'none' is a valid state to set.
                 delete newGrades[selectedCourse];
             }
             
             await setDoc(docRef, newGrades, { merge: true });
 
             toast({ title: "Success", description: "Your grade has been saved." });
+            setSelectedCourse("");
+            setSelectedGrade("");
         } catch (error) {
             console.error("Error saving grade:", error);
             toast({ title: "Error", description: "Could not save your grade.", variant: "destructive"});
@@ -175,7 +174,7 @@ export default function CoursesPage() {
                     <CardHeader>
                         <CardTitle>Select Course and Grade</CardTitle>
                         <CardDescription>
-                           Search for a course and select the grade you received. Saving will update your academic roadmap and CGPA.
+                           Search for a course by its name or code. Then, select the grade you received. Saving the grade will update your academic roadmap.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
