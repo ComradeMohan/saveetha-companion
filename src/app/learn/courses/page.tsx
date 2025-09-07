@@ -89,7 +89,7 @@ export default function CoursesPage() {
     const handleGradeChange = (courseCode: string, grade: string) => {
         setStudentGrades(prev => {
             const newGrades = { ...prev };
-            if (grade) {
+            if (grade && grade !== 'none') {
                 newGrades[courseCode] = grade;
             } else {
                 delete newGrades[courseCode]; // Remove if grade is cleared
@@ -166,7 +166,7 @@ export default function CoursesPage() {
                                                     <SelectValue placeholder="-" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="">-</SelectItem>
+                                                    <SelectItem value="none">-</SelectItem>
                                                     {grades.map(grade => (
                                                         <SelectItem key={grade} value={grade}>{grade}</SelectItem>
                                                     ))}
