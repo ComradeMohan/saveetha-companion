@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,17 +26,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
+import { getColleges } from '@/app/actions/manage-colleges';
+import { getDepartments } from '@/app/actions/manage-departments';
 
 const profileSchema = z.object({
+  college: z.string().min(1, 'Please select your college.'),
   department: z.string().min(1, 'Please select a department.'),
-  college: z.enum(['SSE', 'SEC'], {
-    required_error: 'Please select your college.',
-  }),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const departments = ["AIDS", "BIO", "CSE", "ECE", "EEE", "MECH", "Other"];
+type College = { id: string; name: string };
+type Department = { id: string; name: string };
 
 interface UpdateProfileDialogProps {
   open: boolean;
@@ -48,9 +49,44 @@ export function UpdateProfileDialog({ open, onOpenChange }: UpdateProfileDialogP
   const { updateUserAcademicProfile, setIsNavigating } = useAuth();
   const router = useRouter();
 
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [loadingColleges, setLoadingColleges] = useState(true);
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
   });
+
+  const selectedCollege = form.watch('college');
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+        setLoadingColleges(true);
+        const collegeData = await getColleges();
+        setColleges(collegeData as College[]);
+        setLoadingColleges(false);
+    };
+    if (open) {
+        fetchColleges();
+    }
+  }, [open]);
+
+  useEffect(() => {
+      const fetchDepartments = async () => {
+          if (selectedCollege) {
+              setLoadingDepartments(true);
+              form.setValue('department', ''); // Reset department on college change
+              const departmentData = await getDepartments(selectedCollege);
+              setDepartments(departmentData as Department[]);
+              setLoadingDepartments(false);
+          } else {
+              setDepartments([]);
+          }
+      };
+      fetchDepartments();
+  }, [selectedCollege, form]);
+
 
   const onSubmit = async (values: ProfileFormValues) => {
     setLoading(true);
@@ -84,15 +120,16 @@ export function UpdateProfileDialog({ open, onOpenChange }: UpdateProfileDialogP
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>College</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={loadingColleges}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your college" />
+                        <SelectValue placeholder={loadingColleges ? "Loading colleges..." : "Select your college"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="SSE">Saveetha School of Engineering (SSE)</SelectItem>
-                      <SelectItem value="SEC">Saveetha Engineering College (SEC)</SelectItem>
+                      {colleges.map(college => (
+                          <SelectItem key={college.id} value={college.id}>{college.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -105,15 +142,15 @@ export function UpdateProfileDialog({ open, onOpenChange }: UpdateProfileDialogP
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Department</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                   <Select onValueChange={field.onChange} value={field.value} disabled={!selectedCollege || loadingDepartments}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your department" />
+                        <SelectValue placeholder={!selectedCollege ? "First, select a college" : loadingDepartments ? "Loading departments..." : "Select your department"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {departments.map(dep => (
-                        <SelectItem key={dep} value={dep}>{dep}</SelectItem>
+                        <SelectItem key={dep.id} value={dep.id}>{dep.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
