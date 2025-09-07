@@ -3,8 +3,8 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, CheckCircle } from 'lucide-react';
-import { collection, doc, getDoc, setDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { Loader2, Save, AlertTriangle, Check, BookOpen } from 'lucide-react';
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
 import { getCourses } from '@/app/actions/manage-courses';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Course = {
   id: string;
@@ -32,7 +34,6 @@ export default function CoursesPage() {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     
-    // State for the new UI
     const [selectedCourse, setSelectedCourse] = useState<string>("");
     const [selectedGrade, setSelectedGrade] = useState<string>("");
     
@@ -75,7 +76,6 @@ export default function CoursesPage() {
     }, [user, authLoading, toast]);
 
     useEffect(() => {
-        // When selectedCourse changes, update the grade dropdown
         if (selectedCourse && studentGrades[selectedCourse]) {
             setSelectedGrade(studentGrades[selectedCourse]);
         } else {
@@ -96,15 +96,19 @@ export default function CoursesPage() {
         setIsSaving(true);
         try {
             const docRef = doc(db, 'student_grades', user.uid);
+            
+            // Create a new map to ensure we trigger a re-render.
             const newGrades = { ...studentGrades };
 
             if (selectedGrade !== 'none') {
                 newGrades[selectedCourse] = selectedGrade;
             } else {
+                // This logic allows clearing a grade, which might contradict "non-editable"
+                // For now, let's assume 'none' is a valid state to set.
                 delete newGrades[selectedCourse];
             }
             
-            await setDoc(docRef, newGrades);
+            await setDoc(docRef, newGrades, { merge: true });
 
             toast({ title: "Success", description: "Your grade has been saved." });
         } catch (error) {
@@ -121,6 +125,17 @@ export default function CoursesPage() {
             label: `${course.id} - ${course.name}`
         }));
     }, [allCourses]);
+
+    const completedCourses = useMemo(() => {
+        return Object.entries(studentGrades).map(([courseCode, grade]) => {
+            const course = allCourses.find(c => c.id === courseCode);
+            return {
+                id: courseCode,
+                name: course?.name || 'Unknown Course',
+                grade
+            };
+        }).sort((a,b) => a.id.localeCompare(b.id)); // Sort alphabetically by code
+    }, [studentGrades, allCourses]);
 
     if (loading || authLoading) {
         return (
@@ -146,12 +161,21 @@ export default function CoursesPage() {
             <div className="flex items-center justify-between">
                 <h1 className="text-lg font-semibold md:text-2xl">Log Course Grades</h1>
             </div>
+
+             <Alert variant="destructive" className="mt-4">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Important Notice</AlertTitle>
+                <AlertDescription>
+                    Grades submitted here are considered final and cannot be edited or removed later. Please ensure your selection is accurate before saving.
+                </AlertDescription>
+            </Alert>
+
             <div className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm mt-4">
                 <Card className="w-full">
                     <CardHeader>
                         <CardTitle>Select Course and Grade</CardTitle>
                         <CardDescription>
-                           Search for a course by its name or code. Then, select the grade you received. Saving the grade will update your academic roadmap.
+                           Search for a course and select the grade you received. Saving will update your academic roadmap and CGPA.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
@@ -177,7 +201,6 @@ export default function CoursesPage() {
                                     <SelectValue placeholder="Select Grade" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="none"> - (Clear Grade)</SelectItem>
                                     {grades.map(grade => (
                                         <SelectItem key={grade} value={grade}>{grade}</SelectItem>
                                     ))}
@@ -193,6 +216,43 @@ export default function CoursesPage() {
                     </CardFooter>
                 </Card>
             </div>
+            
+            <Card className="mt-6">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Check className="h-5 w-5 text-green-500" />
+                        Completed Courses
+                    </CardTitle>
+                    <CardDescription>A list of all the grades you have logged so far.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {completedCourses.length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Course Code</TableHead>
+                                    <TableHead>Course Name</TableHead>
+                                    <TableHead className="text-right">Grade</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {completedCourses.map(course => (
+                                    <TableRow key={course.id}>
+                                        <TableCell className="font-mono">{course.id}</TableCell>
+                                        <TableCell>{course.name}</TableCell>
+                                        <TableCell className="text-right font-bold text-primary">{course.grade}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                         <div className="text-center text-muted-foreground py-10">
+                            <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/50"/>
+                            <p className="mt-4">You haven't logged any grades yet.</p>
+                         </div>
+                    )}
+                </CardContent>
+            </Card>
         </>
     )
 }

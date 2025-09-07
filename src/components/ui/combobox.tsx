@@ -66,8 +66,9 @@ export function Combobox({
                 <CommandItem
                   key={option.value}
                   value={`${option.value} ${option.label}`} // Search by both value and label
-                  onSelect={() => {
-                    onChange(option.value === value ? "" : option.value)
+                  onSelect={(currentValue) => {
+                    const selectedValue = options.find(opt => `${opt.value} ${opt.label}`.toLowerCase() === currentValue.toLowerCase())?.value
+                    onChange(selectedValue === value ? "" : selectedValue || "")
                     setOpen(false)
                   }}
                 >
