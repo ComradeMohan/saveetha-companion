@@ -31,9 +31,8 @@ const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
         { name: "Algorithms & Architecture", codes: ['CSA06', 'ECA10', 'CSA12', 'CSA10'] },
         { name: "Advanced Computing Theory", codes: ['CSA13', 'CSA14', 'CSA07', 'UBA09'] },
         { name: "Specialization & AI", codes: ['CSA17', 'CSA15', 'CSA16', 'UBA33'] },
-        { name: "Security & Electives", codes: ['CSA51', 'ITA14', 'UBA28', 'SPIC1'] },
-        // Added remaining courses to logical groups
-        { name: "Additional Core Subjects", codes: ['UBA05', 'SPIC1', 'UBA10', 'ECA14', 'CSA43', 'CSA11', 'CSA57', 'BTA01'] }
+        { name: "Security & Professional Practices", codes: ['CSA51', 'ITA14', 'UBA28', 'SPIC1'] },
+        { name: "Additional Core Subjects", codes: ['UBA05', 'UBA10', 'ECA14', 'CSA43', 'CSA11', 'CSA57', 'BTA01'] }
     ];
 
     const stages: Stage[] = stagesConfig.map(stageConfig => ({
@@ -143,7 +142,7 @@ export default function LearnHomePage() {
                               <h3 className="text-lg font-semibold">{stage.name}</h3>
                           </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-14">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pl-4 md:pl-14">
                           {remainingCourses.map(course => (
                               <div key={course.id} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
                                   <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
@@ -174,5 +173,3 @@ export default function LearnHomePage() {
     </>
   )
 }
-
-    
