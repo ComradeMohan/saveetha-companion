@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -161,19 +160,32 @@ export default function CollegeLearningsPage() {
             <CardDescription>Manage the list of colleges.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {colleges.map(c => (
-                <div key={c.id} className="flex items-center justify-between p-2 rounded-md bg-secondary">
-                  <span>{c.name} ({c.id})</span>
-                   <Button variant="ghost" size="icon" onClick={() => handleDeleteCollege(c.id)} disabled={isPending}>
-                      <Trash2 className="h-4 w-4 text-destructive"/>
-                   </Button>
-                </div>
-              ))}
-            </div>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>College Name</TableHead>
+                        <TableHead>ID</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {colleges.map(c => (
+                        <TableRow key={c.id}>
+                            <TableCell>{c.name}</TableCell>
+                            <TableCell>{c.id}</TableCell>
+                            <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => handleDeleteCollege(c.id)} disabled={isPending}>
+                                    <Trash2 className="h-4 w-4 text-destructive"/>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
           </CardContent>
-          <CardFooter className="flex flex-col gap-2 items-stretch">
-            <Input placeholder="College ID (e.g., SSE)" value={newCollegeId} onChange={e => setNewCollegeId(e.target.value)} />
+          <CardFooter className="flex flex-col gap-2 items-stretch border-t pt-6">
+            <h4 className="font-semibold text-sm mb-2">Add New College</h4>
+            <Input placeholder="College ID (e.g., SSE)" value={newCollegeId} onChange={e => setNewCollegeId(e.target.value.toUpperCase())} />
             <Input placeholder="College Name" value={newCollegeName} onChange={e => setNewCollegeName(e.target.value)} />
             <Button onClick={handleAddCollege} disabled={isPending || !newCollegeId || !newCollegeName}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add College
@@ -194,19 +206,32 @@ export default function CollegeLearningsPage() {
             </Select>
           </CardHeader>
           <CardContent>
-             <div className="space-y-2">
-              {departments.map(d => (
-                <div key={d.id} className="flex items-center justify-between p-2 rounded-md bg-secondary">
-                  <span>{d.name} ({d.id})</span>
-                  <Button variant="ghost" size="icon" onClick={() => handleDeleteDepartment(d.id)} disabled={isPending}>
-                    <Trash2 className="h-4 w-4 text-destructive"/>
-                  </Button>
-                </div>
-              ))}
-            </div>
+             <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Department Name</TableHead>
+                        <TableHead>ID</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {departments.map(d => (
+                        <TableRow key={d.id}>
+                            <TableCell>{d.name}</TableCell>
+                            <TableCell>{d.id}</TableCell>
+                            <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => handleDeleteDepartment(d.id)} disabled={isPending}>
+                                    <Trash2 className="h-4 w-4 text-destructive"/>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
           </CardContent>
-          <CardFooter className="flex flex-col gap-2 items-stretch">
-            <Input placeholder="Dept. ID (e.g., CSE)" value={newDepartmentId} onChange={e => setNewDepartmentId(e.target.value)} disabled={!selectedCollege}/>
+          <CardFooter className="flex flex-col gap-2 items-stretch border-t pt-6">
+             <h4 className="font-semibold text-sm mb-2">Add New Department</h4>
+            <Input placeholder="Dept. ID (e.g., CSE)" value={newDepartmentId} onChange={e => setNewDepartmentId(e.target.value.toUpperCase())} disabled={!selectedCollege}/>
             <Input placeholder="Dept. Name" value={newDepartmentName} onChange={e => setNewDepartmentName(e.target.value)} disabled={!selectedCollege}/>
             <Button onClick={handleAddDepartment} disabled={isPending || !selectedCollege || !newDepartmentId || !newDepartmentName}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Department
@@ -226,20 +251,33 @@ export default function CollegeLearningsPage() {
               </SelectContent>
             </Select>
           </CardHeader>
-          <CardContent>
-             <div className="space-y-2 max-h-60 overflow-y-auto">
-              {courses.map(c => (
-                <div key={c.id} className="flex items-center justify-between p-2 rounded-md bg-secondary">
-                  <span>{c.name} ({c.id})</span>
-                  <Button variant="ghost" size="icon" onClick={() => handleDeleteCourse(c.id)} disabled={isPending}>
-                    <Trash2 className="h-4 w-4 text-destructive"/>
-                  </Button>
-                </div>
-              ))}
-            </div>
+          <CardContent className="max-h-96 overflow-y-auto">
+             <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Course Name</TableHead>
+                        <TableHead>Code</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {courses.map(c => (
+                        <TableRow key={c.id}>
+                            <TableCell>{c.name}</TableCell>
+                            <TableCell>{c.id}</TableCell>
+                            <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => handleDeleteCourse(c.id)} disabled={isPending}>
+                                    <Trash2 className="h-4 w-4 text-destructive"/>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
           </CardContent>
-          <CardFooter className="flex flex-col gap-2 items-stretch">
-            <Input placeholder="Course Code" value={newCourseCode} onChange={e => setNewCourseCode(e.target.value)} disabled={!selectedDepartment}/>
+          <CardFooter className="flex flex-col gap-2 items-stretch border-t pt-6">
+            <h4 className="font-semibold text-sm mb-2">Add New Course</h4>
+            <Input placeholder="Course Code" value={newCourseCode} onChange={e => setNewCourseCode(e.target.value.toUpperCase())} disabled={!selectedDepartment}/>
             <Input placeholder="Course Name" value={newCourseName} onChange={e => setNewCourseName(e.target.value)} disabled={!selectedDepartment}/>
             <Button onClick={handleAddCourse} disabled={isPending || !selectedDepartment || !newCourseCode || !newCourseName}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Course
