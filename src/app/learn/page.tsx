@@ -1,10 +1,24 @@
 
 'use client';
 
+import { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { db } from '@/lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Book, CheckCircle, GitBranch, Milestone } from "lucide-react";
+import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
 
-// Simplified data structure for the roadmap
+type Course = {
+  code: string;
+  name: string;
+};
+
+type Stage = {
+  name: string;
+  courses: Course[];
+};
+
+// Transformed into a hierarchical structure
 const roadmapData = {
   title: "Computer Science & Engineering Roadmap",
   stages: [
@@ -60,8 +74,45 @@ const roadmapData = {
   ],
 };
 
+type StudentGrades = {
+  [courseCode: string]: string;
+};
 
 export default function LearnHomePage() {
+  const { user, loading: authLoading } = useAuth();
+  const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (authLoading || !user) {
+        if (!authLoading) setLoading(false);
+        return;
+    }
+
+    setLoading(true);
+    const docRef = doc(db, 'student_grades', user.uid);
+    
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        setStudentGrades(docSnap.exists() ? docSnap.data() : {});
+        setLoading(false);
+    }, (error) => {
+        console.error("Error fetching grades for roadmap:", error);
+        setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user, authLoading]);
+
+  const completedCourseCodes = new Set(Object.keys(studentGrades));
+
+  if (loading || authLoading) {
+      return (
+           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+              <Loader2 className="h-10 w-10 animate-spin text-primary"/>
+          </div>
+      )
+  }
+
   return (
     <>
       <div className="flex items-center">
@@ -71,39 +122,42 @@ export default function LearnHomePage() {
         <CardHeader>
             <CardTitle>Your Academic Journey</CardTitle>
             <CardDescription>
-                A recommended roadmap for Computer Science and Engineering. Courses you complete in the 'Courses' tab will be marked here.
+                A recommended roadmap for Computer Science and Engineering. Courses disappear from here once you log a grade for them in the 'My Courses' tab.
             </CardDescription>
         </CardHeader>
         <CardContent>
            <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
-              {roadmapData.stages.map((stage, stageIndex) => (
-                <div key={stage.name} className="grid gap-10">
-                    <div className="grid grid-cols-[40px_1fr] items-start gap-4">
-                        <div className="flex-shrink-0">
-                           <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
-                             <GitBranch className="h-5 w-5 text-primary" />
-                           </span>
-                        </div>
-                        <div className="pt-2">
-                            <h3 className="text-lg font-semibold">{stage.name}</h3>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-14">
-                        {stage.courses.map(course => (
-                            <div key={course.code} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
-                                <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                                <div>
-                                    <p className="font-semibold">{course.name}</p>
-                                    <p className="text-sm text-muted-foreground">{course.code}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {stageIndex < roadmapData.stages.length - 1 && (
-                         <div className="h-10 w-full" />
-                    )}
-                </div>
-              ))}
+              {roadmapData.stages.map((stage, stageIndex) => {
+                const remainingCourses = stage.courses.filter(course => !completedCourseCodes.has(course.code));
+
+                if (remainingCourses.length === 0) return null; // Skip rendering the stage if all courses are completed
+
+                return (
+                  <div key={stage.name} className="grid gap-10 mb-10">
+                      <div className="grid grid-cols-[40px_1fr] items-start gap-4">
+                          <div className="flex-shrink-0">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
+                              <GitBranch className="h-5 w-5 text-primary" />
+                            </span>
+                          </div>
+                          <div className="pt-2">
+                              <h3 className="text-lg font-semibold">{stage.name}</h3>
+                          </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-14">
+                          {remainingCourses.map(course => (
+                              <div key={course.code} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
+                                  <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                  <div>
+                                      <p className="font-semibold">{course.name}</p>
+                                      <p className="text-sm text-muted-foreground">{course.code}</p>
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+                )
+              })}
                <div className="grid grid-cols-[40px_1fr] items-start gap-4">
                   <div className="flex-shrink-0">
                       <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-green-500 bg-green-500/10 -ml-5 relative z-10">
@@ -111,8 +165,8 @@ export default function LearnHomePage() {
                       </span>
                   </div>
                   <div className="pt-2">
-                      <h3 className="text-lg font-semibold">Congratulations!</h3>
-                      <p className="text-muted-foreground">You have completed the roadmap.</p>
+                      <h3 className="text-lg font-semibold">End of Roadmap</h3>
+                      <p className="text-muted-foreground">Log grades in 'My Courses' to see your progress.</p>
                   </div>
               </div>
            </div>

@@ -2,15 +2,15 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Save } from 'lucide-react';
-import { collection, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Loader2, Save, CheckCircle } from 'lucide-react';
+import { collection, doc, getDoc, setDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 
 // Simplified data structure, source of truth for all available courses
 const allCourses = [
@@ -49,7 +49,7 @@ const allCourses = [
   { code: "SPIC1", name: "Project 1" },
 ];
 
-const grades = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
+const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
 
 type StudentGrades = {
   [courseCode: string]: string; // e.g., { "CSA02": "A", "UBA01": "S" }
@@ -60,6 +60,11 @@ export default function CoursesPage() {
     const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    
+    // State for the new UI
+    const [selectedCourse, setSelectedCourse] = useState<string>("");
+    const [selectedGrade, setSelectedGrade] = useState<string>("");
+    
     const { toast } = useToast();
 
     useEffect(() => {
@@ -68,7 +73,6 @@ export default function CoursesPage() {
         setLoading(true);
         const docRef = doc(db, 'student_grades', user.uid);
         
-        // Use onSnapshot for real-time updates
         const unsubscribe = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 setStudentGrades(docSnap.data());
@@ -85,36 +89,53 @@ export default function CoursesPage() {
         return () => unsubscribe();
     }, [user, authLoading, toast]);
 
+    useEffect(() => {
+        // When selectedCourse changes, update the grade dropdown
+        if (selectedCourse && studentGrades[selectedCourse]) {
+            setSelectedGrade(studentGrades[selectedCourse]);
+        } else {
+            setSelectedGrade("");
+        }
+    }, [selectedCourse, studentGrades]);
 
-    const handleGradeChange = (courseCode: string, grade: string) => {
-        setStudentGrades(prev => {
-            const newGrades = { ...prev };
-            if (grade && grade !== 'none') {
-                newGrades[courseCode] = grade;
-            } else {
-                delete newGrades[courseCode]; // Remove if grade is cleared
-            }
-            return newGrades;
-        });
-    };
-    
-    const handleSaveChanges = async () => {
+    const handleSaveGrade = async () => {
         if (!user) {
             toast({ title: "Error", description: "You are not logged in.", variant: "destructive"});
             return;
         }
+        if (!selectedCourse || !selectedGrade) {
+            toast({ title: "Error", description: "Please select a course and a grade.", variant: "destructive"});
+            return;
+        }
+
         setIsSaving(true);
         try {
             const docRef = doc(db, 'student_grades', user.uid);
-            await setDoc(docRef, studentGrades, { merge: true });
-            toast({ title: "Success", description: "Your grades have been saved." });
+            const newGrades = { ...studentGrades };
+
+            if (selectedGrade !== 'none') {
+                newGrades[selectedCourse] = selectedGrade;
+            } else {
+                delete newGrades[selectedCourse];
+            }
+            
+            await setDoc(docRef, newGrades);
+
+            toast({ title: "Success", description: "Your grade has been saved." });
         } catch (error) {
-            console.error("Error saving grades:", error);
-            toast({ title: "Error", description: "Could not save your grades.", variant: "destructive"});
+            console.error("Error saving grade:", error);
+            toast({ title: "Error", description: "Could not save your grade.", variant: "destructive"});
         } finally {
             setIsSaving(false);
         }
     }
+
+    const comboboxOptions = useMemo(() => {
+        return allCourses.map(course => ({
+            value: course.code,
+            label: `${course.code} - ${course.name}`
+        }));
+    }, []);
 
     if (loading || authLoading) {
         return (
@@ -127,57 +148,53 @@ export default function CoursesPage() {
     return (
         <>
             <div className="flex items-center justify-between">
-                <h1 className="text-lg font-semibold md:text-2xl">My Courses</h1>
-                 <Button onClick={handleSaveChanges} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
-                    Save Grades
-                </Button>
+                <h1 className="text-lg font-semibold md:text-2xl">Log Course Grades</h1>
             </div>
-            <div
-                className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm"
-            >
+            <div className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm mt-4">
                 <Card className="w-full">
                     <CardHeader>
-                        <CardTitle>Log Your Grades</CardTitle>
+                        <CardTitle>Select Course and Grade</CardTitle>
                         <CardDescription>
-                           Select a grade for each course you have completed. This will update your roadmap.
+                           Choose a course, assign a grade, and save. Your roadmap will update automatically.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Course Code</TableHead>
-                                    <TableHead>Course Name</TableHead>
-                                    <TableHead className="w-[150px]">Grade</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {allCourses.map((course) => (
-                                    <TableRow key={course.code}>
-                                        <TableCell className="font-mono">{course.code}</TableCell>
-                                        <TableCell className="font-medium">{course.name}</TableCell>
-                                        <TableCell>
-                                             <Select 
-                                                value={studentGrades[course.code] || ''} 
-                                                onValueChange={(grade) => handleGradeChange(course.code, grade)}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="-" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="none">-</SelectItem>
-                                                    {grades.map(grade => (
-                                                        <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                    <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
+                        <div className="md:col-span-2 space-y-2">
+                           <Label>Course</Label>
+                           <Combobox
+                                options={comboboxOptions}
+                                value={selectedCourse}
+                                onChange={setSelectedCourse}
+                                placeholder="Search for a course..."
+                                searchPlaceholder="Search course code or name..."
+                                notFoundMessage="No course found."
+                           />
+                        </div>
+                        <div className="space-y-2">
+                             <Label>Grade</Label>
+                             <Select 
+                                value={selectedGrade} 
+                                onValueChange={setSelectedGrade}
+                                disabled={!selectedCourse}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Grade" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none"> - (Clear Grade)</SelectItem>
+                                    {grades.map(grade => (
+                                        <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </CardContent>
+                    <CardFooter>
+                         <Button onClick={handleSaveGrade} disabled={isSaving || !selectedCourse || !selectedGrade}>
+                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+                            Save Grade
+                        </Button>
+                    </CardFooter>
                 </Card>
             </div>
         </>
