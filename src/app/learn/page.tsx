@@ -8,42 +8,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
 import { getCourses } from '@/app/actions/manage-courses';
-
-type Course = {
-  id: string;
-  name: string;
-};
-
-type Stage = {
-  name: string;
-  courses: Course[];
-};
-
-// This function attempts to group courses into logical stages based on common curriculum progression.
-const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
-    const courseMap = new Map(courses.map(c => [c.id, c]));
-    
-    // Define the structured roadmap
-    const stagesConfig = [
-        { name: "Foundational Knowledge", codes: ['UBA01', 'UBA48', 'UBA49', 'CSA02'] },
-        { name: "Core Engineering & Logic", codes: ['EEA01', 'ECA47', 'UBA04', 'CSA03'] },
-        { name: "Core Programming & OS", codes: ['DSA01', 'CSA09', 'CSA05', 'CSA04'] },
-        { name: "Algorithms & Architecture", codes: ['CSA06', 'ECA10', 'CSA12', 'CSA10'] },
-        { name: "Advanced Computing Theory", codes: ['CSA13', 'CSA14', 'CSA07', 'UBA09'] },
-        { name: "Specialization & AI", codes: ['CSA17', 'CSA15', 'CSA16', 'UBA33'] },
-        { name: "Security & Professional Practices", codes: ['CSA51', 'ITA14', 'UBA28', 'SPIC1'] },
-        { name: "Additional Core Subjects", codes: ['UBA05', 'UBA10', 'ECA14', 'CSA43', 'CSA11', 'CSA57', 'BTA01'] }
-    ];
-
-    const stages: Stage[] = stagesConfig.map(stageConfig => ({
-        name: stageConfig.name,
-        courses: stageConfig.codes
-            .map(code => courseMap.get(code))
-            .filter((course): course is Course => !!course) // Filter out undefined courses
-    }));
-    
-    return stages.filter(stage => stage.courses.length > 0);
-};
+import { arrangeRoadmap, Course, Stage } from '@/ai/flows/roadmap-arranger-flow';
 
 
 type StudentGrades = {
@@ -62,10 +27,12 @@ export default function LearnHomePage() {
             setLoading(true);
             try {
                 const courses = await getCourses(profile.college, profile.department) as Course[];
-                const groupedStages = groupCoursesIntoStages(courses);
-                setRoadmapData(groupedStages);
+                if(courses.length > 0) {
+                    const result = await arrangeRoadmap({ courses });
+                    setRoadmapData(result.stages);
+                }
             } catch (error) {
-                console.error("Error fetching courses for roadmap:", error);
+                console.error("Error fetching or arranging roadmap:", error);
             }
         }
     };
@@ -118,7 +85,7 @@ export default function LearnHomePage() {
       </div>
       <Card>
         <CardHeader>
-            <CardTitle>Your Academic Journey</CardTitle>
+            <CardTitle>Your AI-Generated Academic Journey</CardTitle>
             <CardDescription>
                 A recommended roadmap for {profile.department} at {profile.college}. Courses disappear from here once you log a grade for them in the 'My Courses' tab.
             </CardDescription>
