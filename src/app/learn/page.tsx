@@ -1,53 +1,65 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+'use client';
 
-const roadmapData = [
-  { sno: 1, code: "UBA05", name: "Engineering Mathematics II", grade: "F", status: "FAIL", date: "July-2025" },
-  { sno: 2, code: "EEA01", name: "Basic Electrical & Electronics Engineering", grade: "A", status: "PASS", date: "May-2025" },
-  { sno: 3, code: "SPIC1", name: "Project 1", grade: "A", status: "PASS", date: "April-2025" },
-  { sno: 4, code: "UBA10", name: "Numerical Methods", grade: "A", status: "PASS", date: "April-2025" },
-  { sno: 5, code: "UBA05", name: "Engineering Mathematics II", grade: "F", status: "FAIL", date: "February-2025" },
-  { sno: 6, code: "ECA14", name: "Embedded Systems", grade: "S", status: "PASS", date: "February-2025" },
-  { sno: 7, code: "CSA04", name: "Operating Systems", grade: "A", status: "PASS", date: "February-2025" },
-  { sno: 8, code: "CSA15", name: "Cloud Computing and Big Data Analytics", grade: "A", status: "PASS", date: "January-2025" },
-  { sno: 9, code: "CSA51", name: "Cryptography and Network Security", grade: "B", status: "PASS", date: "January-2025" },
-  { sno: 10, code: "CSA13", name: "Theory of Computation", grade: "A", status: "PASS", date: "January-2025" },
-  { sno: 11, code: "CSA12", name: "Computer Architecture", grade: "A", status: "PASS", date: "November-2024" },
-  { sno: 12, code: "CSA17", name: "Artificial Intelligence", grade: "A", status: "PASS", date: "November-2024" },
-  { sno: 13, code: "DSA01", name: "Object Oriented Programming with C++", grade: "S", status: "PASS", date: "September-2024" },
-  { sno: 14, code: "CSA51", name: "Cryptography and Network Security", grade: "F", status: "FAIL", date: "September-2024" },
-  { sno: 15, code: "UBA09", name: "Probability and Statistics", grade: "A", status: "PASS", date: "July-2024" },
-  { sno: 16, code: "CSA43", name: "Internet programming", grade: "B", status: "PASS", date: "July-2024" },
-  { sno: 17, code: "CSA14", name: "Compiler design", grade: "A", status: "PASS", date: "May-2024" },
-  { sno: 18, code: "CSA09", name: "Programming in Java", grade: "S", status: "PASS", date: "April-2024" },
-  { sno: 19, code: "CSA06", name: "Design and Analysis of Algorithms", grade: "B", status: "PASS", date: "April-2024" },
-  { sno: 20, code: "CSA04", name: "Operating Systems", grade: "F", status: "FAIL", date: "April-2024" },
-  { sno: 21, code: "UBA33", name: "Principles of Management", grade: "B", status: "PASS", date: "February-2024" },
-  { sno: 22, code: "CSA07", name: "Computer Networks", grade: "F", status: "FAIL", date: "January-2024" },
-  { sno: 23, code: "CSA16", name: "Data warehousing and Data Mining", grade: "B", status: "PASS", date: "January-2024" },
-  { sno: 24, code: "ITA14", name: "Ethical Hacking", grade: "B", status: "PASS", date: "January-2024" },
-  { sno: 25, code: "CSA08", name: "Python Programming", grade: "S", status: "PASS", date: "January-2024" },
-  { sno: 26, code: "UBA04", name: "Discrete Mathematics", grade: "A", status: "PASS", date: "January-2024" },
-  { sno: 27, code: "ECA10", name: "Microprocessors and Microcontrollers", grade: "B", status: "PASS", date: "September-2023" },
-  { sno: 28, code: "CSA03", name: "Data Structures", grade: "B", status: "PASS", date: "September-2023" },
-  { sno: 29, code: "CSA57", name: "Fundamentals of Computing", grade: "B", status: "PASS", date: "September-2023" },
-  { sno: 30, code: "CSA11", name: "Object Oriented Analysis and Design", grade: "B", status: "PASS", date: "September-2023" },
-  { sno: 31, code: "ECA47", name: "Principles of Digital System Design", grade: "B", status: "PASS", date: "July-2023" },
-  { sno: 32, code: "UBA33", name: "Principles of Management", grade: "F", status: "FAIL", date: "June-2023" },
-  { sno: 33, code: "CSA02", name: "C Programming", grade: "A", status: "PASS", date: "June-2023" },
-  { sno: 34, code: "UBA01", name: "Engineering Mathematics - I", grade: "B", status: "PASS", date: "June-2023" },
-  { sno: 35, code: "UBA49", name: "Engineering Chemistry", grade: "A", status: "PASS", date: "March-2023" },
-  { sno: 36, code: "UBA48", name: "Engineering Physics", grade: "A", status: "PASS", date: "March-2023" },
-  { sno: 37, code: "ITA14", name: "Ethical Hacking", grade: "F", status: "FAIL", date: "March-2023" },
-  { sno: 38, code: "UBA28", name: "Professional Ethics and Legal Practices", grade: "B", status: "PASS", date: "March-2023" },
-  { sno: 39, code: "CSA05", name: "Database Management Systems", grade: "B", status: "PASS", date: "January-2023" },
-  { sno: 40, code: "CSA10", name: "Software Engineering", grade: "B", status: "PASS", date: "January-2023" },
-  { sno: 41, code: "BTA01", name: "Biology and Environmental Science for Engineers", grade: "B", status: "PASS", date: "December-2022" },
-  { sno: 42, code: "UBA28", name: "Professional Ethics and Legal Practices", grade: "F", status: "FAIL", date: "December-2022" },
-];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Book, CheckCircle, GitBranch, Milestone } from "lucide-react";
+
+// Simplified data structure for the roadmap
+const roadmapData = {
+  title: "Computer Science & Engineering Roadmap",
+  stages: [
+    {
+      name: "Semester 1 & 2: Foundational Knowledge",
+      courses: [
+        { code: "UBA01", name: "Engineering Mathematics - I" },
+        { code: "UBA05", name: "Engineering Mathematics II" },
+        { code: "UBA48", name: "Engineering Physics" },
+        { code: "UBA49", name: "Engineering Chemistry" },
+        { code: "CSA02", name: "C Programming" },
+        { code: "EEA01", name: "Basic Electrical & Electronics Engineering" },
+        { code: "BTA01", name: "Biology and Environmental Science" },
+      ],
+    },
+    {
+      name: "Semester 3 & 4: Core Concepts",
+      courses: [
+        { code: "UBA04", name: "Discrete Mathematics" },
+        { code: "CSA03", name: "Data Structures" },
+        { code: "ECA47", name: "Principles of Digital System Design" },
+        { code: "CSA04", name: "Operating Systems" },
+        { code: "CSA05", name: "Database Management Systems" },
+        { code: "CSA06", name: "Design and Analysis of Algorithms" },
+        { code: "ECA10", name: "Microprocessors and Microcontrollers" },
+      ],
+    },
+    {
+      name: "Semester 5 & 6: Advanced Topics & Specialization",
+      courses: [
+        { code: "CSA07", name: "Computer Networks" },
+        { code: "CSA09", name: "Programming in Java" },
+        { code: "CSA10", name: "Software Engineering" },
+        { code: "CSA11", name: "Object Oriented Analysis and Design" },
+        { code: "CSA12", name: "Computer Architecture" },
+        { code: "CSA13", name: "Theory of Computation" },
+        { code: "CSA14", name: "Compiler Design" },
+        { code: "CSA17", name: "Artificial Intelligence" },
+      ],
+    },
+     {
+      name: "Semester 7 & 8: Electives & Projects",
+      courses: [
+        { code: "UBA33", name: "Principles of Management" },
+        { code: "UBA28", name: "Professional Ethics and Legal Practices" },
+        { code: "CSA15", name: "Cloud Computing and Big Data Analytics" },
+        { code: "CSA51", name: "Cryptography and Network Security" },
+        { code: "CSA16", name: "Data warehousing and Data Mining" },
+        { code: "ITA14", name: "Ethical Hacking" },
+        { code: "SPIC1", name: "Project 1" },
+      ],
+    },
+  ],
+};
+
 
 export default function LearnHomePage() {
   return (
@@ -55,48 +67,57 @@ export default function LearnHomePage() {
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Course Roadmap</h1>
       </div>
-      <div
-        className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm"
-      >
-        <Card className="w-full">
-            <CardHeader>
-                <CardTitle>Your Academic Journey</CardTitle>
-                <CardDescription>
-                    This is a sample roadmap for Computer Science and Engineering. A tree-like structure will be implemented soon.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[50px]">S.No</TableHead>
-                            <TableHead>Course Code</TableHead>
-                            <TableHead>Course Name</TableHead>
-                            <TableHead>Grade</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Month & Year</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {roadmapData.map((course) => (
-                            <TableRow key={course.sno}>
-                                <TableCell>{course.sno}</TableCell>
-                                <TableCell>{course.code}</TableCell>
-                                <TableCell className="font-medium">{course.name}</TableCell>
-                                <TableCell>{course.grade}</TableCell>
-                                <TableCell>
-                                    <Badge variant={course.status === 'PASS' ? 'default' : 'destructive'} className={cn(course.status === 'PASS' && 'bg-green-600')}>
-                                        {course.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>{course.date}</TableCell>
-                            </TableRow>
+      <Card>
+        <CardHeader>
+            <CardTitle>Your Academic Journey</CardTitle>
+            <CardDescription>
+                A recommended roadmap for Computer Science and Engineering. Courses you complete in the 'Courses' tab will be marked here.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+           <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
+              {roadmapData.stages.map((stage, stageIndex) => (
+                <div key={stage.name} className="grid gap-10">
+                    <div className="grid grid-cols-[40px_1fr] items-start gap-4">
+                        <div className="flex-shrink-0">
+                           <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
+                             <GitBranch className="h-5 w-5 text-primary" />
+                           </span>
+                        </div>
+                        <div className="pt-2">
+                            <h3 className="text-lg font-semibold">{stage.name}</h3>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-14">
+                        {stage.courses.map(course => (
+                            <div key={course.code} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
+                                <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                <div>
+                                    <p className="font-semibold">{course.name}</p>
+                                    <p className="text-sm text-muted-foreground">{course.code}</p>
+                                </div>
+                            </div>
                         ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-      </div>
+                    </div>
+                    {stageIndex < roadmapData.stages.length - 1 && (
+                         <div className="h-10 w-full" />
+                    )}
+                </div>
+              ))}
+               <div className="grid grid-cols-[40px_1fr] items-start gap-4">
+                  <div className="flex-shrink-0">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-green-500 bg-green-500/10 -ml-5 relative z-10">
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                      </span>
+                  </div>
+                  <div className="pt-2">
+                      <h3 className="text-lg font-semibold">Congratulations!</h3>
+                      <p className="text-muted-foreground">You have completed the roadmap.</p>
+                  </div>
+              </div>
+           </div>
+        </CardContent>
+      </Card>
     </>
   )
 }
