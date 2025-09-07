@@ -12,6 +12,7 @@ import {
   Package,
   Award,
   ClipboardList,
+  Book,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -26,14 +27,14 @@ export default function MobileNav() {
        return [
             { href: '/', label: 'Home', icon: Home },
             { href: '/course-enrollment', label: 'Alerts', icon: ClipboardList },
-            { href: '/calendar', label: 'Calendar', icon: CalendarIcon },
+            { href: '/faq', label: 'Learn', icon: Book },
             { href: '/profile', label: 'Profile', icon: User },
         ];
     }
     return [
         { href: '/', label: 'Home', icon: Home },
         { href: '/certifications', label: 'Certs', icon: Award },
-        { href: '/projects', label: 'Projects', icon: Package },
+        { href: '/faq', label: 'Learn', icon: Book },
         { href: '/login', label: 'Login', icon: User },
     ];
   }, [user]);

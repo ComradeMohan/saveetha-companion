@@ -17,6 +17,7 @@ import {
   Award,
   ChevronDown,
   ClipboardList,
+  Book,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -33,6 +34,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
 import FeatureAnnouncementBanner from './feature-announcement-banner';
+import { Badge } from './ui/badge';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -151,7 +153,6 @@ export default function Header() {
             { href: '/#concepts', label: 'Concepts' },
             { href: '/course-enrollment', label: 'Enrollment Alert' },
             { href: '/certifications', label: 'Certifications' },
-            { href: '/projects', label: 'Ecommerce' },
             { href: '/calendar', label: 'Calendar' },
             { href: '/updates', label: 'Updates' },
             { href: '/contact', label: 'Contact Us' },
@@ -160,7 +161,6 @@ export default function Header() {
     // Links for logged-out users, excluding the dropdown items
     return [
         { href: '/certifications', label: 'Certifications' },
-        { href: '/projects', label: 'Ecommerce' },
         { href: '/contact', label: 'Contact Us' },
     ];
   }, [user]);
@@ -213,6 +213,13 @@ export default function Header() {
                 </NavLink>
               );
             })}
+             <Button asChild variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary h-auto p-0">
+                <Link href="/faq" className="flex items-center gap-1.5">
+                    <Book className="h-4 w-4" />
+                    Learn
+                    <Badge variant="destructive" className="animate-bounce">New</Badge>
+                </Link>
+             </Button>
           </nav>
           <ThemeToggle />
           <UserNav />

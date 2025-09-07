@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,7 +12,6 @@ import { ScrollArea } from '../ui/scroll-area';
 const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
-  { href: '/admin/projects', label: 'Ecommerce', icon: Package },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
