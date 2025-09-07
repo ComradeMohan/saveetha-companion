@@ -151,7 +151,7 @@ export default function CoursesPage() {
                     <CardHeader>
                         <CardTitle>Select Course and Grade</CardTitle>
                         <CardDescription>
-                           Choose a course, assign a grade, and save. Your roadmap will update automatically.
+                           Search for a course by its name or code. Then, select the grade you received. Saving the grade will update your academic roadmap.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
