@@ -12,43 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
+import { getCourses } from '../actions/manage-courses';
 
-// Simplified data structure, source of truth for all available courses
-const allCourses = [
-  // Semester 1 & 2
-  { code: "UBA01", name: "Engineering Mathematics - I" },
-  { code: "UBA05", name: "Engineering Mathematics II" },
-  { code: "UBA48", name: "Engineering Physics" },
-  { code: "UBA49", name: "Engineering Chemistry" },
-  { code: "CSA02", name: "C Programming" },
-  { code: "EEA01", name: "Basic Electrical & Electronics Engineering" },
-  { code: "BTA01", name: "Biology and Environmental Science" },
-  // Semester 3 & 4
-  { code: "UBA04", name: "Discrete Mathematics" },
-  { code: "CSA03", name: "Data Structures" },
-  { code: "ECA47", name: "Principles of Digital System Design" },
-  { code: "CSA04", name: "Operating Systems" },
-  { code: "CSA05", name: "Database Management Systems" },
-  { code: "CSA06", name: "Design and Analysis of Algorithms" },
-  { code: "ECA10", name: "Microprocessors and Microcontrollers" },
-  // Semester 5 & 6
-  { code: "CSA07", name: "Computer Networks" },
-  { code: "CSA09", name: "Programming in Java" },
-  { code: "CSA10", name: "Software Engineering" },
-  { code: "CSA11", name: "Object Oriented Analysis and Design" },
-  { code: "CSA12", name: "Computer Architecture" },
-  { code: "CSA13", name: "Theory of Computation" },
-  { code: "CSA14", name: "Compiler Design" },
-  { code: "CSA17", name: "Artificial Intelligence" },
-  // Semester 7 & 8
-  { code: "UBA33", name: "Principles of Management" },
-  { code: "UBA28", name: "Professional Ethics and Legal Practices" },
-  { code: "CSA15", name: "Cloud Computing and Big Data Analytics" },
-  { code: "CSA51", name: "Cryptography and Network Security" },
-  { code: "CSA16", name: "Data warehousing and Data Mining" },
-  { code: "ITA14", name: "Ethical Hacking" },
-  { code: "SPIC1", name: "Project 1" },
-];
+type Course = {
+  id: string;
+  name: string;
+};
 
 const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
 
@@ -57,7 +26,8 @@ type StudentGrades = {
 };
 
 export default function CoursesPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, profile, loading: authLoading } = useAuth();
+    const [allCourses, setAllCourses] = useState<Course[]>([]);
     const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -67,6 +37,20 @@ export default function CoursesPage() {
     const [selectedGrade, setSelectedGrade] = useState<string>("");
     
     const { toast } = useToast();
+
+    useEffect(() => {
+        const fetchCourseList = async () => {
+             if (!authLoading && profile?.college && profile?.department) {
+                 try {
+                     const courses = await getCourses(profile.college, profile.department) as Course[];
+                     setAllCourses(courses);
+                 } catch (error) {
+                     console.error("Error fetching courses for dropdown:", error);
+                 }
+             }
+        };
+        fetchCourseList();
+    }, [profile, authLoading]);
 
     useEffect(() => {
         if (authLoading || !user) return;
@@ -133,15 +117,26 @@ export default function CoursesPage() {
 
     const comboboxOptions = useMemo(() => {
         return allCourses.map(course => ({
-            value: course.code,
-            label: `${course.code} - ${course.name}`
+            value: course.id,
+            label: `${course.id} - ${course.name}`
         }));
-    }, []);
+    }, [allCourses]);
 
     if (loading || authLoading) {
         return (
              <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
                 <Loader2 className="h-10 w-10 animate-spin text-primary"/>
+            </div>
+        )
+    }
+    
+    if (!profile?.college || !profile?.department) {
+        return (
+            <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
+                <div>
+                  <h3 className="text-xl font-semibold">Profile Incomplete</h3>
+                  <p className="text-muted-foreground mt-2">Please complete your profile from the main site to log your grades.</p>
+                </div>
             </div>
         )
     }

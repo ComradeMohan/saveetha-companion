@@ -7,9 +7,10 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
+import { getCourses } from '../actions/manage-courses';
 
 type Course = {
-  code: string;
+  id: string;
   name: string;
 };
 
@@ -18,83 +19,69 @@ type Stage = {
   courses: Course[];
 };
 
-// Transformed into a hierarchical structure
-const roadmapData = {
-  title: "Computer Science & Engineering Roadmap",
-  stages: [
-    {
-      name: "Semester 1 & 2: Foundational Knowledge",
-      courses: [
-        { code: "UBA01", name: "Engineering Mathematics - I" },
-        { code: "UBA05", name: "Engineering Mathematics II" },
-        { code: "UBA48", name: "Engineering Physics" },
-        { code: "UBA49", name: "Engineering Chemistry" },
-        { code: "CSA02", name: "C Programming" },
-        { code: "EEA01", name: "Basic Electrical & Electronics Engineering" },
-        { code: "BTA01", name: "Biology and Environmental Science" },
-      ],
-    },
-    {
-      name: "Semester 3 & 4: Core Concepts",
-      courses: [
-        { code: "UBA04", name: "Discrete Mathematics" },
-        { code: "CSA03", name: "Data Structures" },
-        { code: "ECA47", name: "Principles of Digital System Design" },
-        { code: "CSA04", name: "Operating Systems" },
-        { code: "CSA05", name: "Database Management Systems" },
-        { code: "CSA06", name: "Design and Analysis of Algorithms" },
-        { code: "ECA10", name: "Microprocessors and Microcontrollers" },
-      ],
-    },
-    {
-      name: "Semester 5 & 6: Advanced Topics & Specialization",
-      courses: [
-        { code: "CSA07", name: "Computer Networks" },
-        { code: "CSA09", name: "Programming in Java" },
-        { code: "CSA10", name: "Software Engineering" },
-        { code: "CSA11", name: "Object Oriented Analysis and Design" },
-        { code: "CSA12", name: "Computer Architecture" },
-        { code: "CSA13", name: "Theory of Computation" },
-        { code: "CSA14", name: "Compiler Design" },
-        { code: "CSA17", name: "Artificial Intelligence" },
-      ],
-    },
-     {
-      name: "Semester 7 & 8: Electives & Projects",
-      courses: [
-        { code: "UBA33", name: "Principles of Management" },
-        { code: "UBA28", name: "Professional Ethics and Legal Practices" },
-        { code: "CSA15", name: "Cloud Computing and Big Data Analytics" },
-        { code: "CSA51", name: "Cryptography and Network Security" },
-        { code: "CSA16", name: "Data warehousing and Data Mining" },
-        { code: "ITA14", name: "Ethical Hacking" },
-        { code: "SPIC1", name: "Project 1" },
-      ],
-    },
-  ],
+// This function attempts to group courses into logical semester-based stages.
+// It's an approximation and can be refined if more detailed semester data is stored per course.
+const groupCoursesIntoStages = (courses: Course[]): Stage[] => {
+    const courseMap = new Map(courses.map(c => [c.id, c]));
+    const stages: Stage[] = [
+        { name: "Semester 1 & 2: Foundational Knowledge", courses: [] },
+        { name: "Semester 3 & 4: Core Concepts", courses: [] },
+        { name: "Semester 5 & 6: Advanced Topics & Specialization", courses: [] },
+        { name: "Semester 7 & 8: Electives & Projects", courses: [] },
+    ];
+
+    const courseToStage: { [key: string]: number } = {
+        'UBA01': 0, 'UBA05': 0, 'UBA48': 0, 'UBA49': 0, 'CSA02': 0, 'EEA01': 0, 'BTA01': 0,
+        'UBA04': 1, 'CSA03': 1, 'ECA47': 1, 'CSA04': 1, 'CSA05': 1, 'CSA06': 1, 'ECA10': 1,
+        'CSA07': 2, 'CSA09': 2, 'CSA10': 2, 'CSA11': 2, 'CSA12': 2, 'CSA13': 2, 'CSA14': 2, 'CSA17': 2,
+        'UBA33': 3, 'UBA28': 3, 'CSA15': 3, 'CSA51': 3, 'CSA16': 3, 'ITA14': 3, 'SPIC1': 3
+    };
+
+    courses.forEach(course => {
+        const stageIndex = courseToStage[course.id] ?? 3; // Default to final stage if not mapped
+        stages[stageIndex].courses.push(course);
+    });
+
+    return stages.filter(stage => stage.courses.length > 0);
 };
+
 
 type StudentGrades = {
   [courseCode: string]: string;
 };
 
 export default function LearnHomePage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
+  const [roadmapData, setRoadmapData] = useState<Stage[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchRoadmap = async () => {
+        if (!authLoading && profile?.college && profile?.department) {
+            setLoading(true);
+            try {
+                const courses = await getCourses(profile.college, profile.department) as Course[];
+                const groupedStages = groupCoursesIntoStages(courses);
+                setRoadmapData(groupedStages);
+            } catch (error) {
+                console.error("Error fetching courses for roadmap:", error);
+            }
+        }
+    };
+    fetchRoadmap();
+  }, [profile, authLoading]);
+  
   useEffect(() => {
     if (authLoading || !user) {
         if (!authLoading) setLoading(false);
         return;
     }
 
-    setLoading(true);
     const docRef = doc(db, 'student_grades', user.uid);
-    
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
         setStudentGrades(docSnap.exists() ? docSnap.data() : {});
-        setLoading(false);
+        setLoading(false); // Only set loading to false after grades are fetched
     }, (error) => {
         console.error("Error fetching grades for roadmap:", error);
         setLoading(false);
@@ -112,6 +99,17 @@ export default function LearnHomePage() {
           </div>
       )
   }
+  
+  if (!profile?.college || !profile?.department) {
+      return (
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
+              <div>
+                <h3 className="text-xl font-semibold">Profile Incomplete</h3>
+                <p className="text-muted-foreground mt-2">Please complete your profile from the main site to view your roadmap.</p>
+              </div>
+          </div>
+      )
+  }
 
   return (
     <>
@@ -122,15 +120,15 @@ export default function LearnHomePage() {
         <CardHeader>
             <CardTitle>Your Academic Journey</CardTitle>
             <CardDescription>
-                A recommended roadmap for Computer Science and Engineering. Courses disappear from here once you log a grade for them in the 'My Courses' tab.
+                A recommended roadmap for {profile.department} at {profile.college}. Courses disappear from here once you log a grade for them in the 'My Courses' tab.
             </CardDescription>
         </CardHeader>
         <CardContent>
            <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
-              {roadmapData.stages.map((stage, stageIndex) => {
-                const remainingCourses = stage.courses.filter(course => !completedCourseCodes.has(course.code));
+              {roadmapData.map((stage) => {
+                const remainingCourses = stage.courses.filter(course => !completedCourseCodes.has(course.id));
 
-                if (remainingCourses.length === 0) return null; // Skip rendering the stage if all courses are completed
+                if (remainingCourses.length === 0) return null;
 
                 return (
                   <div key={stage.name} className="grid gap-10 mb-10">
@@ -146,11 +144,11 @@ export default function LearnHomePage() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 md:pl-14">
                           {remainingCourses.map(course => (
-                              <div key={course.code} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
+                              <div key={course.id} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
                                   <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                                   <div>
                                       <p className="font-semibold">{course.name}</p>
-                                      <p className="text-sm text-muted-foreground">{course.code}</p>
+                                      <p className="text-sm text-muted-foreground">{course.id}</p>
                                   </div>
                               </div>
                           ))}
