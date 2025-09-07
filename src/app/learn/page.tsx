@@ -8,7 +8,8 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
 import { getCourses } from '@/app/actions/manage-courses';
-import { arrangeRoadmap, Course, Stage } from '@/ai/flows/roadmap-arranger-flow';
+import { arrangeRoadmap } from '@/ai/flows/roadmap-arranger-flow';
+import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 
 
 type StudentGrades = {
