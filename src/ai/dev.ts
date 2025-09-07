@@ -3,4 +3,5 @@ import { config } from 'dotenv';
 config();
 
 import '@/ai/flows/tutor-flow.ts';
-import '@/ai/flows/knowledge-feeder.ts';
+// Knowledge feeder is no longer used by the tutor flow.
+// import '@/ai/flows/knowledge-feeder.ts';
