@@ -27,14 +27,14 @@ export default function MobileNav() {
        return [
             { href: '/', label: 'Home', icon: Home },
             { href: '/course-enrollment', label: 'Alerts', icon: ClipboardList },
-            { href: '/faq', label: 'Learn', icon: Book },
+            { href: '/learn', label: 'Learn', icon: Book },
             { href: '/profile', label: 'Profile', icon: User },
         ];
     }
     return [
         { href: '/', label: 'Home', icon: Home },
         { href: '/certifications', label: 'Certs', icon: Award },
-        { href: '/faq', label: 'Learn', icon: Book },
+        { href: '/faq', label: 'FAQ', icon: Book },
         { href: '/login', label: 'Login', icon: User },
     ];
   }, [user]);
@@ -55,6 +55,13 @@ export default function MobileNav() {
     if (prefixMatch) {
       return navLinks.findIndex(link => link.href === prefixMatch.href);
     }
+    
+    // Special case for learn, as its link text is different from href
+    if (pathname.startsWith('/learn')) {
+        const learnIndex = navLinks.findIndex(link => link.href === '/learn');
+        if (learnIndex !== -1) return learnIndex;
+    }
+
 
     return -1; 
   }, [pathname, navLinks]);
@@ -64,7 +71,7 @@ export default function MobileNav() {
     setIsNavigating(true);
   };
 
-  if (pathname.startsWith('/admin')) return null;
+  if (pathname.startsWith('/admin') || pathname.startsWith('/learn')) return null;
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 h-16 animate-slide-in-from-bottom">

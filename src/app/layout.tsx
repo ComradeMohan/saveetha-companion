@@ -10,7 +10,6 @@ import VerificationBanner from '@/components/verification-banner';
 import ScrollProgress from '@/components/scroll-progress';
 import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import MobileNav from '@/components/mobile-nav';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
@@ -105,7 +104,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <FeedbackDialog />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
-          <MobileNav />
           <SupportButton />
       </AuthProvider>
     </ThemeProvider>
