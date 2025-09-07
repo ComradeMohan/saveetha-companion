@@ -5,9 +5,6 @@ import Link from 'next/link';
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -47,35 +44,39 @@ const adminNavLinks = [
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
 ];
 
+const learnNavLinks = [
+    { href: '/learn', label: 'Roadmap', icon: LayoutDashboard },
+    { href: '/learn/courses', label: 'My Courses', icon: BookOpen },
+    { href: '/learn/profile', label: 'Profile', icon: UserCircle },
+]
+
 export default function AdminHeader() {
   const { logout } = useAuth();
   const pathname = usePathname();
 
+  const isLearnSection = pathname.startsWith('/learn');
+  const links = isLearnSection ? learnNavLinks : adminNavLinks;
+  const siteTitle = isLearnSection ? 'Learning Zone' : 'Admin Panel';
+
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:hidden">
+    <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="sm:hidden">
+          <Button size="icon" variant="outline" className="md:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs">
-          <SheetHeader>
-            <SheetTitle className="sr-only">Admin Menu</SheetTitle>
-            <SheetDescription className="sr-only">
-              Navigation menu for the admin dashboard.
-            </SheetDescription>
-          </SheetHeader>
-          <nav className="grid gap-6 text-lg font-medium">
+        <SheetContent side="left" className="flex flex-col">
+          <nav className="grid gap-2 text-lg font-medium">
             <Link
               href="/"
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <GraduationCap className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Saveetha Calculator</span>
+              <span className="sr-only">Saveetha Companion</span>
             </Link>
-            {adminNavLinks.map(link => (
+            {links.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -85,20 +86,21 @@ export default function AdminHeader() {
                 {link.label}
               </Link>
             ))}
-             <button
-                onClick={logout}
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-                <LogOut className="h-5 w-5" />
-                Log Out
-            </button>
           </nav>
+            <div className="mt-auto">
+                 <button
+                    onClick={logout}
+                    className="flex w-full items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                    <LogOut className="h-5 w-5" />
+                    Log Out
+                </button>
+            </div>
         </SheetContent>
       </Sheet>
-       <Link href="/" className="flex items-center gap-2 font-semibold">
-          <GraduationCap className="h-6 w-6 text-primary" />
-          <span className="font-bold">Admin Panel</span>
-        </Link>
+       <div className="w-full flex-1">
+         <h1 className="font-semibold text-lg">{siteTitle}</h1>
+       </div>
     </header>
   );
 }

@@ -4,14 +4,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Home, Book, User as UserIcon, LogOut, ArrowLeft } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Book, User as UserIcon, LogOut, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const learnNavLinks = [
-  { href: '/learn', label: 'Roadmap', icon: Home },
-  { href: '/learn/courses', label: 'Courses', icon: Book },
+  { href: '/learn', label: 'Roadmap', icon: LayoutDashboard },
+  { href: '/learn/courses', label: 'My Courses', icon: Book },
   { href: '/learn/profile', label: 'Profile', icon: UserIcon },
 ];
 

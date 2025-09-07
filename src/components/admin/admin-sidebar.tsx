@@ -29,61 +29,44 @@ export default function AdminSidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex lg:w-56">
-        <div className="flex flex-col h-full">
-            <div className="flex-shrink-0">
-                <nav className="flex flex-col items-center gap-4 px-2 sm:py-5 lg:items-start lg:px-4">
-                    <Link
-                        href="/"
-                        className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 lg:h-9 lg:w-auto lg:px-3 lg:py-2 lg:self-stretch"
-                    >
-                        <GraduationCap className="h-4 w-4 transition-all group-hover:scale-110 lg:h-5 lg:w-5" />
-                        <span className="hidden lg:inline-block font-bold">Saveetha</span>
-                        <span className="sr-only">Saveetha Calculator</span>
-                    </Link>
-                </nav>
+    <aside className="hidden border-r bg-background md:block">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                <Link
+                    href="/"
+                    className="group flex items-center gap-2 font-semibold"
+                >
+                    <GraduationCap className="h-6 w-6 text-primary transition-all group-hover:scale-110" />
+                    <span className="font-bold">Saveetha Admin</span>
+                </Link>
             </div>
             
             <ScrollArea className="flex-1">
-                <TooltipProvider>
-                    <nav className="flex flex-col items-center gap-4 px-2 sm:py-5 lg:items-start lg:px-4">
-                        {adminNavLinks.map(link => (
-                            <Tooltip key={link.href}>
-                                <TooltipTrigger asChild>
-                                <Link
-                                    href={link.href}
-                                    className={cn(
-                                        "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8 lg:h-9 lg:w-full lg:justify-start lg:px-3",
-                                        pathname.startsWith(link.href) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
-                                    )}
-                                >
-                                    <link.icon className="h-5 w-5 lg:h-4 lg:w-4" />
-                                    <span className="ml-4 hidden lg:inline">{link.label}</span>
-                                    <span className="sr-only" suppressHydrationWarning>{link.label}</span>
-                                </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right" className="lg:hidden">{link.label}</TooltipContent>
-                            </Tooltip>
-                        ))}
-                    </nav>
-                </TooltipProvider>
+                <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+                    {adminNavLinks.map(link => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                                pathname.startsWith(link.href) && 'bg-muted text-primary'
+                            )}
+                        >
+                            <link.icon className="h-4 w-4" />
+                            {link.label}
+                        </Link>
+                    ))}
+                </nav>
             </ScrollArea>
             
-            <div className="flex-shrink-0 mt-auto">
-                 <TooltipProvider>
-                    <nav className="flex flex-col items-center gap-4 px-2 sm:py-5 lg:items-start lg:px-4">
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                            <button onClick={logout} className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 lg:h-9 lg:w-full lg:justify-start lg:px-3">
-                                <LogOut className="h-5 w-5 lg:h-4 lg:w-4" />
-                                <span className="ml-4 hidden lg:inline">Logout</span>
-                                <span className="sr-only lg:hidden">Logout</span>
-                            </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="lg:hidden">Logout</TooltipContent>
-                        </Tooltip>
-                    </nav>
-                </TooltipProvider>
+            <div className="mt-auto p-4 border-t">
+                <button 
+                    onClick={logout} 
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
+                >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                </button>
             </div>
         </div>
     </aside>

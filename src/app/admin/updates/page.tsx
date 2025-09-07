@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState, useEffect, useState, useCallback, useRef } from 'react';
@@ -125,7 +126,7 @@ export default function AdminUpdatesPage() {
     
     return (
         <>
-        <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="w-full">
                 <Card>
                     <form action={formAction} ref={formRef}>

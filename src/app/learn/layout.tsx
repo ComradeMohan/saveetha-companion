@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import LearnSidebar from '@/components/learn/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
+import AdminHeader from '@/components/admin/admin-header';
 
 function LearnLayoutSkeleton() {
     return (
@@ -22,7 +23,10 @@ function LearnLayoutSkeleton() {
             </div>
             <div className="flex flex-col flex-1">
                  <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
-                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-8 w-8 rounded-full md:hidden" />
+                    <div className="w-full flex-1">
+                        {/* Search bar skeleton or other header elements */}
+                    </div>
                  </header>
                  <main className="flex-1 overflow-auto p-4 sm:p-6">
                     <Skeleton className="h-96 w-full" />
@@ -55,7 +59,7 @@ export default function LearnLayout({
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <LearnSidebar />
       <div className="flex flex-col">
-        {/* We can add a header here later if needed */}
+        <AdminHeader />
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">
             {children}
         </main>
