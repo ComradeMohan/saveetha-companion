@@ -27,11 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, PlusCircle, Trash2, BookCopy } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, BookCopy, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getColleges, addCollege, deleteCollege } from '@/app/actions/manage-colleges';
 import { getDepartments, addDepartment, deleteDepartment } from '@/app/actions/manage-departments';
-import { getCourses, addCourse, deleteCourse, seedCourses } from '@/app/actions/manage-courses';
+import { getCourses, addCourse, deleteCourse, seedCourses, seedAiDsCourses } from '@/app/actions/manage-courses';
 
 type College = { id: string; name: string };
 type Department = { id: string; name: string };
@@ -145,6 +145,8 @@ export default function CollegeLearningsPage() {
   }
   const handleDeleteCourse = (code: string) => handleAction(() => deleteCourse(selectedCollege, selectedDepartment, code));
   const handleSeedCourses = () => handleAction(() => seedCourses(selectedCollege, selectedDepartment));
+  const handleSeedAiDsCourses = () => handleAction(() => seedAiDsCourses(selectedCollege, selectedDepartment));
+
 
   return (
     <div className="space-y-6">
@@ -282,9 +284,14 @@ export default function CollegeLearningsPage() {
             <Button onClick={handleAddCourse} disabled={isPending || !selectedDepartment || !newCourseCode || !newCourseName}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Course
             </Button>
-            <Button variant="outline" onClick={handleSeedCourses} disabled={isPending || !selectedDepartment}>
-              {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <BookCopy className="mr-2 h-4 w-4"/>} Seed CSE Courses
-            </Button>
+            <div className="flex gap-2 w-full pt-2">
+                <Button variant="outline" onClick={handleSeedCourses} disabled={isPending || !selectedDepartment} className="w-full">
+                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <BookCopy className="mr-2 h-4 w-4"/>} Seed CSE
+                </Button>
+                 <Button variant="outline" onClick={handleSeedAiDsCourses} disabled={isPending || !selectedDepartment} className="w-full">
+                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Brain className="mr-2 h-4 w-4"/>} Seed AI &amp; DS
+                </Button>
+            </div>
           </CardFooter>
         </Card>
       </div>

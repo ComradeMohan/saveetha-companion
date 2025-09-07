@@ -1,3 +1,4 @@
+
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
@@ -97,7 +98,41 @@ const sseCseCourses = [
   { code: 'BTA01', name: 'Biology and Environmental Science for Engineers' },
 ];
 
-export async function seedCourses(collegeId: string, departmentId: string) {
+const sseAiDsCourses = [
+  { code: 'CSA05', name: 'Database Management Systems' },
+  { code: 'SPIC1', name: 'Project 1' },
+  { code: 'DSA03', name: 'Natural Language Processing' },
+  { code: 'EEA01', name: 'Basic Electrical & Electronics Engineering' },
+  { code: 'ITA06', name: 'Machine Learning' },
+  { code: 'ITA04', name: 'Statistics with R Programming' },
+  { code: 'CSA09', name: 'Programming in Java' },
+  { code: 'CSA47', name: 'Deep Learning' },
+  { code: 'CSA14', name: 'Compiler design' },
+  { code: 'CSA04', name: 'Operating Systems' },
+  { code: 'CSA15', name: 'Cloud Computing and Big Data Analytics' },
+  { code: 'DSA02', name: 'Computer Vision with OpenCV' },
+  { code: 'DSA06', name: 'Data Handling and Visualization' },
+  { code: 'CSA16', name: 'Data warehousing and Data Mining' },
+  { code: 'DSA01', name: 'Object Oriented Programming with C++' },
+  { code: 'CSA17', name: 'Artificial Intelligence' },
+  { code: 'UBA47', name: 'Statistics & Linear Algebra' },
+  { code: 'DSA05', name: 'Query Processing for Data Science' },
+  { code: 'CSA03', name: 'Data Structures' },
+  { code: 'CSA02', name: 'C Programming' },
+  { code: 'CSA07', name: 'Computer Networks' },
+  { code: 'UBA04', name: 'Discrete Mathematics' },
+  { code: 'CSA10', name: 'Software Engineering' },
+  { code: 'UBA01', name: 'Engineering Mathematics - I' },
+  { code: 'UBA48', name: 'Engineering Physics' },
+  { code: 'ECA47', name: 'Principles of Digital System Design' },
+  { code: 'CSA08', name: 'Python Programming' },
+  { code: 'UBA33', name: 'Principles of Management' },
+  { code: 'UBA49', name: 'Engineering Chemistry' },
+  { code: 'UBA28', name: 'Professional Ethics and Legal Practices' },
+  { code: 'BTA01', name: 'Biology and Environmental Science for Engineers' },
+];
+
+async function seedCourseData(collegeId: string, departmentId: string, courses: {code: string, name: string}[], courseTypeName: string) {
     if (!collegeId || !departmentId) {
         return { type: 'error', message: 'College and Department must be selected.' };
     }
@@ -106,16 +141,24 @@ export async function seedCourses(collegeId: string, departmentId: string) {
         const batch = adminDb.batch();
         const coursesCollection = adminDb.collection('colleges').doc(collegeId).collection('departments').doc(departmentId).collection('courses');
         
-        sseCseCourses.forEach(course => {
+        courses.forEach(course => {
             const docRef = coursesCollection.doc(course.code);
             batch.set(docRef, { name: course.name, createdAt: new Date().toISOString() });
         });
 
         await batch.commit();
         revalidatePath('/admin/college-learnings');
-        return { type: 'success', message: `${sseCseCourses.length} courses seeded successfully.` };
+        return { type: 'success', message: `${courses.length} ${courseTypeName} courses seeded successfully.` };
     } catch (error) {
-        console.error('Error seeding courses:', error);
-        return { type: 'error', message: 'Failed to seed courses.' };
+        console.error(`Error seeding ${courseTypeName} courses:`, error);
+        return { type: 'error', message: `Failed to seed ${courseTypeName} courses.` };
     }
+}
+
+export async function seedCourses(collegeId: string, departmentId: string) {
+    return seedCourseData(collegeId, departmentId, sseCseCourses, 'CSE');
+}
+
+export async function seedAiDsCourses(collegeId: string, departmentId: string) {
+    return seedCourseData(collegeId, departmentId, sseAiDsCourses, 'AI & DS');
 }
