@@ -3,11 +3,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Phone, CheckCircle2, Calculator } from 'lucide-react';
+import { User, Phone, CheckCircle2, Calculator, Building, School } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
@@ -15,15 +13,7 @@ import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface UserProfile {
-  name: string;
-  email: string;
-  regNo: string;
-  phone: string;
-  isVerified: boolean;
-  photoURL?: string;
-}
+import { UserProfileData } from '@/hooks/use-auth';
 
 interface CgpaData {
     cgpa: number;
@@ -62,49 +52,33 @@ function ProfilePageSkeleton() {
 }
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const { user, profile, loading: authLoading } = useAuth();
   const [cgpaData, setCgpaData] = useState<CgpaData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingCgpa, setLoadingCgpa] = useState(true);
 
   useEffect(() => {
-    const fetchProfileData = async () => {
+    const fetchCgpaData = async () => {
       if (user) {
+        setLoadingCgpa(true);
         try {
-          // Fetch user profile
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            const data = userDocSnap.data();
-            setProfile({
-                name: data.name || user.displayName || 'N/A',
-                email: data.email || user.email || 'N/A',
-                regNo: data.regNo || 'N/A',
-                phone: data.phone || 'N/A',
-                isVerified: user.emailVerified,
-                photoURL: user.photoURL ?? '',
-            });
-          }
-
-          // Fetch CGPA data
+          const { getDoc, doc } = await import('firebase/firestore');
+          const { db } = await import('@/lib/firebase');
           const cgpaDocRef = doc(db, 'students_cgpa', user.uid);
           const cgpaDocSnap = await getDoc(cgpaDocRef);
 
           if (cgpaDocSnap.exists()) {
             setCgpaData(cgpaDocSnap.data() as CgpaData);
           }
-
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching CGPA data:", error);
         } finally {
-          setLoading(false);
+          setLoadingCgpa(false);
         }
       }
     };
 
     if (!authLoading) {
-        fetchProfileData();
+        fetchCgpaData();
     }
   }, [user, authLoading]);
 
@@ -118,12 +92,14 @@ export default function ProfilePage() {
     },
   } satisfies ChartConfig;
 
+  const isLoading = authLoading || loadingCgpa;
+
   return (
     <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1 pt-20 pb-12 md:py-16">
             <div className="container mx-auto px-4">
-                {loading || authLoading ? <ProfilePageSkeleton /> : profile ? (
+                {isLoading ? <ProfilePageSkeleton /> : profile ? (
                     <Card className="max-w-3xl mx-auto p-2 sm:p-0">
                         <CardHeader>
                             <CardTitle className="text-2xl">Your Profile</CardTitle>
@@ -150,14 +126,28 @@ export default function ProfilePage() {
                                             <User className="h-5 w-5 text-primary" />
                                             <div>
                                                 <p className="font-semibold">Registration No.</p>
-                                                <p className="text-muted-foreground">{profile.regNo}</p>
+                                                <p className="text-muted-foreground">{profile.regNo || 'Not Set'}</p>
                                             </div>
                                         </div>
                                          <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
                                             <Phone className="h-5 w-5 text-primary" />
                                             <div>
                                                 <p className="font-semibold">Phone Number</p>
-                                                <p className="text-muted-foreground">{profile.phone}</p>
+                                                <p className="text-muted-foreground">{profile.phone || 'Not Set'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                            <School className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <p className="font-semibold">Department</p>
+                                                <p className="text-muted-foreground">{profile.department || 'Not Set'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                            <Building className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <p className="font-semibold">College</p>
+                                                <p className="text-muted-foreground">{profile.college || 'Not Set'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -244,7 +234,7 @@ export default function ProfilePage() {
                     </Card>
                 ) : (
                     <div className="text-center py-10">
-                        <p className="text-muted-foreground">Could not load profile information.</p>
+                        <p className="text-muted-foreground">Could not load profile information. Please try logging in again.</p>
                     </div>
                 )}
             </div>

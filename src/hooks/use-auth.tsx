@@ -29,12 +29,17 @@ import { Loader2 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 
-interface UserProfileData {
+export interface UserProfileData {
   name: string;
-  regNo: string;
-  phone: string;
   email: string;
+  regNo?: string;
+  phone?: string;
+  isVerified: boolean;
+  photoURL?: string;
+  department?: string;
+  college?: 'SSE' | 'SEC';
 }
+
 
 interface SignUpProfile extends UserProfileData {
   password?: string;
@@ -43,9 +48,14 @@ interface CompleteUserProfile {
   regNo: string;
   phone: string;
 }
+interface AcademicProfile {
+    department: string;
+    college: 'SSE' | 'SEC';
+}
 
 interface AuthContextType {
   user: User | null;
+  profile: UserProfileData | null;
   loading: boolean;
   isAdmin: boolean;
   isNavigating: boolean;
@@ -55,6 +65,7 @@ interface AuthContextType {
   loginWithEmailAndPassword: (email:string, password:string) => Promise<any>;
   sendPasswordReset: (email: string) => Promise<void>;
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
+  updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -106,6 +117,7 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -137,8 +149,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           if (userDoc.exists()) {
               await updateDoc(userDocRef, updateData);
-              if (!user.displayName && userDoc.data()?.name) {
-                await updateProfile(user, { displayName: userDoc.data()?.name });
+              const dbProfile = userDoc.data() as UserProfileData;
+              setProfile(dbProfile);
+              if (!user.displayName && dbProfile?.name) {
+                await updateProfile(user, { displayName: dbProfile.name });
               }
           }
           // Refresh user object to get latest profile info
@@ -152,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } else {
         setUser(null);
+        setProfile(null);
         setIsAdmin(false);
       }
       setLoading(false);
@@ -173,20 +188,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        await setDoc(userDocRef, {
-          email: user.email,
-          name: user.displayName,
-          createdAt: new Date().toISOString(),
+        const newProfile: UserProfileData = {
+          email: user.email!,
+          name: user.displayName!,
           isVerified: user.emailVerified,
-          lastSignInTime: user.metadata.lastSignInTime,
-          photoURL: user.photoURL,
+          photoURL: user.photoURL || undefined,
+        };
+        await setDoc(userDocRef, {
+            ...newProfile,
+            createdAt: new Date().toISOString(),
+            lastSignInTime: user.metadata.lastSignInTime,
         });
+        setProfile(newProfile);
         
         if (!isSignUp) {
             router.push('/complete-profile');
         }
         // If it is a sign-up, the useEffect on the signup page will handle the redirect to step 2.
       } else {
+        setProfile(userDoc.data() as UserProfileData);
         if (!isSignUp) {
             router.push('/');
         }
@@ -255,6 +275,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/');
   }
 
+  const updateUserAcademicProfile = async (data: AcademicProfile) => {
+    if (!auth.currentUser) {
+        toast({ title: 'Error', description: 'You must be logged in.', variant: 'destructive' });
+        return;
+    }
+    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    try {
+        await updateDoc(userDocRef, {
+            department: data.department,
+            college: data.college
+        });
+        // Optimistically update local profile state
+        setProfile(prev => prev ? { ...prev, ...data } : null);
+        toast({ title: 'Success!', description: 'Your profile has been updated.' });
+    } catch (error) {
+        console.error("Error updating academic profile:", error);
+        toast({ title: 'Error', description: 'Could not update your profile.', variant: 'destructive' });
+        throw error;
+    }
+  }
+
   const loginWithEmailAndPassword = async (email:string, password:string) => {
      try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -301,6 +342,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = {
     user,
+    profile,
     loading,
     isAdmin,
     isNavigating,
@@ -310,6 +352,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loginWithEmailAndPassword,
     sendPasswordReset,
     completeUserProfile,
+    updateUserAcademicProfile,
     logout,
   };
 

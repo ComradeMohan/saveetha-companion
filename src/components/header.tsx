@@ -35,6 +35,7 @@ import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
 import FeatureAnnouncementBanner from './feature-announcement-banner';
 import { Badge } from './ui/badge';
+import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -139,11 +140,22 @@ function UserNav() {
 
 
 export default function Header() {
-  const { user, setIsNavigating } = useAuth();
+  const { user, profile, setIsNavigating } = useAuth();
   const pathname = usePathname();
-  
-  const handleNavLinkClick = () => {
+  const router = useRouter();
+  const [isProfileDialogOpen, setProfileDialogOpen] = React.useState(false);
+
+  const handleLearnClick = () => {
     setIsNavigating(true);
+    if (user) {
+        if (profile?.department && profile?.college) {
+            router.push('/faq');
+        } else {
+            setProfileDialogOpen(true);
+        }
+    } else {
+        router.push('/login');
+    }
   };
   
   const mainNavLinks = React.useMemo(() => {
@@ -173,12 +185,12 @@ export default function Header() {
   ];
 
   return (
+    <>
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
-       <FeatureAnnouncementBanner key="feature-announcement-banner" />
        <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 sm:px-6 liquid-glass-nav">
         <div className="flex items-center gap-4">
           {/* Logo */}
-          <Link href="/" onClick={handleNavLinkClick} className="flex items-center space-x-2">
+          <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block">
               Saveetha Calculator
@@ -199,7 +211,7 @@ export default function Header() {
                     <DropdownMenuContent>
                         {featuresDropdownLinks.map(link => (
                             <DropdownMenuItem key={link.href} asChild>
-                                <Link href={link.href} onClick={handleNavLinkClick}>{link.label}</Link>
+                                <Link href={link.href} onClick={() => setIsNavigating(true)}>{link.label}</Link>
                             </DropdownMenuItem>
                         ))}
                     </DropdownMenuContent>
@@ -208,23 +220,26 @@ export default function Header() {
              {mainNavLinks.map(link => {
               const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
               return (
-                <NavLink key={link.href + link.label} href={link.href} onClick={handleNavLinkClick} isActive={isActive}>
+                <NavLink key={link.href + link.label} href={link.href} onClick={() => setIsNavigating(true)} isActive={isActive}>
                   {link.label}
                 </NavLink>
               );
             })}
-             <Button asChild variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary h-auto p-0">
-                <Link href="/faq" className="flex items-center gap-1.5">
-                    <Book className="h-4 w-4" />
-                    Learn
-                    <Badge variant="destructive" className="animate-bounce">New</Badge>
-                </Link>
-             </Button>
+             <button
+                onClick={handleLearnClick}
+                className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
+              >
+                  <Book className="h-4 w-4" />
+                  Learn
+                  <Badge variant="destructive" className="animate-bounce">New</Badge>
+              </button>
           </nav>
           <ThemeToggle />
           <UserNav />
         </div>
        </div>
     </header>
+    <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
+    </>
   );
 }
