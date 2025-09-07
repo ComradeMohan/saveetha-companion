@@ -156,8 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
           }
           // Refresh user object to get latest profile info
-          // We must create a new object to trigger a re-render in consumers of the hook
-          const refreshedUser: User = { ...user };
+          const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
         } catch(error){
           console.error("Error updating user document:", error);
@@ -271,7 +270,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       // Manually update the user state to reflect completion and trigger redirect effect
-      setUser({ ...user }); 
+      const refreshedUser = { ...auth.currentUser } as User;
+      setUser(refreshedUser);
       router.push('/');
   }
 

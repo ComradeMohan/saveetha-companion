@@ -149,11 +149,12 @@ export default function Header() {
     if (user) {
         if (profile?.department && profile?.college) {
             setIsNavigating(true);
-            router.push('/faq');
+            router.push('/learn');
         } else {
             setProfileDialogOpen(true);
         }
     } else {
+        // This button is not shown for logged-out users, but as a fallback:
         setIsNavigating(true);
         router.push('/login');
     }
@@ -171,7 +172,7 @@ export default function Header() {
             { href: '/contact', label: 'Contact Us' },
         ];
     }
-    // Links for logged-out users, excluding the dropdown items
+    // Links for logged-out users
     return [
         { href: '/certifications', label: 'Certifications' },
         { href: '/contact', label: 'Contact Us' },
@@ -185,12 +186,15 @@ export default function Header() {
       { href: '/#stats', label: 'Site Stats' },
   ];
 
+  if (pathname.startsWith('/learn')) {
+    return null; // Don't render this header in the new learning zone
+  }
+
   return (
     <>
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
        <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 sm:px-6 liquid-glass-nav">
         <div className="flex items-center gap-4">
-          {/* Logo */}
           <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block">
@@ -200,7 +204,6 @@ export default function Header() {
         </div>
         
         <div className="flex shrink-0 items-center gap-4">
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              {!user && (
                  <DropdownMenu>
@@ -226,7 +229,8 @@ export default function Header() {
                 </NavLink>
               );
             })}
-             <button
+            {user && (
+              <button
                 onClick={handleLearnClick}
                 className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
               >
@@ -234,6 +238,7 @@ export default function Header() {
                   Learn
                   <Badge variant="destructive" className="animate-bounce">New</Badge>
               </button>
+            )}
           </nav>
           <ThemeToggle />
           <UserNav />

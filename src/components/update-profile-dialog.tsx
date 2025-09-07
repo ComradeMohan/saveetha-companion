@@ -58,7 +58,7 @@ export function UpdateProfileDialog({ open, onOpenChange }: UpdateProfileDialogP
       await updateUserAcademicProfile(values);
       onOpenChange(false); // Close dialog on success
       setIsNavigating(true);
-      router.push('/faq'); // Navigate to learn page
+      router.push('/learn'); // Navigate to learn page
     } catch (error) {
       // Error toast is handled in the auth hook
       console.error(error);
