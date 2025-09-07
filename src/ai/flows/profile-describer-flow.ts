@@ -41,7 +41,7 @@ const profileDescriberFlow = ai.defineFlow(
       "A dedicated student at Saveetha School of Engineering, currently pursuing a degree in Computer Science. With a strong academic record, they are passionate about technology and eager to apply their skills to real-world challenges."
       `,
       output: { schema: ProfileDescriberOutputSchema },
-      model: ai.model('gemini-2.0-flash'),
+      model: 'googleai/gemini-2.0-flash',
     });
     
     if (!output) {

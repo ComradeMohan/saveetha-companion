@@ -44,7 +44,7 @@ const roadmapArrangerFlow = ai.defineFlow(
       ${JSON.stringify(input.courses, null, 2)}
       `,
       output: { schema: RoadmapArrangerOutputSchema },
-      model: ai.model('gemini-2.0-flash'),
+      model: 'googleai/gemini-2.0-flash',
     });
     
     if (!output) {
