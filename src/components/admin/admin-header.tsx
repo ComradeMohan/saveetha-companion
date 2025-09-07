@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -27,6 +26,7 @@ import {
   Package,
   Award,
   ClipboardList,
+  School,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -44,6 +44,7 @@ const adminNavLinks = [
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
+  { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
 ];
 
 const learnNavLinks = [
@@ -70,7 +71,7 @@ export default function AdminHeader() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
-            <SheetHeader className="text-left">
+            <SheetHeader>
                 <SheetTitle>
                     <Link
                         href="/"
