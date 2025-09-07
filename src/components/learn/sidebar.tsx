@@ -57,11 +57,11 @@ export default function LearnSidebar() {
                            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                         </div>
                     </div>
-                     <Link href="/" legacyBehavior>
-                        <Button variant="ghost" className="w-full justify-start">
+                     <Button variant="ghost" className="w-full justify-start" asChild>
+                        <Link href="/">
                              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Main Site
-                        </Button>
-                     </Link>
+                        </Link>
+                     </Button>
                     <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={logout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Logout
