@@ -59,11 +59,18 @@ export default function LearnHomePage() {
     const fetchRoadmap = async () => {
         if (!authLoading && profile?.college && profile?.department) {
             setRoadmapLoading(true);
+            const cacheKey = `roadmapData-${profile.college}-${profile.department}`;
             try {
-                const courses = await getCourses(profile.college, profile.department) as Course[];
-                if(courses.length > 0) {
-                    const result = await arrangeRoadmap({ courses });
-                    setRoadmapData(result.stages);
+                 const cachedRoadmap = localStorage.getItem(cacheKey);
+                 if (cachedRoadmap) {
+                    setRoadmapData(JSON.parse(cachedRoadmap));
+                 } else {
+                    const courses = await getCourses(profile.college, profile.department) as Course[];
+                    if(courses.length > 0) {
+                        const result = await arrangeRoadmap({ courses });
+                        setRoadmapData(result.stages);
+                        localStorage.setItem(cacheKey, JSON.stringify(result.stages));
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching or arranging roadmap:", error);
