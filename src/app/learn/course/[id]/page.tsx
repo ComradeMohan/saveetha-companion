@@ -1,42 +1,65 @@
 
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getCourses } from '@/app/actions/manage-courses';
+import { getUnits, getTopics, Unit, Topic } from '@/app/actions/manage-course-content';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen, Loader2 } from 'lucide-react';
+import { BookOpen, Loader2, FileText, Youtube, HelpCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type Course = {
   id: string;
   name: string;
 };
 
+type UnitWithTopics = Unit & { topics: Topic[] };
+
 export default function CoursePage() {
   const params = useParams();
   const { id: courseId } = params;
   const { profile, loading: authLoading } = useAuth();
   const [course, setCourse] = useState<Course | null>(null);
+  const [courseContent, setCourseContent] = useState<UnitWithTopics[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
+    const fetchCourseData = async () => {
       if (authLoading || !profile?.college || !profile?.department || typeof courseId !== 'string') return;
       
       setLoading(true);
       try {
-        const courses = await getCourses(profile.college, profile.department) as Course[];
+        // Fetch course details and content in parallel
+        const [courses, units] = await Promise.all([
+          getCourses(profile.college, profile.department) as Promise<Course[]>,
+          getUnits(profile.college, profile.department, courseId)
+        ]);
+        
         const foundCourse = courses.find(c => c.id === courseId);
         setCourse(foundCourse || null);
+
+        if (units.length > 0) {
+            const unitsWithTopics = await Promise.all(
+                units.map(async (unit) => {
+                    const topics = await getTopics(profile.college!, profile.department!, courseId, unit.id);
+                    return { ...unit, topics };
+                })
+            );
+            setCourseContent(unitsWithTopics);
+        }
+
       } catch (error) {
-        console.error("Error fetching course details:", error);
+        console.error("Error fetching course data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchCourseDetails();
+    fetchCourseData();
   }, [courseId, profile, authLoading]);
 
   if (loading || authLoading) {
@@ -49,9 +72,9 @@ export default function CoursePage() {
                 <Skeleton className="h-5 w-1/2" />
             </CardHeader>
             <CardContent className="space-y-4">
-                 <Skeleton className="h-4 w-full" />
-                 <Skeleton className="h-4 w-full" />
-                 <Skeleton className="h-4 w-5/6" />
+                 <Skeleton className="h-20 w-full" />
+                 <Skeleton className="h-20 w-full" />
+                 <Skeleton className="h-20 w-full" />
             </CardContent>
         </Card>
       </div>
@@ -72,12 +95,14 @@ export default function CoursePage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Course Details</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Course Content</h1>
       </div>
       <Card>
         <CardHeader>
             <div className='flex items-center gap-4'>
-                <BookOpen className="h-8 w-8 text-primary" />
+                <div className="p-3 bg-primary/10 rounded-lg">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                </div>
                 <div>
                     <CardTitle>{course.name}</CardTitle>
                     <CardDescription>{course.id}</CardDescription>
@@ -85,9 +110,52 @@ export default function CoursePage() {
             </div>
         </CardHeader>
         <CardContent>
-            <p className="text-muted-foreground">
-                This is a placeholder page for the course. More details and features for each course will be added in the future.
-            </p>
+            {courseContent.length > 0 ? (
+                <Accordion type="single" collapsible className="w-full">
+                    {courseContent.map(unit => (
+                        <AccordionItem key={unit.id} value={unit.id}>
+                            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+                                {unit.title}
+                            </AccordionTrigger>
+                            <AccordionContent className="space-y-4 pt-2">
+                               {unit.topics.length > 0 ? unit.topics.map(topic => (
+                                   <div key={topic.id} className="p-4 rounded-md border bg-secondary/40">
+                                       <h4 className="font-semibold mb-3">{topic.title}</h4>
+                                       <div className="space-y-3">
+                                           {topic.notes && (
+                                                <div className="prose prose-sm dark:prose-invert max-w-none">
+                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><FileText className="h-4 w-4"/> Notes</h5>
+                                                    <div dangerouslySetInnerHTML={{ __html: topic.notes.replace(/\n/g, '<br />') }} />
+                                                </div>
+                                           )}
+                                           {topic.videoUrl && (
+                                               <div>
+                                                   <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><Youtube className="h-4 w-4 text-red-500"/> Video</h5>
+                                                    <Button asChild variant="link" className="p-0 h-auto">
+                                                        <a href={topic.videoUrl} target="_blank" rel="noopener noreferrer">{topic.videoUrl}</a>
+                                                    </Button>
+                                               </div>
+                                           )}
+                                           {topic.questions && (
+                                                <div>
+                                                   <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><HelpCircle className="h-4 w-4 text-blue-500"/> Questions</h5>
+                                                    <p className="text-sm whitespace-pre-wrap font-mono bg-muted p-3 rounded-md">{topic.questions}</p>
+                                               </div>
+                                           )}
+                                       </div>
+                                   </div>
+                               )) : (
+                                   <p className="text-sm text-muted-foreground pl-4">No topics have been added to this unit yet.</p>
+                               )}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            ) : (
+                 <div className="text-center text-muted-foreground py-10">
+                    <p>No learning content has been added for this course yet.</p>
+                </div>
+            )}
         </CardContent>
       </Card>
     </>
