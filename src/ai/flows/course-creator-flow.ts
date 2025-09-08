@@ -18,7 +18,7 @@ export type CourseCreatorInput = z.infer<typeof CourseCreatorInputSchema>;
 // Output Schema
 const TopicSchema = z.object({
     title: z.string().describe("The title of the topic, e.g., 'Introduction to Linked Lists'."),
-    notes: z.string().optional().describe("A brief, clear explanation of the topic. Can use Markdown for formatting."),
+    notes: z.string().optional().describe("A detailed explanation of the topic. Can use Markdown for formatting, including paragraphs and bullet points."),
     videoUrl: z.string().url().optional().describe("A relevant YouTube video URL for the topic."),
     questions: z.string().optional().describe("1-2 key practice questions related to the topic."),
 });
@@ -71,9 +71,9 @@ const courseCreatorFlow = ai.defineFlow(
         Follow these instructions precisely:
         1.  Create exactly 5 distinct units for the course. Each unit should represent a major section of the subject.
         2.  Assign each unit a title and a sequential order number (1 through 5).
-        3.  For each unit, generate exactly 3-4 relevant topics.
+        3.  For each unit, generate between 5 and 10 relevant topics.
         4.  For each topic, you MUST provide:
-            a. A clear and concise 'notes' section explaining the core concept (2-4 sentences). Use Markdown for lists or emphasis.
+            a. A detailed 'notes' section. This should be comprehensive, with multiple paragraphs and bullet points (using Markdown) to thoroughly explain the concept.
             b. A 'videoUrl' field pointing to a *real, relevant, and high-quality* YouTube video for that specific topic.
             c. A 'questions' field containing 1-2 important practice questions.
 
