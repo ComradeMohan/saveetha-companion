@@ -11,6 +11,7 @@ import { getCourses } from '@/app/actions/manage-courses';
 import { arrangeRoadmap } from '@/ai/flows/roadmap-arranger-flow';
 import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 
 type StudentGrades = {
@@ -150,13 +151,15 @@ export default function LearnHomePage() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pl-4 md:pl-14">
                                 {remainingCourses.map(course => (
-                                    <div key={course.id} className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30">
-                                        <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                                        <div>
-                                            <p className="font-semibold">{course.name}</p>
-                                            <p className="text-sm text-muted-foreground">{course.id}</p>
+                                    <Link key={course.id} href={`/learn/course/${course.id}`} className="group">
+                                        <div className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30 h-full transition-all hover:bg-secondary/60 hover:border-primary/50">
+                                            <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                            <div>
+                                                <p className="font-semibold group-hover:text-primary transition-colors">{course.name}</p>
+                                                <p className="text-sm text-muted-foreground">{course.id}</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
