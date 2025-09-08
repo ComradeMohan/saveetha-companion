@@ -4,6 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { getCourses as getAllCourses } from './manage-courses'; // Import the function to get all courses
 
 // Define types for stricter control
 export type Unit = { id: string; title: string; order: number; };
@@ -22,27 +23,29 @@ const topicSchema = z.object({
 });
 
 
-// Helper to get the units collection reference
-const getUnitsCollection = (collegeId: string, departmentId: string, courseId: string) => {
-    return adminDb.collection('colleges').doc(collegeId).collection('departments').doc(departmentId).collection('courses').doc(courseId).collection('units');
+// Helper to get the units collection reference from the new centralized location
+const getUnitsCollection = (courseId: string) => {
+    return adminDb.collection('course-content').doc(courseId).collection('units');
 }
 
 // Helper to get the topics collection reference
-const getTopicsCollection = (collegeId: string, departmentId: string, courseId: string, unitId: string) => {
-    return getUnitsCollection(collegeId, departmentId, courseId).doc(unitId).collection('topics');
+const getTopicsCollection = (courseId: string, unitId: string) => {
+    return getUnitsCollection(courseId).doc(unitId).collection('topics');
 }
 
 
 // Units Management
-export async function addUnit(collegeId: string, departmentId: string, courseId: string, title: string, order: number) {
+export async function addUnit(courseId: string, title: string, order: number) {
   const validatedFields = unitSchema.safeParse({ title, order });
   if (!validatedFields.success) {
     return { type: 'error', message: 'Validation failed', errors: validatedFields.error.flatten().fieldErrors, id: null };
   }
 
   try {
-    const unitRef = getUnitsCollection(collegeId, departmentId, courseId).doc();
+    const unitRef = getUnitsCollection(courseId).doc();
     await unitRef.set({ ...validatedFields.data, createdAt: new Date().toISOString() });
+    revalidatePath(`/admin/course-content`);
+    revalidatePath(`/learn/course/${courseId}`);
     return { type: 'success', message: 'Unit added successfully.', id: unitRef.id };
   } catch (error) {
     console.error('Error adding unit:', error);
@@ -50,11 +53,11 @@ export async function addUnit(collegeId: string, departmentId: string, courseId:
   }
 }
 
-export async function deleteUnit(collegeId: string, departmentId: string, courseId: string, unitId: string) {
+export async function deleteUnit(courseId: string, unitId: string) {
     try {
-        await getUnitsCollection(collegeId, departmentId, courseId).doc(unitId).delete();
-        // Note: Deleting a unit does not automatically delete its subcollections (topics).
-        // For this app's scope, we'll assume this is acceptable. A production app might need a Cloud Function for recursive deletes.
+        await getUnitsCollection(courseId).doc(unitId).delete();
+        revalidatePath(`/admin/course-content`);
+        revalidatePath(`/learn/course/${courseId}`);
         return { type: 'success', message: 'Unit deleted.' };
     } catch (error) {
         console.error('Error deleting unit:', error);
@@ -62,9 +65,9 @@ export async function deleteUnit(collegeId: string, departmentId: string, course
     }
 }
 
-export async function getUnits(collegeId: string, departmentId: string, courseId: string) {
+export async function getUnits(courseId: string) {
   try {
-    const snapshot = await getUnitsCollection(collegeId, departmentId, courseId).orderBy('order').get();
+    const snapshot = await getUnitsCollection(courseId).orderBy('order').get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Unit[];
   } catch (error) {
     console.error('Error fetching units:', error);
@@ -74,7 +77,7 @@ export async function getUnits(collegeId: string, departmentId: string, courseId
 
 
 // Topics Management
-export async function addTopic(collegeId: string, departmentId: string, courseId: string, unitId: string, formData: FormData) {
+export async function addTopic(courseId: string, unitId: string, formData: FormData) {
   const validatedFields = topicSchema.safeParse({
     title: formData.get('title'),
     notes: formData.get('notes'),
@@ -89,8 +92,10 @@ export async function addTopic(collegeId: string, departmentId: string, courseId
   const { title, notes, videoUrl, questions } = validatedFields.data;
 
   try {
-    const topicRef = getTopicsCollection(collegeId, departmentId, courseId, unitId).doc();
+    const topicRef = getTopicsCollection(courseId, unitId).doc();
     await topicRef.set({ title, notes, videoUrl, questions, createdAt: new Date().toISOString() });
+    revalidatePath(`/admin/course-content`);
+    revalidatePath(`/learn/course/${courseId}`);
     return { type: 'success', message: 'Topic added successfully.' };
   } catch (error) {
     console.error('Error adding topic:', error);
@@ -98,9 +103,36 @@ export async function addTopic(collegeId: string, departmentId: string, courseId
   }
 }
 
-export async function deleteTopic(collegeId: string, departmentId: string, courseId: string, unitId: string, topicId: string) {
+export async function updateTopic(courseId: string, unitId: string, topicId: string, formData: FormData) {
+    const validatedFields = topicSchema.safeParse({
+        title: formData.get('title'),
+        notes: formData.get('notes'),
+        videoUrl: formData.get('videoUrl'),
+        questions: formData.get('questions'),
+    });
+
+    if (!validatedFields.success) {
+        return { type: 'error', message: 'Validation failed.', errors: validatedFields.error.flatten().fieldErrors };
+    }
+
     try {
-        await getTopicsCollection(collegeId, departmentId, courseId, unitId).doc(topicId).delete();
+        const topicRef = getTopicsCollection(courseId, unitId).doc(topicId);
+        await topicRef.update({ ...validatedFields.data });
+        revalidatePath(`/admin/course-content`);
+        revalidatePath(`/learn/course/${courseId}`);
+        return { type: 'success', message: 'Topic updated successfully.' };
+    } catch (error) {
+        console.error('Error updating topic:', error);
+        return { type: 'error', message: 'Failed to update topic.' };
+    }
+}
+
+
+export async function deleteTopic(courseId: string, unitId: string, topicId: string) {
+    try {
+        await getTopicsCollection(courseId, unitId).doc(topicId).delete();
+        revalidatePath(`/admin/course-content`);
+        revalidatePath(`/learn/course/${courseId}`);
         return { type: 'success', message: 'Topic deleted.' };
     } catch (error) {
         console.error('Error deleting topic:', error);
@@ -108,12 +140,31 @@ export async function deleteTopic(collegeId: string, departmentId: string, cours
     }
 }
 
-export async function getTopics(collegeId: string, departmentId: string, courseId: string, unitId: string): Promise<Topic[]> {
+export async function getTopics(courseId: string, unitId: string): Promise<Topic[]> {
   try {
-    const snapshot = await getTopicsCollection(collegeId, departmentId, courseId, unitId).orderBy('createdAt').get();
+    const snapshot = await getTopicsCollection(courseId, unitId).orderBy('createdAt').get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Topic[];
   } catch (error) {
     console.error('Error fetching topics:', error);
     return [];
   }
+}
+
+// Function to get a unified list of all courses from all colleges and departments
+export async function getUnifiedCourses() {
+    const collegesCollection = await adminDb.collection('colleges').get();
+    const allCoursesMap = new Map<string, { id: string; name: string }>();
+
+    for (const collegeDoc of collegesCollection.docs) {
+        const departmentsCollection = await collegeDoc.ref.collection('departments').get();
+        for (const departmentDoc of departmentsCollection.docs) {
+            const courses = await getAllCourses(collegeDoc.id, departmentDoc.id);
+            courses.forEach(course => {
+                if (!allCoursesMap.has(course.id)) {
+                    allCoursesMap.set(course.id, { id: course.id, name: course.name as string });
+                }
+            });
+        }
+    }
+    return Array.from(allCoursesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 }

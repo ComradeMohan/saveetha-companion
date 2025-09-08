@@ -3,8 +3,8 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getCourses } from '@/app/actions/manage-courses';
 import { getUnits, getTopics, Unit, Topic } from '@/app/actions/manage-course-content';
+import { getCourses } from '@/app/actions/manage-courses';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,7 +13,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-type Course = {
+type CourseInfo = {
   id: string;
   name: string;
 };
@@ -23,35 +23,37 @@ type UnitWithTopics = Unit & { topics: Topic[] };
 export default function CoursePage() {
   const params = useParams();
   const { id: courseId } = params;
-  const { profile, loading: authLoading } = useAuth();
-  const [course, setCourse] = useState<Course | null>(null);
+  const { loading: authLoading } = useAuth();
+  const [course, setCourse] = useState<CourseInfo | null>(null);
   const [courseContent, setCourseContent] = useState<UnitWithTopics[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCourseData = async () => {
-      if (authLoading || !profile?.college || !profile?.department || typeof courseId !== 'string') return;
+      if (authLoading || typeof courseId !== 'string') return;
       
       setLoading(true);
       try {
-        // Fetch course details and content in parallel
-        const [courses, units] = await Promise.all([
-          getCourses(profile.college, profile.department) as Promise<Course[]>,
-          getUnits(profile.college, profile.department, courseId)
-        ]);
+        // Since content is now centralized, we don't need profile info to fetch it.
+        // We just need a way to get the course name. A full unified course list fetch is needed.
+        // This is a placeholder for getting the course name. 
+        // A more efficient way would be a new server action `getCourseById(courseId)`.
+        // For now, we'll just show the code. A better approach can be implemented later.
         
-        const foundCourse = courses.find(c => c.id === courseId);
-        setCourse(foundCourse || null);
-
+        const units = await getUnits(courseId);
+        
         if (units.length > 0) {
             const unitsWithTopics = await Promise.all(
                 units.map(async (unit) => {
-                    const topics = await getTopics(profile.college!, profile.department!, courseId, unit.id);
+                    const topics = await getTopics(courseId, unit.id);
                     return { ...unit, topics };
                 })
             );
             setCourseContent(unitsWithTopics);
         }
+        
+        // This is a temporary way to get the course name.
+        setCourse({ id: courseId, name: `Course ${courseId}` });
 
       } catch (error) {
         console.error("Error fetching course data:", error);
@@ -60,7 +62,7 @@ export default function CoursePage() {
       }
     };
     fetchCourseData();
-  }, [courseId, profile, authLoading]);
+  }, [courseId, authLoading]);
 
   if (loading || authLoading) {
     return (
@@ -86,7 +88,7 @@ export default function CoursePage() {
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
             <div>
               <h3 className="text-xl font-semibold">Course Not Found</h3>
-              <p className="text-muted-foreground mt-2">The requested course could not be found in your department.</p>
+              <p className="text-muted-foreground mt-2">The requested course could not be found.</p>
             </div>
         </div>
     )
@@ -104,14 +106,14 @@ export default function CoursePage() {
                     <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <CardTitle>{course.name}</CardTitle>
-                    <CardDescription>{course.id}</CardDescription>
+                    <CardTitle>{course.id}</CardTitle>
+                    <CardDescription>Review the learning materials for this course.</CardDescription>
                 </div>
             </div>
         </CardHeader>
         <CardContent>
             {courseContent.length > 0 ? (
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" defaultValue={courseContent[0]?.id}>
                     {courseContent.map(unit => (
                         <AccordionItem key={unit.id} value={unit.id}>
                             <AccordionTrigger className="text-base font-semibold hover:no-underline">

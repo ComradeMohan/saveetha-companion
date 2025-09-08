@@ -21,20 +21,16 @@ import {
 } from '@/components/ui/select';
 import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getColleges } from '@/app/actions/manage-colleges';
-import { getDepartments } from '@/app/actions/manage-departments';
-import { getCourses } from '@/app/actions/manage-courses';
-import { addUnit, getUnits, deleteUnit, addTopic, getTopics, deleteTopic } from '@/app/actions/manage-course-content';
+import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic } from '@/app/actions/manage-course-content';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
 import type { Unit, Topic } from '@/app/actions/manage-course-content';
 import { generateCourseContent } from '@/ai/flows/course-creator-flow';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { EditTopicDialog } from '@/components/admin/course-content/edit-topic-dialog';
 
 
-type College = { id: string; name: string };
-type Department = { id: string; name: string };
 type Course = { id: string; name: string };
 
 
@@ -42,14 +38,10 @@ export default function CourseContentPage() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const [colleges, setColleges] = useState<College[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Record<string, Topic[]>>({});
 
-  const [selectedCollege, setSelectedCollege] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
 
   const [newUnitTitle, setNewUnitTitle] = useState('');
@@ -59,46 +51,22 @@ export default function CourseContentPage() {
   // Initial data loading for dropdowns
   useEffect(() => {
     startTransition(async () => {
-      const collegesData = await getColleges();
-      setColleges(collegesData as College[]);
+      const coursesData = await getUnifiedCourses();
+      setCourses(coursesData);
     });
   }, []);
-
-  useEffect(() => {
-    if (selectedCollege) {
-      startTransition(async () => {
-        const departmentsData = await getDepartments(selectedCollege);
-        setDepartments(departmentsData as Department[]);
-        setCourses([]);
-        setUnits([]);
-        setSelectedDepartment('');
-        setSelectedCourse('');
-      });
-    }
-  }, [selectedCollege]);
-
-  useEffect(() => {
-    if (selectedDepartment) {
-      startTransition(async () => {
-        const coursesData = await getCourses(selectedCollege, selectedDepartment);
-        setCourses(coursesData as Course[]);
-        setUnits([]);
-        setSelectedCourse('');
-      });
-    }
-  }, [selectedDepartment, selectedCollege]);
 
   // Fetch units when a course is selected
   useEffect(() => {
     if (selectedCourse) {
       startTransition(async () => {
-        const unitsData = await getUnits(selectedCollege, selectedDepartment, selectedCourse);
+        const unitsData = await getUnits(selectedCourse);
         setUnits(unitsData as Unit[]);
       });
     } else {
         setUnits([]);
     }
-  }, [selectedCourse, selectedCollege, selectedDepartment]);
+  }, [selectedCourse]);
   
   // Fetch topics for each unit
   useEffect(() => {
@@ -106,7 +74,7 @@ export default function CourseContentPage() {
         startTransition(async () => {
             const allTopics: Record<string, Topic[]> = {};
             for (const unit of units) {
-                const topicsData = await getTopics(selectedCollege, selectedDepartment, selectedCourse, unit.id);
+                const topicsData = await getTopics(selectedCourse, unit.id);
                 allTopics[unit.id] = topicsData;
             }
             setTopics(allTopics);
@@ -114,11 +82,11 @@ export default function CourseContentPage() {
     } else {
         setTopics({});
     }
-  }, [units, selectedCollege, selectedDepartment, selectedCourse]);
+  }, [units, selectedCourse]);
 
   const refreshCourseData = async () => {
     if (selectedCourse) {
-        const unitsData = await getUnits(selectedCollege, selectedDepartment, selectedCourse);
+        const unitsData = await getUnits(selectedCourse);
         setUnits(unitsData as Unit[]);
     }
   }
@@ -126,7 +94,7 @@ export default function CourseContentPage() {
   const handleAddUnit = () => {
     if (!newUnitTitle.trim()) return;
     startTransition(async () => {
-      const result = await addUnit(selectedCollege, selectedDepartment, selectedCourse, newUnitTitle, units.length + 1);
+      const result = await addUnit(selectedCourse, newUnitTitle, units.length + 1);
       toast({
         title: result.type === 'success' ? 'Success' : 'Error',
         description: result.message,
@@ -141,7 +109,7 @@ export default function CourseContentPage() {
 
   const handleDeleteUnit = (unitId: string) => {
     startTransition(async () => {
-        const result = await deleteUnit(selectedCollege, selectedDepartment, selectedCourse, unitId);
+        const result = await deleteUnit(selectedCourse, unitId);
         toast({
             title: result.type === 'success' ? 'Success' : 'Error',
             description: result.message,
@@ -159,7 +127,7 @@ export default function CourseContentPage() {
 
    const handleDeleteTopic = (unitId: string, topicId: string) => {
     startTransition(async () => {
-        const result = await deleteTopic(selectedCollege, selectedDepartment, selectedCourse, unitId, topicId);
+        const result = await deleteTopic(selectedCourse, unitId, topicId);
         toast({
             title: result.type === 'success' ? 'Success' : 'Error',
             description: result.message,
@@ -186,11 +154,11 @@ export default function CourseContentPage() {
           
           // Clear existing units and topics before adding new ones
           for (const unit of units) {
-            await deleteUnit(selectedCollege, selectedDepartment, selectedCourse, unit.id);
+            await deleteUnit(selectedCourse, unit.id);
           }
 
           for (const unit of content.units) {
-              const unitResult = await addUnit(selectedCollege, selectedDepartment, selectedCourse, unit.title, unit.order);
+              const unitResult = await addUnit(selectedCourse, unit.title, unit.order);
               if (unitResult.id) {
                   for (const topic of unit.topics) {
                       const formData = new FormData();
@@ -198,7 +166,7 @@ export default function CourseContentPage() {
                       formData.append('notes', topic.notes || '');
                       formData.append('videoUrl', topic.videoUrl || '');
                       formData.append('questions', topic.questions || '');
-                      await addTopic(selectedCollege, selectedDepartment, selectedCourse, unitResult.id, formData);
+                      await addTopic(selectedCourse, unitResult.id, formData);
                   }
               }
           }
@@ -218,28 +186,16 @@ export default function CourseContentPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Course Content Management</h2>
-        <p className="text-muted-foreground">Add and organize learning materials for each course.</p>
+        <p className="text-muted-foreground">Add and organize learning materials for each course. Content is shared across all departments.</p>
       </div>
       
       <Card>
         <CardHeader>
             <CardTitle>Select a Course</CardTitle>
-            <CardDescription>Choose the college, department, and course you want to manage.</CardDescription>
+            <CardDescription>Choose the course you want to manage.</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-           <Select onValueChange={setSelectedCollege} value={selectedCollege}>
-              <SelectTrigger><SelectValue placeholder="Select a College" /></SelectTrigger>
-              <SelectContent>
-                {colleges.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setSelectedDepartment} value={selectedDepartment} disabled={!selectedCollege}>
-              <SelectTrigger><SelectValue placeholder="Select a Department"/></SelectTrigger>
-              <SelectContent>
-                {departments.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setSelectedCourse} value={selectedCourse} disabled={!selectedDepartment}>
+        <CardContent>
+            <Select onValueChange={setSelectedCourse} value={selectedCourse}>
               <SelectTrigger><SelectValue placeholder="Select a Course"/></SelectTrigger>
               <SelectContent>
                 {courses.map(c => <SelectItem key={c.id} value={c.id}>{c.name} ({c.id})</SelectItem>)}
@@ -265,7 +221,7 @@ export default function CourseContentPage() {
                         <Accordion type="multiple" className="w-full">
                             {units.map(unit => (
                                 <AccordionItem key={unit.id} value={unit.id}>
-                                    <div className="flex items-center w-full">
+                                    <div className="flex items-center w-full group">
                                         <AccordionTrigger className="flex-1 hover:no-underline">
                                             <div className='flex items-center gap-3'>
                                                 <BookOpen className="h-5 w-5 text-primary" />
@@ -283,9 +239,16 @@ export default function CourseContentPage() {
                                                     <div key={topic.id} className="flex items-center justify-between p-3 rounded-md bg-secondary/50">
                                                         <span>{topic.title}</span>
                                                         <div className="flex items-center gap-1">
-                                                            <Button variant="ghost" size="icon" className="h-7 w-7">
-                                                                <Edit className="h-4 w-4"/>
-                                                            </Button>
+                                                            <EditTopicDialog
+                                                                topic={topic}
+                                                                courseId={selectedCourse}
+                                                                unitId={unit.id}
+                                                                onTopicUpdated={handleTopicAction}
+                                                            >
+                                                                <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                                    <Edit className="h-4 w-4"/>
+                                                                </Button>
+                                                            </EditTopicDialog>
                                                              <Button variant="ghost" size="icon" className="text-destructive h-7 w-7" onClick={() => handleDeleteTopic(unit.id, topic.id)}>
                                                                 <Trash2 className="h-4 w-4"/>
                                                             </Button>
@@ -297,8 +260,6 @@ export default function CourseContentPage() {
                                             )}
 
                                             <AddTopicDialog 
-                                                collegeId={selectedCollege}
-                                                departmentId={selectedDepartment}
                                                 courseId={selectedCourse}
                                                 unitId={unit.id}
                                                 onTopicAdded={handleTopicAction}

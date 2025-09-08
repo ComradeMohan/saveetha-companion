@@ -28,7 +28,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { addTopic } from '@/app/actions/manage-course-content';
+import { updateTopic } from '@/app/actions/manage-course-content';
+import type { Topic } from '@/app/actions/manage-course-content';
+
 
 const topicSchema = z.object({
     title: z.string().min(3, 'Title is required.'),
@@ -39,21 +41,27 @@ const topicSchema = z.object({
 
 type TopicFormValues = z.infer<typeof topicSchema>;
 
-interface AddTopicDialogProps {
+interface EditTopicDialogProps {
   children: React.ReactNode;
+  topic: Topic;
   courseId: string;
   unitId: string;
-  onTopicAdded: () => void;
+  onTopicUpdated: () => void;
 }
 
-export function AddTopicDialog({ children, courseId, unitId, onTopicAdded }: AddTopicDialogProps) {
+export function EditTopicDialog({ children, topic, courseId, unitId, onTopicUpdated }: EditTopicDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<TopicFormValues>({
     resolver: zodResolver(topicSchema),
-    defaultValues: { title: '', notes: '', videoUrl: '', questions: '' },
+    defaultValues: {
+        title: topic.title,
+        notes: topic.notes || '',
+        videoUrl: topic.videoUrl || '',
+        questions: topic.questions || '',
+    },
   });
 
   const onSubmit = async (values: TopicFormValues) => {
@@ -65,11 +73,10 @@ export function AddTopicDialog({ children, courseId, unitId, onTopicAdded }: Add
     formData.append('questions', values.questions || '');
     
     try {
-      const result = await addTopic(courseId, unitId, formData);
+      const result = await updateTopic(courseId, unitId, topic.id, formData);
       if (result.type === 'success') {
-          toast({ title: 'Success', description: 'Topic added successfully.' });
-          onTopicAdded();
-          form.reset();
+          toast({ title: 'Success', description: 'Topic updated successfully.' });
+          onTopicUpdated();
           setOpen(false);
       } else {
           toast({ title: 'Error', description: result.message, variant: 'destructive' });
@@ -86,9 +93,9 @@ export function AddTopicDialog({ children, courseId, unitId, onTopicAdded }: Add
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add New Topic</DialogTitle>
+          <DialogTitle>Edit Topic: {topic.title}</DialogTitle>
           <DialogDescription>
-            Fill in the learning materials for this topic. Use Markdown for notes if needed.
+            Update the learning materials for this topic.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -143,7 +150,7 @@ export function AddTopicDialog({ children, courseId, unitId, onTopicAdded }: Add
             </ScrollArea>
             <DialogFooter className="pt-4">
               <Button type="submit" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Topic'}
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
               </Button>
             </DialogFooter>
           </form>
