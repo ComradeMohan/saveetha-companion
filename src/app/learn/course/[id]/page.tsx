@@ -107,7 +107,7 @@ export default function CoursePage() {
         </CardHeader>
         <CardContent>
             {courseContent.length > 0 ? (
-                <Accordion type="single" collapsible className="w-full" defaultValue={courseContent[0]?.id}>
+                <Accordion type="single" collapsible className="w-full">
                     {courseContent.map(unit => (
                         <AccordionItem key={unit.id} value={unit.id}>
                             <AccordionTrigger className="text-base font-semibold hover:no-underline">
