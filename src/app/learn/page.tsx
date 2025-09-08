@@ -1,17 +1,18 @@
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Book, GitBranch, CheckCircle, Loader2 } from "lucide-react";
+import { Book, GitBranch, CheckCircle, Loader2, Trophy } from "lucide-react";
 import { getCourses } from '@/app/actions/manage-courses';
 import { arrangeRoadmap } from '@/ai/flows/roadmap-arranger-flow';
 import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
+import { Progress } from '@/components/ui/progress';
 
 
 type StudentGrades = {
@@ -102,7 +103,14 @@ export default function LearnHomePage() {
     return () => unsubscribe();
   }, [user, authLoading]);
 
-  const completedCourseCodes = new Set(Object.keys(studentGrades));
+  const completedCourseCodes = useMemo(() => new Set(Object.keys(studentGrades)), [studentGrades]);
+
+  const { totalCourses, progressPercentage } = useMemo(() => {
+    const total = roadmapData.reduce((acc, stage) => acc + stage.courses.length, 0);
+    const completedCount = completedCourseCodes.size;
+    const percentage = total > 0 ? (completedCount / total) * 100 : 0;
+    return { totalCourses: total, progressPercentage: percentage };
+  }, [roadmapData, completedCourseCodes]);
 
   if (loading || authLoading) {
       return (
@@ -129,6 +137,19 @@ export default function LearnHomePage() {
         <h1 className="text-lg font-semibold md:text-2xl">Course Roadmap</h1>
       </div>
       
+       <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Trophy className="text-amber-500"/> Progress Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="flex items-center justify-between mb-2">
+                    <p className="text-muted-foreground text-sm">{completedCourseCodes.size} of {totalCourses} courses completed</p>
+                    <p className="font-bold text-primary">{Math.round(progressPercentage)}%</p>
+                </div>
+                <Progress value={progressPercentage} className="h-3"/>
+            </CardContent>
+        </Card>
+
       {roadmapLoading ? <RoadmapSkeleton /> : (
         <Card>
             <CardHeader>
