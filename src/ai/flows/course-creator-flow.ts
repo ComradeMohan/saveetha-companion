@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow to generate a complete course structure.
@@ -23,7 +24,7 @@ const TopicSchema = z.object({
 
 const UnitSchema = z.object({
     title: z.string().describe("The title of the unit, e.g., 'Unit 1: Fundamental Data Structures'."),
-    order: z.number().int().positive().describe("The sequential order of the unit in the course."),
+    order: z.number().int().min(1).describe("The sequential order of the unit in the course."),
     topics: z.array(TopicSchema).describe("A list of topics covered in this unit."),
 });
 
