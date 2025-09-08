@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select';
 import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic } from '@/app/actions/manage-course-content';
+import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic, addTopic } from '@/app/actions/manage-course-content';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
 import type { Unit, Topic } from '@/app/actions/manage-course-content';
@@ -43,6 +43,7 @@ export default function CourseContentPage() {
   const [topics, setTopics] = useState<Record<string, Topic[]>>({});
 
   const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedCourseName, setSelectedCourseName] = useState('');
 
   const [newUnitTitle, setNewUnitTitle] = useState('');
   const [syllabusText, setSyllabusText] = useState('');
@@ -62,11 +63,13 @@ export default function CourseContentPage() {
       startTransition(async () => {
         const unitsData = await getUnits(selectedCourse);
         setUnits(unitsData as Unit[]);
+        setSelectedCourseName(courses.find(c => c.id === selectedCourse)?.name || '');
       });
     } else {
         setUnits([]);
+        setSelectedCourseName('');
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, courses]);
   
   // Fetch topics for each unit
   useEffect(() => {
@@ -140,15 +143,13 @@ export default function CourseContentPage() {
   };
 
   const handleAiGenerate = async () => {
-      if (!selectedCourse) return;
-      const courseName = courses.find(c => c.id === selectedCourse)?.name;
-      if (!courseName) return;
+      if (!selectedCourseName) return;
 
       setIsGenerating(true);
-      toast({ title: "AI Generation Started", description: `Generating content for ${courseName}. This may take a minute...` });
+      toast({ title: "AI Generation Started", description: `Generating content for ${selectedCourseName}. This may take a minute...` });
       try {
           const content = await generateCourseContent({ 
-            courseName,
+            courseName: selectedCourseName,
             syllabus: syllabusText || undefined
           });
           
@@ -211,7 +212,7 @@ export default function CourseContentPage() {
                     <div className="flex items-center justify-between">
                         <div>
                             <CardTitle>Course Structure</CardTitle>
-                            <CardDescription>Manage units and topics for {selectedCourse}.</CardDescription>
+                            <CardDescription>Manage units and topics for {selectedCourseName} ({selectedCourse}).</CardDescription>
                         </div>
                     </div>
                 </CardHeader>

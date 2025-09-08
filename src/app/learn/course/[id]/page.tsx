@@ -3,14 +3,12 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getUnits, getTopics, Unit, Topic } from '@/app/actions/manage-course-content';
-import { getCourses } from '@/app/actions/manage-courses';
+import { getUnits, getTopics, Unit, Topic, getCourseNameById } from '@/app/actions/manage-course-content';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, Loader2, FileText, Youtube, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 type CourseInfo = {
@@ -34,13 +32,12 @@ export default function CoursePage() {
       
       setLoading(true);
       try {
-        // Since content is now centralized, we don't need profile info to fetch it.
-        // We just need a way to get the course name. A full unified course list fetch is needed.
-        // This is a placeholder for getting the course name. 
-        // A more efficient way would be a new server action `getCourseById(courseId)`.
-        // For now, we'll just show the code. A better approach can be implemented later.
-        
-        const units = await getUnits(courseId);
+        const [courseName, units] = await Promise.all([
+            getCourseNameById(courseId),
+            getUnits(courseId)
+        ]);
+
+        setCourse({ id: courseId, name: courseName || `Course ${courseId}` });
         
         if (units.length > 0) {
             const unitsWithTopics = await Promise.all(
@@ -52,9 +49,6 @@ export default function CoursePage() {
             setCourseContent(unitsWithTopics);
         }
         
-        // This is a temporary way to get the course name.
-        setCourse({ id: courseId, name: `Course ${courseId}` });
-
       } catch (error) {
         console.error("Error fetching course data:", error);
       } finally {
@@ -106,8 +100,8 @@ export default function CoursePage() {
                     <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <CardTitle>{course.id}</CardTitle>
-                    <CardDescription>Review the learning materials for this course.</CardDescription>
+                    <CardTitle>{course.name}</CardTitle>
+                    <CardDescription>Review the learning materials for this course ({course.id}).</CardDescription>
                 </div>
             </div>
         </CardHeader>

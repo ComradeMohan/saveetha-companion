@@ -4,7 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { getCourses as getAllCourses } from './manage-courses'; // Import the function to get all courses
+import { getCourses as getAllCoursesFromDept } from './manage-courses'; // Import the function to get all courses
 
 // Define types for stricter control
 export type Unit = { id: string; title: string; order: number; };
@@ -12,7 +12,7 @@ export type Topic = { id: string; title: string; notes?: string; videoUrl?: stri
 
 const unitSchema = z.object({
   title: z.string().min(3, { message: 'Unit title must be at least 3 characters.' }),
-  order: z.number().int().positive(),
+  order: z.number().int().min(1),
 });
 
 const topicSchema = z.object({
@@ -158,7 +158,7 @@ export async function getUnifiedCourses() {
     for (const collegeDoc of collegesCollection.docs) {
         const departmentsCollection = await collegeDoc.ref.collection('departments').get();
         for (const departmentDoc of departmentsCollection.docs) {
-            const courses = await getAllCourses(collegeDoc.id, departmentDoc.id);
+            const courses = await getAllCoursesFromDept(collegeDoc.id, departmentDoc.id);
             courses.forEach(course => {
                 if (!allCoursesMap.has(course.id)) {
                     allCoursesMap.set(course.id, { id: course.id, name: course.name as string });
@@ -167,4 +167,21 @@ export async function getUnifiedCourses() {
         }
     }
     return Array.from(allCoursesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Function to get a single course's name by its ID, searching across all departments
+export async function getCourseNameById(courseId: string): Promise<string | null> {
+    if (!courseId) return null;
+    const collegesCollection = await adminDb.collection('colleges').get();
+
+    for (const collegeDoc of collegesCollection.docs) {
+        const departmentsCollection = await collegeDoc.ref.collection('departments').get();
+        for (const departmentDoc of departmentsCollection.docs) {
+            const courseDoc = await departmentDoc.ref.collection('courses').doc(courseId).get();
+            if (courseDoc.exists) {
+                return courseDoc.data()?.name || null;
+            }
+        }
+    }
+    return null;
 }
