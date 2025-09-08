@@ -19,16 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getColleges } from '@/app/actions/manage-colleges';
 import { getDepartments } from '@/app/actions/manage-departments';
 import { getCourses } from '@/app/actions/manage-courses';
 import { addUnit, getUnits, deleteUnit, addTopic, getTopics, deleteTopic } from '@/app/actions/manage-course-content';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Textarea } from '@/components/ui/textarea';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
 import type { Unit, Topic } from '@/app/actions/manage-course-content';
+import { generateCourseContent } from '@/ai/flows/course-creator-flow';
 
 
 type College = { id: string; name: string };
@@ -51,6 +51,7 @@ export default function CourseContentPage() {
   const [selectedCourse, setSelectedCourse] = useState('');
 
   const [newUnitTitle, setNewUnitTitle] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Initial data loading for dropdowns
   useEffect(() => {
@@ -150,7 +151,6 @@ export default function CourseContentPage() {
   };
 
   const handleTopicAction = () => {
-      // This will refetch both units and topics
       refreshCourseData();
   }
 
@@ -168,6 +168,40 @@ export default function CourseContentPage() {
     });
   };
 
+  const handleAiGenerate = async () => {
+      if (!selectedCourse) return;
+      const courseName = courses.find(c => c.id === selectedCourse)?.name;
+      if (!courseName) return;
+
+      setIsGenerating(true);
+      toast({ title: "AI Generation Started", description: `Generating content for ${courseName}. This may take a minute...` });
+      try {
+          const content = await generateCourseContent({ courseName });
+          
+          for (const unit of content.units) {
+              const unitResult = await addUnit(selectedCollege, selectedDepartment, selectedCourse, unit.title, unit.order);
+              if (unitResult.id) {
+                  for (const topic of unit.topics) {
+                      const formData = new FormData();
+                      formData.append('title', topic.title);
+                      formData.append('notes', topic.notes || '');
+                      formData.append('videoUrl', topic.videoUrl || '');
+                      formData.append('questions', topic.questions || '');
+                      await addTopic(selectedCollege, selectedDepartment, selectedCourse, unitResult.id, formData);
+                  }
+              }
+          }
+          toast({ title: "Success!", description: "AI has finished generating the course content." });
+          refreshCourseData();
+
+      } catch (error) {
+          console.error("Error generating course content:", error);
+          toast({ title: "Generation Failed", description: "The AI failed to generate content. Please try again.", variant: 'destructive' });
+      } finally {
+          setIsGenerating(false);
+      }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -181,7 +215,7 @@ export default function CourseContentPage() {
             <CardTitle>Select a Course</CardTitle>
             <CardDescription>Choose the college, department, and course you want to manage.</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
            <Select onValueChange={setSelectedCollege} value={selectedCollege}>
               <SelectTrigger><SelectValue placeholder="Select a College" /></SelectTrigger>
               <SelectContent>
@@ -207,8 +241,16 @@ export default function CourseContentPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
              <Card className="lg:col-span-2">
                 <CardHeader>
-                    <CardTitle>Course Structure</CardTitle>
-                    <CardDescription>Manage units and topics for {selectedCourse}.</CardDescription>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Course Structure</CardTitle>
+                            <CardDescription>Manage units and topics for {selectedCourse}.</CardDescription>
+                        </div>
+                        <Button onClick={handleAiGenerate} disabled={isGenerating || units.length > 0}>
+                            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                             Generate with AI
+                        </Button>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     {isPending && !units.length ? <Loader2 className="mx-auto h-8 w-8 animate-spin" /> :
@@ -264,7 +306,7 @@ export default function CourseContentPage() {
                             ))}
                         </Accordion>
                      ) : (
-                        <p className="text-center text-muted-foreground py-8">No units found for this course. Add one to begin.</p>
+                        <p className="text-center text-muted-foreground py-8">No units found for this course. Add one manually or use the AI generator.</p>
                      )}
                 </CardContent>
             </Card>

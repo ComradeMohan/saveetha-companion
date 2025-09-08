@@ -37,16 +37,16 @@ const getTopicsCollection = (collegeId: string, departmentId: string, courseId: 
 export async function addUnit(collegeId: string, departmentId: string, courseId: string, title: string, order: number) {
   const validatedFields = unitSchema.safeParse({ title, order });
   if (!validatedFields.success) {
-    return { type: 'error', message: 'Validation failed', errors: validatedFields.error.flatten().fieldErrors };
+    return { type: 'error', message: 'Validation failed', errors: validatedFields.error.flatten().fieldErrors, id: null };
   }
 
   try {
     const unitRef = getUnitsCollection(collegeId, departmentId, courseId).doc();
     await unitRef.set({ ...validatedFields.data, createdAt: new Date().toISOString() });
-    return { type: 'success', message: 'Unit added successfully.' };
+    return { type: 'success', message: 'Unit added successfully.', id: unitRef.id };
   } catch (error) {
     console.error('Error adding unit:', error);
-    return { type: 'error', message: 'Failed to add unit.' };
+    return { type: 'error', message: 'Failed to add unit.', id: null };
   }
 }
 
@@ -117,4 +117,3 @@ export async function getTopics(collegeId: string, departmentId: string, courseI
     return [];
   }
 }
-
