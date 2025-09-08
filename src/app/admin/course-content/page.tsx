@@ -216,17 +216,17 @@ export default function CourseContentPage() {
                         <Accordion type="multiple" className="w-full">
                             {units.map(unit => (
                                 <AccordionItem key={unit.id} value={unit.id}>
-                                    <AccordionTrigger className="hover:no-underline">
-                                        <div className="flex items-center justify-between w-full pr-4">
+                                    <div className="flex items-center w-full">
+                                        <AccordionTrigger className="flex-1 hover:no-underline">
                                             <div className='flex items-center gap-3'>
                                                 <BookOpen className="h-5 w-5 text-primary" />
                                                 <span className="font-semibold">{unit.title}</span>
                                             </div>
-                                            <Button variant="ghost" size="icon" className="text-destructive h-7 w-7" onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id);}}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </AccordionTrigger>
+                                        </AccordionTrigger>
+                                        <Button variant="ghost" size="icon" className="text-destructive h-7 w-7 mr-2" onClick={() => handleDeleteUnit(unit.id)}>
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                     <AccordionContent className="pl-8 pr-4">
                                        <div className="space-y-3">
                                             {(topics[unit.id] || []).length > 0 ? (
@@ -293,4 +293,3 @@ export default function CourseContentPage() {
     </div>
   );
 }
-
