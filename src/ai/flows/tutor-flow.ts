@@ -50,6 +50,7 @@ User Question: ${input.question}
     const { output } = await ai.generate({
       prompt: finalPrompt,
       output: { schema: TutorOutputSchema },
+      model: 'googleai/gemini-2.0-flash',
     });
     
     // Ensure the output is not null. If it is, return a default answer.
