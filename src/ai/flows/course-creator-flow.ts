@@ -11,6 +11,7 @@ import { z } from 'genkit';
 // Input Schema
 const CourseCreatorInputSchema = z.object({
   courseName: z.string().describe('The name of the course to generate content for, e.g., "Data Structures".'),
+  syllabus: z.string().optional().describe('The full syllabus for the course as a block of text.'),
 });
 export type CourseCreatorInput = z.infer<typeof CourseCreatorInputSchema>;
 
@@ -48,6 +49,15 @@ const courseCreatorFlow = ai.defineFlow(
     outputSchema: CourseCreatorOutputSchema,
   },
   async (input) => {
+    
+    const syllabusPromptSection = input.syllabus
+      ? `Base the entire structure on the following syllabus:
+        <syllabus>
+        ${input.syllabus}
+        </syllabus>
+        First, identify the main units from the syllabus. Then, for each unit, extract the relevant topics.`
+      : `Generate a standard, university-level curriculum for the course.`;
+
     const { output } = await ai.generate({
       model: 'googleai/gemini-2.0-flash',
       prompt: `
@@ -56,6 +66,8 @@ const courseCreatorFlow = ai.defineFlow(
 
         Course Name: "${input.courseName}"
 
+        ${syllabusPromptSection}
+        
         Follow these instructions precisely:
         1.  Create exactly 5 distinct units for the course. Each unit should represent a major section of the subject.
         2.  Assign each unit a title and a sequential order number (1 through 5).

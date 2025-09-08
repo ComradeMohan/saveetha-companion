@@ -29,6 +29,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
 import type { Unit, Topic } from '@/app/actions/manage-course-content';
 import { generateCourseContent } from '@/ai/flows/course-creator-flow';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 
 type College = { id: string; name: string };
@@ -51,6 +53,7 @@ export default function CourseContentPage() {
   const [selectedCourse, setSelectedCourse] = useState('');
 
   const [newUnitTitle, setNewUnitTitle] = useState('');
+  const [syllabusText, setSyllabusText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Initial data loading for dropdowns
@@ -176,8 +179,16 @@ export default function CourseContentPage() {
       setIsGenerating(true);
       toast({ title: "AI Generation Started", description: `Generating content for ${courseName}. This may take a minute...` });
       try {
-          const content = await generateCourseContent({ courseName });
+          const content = await generateCourseContent({ 
+            courseName,
+            syllabus: syllabusText || undefined
+          });
           
+          // Clear existing units and topics before adding new ones
+          for (const unit of units) {
+            await deleteUnit(selectedCollege, selectedDepartment, selectedCourse, unit.id);
+          }
+
           for (const unit of content.units) {
               const unitResult = await addUnit(selectedCollege, selectedDepartment, selectedCourse, unit.title, unit.order);
               if (unitResult.id) {
@@ -246,10 +257,6 @@ export default function CourseContentPage() {
                             <CardTitle>Course Structure</CardTitle>
                             <CardDescription>Manage units and topics for {selectedCourse}.</CardDescription>
                         </div>
-                        <Button onClick={handleAiGenerate} disabled={isGenerating || units.length > 0}>
-                            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
-                             Generate with AI
-                        </Button>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -311,25 +318,55 @@ export default function CourseContentPage() {
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Add New Unit</CardTitle>
-                </CardHeader>
-                 <CardContent>
-                    <div className="space-y-2">
-                        <Input
-                            placeholder="e.g., Unit 1: Introduction"
-                            value={newUnitTitle}
-                            onChange={(e) => setNewUnitTitle(e.target.value)}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button onClick={handleAddUnit} disabled={isPending || !newUnitTitle.trim()}>
-                        {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Unit
-                    </Button>
-                </CardFooter>
-            </Card>
+            <div className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>AI Content Generation</CardTitle>
+                        <CardDescription>
+                            Paste the course syllabus here to generate all units and topics automatically. This will overwrite existing content for this course.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                             <Label htmlFor="syllabus">Syllabus Text (Optional)</Label>
+                            <Textarea 
+                                id="syllabus"
+                                placeholder="UNIT I: INTRODUCTION&#10;Role of Algorithms in Computing - Insertion sort..."
+                                className="min-h-36"
+                                value={syllabusText}
+                                onChange={(e) => setSyllabusText(e.target.value)}
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                         <Button onClick={handleAiGenerate} disabled={isGenerating}>
+                            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                             {syllabusText ? 'Generate from Syllabus' : 'Generate from Title'}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Add New Unit Manually</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                            <Input
+                                placeholder="e.g., Unit 1: Introduction"
+                                value={newUnitTitle}
+                                onChange={(e) => setNewUnitTitle(e.target.value)}
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={handleAddUnit} disabled={isPending || !newUnitTitle.trim()}>
+                            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Unit
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+
           </div>
       )}
     </div>
