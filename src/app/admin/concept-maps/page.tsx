@@ -104,7 +104,7 @@ export default function AdminConceptMapsPage() {
         setIsFeeding(true);
         toast({
             title: "Starting AI Knowledge Feed",
-            description: `Caching ${conceptMaps.length} documents into the database. This may take a moment.`
+            description: `Caching ${conceptMaps.length} documents into the database for the AI Tutor. This may take a moment.`
         });
 
         let successCount = 0;
@@ -135,7 +135,7 @@ export default function AdminConceptMapsPage() {
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">Concept Map Management</h2>
                         <p className="text-muted-foreground">
-                            Add, edit, or remove concept maps available to users.
+                            Add, edit, or remove concept map documents for the AI Tutor.
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function AdminConceptMapsPage() {
                     <CardHeader>
                         <CardTitle>Available Concept Maps</CardTitle>
                         <CardDescription>
-                            Use the "Feed Knowledge to AI" button to cache document content in the database for faster AI responses.
+                            Use the "Feed Knowledge to AI" button to cache document content in the database. This makes the content available to the AI Tutor.
                         </CardDescription>
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

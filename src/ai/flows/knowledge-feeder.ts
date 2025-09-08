@@ -86,7 +86,10 @@ const knowledgeFeederFlow = ai.defineFlow(
     try {
       console.log(`Feeding knowledge from: ${input.url}`);
       // This will fetch, parse, and store the content in the Firestore cache.
-      await getPdfContent(input.url);
+      const content = await getPdfContent(input.url);
+      if (!content) {
+        throw new Error("Extracted PDF content was empty.");
+      }
       console.log(`Successfully fed and cached: ${input.url}`);
       return {
         status: 'success',
