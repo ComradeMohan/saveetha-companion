@@ -121,7 +121,7 @@ export default function CoursePage() {
                                            {topic.notes && (
                                                 <div className="prose prose-sm dark:prose-invert max-w-none">
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><FileText className="h-4 w-4"/> Notes</h5>
-                                                    <div dangerouslySetInnerHTML={{ __html: topic.notes.replace(/\n/g, '<br />') }} />
+                                                    <div dangerouslySetInnerHTML={{ __html: topic.notes }} />
                                                 </div>
                                            )}
                                            {topic.videoUrl && (
