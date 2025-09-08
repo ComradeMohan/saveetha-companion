@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -27,6 +28,7 @@ import {
   Award,
   ClipboardList,
   School,
+  PenSquare,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -45,6 +47,7 @@ const adminNavLinks = [
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
   { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
+  { href: '/admin/course-content', label: 'Course Content', icon: PenSquare },
 ];
 
 const learnNavLinks = [
