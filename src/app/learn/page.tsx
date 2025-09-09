@@ -103,14 +103,34 @@ export default function LearnHomePage() {
     return () => unsubscribe();
   }, [user, authLoading]);
 
-  const completedCourseCodes = useMemo(() => new Set(Object.keys(studentGrades)), [studentGrades]);
+  const roadmapCourses = useMemo(() => {
+    const courseSet = new Map<string, Course>();
+    roadmapData.forEach(stage => {
+        stage.courses.forEach(course => {
+            if (!courseSet.has(course.id)) {
+                courseSet.set(course.id, course);
+            }
+        });
+    });
+    return courseSet;
+  }, [roadmapData]);
+  
+  const completedRoadmapCourses = useMemo(() => {
+    const completed = new Set<string>();
+    for (const code of Object.keys(studentGrades)) {
+        if (roadmapCourses.has(code)) {
+            completed.add(code);
+        }
+    }
+    return completed;
+  }, [studentGrades, roadmapCourses]);
 
   const { totalCourses, progressPercentage } = useMemo(() => {
-    const total = roadmapData.reduce((acc, stage) => acc + stage.courses.length, 0);
-    const completedCount = completedCourseCodes.size;
+    const total = roadmapCourses.size;
+    const completedCount = completedRoadmapCourses.size;
     const percentage = total > 0 ? (completedCount / total) * 100 : 0;
-    return { totalCourses: total, progressPercentage: percentage };
-  }, [roadmapData, completedCourseCodes]);
+    return { totalCourses: total, completedCount, progressPercentage: percentage };
+  }, [roadmapCourses, completedRoadmapCourses]);
 
   if (loading || authLoading) {
       return (
@@ -143,7 +163,7 @@ export default function LearnHomePage() {
             </CardHeader>
             <CardContent>
                 <div className="flex items-center justify-between mb-2">
-                    <p className="text-muted-foreground text-sm">{completedCourseCodes.size} of {totalCourses} courses completed</p>
+                    <p className="text-muted-foreground text-sm">{completedRoadmapCourses.size} of {totalCourses} core courses completed</p>
                     <p className="font-bold text-primary">{Math.round(progressPercentage)}%</p>
                 </div>
                 <Progress value={progressPercentage} className="h-3"/>
@@ -162,11 +182,11 @@ export default function LearnHomePage() {
             <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
                 {roadmapData.length > 0 ? (
                     roadmapData.map((stage) => {
-                        const remainingCourses = stage.courses.filter(course => !completedCourseCodes.has(course.id));
+                        const remainingCourses = stage.courses.filter(course => !completedRoadmapCourses.has(course.id));
                         if (remainingCourses.length === 0) return null;
 
                         return (
-                        <div key={stage.name} className="grid gap-10 mb-10">
+                        <div key={stage.name} className="grid gap-6 mb-8">
                             <div className="grid grid-cols-[40px_1fr] items-start gap-4">
                                 <div className="flex-shrink-0">
                                     <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
