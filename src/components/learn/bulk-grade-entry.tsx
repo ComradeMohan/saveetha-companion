@@ -5,13 +5,15 @@ import { useState, useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { FileText, Loader2, Save } from "lucide-react";
+import { FileText, Loader2, Save, AlertTriangle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+
 
 type Course = {
     id: string;
@@ -37,6 +39,7 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
     const { toast } = useToast();
     const [pastedText, setPastedText] = useState("");
     const [parsedGrades, setParsedGrades] = useState<ParsedGrade[]>([]);
+    const [unmatchedGrades, setUnmatchedGrades] = useState<ParsedGrade[]>([]);
     const [isParsing, setIsParsing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -46,13 +49,11 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
 
     const handleParse = () => {
         setIsParsing(true);
-        // Regex to find potential course codes (3-4 uppercase letters followed by digits)
-        // and a potential grade (S, A, B, C, D, E) on the same line.
         const gradeRegex = /\b([A-Z]{3,4}\d{1,2})\b/gi;
         const validGrades = new Set(grades);
 
         const lines = pastedText.split('\n');
-        const foundGrades: ParsedGrade[] = [];
+        const allFoundGrades: ParsedGrade[] = [];
         const seenCodes = new Set<string>();
 
         lines.forEach(line => {
@@ -60,32 +61,45 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
             if (matches) {
                 matches.forEach(codeMatch => {
                     const upperCode = codeMatch.toUpperCase();
-                    if (!seenCodes.has(upperCode) && courseMap.has(upperCode.toLowerCase())) {
-                        const gradeMatch = line.match(/\b([SABCDE])\b/i); // Find grade on the same line
+                    if (!seenCodes.has(upperCode)) {
+                        const gradeMatch = line.match(/\b([SABCDE])\b/i);
                         if (gradeMatch) {
                             const grade = gradeMatch[0].toUpperCase();
                             if (validGrades.has(grade)) {
                                 const course = courseMap.get(upperCode.toLowerCase());
-                                if (course) {
-                                    foundGrades.push({ code: course.id, name: course.name, grade });
-                                    seenCodes.add(upperCode);
-                                }
+                                allFoundGrades.push({
+                                    code: upperCode,
+                                    name: course?.name || 'Unknown Course',
+                                    grade
+                                });
+                                seenCodes.add(upperCode);
                             }
                         }
                     }
                 });
             }
         });
-
-        // Filter out grades that are already logged
-        const newGrades = foundGrades.filter(g => !existingGrades.hasOwnProperty(g.code));
-        setParsedGrades(newGrades);
         
-        if(newGrades.length === 0 && foundGrades.length > 0) {
-            toast({ title: "No new grades found", description: "All parsed grades have already been logged." });
-        } else if (newGrades.length === 0) {
-            toast({ title: "Parsing Complete", description: "Could not find any valid new course grades in the text.", variant: "destructive" });
+        const matched: ParsedGrade[] = [];
+        const unmatched: ParsedGrade[] = [];
+
+        allFoundGrades.forEach(g => {
+            if (courseMap.has(g.code.toLowerCase()) && !existingGrades.hasOwnProperty(g.code)) {
+                matched.push(g);
+            } else if (!courseMap.has(g.code.toLowerCase())) {
+                unmatched.push(g);
+            }
+        });
+
+        setParsedGrades(matched);
+        setUnmatchedGrades(unmatched);
+        
+        if (matched.length === 0 && allFoundGrades.length > 0) {
+            toast({ title: "No new grades found", description: "All valid grades found in the text have already been logged." });
+        } else if (matched.length === 0 && unmatched.length === 0) {
+             toast({ title: "Parsing Complete", description: "Could not find any valid course grades in the text.", variant: "destructive" });
         }
+
 
         setIsParsing(false);
     };
@@ -117,6 +131,7 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
             onSave(newGradesToSave);
             toast({ title: "Success", description: `${parsedGrades.length} grades have been saved.` });
             setParsedGrades([]);
+            setUnmatchedGrades([]);
             setPastedText("");
         } catch (error) {
             console.error("Error saving bulk grades:", error);
@@ -132,7 +147,7 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
             <CardHeader>
                 <CardTitle>Bulk Grade Entry (New)</CardTitle>
                 <CardDescription>
-                    Copy your grades from a document or table and paste them here. The AI will parse them for you.
+                    Copy your grades from a document or table and paste them here. The system will parse them for you.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -147,6 +162,24 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
                     Parse Grades
                 </Button>
             </CardContent>
+
+            {unmatchedGrades.length > 0 && (
+                <CardContent>
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4"/>
+                        <AlertTitle>Unmatched Courses Found</AlertTitle>
+                        <AlertDescription>
+                            The following courses were found in your text but do not seem to belong to your department's curriculum. They will not be saved.
+                            <ul className="list-disc pl-5 mt-2">
+                                {unmatchedGrades.map(g => (
+                                    <li key={g.code} className="font-mono text-xs">{g.code}</li>
+                                ))}
+                            </ul>
+                        </AlertDescription>
+                    </Alert>
+                </CardContent>
+            )}
+
 
             {parsedGrades.length > 0 && (
                 <>
