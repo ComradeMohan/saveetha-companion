@@ -41,19 +41,28 @@ export default function CourseContentPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [topics, setTopics] = useState<Record<string, Topic[]>>({});
+  const [pendingCourses, setPendingCourses] = useState<Course[]>([]);
 
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedCourseName, setSelectedCourseName] = useState('');
 
   const [newUnitTitle, setNewUnitTitle] = useState('');
   const [syllabusText, setSyllabusText] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingCourses, setGeneratingCourses] = useState<Set<string>>(new Set());
 
   // Initial data loading for dropdowns
   useEffect(() => {
     startTransition(async () => {
       const coursesData = await getUnifiedCourses();
       setCourses(coursesData);
+      
+      const contentCheckPromises = coursesData.map(async course => {
+        const units = await getUnits(course.id);
+        return { course, hasContent: units.length > 0 };
+      });
+      const results = await Promise.all(contentCheckPromises);
+      setPendingCourses(results.filter(r => !r.hasContent).map(r => r.course));
+
     });
   }, []);
 
@@ -92,6 +101,13 @@ export default function CourseContentPage() {
         const unitsData = await getUnits(selectedCourse);
         setUnits(unitsData as Unit[]);
     }
+     // Refresh pending courses list
+    const contentCheckPromises = courses.map(async course => {
+        const units = await getUnits(course.id);
+        return { course, hasContent: units.length > 0 };
+    });
+    const results = await Promise.all(contentCheckPromises);
+    setPendingCourses(results.filter(r => !r.hasContent).map(r => r.course));
   }
 
   const handleAddUnit = () => {
@@ -142,24 +158,22 @@ export default function CourseContentPage() {
     });
   };
 
-  const handleAiGenerate = async () => {
-      if (!selectedCourseName) return;
-
-      setIsGenerating(true);
-      toast({ title: "AI Generation Started", description: `Generating content for ${selectedCourseName}. This may take a minute...` });
+  const handleAiGenerate = async (courseId: string, courseName: string, syllabus?: string) => {
+      setGeneratingCourses(prev => new Set(prev).add(courseId));
+      toast({ title: "AI Generation Started", description: `Generating content for ${courseName}. This may take a minute...` });
       try {
           const content = await generateCourseContent({ 
-            courseName: selectedCourseName,
-            syllabus: syllabusText || undefined
+            courseName: courseName,
+            syllabus: syllabus || undefined
           });
           
-          // Clear existing units and topics before adding new ones
-          for (const unit of units) {
-            await deleteUnit(selectedCourse, unit.id);
+          const existingUnits = await getUnits(courseId);
+          for (const unit of existingUnits) {
+            await deleteUnit(courseId, unit.id);
           }
 
           for (const unit of content.units) {
-              const unitResult = await addUnit(selectedCourse, unit.title, unit.order);
+              const unitResult = await addUnit(courseId, unit.title, unit.order);
               if (unitResult.id) {
                   for (const topic of unit.topics) {
                       const formData = new FormData();
@@ -167,18 +181,22 @@ export default function CourseContentPage() {
                       formData.append('notes', topic.notes || '');
                       formData.append('videoUrl', topic.videoUrl || '');
                       formData.append('questions', topic.questions || '');
-                      await addTopic(selectedCourse, unitResult.id, formData);
+                      await addTopic(courseId, unitResult.id, formData);
                   }
               }
           }
-          toast({ title: "Success!", description: "AI has finished generating the course content." });
+          toast({ title: "Success!", description: `AI has finished generating content for ${courseName}.` });
           refreshCourseData();
 
       } catch (error) {
           console.error("Error generating course content:", error);
-          toast({ title: "Generation Failed", description: "The AI failed to generate content. Please try again.", variant: 'destructive' });
+          toast({ title: "Generation Failed", description: `The AI failed to generate content for ${courseName}. Please try again.`, variant: 'destructive' });
       } finally {
-          setIsGenerating(false);
+          setGeneratingCourses(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(courseId);
+              return newSet;
+          });
       }
   };
 
@@ -301,8 +319,8 @@ export default function CourseContentPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                         <Button onClick={handleAiGenerate} disabled={isGenerating}>
-                            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                         <Button onClick={() => handleAiGenerate(selectedCourse, selectedCourseName, syllabusText)} disabled={generatingCourses.has(selectedCourse)}>
+                            {generatingCourses.has(selectedCourse) ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
                              {syllabusText ? 'Generate from Syllabus' : 'Generate from Title'}
                         </Button>
                     </CardFooter>
@@ -331,6 +349,29 @@ export default function CourseContentPage() {
 
           </div>
       )}
+
+        {pendingCourses.length > 0 && (
+            <Card className="mt-6">
+                <CardHeader>
+                    <CardTitle>Pending Courses</CardTitle>
+                    <CardDescription>These courses have no content yet. Use the button to generate it with AI.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+                    {pendingCourses.map(course => (
+                        <div key={course.id} className="flex items-center justify-between p-3 rounded-md bg-secondary/50">
+                            <div>
+                                <p className="font-semibold">{course.name}</p>
+                                <p className="text-sm text-muted-foreground">{course.id}</p>
+                            </div>
+                            <Button size="sm" onClick={() => handleAiGenerate(course.id, course.name)} disabled={generatingCourses.has(course.id)}>
+                                {generatingCourses.has(course.id) ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
+                                Generate
+                            </Button>
+                        </div>
+                    ))}
+                </CardContent>
+            </Card>
+        )}
     </div>
   );
 }
