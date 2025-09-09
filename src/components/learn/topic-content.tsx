@@ -9,13 +9,24 @@ interface TopicContentProps {
 
 const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const scriptsRef = useRef<HTMLScriptElement[]>([]);
+
+  useEffect(() => {
+    // Cleanup function to remove scripts when component unmounts or content changes
+    return () => {
+      scriptsRef.current.forEach(script => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      });
+      scriptsRef.current = [];
+    };
+  }, [htmlContent]);
 
   useEffect(() => {
     if (contentRef.current) {
-      // 1. Clear previous content and scripts
+      // 1. Clear previous content
       contentRef.current.innerHTML = '';
-      const oldScripts = document.querySelectorAll('script[data-dynamic-script]');
-      oldScripts.forEach(s => s.remove());
 
       // 2. Use the browser's parser to create a document fragment
       const template = document.createElement('template');
@@ -30,9 +41,11 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
 
       // 5. Find and execute scripts from the parsed content
       const scripts = template.content.querySelectorAll('script');
+      const newScripts: HTMLScriptElement[] = [];
+      
       scripts.forEach(script => {
         // Avoid executing external stylesheets like Tailwind CDN
-        if (script.src.includes('tailwindcss')) {
+        if (script.src && script.src.includes('tailwindcss')) {
             return;
         }
 
@@ -50,7 +63,9 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
         
         // Append to the actual document body to execute
         document.body.appendChild(newScript);
+        newScripts.push(newScript);
       });
+      scriptsRef.current = newScripts;
     }
   }, [htmlContent]);
 
