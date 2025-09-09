@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Phone, CheckCircle2, Calculator, Building, School, Bot, Loader2 } from 'lucide-react';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
