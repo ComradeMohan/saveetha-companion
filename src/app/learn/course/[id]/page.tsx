@@ -119,7 +119,7 @@ export default function CoursePage() {
                                        <h4 className="font-semibold mb-3">{topic.title}</h4>
                                        <div className="space-y-3">
                                            {topic.notes && (
-                                                <div className="prose prose-sm dark:prose-invert max-w-none">
+                                                <div>
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><FileText className="h-4 w-4"/> Notes</h5>
                                                     <div dangerouslySetInnerHTML={{ __html: topic.notes }} />
                                                 </div>
