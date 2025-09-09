@@ -30,17 +30,16 @@ const roadmapArrangerFlow = ai.defineFlow(
   async (input) => {
 
     const { output } = await ai.generate({
-      prompt: `You are an expert academic advisor for a Computer Science & Engineering curriculum.
-      Your task is to organize the provided list of courses into a logical, structured learning path.
+      prompt: `You are an expert academic advisor. Organize the provided list of courses into a logical, structured learning path.
       
       Follow these rules precisely:
-      1. Group the courses into logical stages. Each stage MUST contain exactly 4 courses.
-      2. The stages should represent a clear progression from foundational knowledge to more advanced topics.
-      3. Give each stage a descriptive name like "Foundational Knowledge", "Core Programming & OS", or "Advanced Computing Theory".
-      4. The course with the ID 'SPIC1' (Project 1) MUST be in the very last stage.
-      5. Return the full list of courses, ensuring every course is placed into one of the stages.
+      1. Group the courses into logical stages, each containing exactly 4 courses.
+      2. The stages should represent a clear progression from foundational to advanced topics.
+      3. Give each stage a descriptive name like "Foundational Knowledge" or "Core Programming".
+      4. Place the course with ID 'SPIC1' in the very last stage.
+      5. Ensure every course is placed into one of the stages.
 
-      Here is the list of courses to arrange:
+      Courses:
       ${JSON.stringify(input.courses, null, 2)}
       `,
       output: { schema: RoadmapArrangerOutputSchema },

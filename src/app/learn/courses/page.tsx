@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, AlertTriangle, Check, BookOpen } from 'lucide-react';
+import { Loader2, Save, Check, BookOpen } from 'lucide-react';
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { getCourses } from '@/app/actions/manage-courses';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { BulkGradeEntry } from '@/components/learn/bulk-grade-entry';
 
 type Course = {
   id: string;
@@ -161,20 +162,18 @@ export default function CoursesPage() {
                 <h1 className="text-lg font-semibold md:text-2xl">Log Course Grades</h1>
             </div>
 
-             <Alert variant="destructive" className="mt-4">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Important Notice</AlertTitle>
-                <AlertDescription>
-                    Grades submitted here are considered final and cannot be edited or removed later. Please ensure your selection is accurate before saving.
-                </AlertDescription>
-            </Alert>
+            <BulkGradeEntry 
+                allCourses={allCourses}
+                existingGrades={studentGrades}
+                onSave={(newGrades) => setStudentGrades(prev => ({...prev, ...newGrades}))}
+            />
 
             <div className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm mt-4">
                 <Card className="w-full">
                     <CardHeader>
-                        <CardTitle>Select Course and Grade</CardTitle>
+                        <CardTitle>Single Grade Entry</CardTitle>
                         <CardDescription>
-                           Search for a course by its name or code. Then, select the grade you received. Saving the grade will update your academic roadmap.
+                           Use this form to add or update a single grade.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
