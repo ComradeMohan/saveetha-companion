@@ -12,6 +12,7 @@ import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
+import { getCourses } from '@/app/actions/manage-courses';
 
 
 type StudentGrades = {
