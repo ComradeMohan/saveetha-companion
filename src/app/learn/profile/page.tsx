@@ -152,8 +152,8 @@ export default function ProfilePage() {
                     </div>
                 </CardHeader>
 
-                <CardContent className="p-4 md:p-6">
-                     <Card className="mb-4 bg-primary/5 border-primary/20">
+                <CardContent className="p-4 md:p-6 space-y-4">
+                     <Card className="bg-primary/5 border-primary/20">
                         <CardHeader className="pb-2 pt-4">
                             <CardTitle className="text-base flex items-center gap-2">
                                 <Bot className="h-5 w-5 text-primary" /> AI Profile Summary
@@ -172,37 +172,35 @@ export default function ProfilePage() {
                     </Card>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="md:col-span-2 space-y-2">
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                    <User className="h-5 w-5 text-primary" />
-                                    <div>
-                                        <p className="font-semibold text-xs text-muted-foreground">Registration No.</p>
-                                        <p className="text-sm">{profile.regNo || 'Not Set'}</p>
-                                    </div>
+                        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                <User className="h-5 w-5 text-primary" />
+                                <div>
+                                    <p className="font-semibold text-xs text-muted-foreground">Registration No.</p>
+                                    <p className="text-sm">{profile.regNo || 'Not Set'}</p>
                                 </div>
-                                 <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                    <Phone className="h-5 w-5 text-primary" />
-                                    <div>
-                                        <p className="font-semibold text-xs text-muted-foreground">Phone Number</p>
-                                        <p className="text-sm">{profile.phone || 'Not Set'}</p>
-                                    </div>
+                            </div>
+                             <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                <Phone className="h-5 w-5 text-primary" />
+                                <div>
+                                    <p className="font-semibold text-xs text-muted-foreground">Phone Number</p>
+                                    <p className="text-sm">{profile.phone || 'Not Set'}</p>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                    <School className="h-5 w-5 text-primary" />
-                                    <div>
-                                        <p className="font-semibold text-xs text-muted-foreground">Department</p>
-                                        <p className="text-sm">{profile.department || 'Not Set'}</p>
-                                    </div>
+                            </div>
+                            <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                <School className="h-5 w-5 text-primary" />
+                                <div>
+                                    <p className="font-semibold text-xs text-muted-foreground">Department</p>
+                                    <p className="text-sm">{profile.department || 'Not Set'}</p>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
-                                    <Building className="h-5 w-5 text-primary" />
-                                    <div>
-                                        <p className="font-semibold text-xs text-muted-foreground">College</p>
-                                        <p className="text-sm">{profile.college || 'Not Set'}</p>
-                                    </div>
+                            </div>
+                            <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                <Building className="h-5 w-5 text-primary" />
+                                <div>
+                                    <p className="font-semibold text-xs text-muted-foreground">College</p>
+                                    <p className="text-sm">{profile.college || 'Not Set'}</p>
                                 </div>
-                             </div>
+                            </div>
                         </div>
                         <div className="md:col-span-1">
                             {cgpaData ? (
@@ -263,3 +261,4 @@ export default function ProfilePage() {
     </>
   );
 }
+
