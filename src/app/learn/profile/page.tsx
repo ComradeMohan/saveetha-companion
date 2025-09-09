@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,11 +12,17 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateProfileDescription } from '@/ai/flows/profile-describer-flow';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface CgpaData {
     cgpa: number;
     totalCredits: number;
 }
+
+const gradePoints: { [key: string]: number } = {
+  S: 10, A: 9, B: 8, C: 7, D: 6, E: 5,
+};
 
 function ProfilePageSkeleton() {
     return (
@@ -50,28 +56,40 @@ export default function ProfilePage() {
   const [loadingDescription, setLoadingDescription] = useState(true);
 
   useEffect(() => {
-    const fetchCgpaData = async () => {
-      if (user) {
-        setLoadingCgpa(true);
-        try {
-          const { getDoc, doc } = await import('firebase/firestore');
-          const { db } = await import('@/lib/firebase');
-          const cgpaDocRef = doc(db, 'students_cgpa', user.uid);
-          const cgpaDocSnap = await getDoc(cgpaDocRef);
+    const fetchAndCalculateCgpa = async () => {
+      if (!user) return;
+      setLoadingCgpa(true);
+      try {
+        const gradesDocRef = doc(db, 'student_grades', user.uid);
+        const gradesDocSnap = await getDoc(gradesDocRef);
 
-          if (cgpaDocSnap.exists()) {
-            setCgpaData(cgpaDocSnap.data() as CgpaData);
-          }
-        } catch (error) {
-          console.error("Error fetching CGPA data:", error);
-        } finally {
-          setLoadingCgpa(false);
+        if (gradesDocSnap.exists()) {
+            const grades = gradesDocSnap.data();
+            let totalPoints = 0;
+            let totalSubjects = 0;
+            for (const courseCode in grades) {
+                const grade = grades[courseCode];
+                if (gradePoints[grade]) {
+                    totalPoints += gradePoints[grade];
+                    totalSubjects++;
+                }
+            }
+            const totalCredits = totalSubjects * 4; // Assuming 4 credits per subject
+            const cgpa = totalCredits > 0 ? (totalPoints * 4) / totalCredits : 0;
+
+            setCgpaData({ cgpa, totalCredits });
+        } else {
+            setCgpaData(null);
         }
+      } catch (error) {
+        console.error("Error fetching/calculating CGPA data:", error);
+      } finally {
+        setLoadingCgpa(false);
       }
     };
 
     if (!authLoading) {
-        fetchCgpaData();
+      fetchAndCalculateCgpa();
     }
   }, [user, authLoading]);
   
@@ -96,7 +114,6 @@ export default function ProfilePage() {
         }
     };
 
-    // We only fetch the description once auth, profile, and CGPA data are all loaded.
     if (!authLoading && profile && !loadingCgpa) {
         fetchDescription();
     }

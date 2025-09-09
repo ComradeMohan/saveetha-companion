@@ -13,7 +13,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
-
+import { cn } from "@/lib/utils";
 
 type Course = {
     id: string;
@@ -33,6 +33,15 @@ interface BulkGradeEntryProps {
 }
 
 const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
+
+const gradeColorClasses: Record<string, string> = {
+    S: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+    A: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+    B: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300',
+    C: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
+    D: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
+    E: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+}
 
 export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGradeEntryProps) {
     const { user } = useAuth();
@@ -206,12 +215,12 @@ export function BulkGradeEntry({ allCourses, existingGrades, onSave }: BulkGrade
                                         </TableCell>
                                         <TableCell>
                                              <Select value={g.grade} onValueChange={(newGrade) => handleGradeChange(g.code, newGrade)}>
-                                                <SelectTrigger>
+                                                <SelectTrigger className={cn(gradeColorClasses[g.grade])}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {grades.map(grade => (
-                                                        <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                                                        <SelectItem key={grade} value={grade} className={cn("focus:text-white", gradeColorClasses[grade])}>{grade}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>

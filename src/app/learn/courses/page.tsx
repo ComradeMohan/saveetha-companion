@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, Check, BookOpen } from 'lucide-react';
+import { Loader2, Save, Check, BookOpen, PlusCircle } from 'lucide-react';
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
@@ -13,9 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
 import { getCourses } from '@/app/actions/manage-courses';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BulkGradeEntry } from '@/components/learn/bulk-grade-entry';
+import { SuggestCourseDialog } from '@/components/learn/suggest-course-dialog';
 
 type Course = {
   id: string;
@@ -160,6 +160,7 @@ export default function CoursesPage() {
         <>
             <div className="flex items-center justify-between">
                 <h1 className="text-lg font-semibold md:text-2xl">Log Course Grades</h1>
+                <SuggestCourseDialog />
             </div>
 
             <BulkGradeEntry 
