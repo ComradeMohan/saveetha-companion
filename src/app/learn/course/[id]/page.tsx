@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, Loader2, FileText, Youtube, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
+import TopicContent from '@/components/learn/topic-content';
 
 type CourseInfo = {
   id: string;
@@ -121,7 +122,7 @@ export default function CoursePage() {
                                            {topic.notes && (
                                                 <div>
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><FileText className="h-4 w-4"/> Notes</h5>
-                                                    <div dangerouslySetInnerHTML={{ __html: topic.notes }} />
+                                                    <TopicContent htmlContent={topic.notes} />
                                                 </div>
                                            )}
                                            {topic.videoUrl && (
