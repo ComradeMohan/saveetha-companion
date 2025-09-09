@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, Check, BookOpen, PlusCircle } from 'lucide-react';
+import { Loader2, Save, Check, BookOpen, PlusCircle, Search } from 'lucide-react';
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
@@ -16,6 +16,9 @@ import { getCourses } from '@/app/actions/manage-courses';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BulkGradeEntry } from '@/components/learn/bulk-grade-entry';
 import { SuggestCourseDialog } from '@/components/learn/suggest-course-dialog';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 type Course = {
   id: string;
@@ -23,6 +26,16 @@ type Course = {
 };
 
 const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
+
+const gradeColorClasses: Record<string, string> = {
+    S: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700',
+    A: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700',
+    B: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/50 dark:text-indigo-300 dark:border-indigo-700',
+    C: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-700',
+    D: 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700',
+    E: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700',
+};
+
 
 type StudentGrades = {
   [courseCode: string]: string; // e.g., { "CSA02": "A", "UBA01": "S" }
@@ -34,6 +47,7 @@ export default function CoursesPage() {
     const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     
     const [selectedCourse, setSelectedCourse] = useState<string>("");
     const [selectedGrade, setSelectedGrade] = useState<string>("");
@@ -126,16 +140,26 @@ export default function CoursesPage() {
         }));
     }, [allCourses]);
 
-    const completedCourses = useMemo(() => {
-        return Object.entries(studentGrades).map(([courseCode, grade]) => {
+    const filteredCompletedCourses = useMemo(() => {
+        const completedCourses = Object.entries(studentGrades).map(([courseCode, grade]) => {
             const course = allCourses.find(c => c.id === courseCode);
             return {
                 id: courseCode,
                 name: course?.name || 'Unknown Course',
                 grade
             };
-        }).sort((a,b) => a.id.localeCompare(b.id)); // Sort alphabetically by code
-    }, [studentGrades, allCourses]);
+        }).sort((a, b) => a.id.localeCompare(b.id));
+
+        if (!searchTerm) {
+            return completedCourses;
+        }
+        const lowercasedFilter = searchTerm.toLowerCase();
+        return completedCourses.filter(course =>
+            course.name.toLowerCase().includes(lowercasedFilter) ||
+            course.id.toLowerCase().includes(lowercasedFilter)
+        );
+    }, [studentGrades, allCourses, searchTerm]);
+
 
     if (loading || authLoading) {
         return (
@@ -218,14 +242,27 @@ export default function CoursesPage() {
             
             <Card className="mt-6">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Check className="h-5 w-5 text-green-500" />
-                        Completed Courses
-                    </CardTitle>
-                    <CardDescription>A list of all the grades you have logged so far.</CardDescription>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <Check className="h-5 w-5 text-green-500" />
+                                Completed Courses
+                            </CardTitle>
+                            <CardDescription className="mt-1">A list of all the grades you have logged so far.</CardDescription>
+                        </div>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Filter courses..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10 w-full sm:w-64"
+                            />
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    {completedCourses.length > 0 ? (
+                    {Object.keys(studentGrades).length > 0 ? (
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -235,13 +272,23 @@ export default function CoursesPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {completedCourses.map(course => (
+                                {filteredCompletedCourses.length > 0 ? filteredCompletedCourses.map(course => (
                                     <TableRow key={course.id}>
                                         <TableCell className="font-mono">{course.id}</TableCell>
                                         <TableCell>{course.name}</TableCell>
-                                        <TableCell className="text-right font-bold text-primary">{course.grade}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Badge variant="outline" className={cn("text-base font-bold", gradeColorClasses[course.grade])}>
+                                                {course.grade}
+                                            </Badge>
+                                        </TableCell>
                                     </TableRow>
-                                ))}
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="h-24 text-center">
+                                            No courses match your search.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     ) : (

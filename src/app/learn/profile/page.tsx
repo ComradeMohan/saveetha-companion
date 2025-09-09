@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Phone, CheckCircle2, Calculator, Building, School, Bot, Loader2 } from 'lucide-react';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
@@ -27,12 +27,12 @@ const gradePoints: { [key: string]: number } = {
 function ProfilePageSkeleton() {
     return (
         <Card className="w-full">
-            <CardHeader className="text-center p-6 md:p-8">
+            <CardHeader className="text-center p-6">
                  <Skeleton className="h-24 w-24 rounded-full mx-auto mb-4" />
                  <Skeleton className="h-8 w-48 mx-auto mb-2" />
                  <Skeleton className="h-4 w-64 mx-auto" />
             </CardHeader>
-            <CardContent className="p-6 md:p-8 pt-0">
+            <CardContent className="p-6 pt-0">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 space-y-4">
                         <Skeleton className="h-24 w-full" />
@@ -140,33 +140,33 @@ export default function ProfilePage() {
        <div className="mt-4">
         {isLoading ? <ProfilePageSkeleton /> : profile ? (
             <Card className="w-full">
-                <CardHeader className="text-center bg-secondary/30 p-6 md:p-8 rounded-t-xl">
-                    <Avatar className="h-24 w-24 mx-auto mb-4 border-4 border-primary/50 shadow-lg">
+                <CardHeader className="text-center bg-secondary/30 p-6 rounded-t-xl">
+                    <Avatar className="h-20 w-20 mx-auto mb-3 border-4 border-primary/50 shadow-lg">
                         <AvatarImage src={profile.photoURL} alt={profile.name} />
-                        <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
+                        <AvatarFallback className="text-2xl">{userInitials}</AvatarFallback>
                     </Avatar>
-                    <h1 className="text-3xl font-bold">{profile.name}</h1>
-                    <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                    <h1 className="text-2xl font-bold">{profile.name}</h1>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                         <p>{profile.email}</p>
                         {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500" />}
                     </div>
                 </CardHeader>
 
-                <CardContent className="p-6 md:p-8">
+                <CardContent className="p-6">
                      <Card className="mb-6 bg-primary/5 border-primary/20">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-lg flex items-center gap-2">
+                        <CardHeader className="pb-2 pt-4">
+                            <CardTitle className="text-base flex items-center gap-2">
                                 <Bot className="h-5 w-5 text-primary" /> AI Profile Summary
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-0 pb-4">
                             {loadingDescription ? (
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                     <span>Generating your summary...</span>
                                 </div>
                             ) : (
-                                <p className="text-muted-foreground italic">{aiDescription}</p>
+                                <p className="text-sm text-muted-foreground italic">{aiDescription}</p>
                             )}
                         </CardContent>
                     </Card>
@@ -174,46 +174,46 @@ export default function ProfilePage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="md:col-span-2 space-y-4">
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <User className="h-5 w-5 text-primary mt-1" />
+                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                    <User className="h-5 w-5 text-primary" />
                                     <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">Registration No.</p>
-                                        <p>{profile.regNo || 'Not Set'}</p>
+                                        <p className="font-semibold text-xs text-muted-foreground">Registration No.</p>
+                                        <p className="text-sm">{profile.regNo || 'Not Set'}</p>
                                     </div>
                                 </div>
-                                 <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <Phone className="h-5 w-5 text-primary mt-1" />
+                                 <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                    <Phone className="h-5 w-5 text-primary" />
                                     <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">Phone Number</p>
-                                        <p>{profile.phone || 'Not Set'}</p>
+                                        <p className="font-semibold text-xs text-muted-foreground">Phone Number</p>
+                                        <p className="text-sm">{profile.phone || 'Not Set'}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <School className="h-5 w-5 text-primary mt-1" />
+                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                    <School className="h-5 w-5 text-primary" />
                                     <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">Department</p>
-                                        <p>{profile.department || 'Not Set'}</p>
+                                        <p className="font-semibold text-xs text-muted-foreground">Department</p>
+                                        <p className="text-sm">{profile.department || 'Not Set'}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <Building className="h-5 w-5 text-primary mt-1" />
+                                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
+                                    <Building className="h-5 w-5 text-primary" />
                                     <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">College</p>
-                                        <p>{profile.college || 'Not Set'}</p>
+                                        <p className="font-semibold text-xs text-muted-foreground">College</p>
+                                        <p className="text-sm">{profile.college || 'Not Set'}</p>
                                     </div>
                                 </div>
                              </div>
                         </div>
                         <div className="md:col-span-1">
                             {cgpaData ? (
-                                <Card className="bg-secondary/30 text-center h-full flex flex-col justify-center">
-                                    <CardHeader className="pb-0">
-                                        <CardTitle className="text-lg">Your CGPA</CardTitle>
+                                <Card className="bg-secondary/30 text-center h-full flex flex-col justify-center items-center">
+                                    <CardHeader className="p-2 pt-4">
+                                        <CardTitle className="text-base">Your CGPA</CardTitle>
                                     </CardHeader>
-                                    <CardContent className="flex items-center justify-center p-0">
+                                    <CardContent className="flex-1 flex items-center justify-center p-0">
                                         <ChartContainer
                                             config={chartConfig}
-                                            className="mx-auto aspect-square h-48 w-48"
+                                            className="mx-auto aspect-square h-40 w-40"
                                         >
                                             <RadialBarChart data={chartData} startAngle={-270} endAngle={90} innerRadius="70%" outerRadius="100%" barSize={20}>
                                                 <PolarAngleAxis type="number" domain={[0, 100]} dataKey="value" tick={false}/>
@@ -223,10 +223,10 @@ export default function ProfilePage() {
                                                         return (
                                                             <>
                                                             <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                                                                <tspan className="fill-foreground text-4xl font-bold tabular-nums">{cgpaData.cgpa.toFixed(2)}</tspan>
+                                                                <tspan className="fill-foreground text-3xl font-bold tabular-nums">{cgpaData.cgpa.toFixed(2)}</tspan>
                                                             </text>
-                                                            <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
-                                                                <tspan className="fill-muted-foreground text-sm">out of 10</tspan>
+                                                            <text x={viewBox.cx} y={(viewBox.cy || 0) + 16} textAnchor="middle" dominantBaseline="middle">
+                                                                <tspan className="fill-muted-foreground text-xs">out of 10</tspan>
                                                             </text>
                                                             </>
                                                         )}
@@ -236,8 +236,8 @@ export default function ProfilePage() {
                                             </RadialBarChart>
                                         </ChartContainer>
                                     </CardContent>
-                                    <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-2 pb-4">
-                                        <p>Based on {cgpaData.totalCredits} total credits.</p>
+                                    <CardFooter className="text-xs text-muted-foreground justify-center p-2 pb-3">
+                                        <p>Based on {cgpaData.totalCredits} credits.</p>
                                     </CardFooter>
                                 </Card>
                             ) : (
