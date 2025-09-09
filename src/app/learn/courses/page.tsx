@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, Check, BookOpen, PlusCircle, Search } from 'lucide-react';
+import { Loader2, Save, Check, BookOpen, PlusCircle, Search, ArrowUpDown } from 'lucide-react';
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
@@ -27,6 +27,8 @@ type Course = {
 
 const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
 
+const gradePoints: { [key: string]: number } = { S: 10, A: 9, B: 8, C: 7, D: 6, E: 5 };
+
 const gradeColorClasses: Record<string, string> = {
     S: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700',
     A: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700',
@@ -41,6 +43,9 @@ type StudentGrades = {
   [courseCode: string]: string; // e.g., { "CSA02": "A", "UBA01": "S" }
 };
 
+type SortKey = 'id' | 'name' | 'grade';
+type SortDirection = 'asc' | 'desc';
+
 export default function CoursesPage() {
     const { user, profile, loading: authLoading } = useAuth();
     const [allCourses, setAllCourses] = useState<Course[]>([]);
@@ -48,6 +53,7 @@ export default function CoursesPage() {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({ key: 'id', direction: 'asc' });
     
     const [selectedCourse, setSelectedCourse] = useState<string>("");
     const [selectedGrade, setSelectedGrade] = useState<string>("");
@@ -133,6 +139,22 @@ export default function CoursesPage() {
         }
     }
 
+    const handleSort = (key: SortKey) => {
+        let direction: SortDirection = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: SortKey) => {
+      if (sortConfig.key !== key) {
+        return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />;
+      }
+      return sortConfig.direction === 'asc' ? '▲' : '▼';
+    }
+
+
     const comboboxOptions = useMemo(() => {
         return allCourses.map(course => ({
             value: course.id,
@@ -140,25 +162,45 @@ export default function CoursesPage() {
         }));
     }, [allCourses]);
 
-    const filteredCompletedCourses = useMemo(() => {
-        const completedCourses = Object.entries(studentGrades).map(([courseCode, grade]) => {
+    const filteredAndSortedCourses = useMemo(() => {
+        let completedCourses = Object.entries(studentGrades).map(([courseCode, grade]) => {
             const course = allCourses.find(c => c.id === courseCode);
             return {
                 id: courseCode,
                 name: course?.name || 'Unknown Course',
                 grade
             };
-        }).sort((a, b) => a.id.localeCompare(b.id));
+        });
 
-        if (!searchTerm) {
-            return completedCourses;
+        if (searchTerm) {
+            const lowercasedFilter = searchTerm.toLowerCase();
+            completedCourses = completedCourses.filter(course =>
+                course.name.toLowerCase().includes(lowercasedFilter) ||
+                course.id.toLowerCase().includes(lowercasedFilter)
+            );
         }
-        const lowercasedFilter = searchTerm.toLowerCase();
-        return completedCourses.filter(course =>
-            course.name.toLowerCase().includes(lowercasedFilter) ||
-            course.id.toLowerCase().includes(lowercasedFilter)
-        );
-    }, [studentGrades, allCourses, searchTerm]);
+        
+        return completedCourses.sort((a, b) => {
+            let aValue, bValue;
+            switch(sortConfig.key) {
+                case 'grade':
+                    aValue = gradePoints[a.grade] ?? 0;
+                    bValue = gradePoints[b.grade] ?? 0;
+                    break;
+                case 'name':
+                    aValue = a.name;
+                    bValue = b.name;
+                    break;
+                default: // id
+                    aValue = a.id;
+                    bValue = b.id;
+            }
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+    }, [studentGrades, allCourses, searchTerm, sortConfig]);
 
 
     if (loading || authLoading) {
@@ -267,13 +309,25 @@ export default function CoursesPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[80px]">S.No.</TableHead>
-                                    <TableHead>Course Code</TableHead>
-                                    <TableHead>Course Name</TableHead>
-                                    <TableHead className="text-right">Grade</TableHead>
+                                    <TableHead>
+                                        <Button variant="ghost" className="px-0" onClick={() => handleSort('id')}>
+                                            Course Code {getSortIcon('id')}
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                        <Button variant="ghost" className="px-0" onClick={() => handleSort('name')}>
+                                            Course Name {getSortIcon('name')}
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                         <Button variant="ghost" className="px-0" onClick={() => handleSort('grade')}>
+                                            Grade {getSortIcon('grade')}
+                                        </Button>
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredCompletedCourses.length > 0 ? filteredCompletedCourses.map((course, index) => (
+                                {filteredAndSortedCourses.length > 0 ? filteredAndSortedCourses.map((course, index) => (
                                     <TableRow key={course.id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell className="font-mono">{course.id}</TableCell>
