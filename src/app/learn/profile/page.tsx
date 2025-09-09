@@ -152,8 +152,8 @@ export default function ProfilePage() {
                     </div>
                 </CardHeader>
 
-                <CardContent className="p-6">
-                     <Card className="mb-6 bg-primary/5 border-primary/20">
+                <CardContent className="p-4 md:p-6">
+                     <Card className="mb-4 bg-primary/5 border-primary/20">
                         <CardHeader className="pb-2 pt-4">
                             <CardTitle className="text-base flex items-center gap-2">
                                 <Bot className="h-5 w-5 text-primary" /> AI Profile Summary
@@ -171,9 +171,9 @@ export default function ProfilePage() {
                         </CardContent>
                     </Card>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-2 space-y-4">
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="md:col-span-2 space-y-2">
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg">
                                     <User className="h-5 w-5 text-primary" />
                                     <div>
@@ -207,15 +207,15 @@ export default function ProfilePage() {
                         <div className="md:col-span-1">
                             {cgpaData ? (
                                 <Card className="bg-secondary/30 text-center h-full flex flex-col justify-center items-center">
-                                    <CardHeader className="p-2 pt-4">
-                                        <CardTitle className="text-base">Your CGPA</CardTitle>
+                                    <CardHeader className="p-2 pt-3">
+                                        <CardTitle className="text-sm">Your CGPA</CardTitle>
                                     </CardHeader>
                                     <CardContent className="flex-1 flex items-center justify-center p-0">
                                         <ChartContainer
                                             config={chartConfig}
-                                            className="mx-auto aspect-square h-40 w-40"
+                                            className="mx-auto aspect-square h-32 w-32"
                                         >
-                                            <RadialBarChart data={chartData} startAngle={-270} endAngle={90} innerRadius="70%" outerRadius="100%" barSize={20}>
+                                            <RadialBarChart data={chartData} startAngle={-270} endAngle={90} innerRadius="70%" outerRadius="100%" barSize={15}>
                                                 <PolarAngleAxis type="number" domain={[0, 100]} dataKey="value" tick={false}/>
                                                 <RadialBar dataKey="value" background cornerRadius={10} className="fill-primary">
                                                     <LabelList position="center" content={({ viewBox }) => {
