@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useTransition, Fragment } from 'react';
+import { useEffect, useState, useTransition, Fragment, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -12,13 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic, addTopic } from '@/app/actions/manage-course-content';
@@ -200,6 +194,12 @@ export default function CourseContentPage() {
       }
   };
 
+  const courseOptions = useMemo(() => 
+    courses.map(c => ({
+        value: c.id,
+        label: `${c.name} (${c.id})`
+    })), [courses]);
+
 
   return (
     <div className="space-y-6">
@@ -214,12 +214,14 @@ export default function CourseContentPage() {
             <CardDescription>Choose the course you want to manage.</CardDescription>
         </CardHeader>
         <CardContent>
-            <Select onValueChange={setSelectedCourse} value={selectedCourse}>
-              <SelectTrigger><SelectValue placeholder="Select a Course"/></SelectTrigger>
-              <SelectContent>
-                {courses.map(c => <SelectItem key={c.id} value={c.id}>{c.name} ({c.id})</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Combobox
+                options={courseOptions}
+                value={selectedCourse}
+                onChange={setSelectedCourse}
+                placeholder="Search by course name or code..."
+                searchPlaceholder="Search courses..."
+                notFoundMessage="No course found."
+            />
         </CardContent>
       </Card>
       
