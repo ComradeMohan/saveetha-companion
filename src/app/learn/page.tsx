@@ -7,7 +7,6 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2, Trophy } from "lucide-react";
-import { getCourses } from '@/app/actions/manage-courses';
 import { arrangeRoadmap } from '@/ai/flows/roadmap-arranger-flow';
 import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -125,11 +124,19 @@ export default function LearnHomePage() {
     return completed;
   }, [studentGrades, roadmapCourses]);
 
-  const { totalCourses, progressPercentage } = useMemo(() => {
+  const { totalCourses, progressPercentage, remainingCoursesList } = useMemo(() => {
     const total = roadmapCourses.size;
     const completedCount = completedRoadmapCourses.size;
     const percentage = total > 0 ? (completedCount / total) * 100 : 0;
-    return { totalCourses: total, completedCount, progressPercentage: percentage };
+    
+    const remaining: Course[] = [];
+    roadmapCourses.forEach((course) => {
+        if (!completedRoadmapCourses.has(course.id)) {
+            remaining.push(course);
+        }
+    });
+
+    return { totalCourses: total, completedCount, progressPercentage: percentage, remainingCoursesList: remaining };
   }, [roadmapCourses, completedRoadmapCourses]);
 
   if (loading || authLoading) {
@@ -150,6 +157,8 @@ export default function LearnHomePage() {
           </div>
       )
   }
+
+  const showSimpleView = remainingCoursesList.length <= 8;
 
   return (
     <>
@@ -173,61 +182,85 @@ export default function LearnHomePage() {
       {roadmapLoading ? <RoadmapSkeleton /> : (
         <Card>
             <CardHeader>
-                <CardTitle>Your AI-Generated Academic Journey</CardTitle>
+                <CardTitle>{showSimpleView ? "Your Remaining Courses" : "Your AI-Generated Academic Journey"}</CardTitle>
                 <CardDescription>
-                    A recommended roadmap for {profile.department} at {profile.college}. Courses disappear from here once you log a grade for them in the 'My Courses' tab.
+                    {showSimpleView
+                        ? "Here are the last few courses in your curriculum. Keep going!"
+                        : `A recommended roadmap for ${profile.department} at ${profile.college}. Courses disappear once you log a grade.`}
                 </CardDescription>
             </CardHeader>
             <CardContent>
-            <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
-                {roadmapData.length > 0 ? (
-                    roadmapData.map((stage) => {
-                        const remainingCourses = stage.courses.filter(course => !completedRoadmapCourses.has(course.id));
-                        if (remainingCourses.length === 0) return null;
-
-                        return (
-                        <div key={stage.name} className="grid gap-6 mb-8">
-                            <div className="grid grid-cols-[40px_1fr] items-start gap-4">
-                                <div className="flex-shrink-0">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
-                                    <GitBranch className="h-5 w-5 text-primary" />
-                                    </span>
+                {showSimpleView ? (
+                    // Simple grid view for 8 or fewer courses
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                         {remainingCoursesList.length > 0 ? remainingCoursesList.map(course => (
+                            <Link key={course.id} href={`/learn/course/${course.id}`} className="group">
+                                <div className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30 h-full transition-all hover:bg-secondary/60 hover:border-primary/50">
+                                    <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-semibold group-hover:text-primary transition-colors">{course.name}</p>
+                                        <p className="text-sm text-muted-foreground">{course.id}</p>
+                                    </div>
                                 </div>
-                                <div className="pt-2">
-                                    <h3 className="text-lg font-semibold">{stage.name}</h3>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pl-4 md:pl-14">
-                                {remainingCourses.map(course => (
-                                    <Link key={course.id} href={`/learn/course/${course.id}`} className="group">
-                                        <div className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30 h-full transition-all hover:bg-secondary/60 hover:border-primary/50">
-                                            <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                                            <div>
-                                                <p className="font-semibold group-hover:text-primary transition-colors">{course.name}</p>
-                                                <p className="text-sm text-muted-foreground">{course.id}</p>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-                        )
-                    })
-                ) : (
-                    <div className="pl-4 md:pl-14 text-muted-foreground">No courses found for your department. An admin needs to add them.</div>
-                )}
-                <div className="grid grid-cols-[40px_1fr] items-start gap-4">
-                    <div className="flex-shrink-0">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-green-500 bg-green-500/10 -ml-5 relative z-10">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
-                        </span>
+                            </Link>
+                        )) : (
+                           <div className="col-span-full text-center py-10 text-muted-foreground">
+                                All roadmap courses completed!
+                           </div>
+                        )}
                     </div>
-                    <div className="pt-2">
-                        <h3 className="text-lg font-semibold">End of Roadmap</h3>
-                        <p className="text-muted-foreground">Log grades in 'My Courses' to see your progress.</p>
+                ) : (
+                    // Full roadmap timeline view
+                    <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6">
+                        {roadmapData.map((stage) => {
+                            const stageRemainingCourses = stage.courses.filter(course => !completedRoadmapCourses.has(course.id));
+                            if (stageRemainingCourses.length === 0) return null;
+
+                            return (
+                                <div key={stage.name} className="grid gap-6 mb-8">
+                                    <div className="grid grid-cols-[40px_1fr] items-start gap-4">
+                                        <div className="flex-shrink-0">
+                                            <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-primary/10 -ml-5 relative z-10">
+                                            <GitBranch className="h-5 w-5 text-primary" />
+                                            </span>
+                                        </div>
+                                        <div className="pt-2">
+                                            <h3 className="text-lg font-semibold">{stage.name}</h3>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pl-4 md:pl-14">
+                                        {stageRemainingCourses.map(course => (
+                                            <Link key={course.id} href={`/learn/course/${course.id}`} className="group">
+                                                <div className="flex items-start gap-3 p-3 rounded-lg border bg-secondary/30 h-full transition-all hover:bg-secondary/60 hover:border-primary/50">
+                                                    <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                                    <div>
+                                                        <p className="font-semibold group-hover:text-primary transition-colors">{course.name}</p>
+                                                        <p className="text-sm text-muted-foreground">{course.id}</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+
+                {/* This section appears regardless of view type */}
+                <div className="relative pl-6 after:absolute after:inset-y-0 after:w-px after:bg-muted-foreground/20 after:left-6 mt-8">
+                    <div className="grid grid-cols-[40px_1fr] items-start gap-4">
+                        <div className="flex-shrink-0">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-green-500 bg-green-500/10 -ml-5 relative z-10">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                            </span>
+                        </div>
+                        <div className="pt-2">
+                            <h3 className="text-lg font-semibold">End of Roadmap</h3>
+                            <p className="text-muted-foreground">Log grades in 'My Courses' to see your progress.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
             </CardContent>
         </Card>
       )}
