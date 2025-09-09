@@ -266,14 +266,16 @@ export default function CoursesPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead className="w-[80px]">S.No.</TableHead>
                                     <TableHead>Course Code</TableHead>
                                     <TableHead>Course Name</TableHead>
                                     <TableHead className="text-right">Grade</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredCompletedCourses.length > 0 ? filteredCompletedCourses.map(course => (
+                                {filteredCompletedCourses.length > 0 ? filteredCompletedCourses.map((course, index) => (
                                     <TableRow key={course.id}>
+                                        <TableCell>{index + 1}</TableCell>
                                         <TableCell className="font-mono">{course.id}</TableCell>
                                         <TableCell>{course.name}</TableCell>
                                         <TableCell className="text-right">
@@ -284,7 +286,7 @@ export default function CoursesPage() {
                                     </TableRow>
                                 )) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             No courses match your search.
                                         </TableCell>
                                     </TableRow>
