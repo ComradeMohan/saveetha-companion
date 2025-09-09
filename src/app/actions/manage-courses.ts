@@ -162,3 +162,4 @@ export async function seedCourses(collegeId: string, departmentId: string) {
 export async function seedAiDsCourses(collegeId: string, departmentId: string) {
     return seedCourseData(collegeId, departmentId, sseAiDsCourses, 'AI & DS');
 }
+
