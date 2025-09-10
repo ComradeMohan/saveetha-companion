@@ -67,7 +67,6 @@ export default function StudentDashboardPage() {
                             <p className="text-sm text-muted-foreground">{profile?.department || 'Student'}</p>
                         </div>
                     </div>
-                    <Button variant="outline" size="sm">Edit status</Button>
                 </CardContent>
             </Card>
 
@@ -88,6 +87,9 @@ export default function StudentDashboardPage() {
                         <div className="flex-1 w-full space-y-4">
                              <div className="flex flex-wrap items-center gap-4 text-sm">
                                 <Badge variant="secondary">GPA: {data.cgpa.toFixed(2)}</Badge>
+                                 <p className="text-muted-foreground">
+                                    {data.completedCoursesCount} of {data.totalCourses} core courses completed
+                                </p>
                              </div>
                             <Progress value={data.progressPercentage} className="h-2" />
                         </div>
@@ -96,20 +98,25 @@ export default function StudentDashboardPage() {
                 
                  <Card>
                     <CardHeader>
-                        <CardTitle>Continue Studying</CardTitle>
+                        <CardTitle>Quick Actions</CardTitle>
+                        <CardDescription>Jump right back into your work.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
                            <div className="flex items-center gap-3">
                                 <div className="p-2 bg-background rounded-md">
                                     <Scan className="h-5 w-5 text-primary"/>
-                                </div>
+                                d_iv>
                                 <div>
-                                    <p className="font-semibold">Artificial Intelligence</p>
-                                    <p className="text-xs text-muted-foreground">MASTER Mode</p>
+                                    <p className="font-semibold">Review Roadmap</p>
+                                    <p className="text-xs text-muted-foreground">Check your course progression</p>
                                 </div>
                            </div>
-                           <Button size="sm">Resume</Button>
+                           <Button size="sm" asChild>
+                                <Link href="/learn">
+                                    View
+                                </Link>
+                           </Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -124,13 +131,13 @@ export default function StudentDashboardPage() {
                         <div className="p-4 bg-primary/5 rounded-lg flex items-start justify-between">
                             <div>
                                 <p className="text-xs text-muted-foreground">Total Time Spent</p>
-                                <p className="text-2xl font-bold">42h 30m</p>
+                                <p className="text-2xl font-bold">--</p>
                             </div>
                             <Clock4 className="h-4 w-4 text-muted-foreground"/>
                         </div>
                          <div className="p-4 bg-primary/5 rounded-lg flex items-start justify-between">
                             <div>
-                                <p className="text-xs text-muted-foreground">Total Courses</p>
+                                <p className="text-xs text-muted-foreground">Core Courses</p>
                                 <p className="text-2xl font-bold">{data.totalCourses}</p>
                             </div>
                             <BookOpen className="h-4 w-4 text-muted-foreground"/>
@@ -141,18 +148,18 @@ export default function StudentDashboardPage() {
                  <Card className="lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>Add or manage activities as you engage with courses.</CardDescription>
+                        <CardDescription>Manage activities as you engage with courses.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="p-4 text-center bg-primary/5 rounded-lg text-sm text-muted-foreground">
-                            No recent activity to show
+                            Activity tracking is not yet available.
                         </div>
                         <div className="flex items-center gap-2 mt-4">
                            <div className="relative flex-1">
                              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                             <Input placeholder="Found saved course" className="pl-8" />
+                             <Input placeholder="Search saved courses..." className="pl-8" disabled />
                            </div>
-                           <Button variant="secondary">Manage</Button>
+                           <Button variant="secondary" disabled>Manage</Button>
                         </div>
                     </CardContent>
                 </Card>
