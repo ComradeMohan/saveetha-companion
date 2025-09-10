@@ -64,7 +64,7 @@ export default function StudentDashboardPage() {
                         </Avatar>
                         <div>
                             <p className="font-semibold">{profile?.name}</p>
-                            <p className="text-sm text-muted-foreground">I am testing this qapp for the mobile application</p>
+                            <p className="text-sm text-muted-foreground">{profile?.department || 'Student'}</p>
                         </div>
                     </div>
                     <Button variant="outline" size="sm">Edit status</Button>
