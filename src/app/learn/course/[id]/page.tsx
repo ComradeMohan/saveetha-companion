@@ -38,7 +38,8 @@ export default function CoursePage() {
             getUnits(courseId)
         ]);
 
-        setCourse({ id: courseId, name: courseName || `Course ${courseId}` });
+        const currentCourse = { id: courseId, name: courseName || `Course ${courseId}` };
+        setCourse(currentCourse);
         
         if (units.length > 0) {
             const unitsWithTopics = await Promise.all(
@@ -48,6 +49,11 @@ export default function CoursePage() {
                 })
             );
             setCourseContent(unitsWithTopics);
+        }
+
+        // Save the last viewed course to localStorage
+        if (currentCourse.name) {
+          localStorage.setItem('lastViewedCourse', JSON.stringify({ id: currentCourse.id, name: currentCourse.name }));
         }
         
       } catch (error) {

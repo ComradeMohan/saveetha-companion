@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Book, Search, Briefcase, Bot, ArrowRight, BookOpen, Clock4, Scan } from 'lucide-react';
+import { Clock, Book, Search, Briefcase, Bot, ArrowRight, BookOpen, Clock4, Scan, Link as LinkIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { useEffect, useState } from 'react';
 
 function DashboardSkeleton() {
     return (
@@ -36,10 +37,28 @@ function DashboardSkeleton() {
     )
 }
 
+interface LastViewedCourse {
+    id: string;
+    name: string;
+}
+
 
 export default function StudentDashboardPage() {
     const { user, profile, loading: authLoading } = useAuth();
     const { data, loading: dataLoading } = useStudentDashboard();
+    const [lastViewedCourse, setLastViewedCourse] = useState<LastViewedCourse | null>(null);
+
+    useEffect(() => {
+        const item = localStorage.getItem('lastViewedCourse');
+        if (item) {
+            try {
+                setLastViewedCourse(JSON.parse(item));
+            } catch (e) {
+                console.error("Failed to parse last viewed course from localStorage", e);
+                localStorage.removeItem('lastViewedCourse');
+            }
+        }
+    }, []);
 
     const loading = authLoading || dataLoading;
 
@@ -78,10 +97,9 @@ export default function StudentDashboardPage() {
                     </CardHeader>
                     <CardContent className="flex flex-col sm:flex-row items-center gap-6">
                         <div className="relative h-28 w-28 flex-shrink-0">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                 <div className="h-full w-full rounded-lg border-2 border-dashed flex items-center justify-center">
-                                     <span className="text-3xl font-bold">{data.progressPercentage.toFixed(0)}%</span>
-                                 </div>
+                             <Progress value={data.progressPercentage} className="h-full w-full rounded-lg border-2 border-dashed" />
+                             <div className="absolute inset-0 flex items-center justify-center">
+                                 <span className="text-3xl font-bold">{data.progressPercentage.toFixed(0)}%</span>
                             </div>
                         </div>
                         <div className="flex-1 w-full space-y-4">
@@ -102,22 +120,41 @@ export default function StudentDashboardPage() {
                         <CardDescription>Jump right back into your work.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
-                           <div className="flex items-center gap-3">
-                                <div className="p-2 bg-background rounded-md">
-                                    <Scan className="h-5 w-5 text-primary"/>
-                                </div>
-                                <div>
-                                    <p className="font-semibold">Review Roadmap</p>
-                                    <p className="text-xs text-muted-foreground">Check your course progression</p>
-                                </div>
-                           </div>
-                           <Button size="sm" asChild>
-                                <Link href="/learn">
-                                    View
-                                </Link>
-                           </Button>
-                        </div>
+                        {lastViewedCourse ? (
+                             <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
+                               <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-background rounded-md">
+                                        <LinkIcon className="h-5 w-5 text-primary"/>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold">{lastViewedCourse.name}</p>
+                                        <p className="text-xs text-muted-foreground">Continue where you left off</p>
+                                    </div>
+                               </div>
+                               <Button size="sm" asChild>
+                                    <Link href={`/learn/course/${lastViewedCourse.id}`}>
+                                        View
+                                    </Link>
+                               </Button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
+                               <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-background rounded-md">
+                                        <Scan className="h-5 w-5 text-primary"/>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold">Review Roadmap</p>
+                                        <p className="text-xs text-muted-foreground">Check your course progression</p>
+                                    </div>
+                               </div>
+                               <Button size="sm" asChild>
+                                    <Link href="/learn">
+                                        View
+                                    </Link>
+                               </Button>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
