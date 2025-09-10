@@ -155,7 +155,7 @@ export default function Header() {
     if (user) {
         if (profile?.department && profile?.college) {
             setIsNavigating(true);
-            router.push('/learn');
+            router.push('/learn/dashboard');
         } else {
             setProfileDialogOpen(true);
         }
