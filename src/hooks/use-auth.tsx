@@ -152,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              const newProfile: UserProfileData = {
                 email: user.email!,
                 name: user.displayName!,
-                isVerified: false, // Default to not verified
+                isVerified: true, // Automatically verified since they are using a @saveetha.com account
                 photoURL: user.photoURL || undefined,
              };
              await setDoc(userDocRef, {
@@ -195,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const newProfile: UserProfileData = {
           email: user.email!,
           name: user.displayName!,
-          isVerified: false, // All new users start as unverified
+          isVerified: true, // Automatically verified on signup
           photoURL: user.photoURL || undefined,
         };
         await setDoc(userDocRef, {
@@ -210,14 +210,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(dbProfile);
         if(!dbProfile.regNo) {
             router.push('/complete-profile');
-        } else if (!dbProfile.isVerified) {
-            // User exists but is not verified
-             toast({
-                title: 'Account Pending Approval',
-                description: 'Your account is waiting for admin approval. Please check back later.',
-                variant: 'default',
-             });
-             await signOut(auth); // Log them out
         } else {
             router.push('/');
         }
@@ -246,12 +238,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       toast({
         title: 'Profile Complete!',
-        description: "Your account is now pending admin approval. You will be logged out.",
+        description: "You're all set! Welcome to the Saveetha Companion.",
       });
 
-      // Log the user out after they complete the profile, to await admin approval.
-      await signOut(auth);
-      router.push('/login');
+      router.push('/');
   }
 
   const updateUserAcademicProfile = async (data: AcademicProfile) => {

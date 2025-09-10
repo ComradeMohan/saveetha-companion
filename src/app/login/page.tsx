@@ -31,13 +31,7 @@ export default function LoginPage() {
             
             if (userDoc.exists()) {
                 const profile = userDoc.data();
-                if (!profile.isVerified) {
-                     toast({
-                        title: 'Account Pending Approval',
-                        description: 'Your account is waiting for admin approval. Please check back later.',
-                     });
-                     // User is logged out by the auth provider, so no need to do it here.
-                } else if (!profile.regNo) {
+                 if (!profile.regNo) {
                     router.push('/complete-profile');
                 } else {
                     router.push('/');

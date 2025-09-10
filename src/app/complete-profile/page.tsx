@@ -32,8 +32,7 @@ export default function CompleteProfilePage() {
         regNo,
         phone,
       });
-      router.push('/');
-      toast({ title: 'Profile completed successfully!' });
+      // The redirect is now handled in the completeUserProfile function
     } catch (error) {
       console.error('Profile Completion Error:', error);
       toast({ title: 'Error completing profile', description: (error as Error).message, variant: 'destructive' });
