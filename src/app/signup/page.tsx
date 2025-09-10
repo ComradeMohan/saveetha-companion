@@ -6,118 +6,35 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { LoginIssueDialog } from '@/components/login-issue-dialog';
 
-const step1Schema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters.'),
-  email: z.string().email('Please enter a valid email.').refine(email => email.endsWith('@saveetha.com'), {
-    message: 'Please use an email ending with @saveetha.com',
-  }),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
-});
-
-const step2Schema = z.object({
-  regNo: z.string().min(4, 'Registration number is required.'),
-  phone: z.string().regex(/^\d{10}$/, 'Please enter a valid 10-digit phone number.'),
-});
-
-const formSchema = step1Schema.merge(step2Schema);
-
-type SignUpFormValues = z.infer<typeof formSchema>;
-
 export default function SignUpPage() {
-  const [step, setStep] = useState(1);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, signUpWithEmailAndPassword, signInWithGoogle, completeUserProfile } = useAuth();
+  const { user, signInWithGoogle, loading: authLoading } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
 
-  const form = useForm<SignUpFormValues>({
-    resolver: zodResolver(step === 1 ? step1Schema : formSchema),
-    mode: 'onChange',
-  });
-  const { trigger, getValues, setValue } = form;
-
-  // Effect to move to step 2 after Google sign-in
   useEffect(() => {
-    if (user) {
-      setValue('name', user.displayName || '');
-      setValue('email', user.email || '');
-      setStep(2);
-      setGoogleLoading(false);
+    if (!authLoading && user) {
+      router.push('/complete-profile');
     }
-  }, [user, setValue]);
+  }, [user, authLoading, router]);
 
-  const onInputChange = () => {
-    if (error) {
-      setError(null);
-    }
-  };
-
-  const handleNextStep = async () => {
-    const isValid = await trigger(['name', 'email', 'password']);
-    if (isValid) {
-      setStep(2);
-    }
-  };
-  
-  const handlePrevStep = () => {
-    setStep(1);
-  }
-
-  const handleFormSubmit = async (data: SignUpFormValues) => {
+  const handleGoogleSignUp = async () => {
     setLoading(true);
     setError(null);
     try {
-      if (user) { // Case: Signed in with Google, now completing profile
-        await completeUserProfile({
-          regNo: data.regNo,
-          phone: data.phone,
-        });
-        toast({ 
-          title: 'Profile Completed!',
-          description: 'Your account is all set up.',
-        });
-        router.push('/');
-      } else { // Case: Standard email/password signup
-        await signUpWithEmailAndPassword(data);
-        toast({ 
-          title: 'Verification Email Sent!',
-          description: `We've sent a verification link to ${data.email}. Please check your inbox.`,
-        });
-        router.push('/login');
-      }
+      await signInWithGoogle(true);
+      // The useEffect will handle redirecting to complete-profile
     } catch (err: any) {
       setError(err.message);
     } finally {
-        setLoading(false);
-    }
-  };
-
-  const handleGoogleSignUp = async () => {
-    setGoogleLoading(true);
-    setError(null);
-    try {
-      await signInWithGoogle(true); // Pass true to indicate sign-up flow
-      // The useEffect will handle moving to the next step
-    } catch (err: any) {
-      setError(err.message);
-      setGoogleLoading(false);
+      setLoading(false);
     }
   };
 
@@ -140,138 +57,29 @@ export default function SignUpPage() {
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Create an Account</CardTitle>
-                <CardDescription>Get started with your academic companion.</CardDescription>
+                <CardDescription>Sign up with your @saveetha.com Google account to get started.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center gap-2 mb-6">
-                      <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold", step >= 1 ? "bg-primary text-primary-foreground" : "bg-muted")}>1</div>
-                        <span className={cn("text-sm", step >= 1 ? "text-primary font-semibold" : "text-muted-foreground")}>Account</span>
-                      </div>
-                      <div className="flex-1 h-px bg-border" />
-                      <div className="flex items-center gap-2">
-                        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold", step >= 2 ? "bg-primary text-primary-foreground" : "bg-muted")}>2</div>
-                        <span className={cn("text-sm", step >= 2 ? "text-primary font-semibold" : "text-muted-foreground")}>Details</span>
-                      </div>
-                  </div>
+                <CardContent className="space-y-4">
+                  <Button variant="outline" className="w-full" onClick={handleGoogleSignUp} disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 
+                      <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
+                      }
+                      Sign up with Google
+                  </Button>
 
-                <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-                  {step === 1 && (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                            id="name"
-                            type="text"
-                            placeholder="John Doe"
-                            {...form.register('name')}
-                            onChange={(e) => { form.setValue('name', e.target.value); onInputChange(); }}
-                            disabled={loading || googleLoading}
-                        />
-                         {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
+                  {error && (
+                      <div className="mt-4 flex items-center justify-center gap-2 text-sm text-destructive dark:text-red-400">
+                          <AlertCircle className="h-4 w-4"/>
+                          <p>{error}</p>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">College Email</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="you@saveetha.com"
-                            {...form.register('email')}
-                            onChange={(e) => { form.setValue('email', e.target.value); onInputChange(); }}
-                            disabled={loading || googleLoading}
-                        />
-                         {form.formState.errors.email && <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>}
-                      </div>
-                      <div className="space-y-2 relative">
-                        <Label htmlFor="password">Password</Label>
-                        <Input 
-                            id="password" 
-                            type={showPassword ? 'text' : 'password'}
-                            {...form.register('password')}
-                            onChange={(e) => { form.setValue('password', e.target.value); onInputChange(); }}
-                            minLength={6}
-                            disabled={loading || googleLoading}
-                        />
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-1 top-7 h-7 w-7"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
-                        </Button>
-                         {form.formState.errors.password && <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>}
-                      </div>
-                       <Button type="button" className="w-full" onClick={handleNextStep} disabled={loading || googleLoading}>
-                         Next
-                       </Button>
-                        <div className="my-4 flex items-center">
-                            <div className="flex-grow border-t border-muted" />
-                            <span className="mx-4 text-xs uppercase text-muted-foreground">Or</span>
-                            <div className="flex-grow border-t border-muted" />
-                        </div>
-                        <Button variant="outline" className="w-full" onClick={handleGoogleSignUp} disabled={loading || googleLoading}>
-                            {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 
-                            <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 62.3l-66.5 64.6C305.5 114.6 280.1 103 248 103c-73.2 0-133.1 60.3-133.1 134.9s59.9 134.9 133.1 134.9c79.2 0 111.3-52.1 115.8-77.9H248v-65.4h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path></svg>
-                            }
-                            Sign up with Google
-                        </Button>
-                    </>
                   )}
-
-                  {step === 2 && (
-                    <>
-                       <div className="space-y-2">
-                        <Label htmlFor="regNo">Registration Number</Label>
-                        <Input
-                            id="regNo"
-                            type="text"
-                            placeholder="19YYDDRRR"
-                            {...form.register('regNo')}
-                            onChange={(e) => { form.setValue('regNo', e.target.value); onInputChange(); }}
-                            disabled={loading}
-                        />
-                         {form.formState.errors.regNo && <p className="text-sm text-destructive">{form.formState.errors.regNo.message}</p>}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                            id="phone"
-                            type="tel"
-                            placeholder="9876543210"
-                            {...form.register('phone')}
-                            onChange={(e) => { form.setValue('phone', e.target.value); onInputChange(); }}
-                            disabled={loading}
-                        />
-                         {form.formState.errors.phone && <p className="text-sm text-destructive">{form.formState.errors.phone.message}</p>}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button type="button" variant="outline" className="w-1/3" onClick={handlePrevStep} disabled={loading}>
-                           <ArrowLeft className="h-4 w-4" /> Back
-                        </Button>
-                        <Button type="submit" className="w-2/3" disabled={loading}>
-                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
-                            {user ? 'Complete Profile' : 'Sign Up'}
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </form>
-                {error && (
-                    <div className="mt-4 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400">
-                        <AlertCircle className="h-4 w-4"/>
-                        <p>{error}</p>
-                    </div>
-                )}
                 
-                <p className="mt-4 text-center text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <Link href="/login" className="font-medium text-primary hover:underline">
-                    Sign in
-                    </Link>
-                </p>
+                  <p className="mt-4 text-center text-sm text-muted-foreground">
+                      Already have an account?{' '}
+                      <Link href="/login" className="font-medium text-primary hover:underline">
+                      Sign in
+                      </Link>
+                  </p>
                 </CardContent>
             </Card>
           </div>
