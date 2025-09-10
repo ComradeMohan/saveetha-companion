@@ -56,16 +56,21 @@ export default function StudentDashboardPage() {
                     <CardContent className="flex flex-col sm:flex-row items-center gap-6">
                         <div className="relative h-32 w-32">
                              <Progress value={data.progressPercentage} className="h-full w-full rounded-full" />
-                              <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold">
-                                {data.progressPercentage.toFixed(0)}%
+                              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                <span className="text-2xl font-bold">{data.progressPercentage.toFixed(0)}%</span>
+                                <span className="text-xs text-muted-foreground">Complete</span>
                             </div>
                         </div>
-                        <div className="flex-1 space-y-2 w-full">
-                            <div className="flex justify-between">
-                                <Badge variant="secondary">{data.totalCourses} courses logged</Badge>
-                                <Badge variant="secondary">GPA: {data.cgpa.toFixed(2)}</Badge>
+                        <div className="flex-1 space-y-4 w-full">
+                             <div className="flex justify-between font-medium">
+                                <p>CGPA</p>
+                                <p className="text-primary">{data.cgpa.toFixed(2)}</p>
                             </div>
-                            <Progress value={data.progressPercentage} />
+                            <Progress value={data.cgpa * 10} className="h-2" />
+                            <div className="flex justify-between font-medium">
+                                <p>Courses Logged</p>
+                                <p className="text-primary">{data.totalCourses}</p>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
