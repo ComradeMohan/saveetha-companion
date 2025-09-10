@@ -106,7 +106,7 @@ export default function StudentDashboardPage() {
                            <div className="flex items-center gap-3">
                                 <div className="p-2 bg-background rounded-md">
                                     <Scan className="h-5 w-5 text-primary"/>
-                                d_iv>
+                                </div>
                                 <div>
                                     <p className="font-semibold">Review Roadmap</p>
                                     <p className="text-xs text-muted-foreground">Check your course progression</p>
