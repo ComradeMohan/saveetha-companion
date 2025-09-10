@@ -1,16 +1,16 @@
-
 'use client';
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, LayoutDashboard, Book, User as UserIcon, LogOut, ArrowLeft } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Book, User as UserIcon, LogOut, ArrowLeft, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const learnNavLinks = [
-  { href: '/learn', label: 'Roadmap', icon: LayoutDashboard },
+  { href: '/learn/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/learn', label: 'Roadmap', icon: GitBranch },
   { href: '/learn/courses', label: 'My Courses', icon: Book },
   { href: '/learn/profile', label: 'Profile', icon: UserIcon },
 ];
