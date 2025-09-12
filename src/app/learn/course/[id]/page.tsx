@@ -128,7 +128,7 @@ export default function CoursePage() {
                                            {topic.notes && (
                                                 <div>
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-2"><FileText className="h-4 w-4"/> Notes</h5>
-                                                    <TopicContent htmlContent={topic.notes} />
+                                                    <TopicContent htmlContent={topic.notes} courseId={courseId} topicId={topic.id} />
                                                 </div>
                                            )}
                                            {topic.videoUrl && (
