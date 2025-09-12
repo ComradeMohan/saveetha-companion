@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useMemo } from 'react';
+import { useState, useTransition, useMemo, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -44,7 +44,7 @@ export default function McqsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [parsedMcqs, setParsedMcqs] = useState<ParsedMcq[]>([]);
 
-  useMemo(() => {
+  useEffect(() => {
     startTransition(async () => {
       const coursesData = await getUnifiedCourses();
       setCourses(coursesData);
