@@ -44,13 +44,22 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
       if (sib.nodeName === a.nodeName) nth++;
       a = sib;
     }
-    return getPathTo(element.parentNode) + `/${element.nodeName.toLowerCase()}[${nth}]`;
+    const nodeName = element.nodeName.toLowerCase();
+    
+    // Handle text nodes correctly for XPath
+    if (nodeName === '#text') {
+        return getPathTo(element.parentNode) + `/text()[${nth + 1}]`;
+    }
+
+    return getPathTo(element.parentNode) + `/${nodeName}[${nth}]`;
   };
 
   const getNodeFromPath = (path: string): Node | null => {
     if (!contentRef.current) return null;
     try {
-      const result = document.evaluate(path, contentRef.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+      // The path should start relative to the contentRef for evaluation
+      const relativePath = '.' + path;
+      const result = document.evaluate(relativePath, contentRef.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
       return result.singleNodeValue;
     } catch(e) {
       console.error("Failed to evaluate XPath:", path, e);
@@ -112,7 +121,10 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
         // Clear existing spans before reapplying
         contentRef.current.querySelectorAll('span[id^="annotation-"]').forEach(span => {
             if (span.parentNode) {
-                span.parentNode.replaceChild(document.createTextNode(span.textContent || ''), span);
+                while (span.firstChild) {
+                    span.parentNode.insertBefore(span.firstChild, span);
+                }
+                span.parentNode.removeChild(span);
                 span.parentNode.normalize(); // Merges adjacent text nodes
             }
         });
@@ -128,24 +140,23 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
     if (!contentRef.current || editingNote) return;
 
     const selection = window.getSelection();
-    if (selection && !selection.isCollapsed && contentRef.current.contains(selection.anchorNode)) {
-      const range = selection.getRangeAt(0);
+    if (selection && !selection.isCollapsed) {
+        const range = selection.getRangeAt(0);
 
-      // Check if selection is within our content area
-      const parentElement = range.startContainer.nodeType === 3 
-        ? range.startContainer.parentElement 
-        : range.startContainer as HTMLElement;
-      
-      if (parentElement && contentRef.current.contains(parentElement)) {
-        const rect = range.getBoundingClientRect();
-        setMenu({
-          top: rect.top + window.scrollY - 45,
-          left: rect.left + window.scrollX + (rect.width / 2),
-          selection: selection,
-        });
-      }
+        const parentElement = range.startContainer.nodeType === 3
+            ? range.startContainer.parentElement
+            : range.startContainer as HTMLElement;
+
+        if (parentElement && contentRef.current.contains(parentElement)) {
+            const rect = range.getBoundingClientRect();
+            setMenu({
+                top: rect.top + window.scrollY - 45,
+                left: rect.left + window.scrollX + (rect.width / 2),
+                selection: selection,
+            });
+        }
     } else if (!editingNote) {
-      setMenu(null);
+        setMenu(null);
     }
   }, [editingNote]);
 
