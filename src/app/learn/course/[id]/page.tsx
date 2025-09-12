@@ -114,7 +114,7 @@ export default function CoursePage() {
         </CardHeader>
         <CardContent>
             {courseContent.length > 0 ? (
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" defaultValue={courseContent[0]?.id}>
                     {courseContent.map(unit => (
                         <AccordionItem key={unit.id} value={unit.id}>
                             <AccordionTrigger className="text-base font-semibold hover:no-underline">
@@ -127,7 +127,7 @@ export default function CoursePage() {
                                        <div className="space-y-3">
                                            {topic.notes && (
                                                 <div>
-                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><FileText className="h-4 w-4"/> Notes</h5>
+                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-2"><FileText className="h-4 w-4"/> Notes</h5>
                                                     <TopicContent htmlContent={topic.notes} />
                                                 </div>
                                            )}
