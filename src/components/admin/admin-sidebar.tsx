@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -17,13 +16,14 @@ const adminNavLinks = [
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
+  { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
+  { href: '/admin/course-content', label: 'Course Content', icon: PenSquare },
+  { href: '/admin/mcqs', label: 'MCQs', icon: FileQuestion },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/certifications', label: 'Certifications', icon: Award },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
-  { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
-  { href: '/admin/course-content', label: 'Course Content', icon: PenSquare },
   { href: '/admin/course-suggestions', label: 'Course Suggestions', icon: FileQuestion },
 ];
 
