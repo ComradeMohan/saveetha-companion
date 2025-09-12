@@ -10,20 +10,21 @@ interface TopicContentProps {
 }
 
 interface Annotation {
-    id: string;
-    range: Range;
-    note: string;
+  id: string;
+  type: 'highlight' | 'underline' | 'note';
+  range: Range;
+  noteText?: string;
 }
 
 const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [menu, setMenu] = useState<{ top: number; left: number; selection: Selection | null } | null>(null);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
-  const [isEditingNote, setIsEditingNote] = useState<string | null>(null);
+  const [editingNote, setEditingNote] = useState<{ annotationId: string; initialValue: string } | null>(null);
 
   const handleMouseUp = useCallback(() => {
-    if (!contentRef.current) return;
-    
+    if (!contentRef.current || editingNote) return;
+
     const selection = window.getSelection();
     if (selection && !selection.isCollapsed && contentRef.current.contains(selection.anchorNode)) {
       const range = selection.getRangeAt(0);
@@ -34,85 +35,76 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
         left: rect.left + window.scrollX + (rect.width / 2),
         selection: selection,
       });
-    } else {
+    } else if (!editingNote) {
       setMenu(null);
     }
-  }, []);
+  }, [editingNote]);
 
-  const wrapSelection = (className: string) => {
+  const addAnnotation = (type: 'highlight' | 'underline' | 'note') => {
     if (!menu?.selection) return;
 
     const range = menu.selection.getRangeAt(0);
+    const annotationId = `annotation-${uuidv4()}`;
     const span = document.createElement('span');
+    span.id = annotationId;
+
+    let className = '';
+    if (type === 'highlight') className = 'highlight-yellow';
+    if (type === 'underline') className = 'underline-blue';
+    if (type === 'note') {
+        className = 'highlight-note relative';
+        span.style.cursor = 'pointer';
+        span.onclick = () => {
+            const currentAnnotation = annotations.find(a => a.id === annotationId);
+            if (currentAnnotation) {
+                setEditingNote({ annotationId, initialValue: currentAnnotation.noteText || '' });
+            }
+        };
+    }
     span.className = className;
     
     try {
-        // This is a robust way to wrap content, even across multiple nodes.
         range.surroundContents(span);
+        const newAnnotation: Annotation = { id: annotationId, type, range, noteText: '' };
+        setAnnotations(prev => [...prev, newAnnotation]);
+        
+        if (type === 'note') {
+            setEditingNote({ annotationId, initialValue: '' });
+        }
+
     } catch(e) {
-        // Fallback for selections that span across complex node boundaries
-        console.warn("Could not wrap selection directly, using fallback.", e);
-        span.appendChild(range.extractContents());
-        range.insertNode(span);
+        console.warn("Could not wrap selection directly.", e);
+        toast({ title: "Selection Error", description: "Cannot annotate across complex text elements. Please try a simpler selection.", variant: "destructive" });
     }
 
     menu.selection.removeAllRanges();
     setMenu(null);
   };
   
-  const handleAddNote = () => {
-    if (!menu?.selection) return;
-
-    const range = menu.selection.getRangeAt(0).cloneRange();
-    const id = `note-${uuidv4()}`;
-
-    const span = document.createElement('span');
-    span.className = 'highlight-note relative';
-    span.id = id;
-    span.style.cursor = 'pointer';
-
-    try {
-      range.surroundContents(span);
-    } catch (e) {
-       console.warn("Could not wrap selection for note directly, using fallback.", e);
-       span.appendChild(range.extractContents());
-       range.insertNode(span);
-    }
-    
-    setAnnotations(prev => [...prev, { id, range, note: '' }]);
-    setIsEditingNote(id); // Open the editor for the new note
-    menu.selection.removeAllRanges();
-    setMenu(null);
-  };
-
-  const handleUpdateNote = (id: string, text: string) => {
-    setAnnotations(prev => prev.map(a => (a.id === id ? { ...a, note: text } : a)));
-    setIsEditingNote(null);
+  const handleUpdateNote = (annotationId: string, text: string) => {
+    setAnnotations(prev => prev.map(a => (a.id === annotationId ? { ...a, noteText: text } : a)));
+    setEditingNote(null);
   };
 
   useEffect(() => {
-    if (contentRef.current) {
-        // Set content and add event listeners
-        contentRef.current.innerHTML = htmlContent;
-        contentRef.current.addEventListener('mouseup', handleMouseUp);
-
-        // Re-attach click listeners for existing annotations
-        annotations.forEach(annotation => {
-            const el = document.getElementById(annotation.id);
-            if (el) {
-                el.onclick = () => setIsEditingNote(annotation.id);
-            }
-        });
+    const contentEl = contentRef.current;
+    if (contentEl) {
+        contentEl.addEventListener('mouseup', handleMouseUp);
+        
+        return () => {
+            contentEl.removeEventListener('mouseup', handleMouseUp);
+        };
     }
-
-    // Cleanup function
-    return () => {
-      if (contentRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        contentRef.current.removeEventListener('mouseup', handleMouseUp);
+  }, [handleMouseUp]);
+  
+  useEffect(() => {
+      if(contentRef.current && !contentRef.current.innerHTML) {
+          contentRef.current.innerHTML = htmlContent;
       }
-    };
-  }, [htmlContent, handleMouseUp, annotations]);
+  }, [htmlContent]);
+
+
+  const currentlyEditingAnnotation = editingNote ? annotations.find(a => a.id === editingNote.annotationId) : null;
 
   return (
     <div className="prose dark:prose-invert max-w-none">
@@ -126,32 +118,34 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent }) => {
             <TextSelectionMenu
                 top={menu.top}
                 left={menu.left}
-                onHighlight={() => wrapSelection('highlight-yellow')}
-                onUnderline={() => wrapSelection('underline-blue')}
-                onAddNote={handleAddNote}
+                onHighlight={() => addAnnotation('highlight')}
+                onUnderline={() => addAnnotation('underline')}
+                onAddNote={() => addAnnotation('note')}
                 onClose={() => setMenu(null)}
             />
         )}
-        {annotations.map(annotation => {
-            if (isEditingNote === annotation.id) {
-                const el = document.getElementById(annotation.id);
-                if (!el) return null;
-                const rect = el.getBoundingClientRect();
-                return (
-                     <TextSelectionMenu.NoteEditor
-                        key={annotation.id}
-                        top={rect.top + window.scrollY + rect.height + 5}
-                        left={rect.left + window.scrollX}
-                        initialValue={annotation.note}
-                        onSave={(text) => handleUpdateNote(annotation.id, text)}
-                        onCancel={() => setIsEditingNote(null)}
-                     />
-                )
-            }
-            return null;
-        })}
+        {currentlyEditingAnnotation && (() => {
+            const el = document.getElementById(currentlyEditingAnnotation.id);
+            if (!el) return null;
+            const rect = el.getBoundingClientRect();
+            return (
+                 <TextSelectionMenu.NoteEditor
+                    key={currentlyEditingAnnotation.id}
+                    top={rect.top + window.scrollY + rect.height + 5}
+                    left={rect.left + window.scrollX}
+                    initialValue={currentlyEditingAnnotation.noteText || ''}
+                    onSave={(text) => handleUpdateNote(currentlyEditingAnnotation.id, text)}
+                    onCancel={() => setEditingNote(null)}
+                 />
+            )
+        })()}
     </div>
   );
+};
+
+// Dummy toast for development, replace with your actual toast implementation
+const toast = ({title, description, variant}: any) => {
+    console.log(`Toast: ${title} - ${description} (${variant})`);
 };
 
 export default TopicContent;
