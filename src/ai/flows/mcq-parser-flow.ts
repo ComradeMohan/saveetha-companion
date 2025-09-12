@@ -56,6 +56,7 @@ const mcqParserFlow = ai.defineFlow(
         ---
         ${text}
         ---
+        End of text.
 
         Return only the JSON object that adheres to the provided output schema.
       `,
