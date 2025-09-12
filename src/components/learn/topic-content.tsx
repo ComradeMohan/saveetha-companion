@@ -33,29 +33,31 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
 
   const getStorageKey = useCallback(() => `annotations-${courseId}-${topicId}`, [courseId, topicId]);
 
-  const getPathTo = (element: Node): string => {
-    if (element === contentRef.current) return '';
+  const getPathTo = (element: Node | null): string => {
+    if (!element || element === contentRef.current) return '';
     if (!element.parentNode) return '';
-
+    
     let a = element as any;
     let sib: Node | null,
-      nth = 0;
+      nth = 1; // XPath is 1-indexed
     while ((sib = a.previousSibling)) {
       if (sib.nodeName === a.nodeName) nth++;
       a = sib;
     }
+    
     const nodeName = element.nodeName.toLowerCase();
     
     // Handle text nodes correctly for XPath
     if (nodeName === '#text') {
-        return getPathTo(element.parentNode) + `/text()[${nth + 1}]`;
+      return getPathTo(element.parentNode) + `/text()[${nth}]`;
     }
 
     return getPathTo(element.parentNode) + `/${nodeName}[${nth}]`;
   };
 
+
   const getNodeFromPath = (path: string): Node | null => {
-    if (!contentRef.current) return null;
+    if (!contentRef.current || !path) return null;
     try {
       // The path should start relative to the contentRef for evaluation
       const relativePath = '.' + path;
@@ -120,12 +122,13 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
         
         // Clear existing spans before reapplying
         contentRef.current.querySelectorAll('span[id^="annotation-"]').forEach(span => {
-            if (span.parentNode) {
+            const parent = span.parentNode;
+            if (parent) {
                 while (span.firstChild) {
-                    span.parentNode.insertBefore(span.firstChild, span);
+                    parent.insertBefore(span.firstChild, span);
                 }
-                span.parentNode.removeChild(span);
-                span.parentNode.normalize(); // Merges adjacent text nodes
+                parent.removeChild(span);
+                parent.normalize(); // Merges adjacent text nodes
             }
         });
         
