@@ -35,25 +35,47 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
 
   const getPathTo = (element: Node | null): string => {
     if (!element || element === contentRef.current) return '';
-    if (!element.parentNode) return '';
     
-    let a = element as any;
-    let sib: Node | null,
-      nth = 1; // XPath is 1-indexed
-    while ((sib = a.previousSibling)) {
-      if (sib.nodeName === a.nodeName) nth++;
-      a = sib;
-    }
-    
-    const nodeName = element.nodeName.toLowerCase();
-    
-    // Handle text nodes correctly for XPath
-    if (nodeName === '#text') {
-      return getPathTo(element.parentNode) + `/text()[${nth}]`;
-    }
+    let path = '';
+    let node: Node | null = element;
 
-    return getPathTo(element.parentNode) + `/${nodeName}[${nth}]`;
-  };
+    while(node && node !== contentRef.current) {
+        let sibling = node;
+        let nth = 1;
+        while ((sibling = sibling.previousSibling)) {
+            if (sibling.nodeType === Node.ELEMENT_NODE && (sibling as Element).tagName === (node as Element).tagName) {
+                nth++;
+            }
+        }
+
+        let segment = node.nodeType === Node.ELEMENT_NODE ? (node as Element).tagName.toLowerCase() : 'text()';
+        
+        // Check if there are other siblings with the same tag name to determine if index is needed
+        let needsIndex = false;
+        let nextSibling = node.nextSibling;
+        while(nextSibling) {
+            if (nextSibling.nodeType === node.nodeType && nextSibling.nodeName === node.nodeName) {
+                needsIndex = true;
+                break;
+            }
+            nextSibling = nextSibling.nextSibling;
+        }
+        if (!needsIndex) {
+            let prevSibling = node.previousSibling;
+             while(prevSibling) {
+                if (prevSibling.nodeType === node.nodeType && prevSibling.nodeName === node.nodeName) {
+                    needsIndex = true;
+                    break;
+                }
+                prevSibling = prevSibling.previousSibling;
+            }
+        }
+        
+        path = `/${segment}${needsIndex ? `[${nth}]` : ''}` + path;
+        node = node.parentNode;
+    }
+    return path;
+};
 
 
   const getNodeFromPath = (path: string): Node | null => {
