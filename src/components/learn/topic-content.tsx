@@ -43,14 +43,13 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
         let sibling = node;
         let nth = 1;
         while ((sibling = sibling.previousSibling)) {
-            if (sibling.nodeType === Node.ELEMENT_NODE && (sibling as Element).tagName === (node as Element).tagName) {
+            if (sibling.nodeType === node.nodeType && sibling.nodeName === node.nodeName) {
                 nth++;
             }
         }
 
         let segment = node.nodeType === Node.ELEMENT_NODE ? (node as Element).tagName.toLowerCase() : 'text()';
         
-        // Check if there are other siblings with the same tag name to determine if index is needed
         let needsIndex = false;
         let nextSibling = node.nextSibling;
         while(nextSibling) {
@@ -81,7 +80,6 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
   const getNodeFromPath = (path: string): Node | null => {
     if (!contentRef.current || !path) return null;
     try {
-      // The path should start relative to the contentRef for evaluation
       const relativePath = '.' + path;
       const result = document.evaluate(relativePath, contentRef.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
       return result.singleNodeValue;
@@ -96,6 +94,13 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
     const endNode = getNodeFromPath(annotation.range.endContainerPath);
 
     if (startNode && endNode) {
+      // Safety check to prevent IndexSizeError
+      if (annotation.range.startOffset > (startNode.nodeValue?.length ?? 0) ||
+          annotation.range.endOffset > (endNode.nodeValue?.length ?? 0)) {
+        console.warn('Skipping annotation due to invalid range offsets:', annotation);
+        return;
+      }
+
       const range = document.createRange();
       range.setStart(startNode, annotation.range.startOffset);
       range.setEnd(endNode, annotation.range.endOffset);
@@ -121,7 +126,6 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
       try {
         range.surroundContents(span);
       } catch (e) {
-        // This might fail if selection spans multiple block elements. For now, we accept this limitation.
         console.warn("Could not wrap selection for annotation:", annotation.id, e);
       }
     }
@@ -142,7 +146,6 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
             contentRef.current.innerHTML = htmlContent;
         }
         
-        // Clear existing spans before reapplying
         contentRef.current.querySelectorAll('span[id^="annotation-"]').forEach(span => {
             const parent = span.parentNode;
             if (parent) {
@@ -150,7 +153,7 @@ const TopicContent: React.FC<TopicContentProps> = ({ htmlContent, courseId, topi
                     parent.insertBefore(span.firstChild, span);
                 }
                 parent.removeChild(span);
-                parent.normalize(); // Merges adjacent text nodes
+                parent.normalize();
             }
         });
         
