@@ -7,10 +7,12 @@ import { getUnits, getTopics, Unit, Topic, getCourseNameById } from '@/app/actio
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen, Loader2, FileText, Youtube, HelpCircle } from 'lucide-react';
+import { BookOpen, Loader2, FileText, Youtube, HelpCircle, Trash2 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import TopicContent from '@/components/learn/topic-content';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 type CourseInfo = {
   id: string;
@@ -26,6 +28,7 @@ export default function CoursePage() {
   const [course, setCourse] = useState<CourseInfo | null>(null);
   const [courseContent, setCourseContent] = useState<UnitWithTopics[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -64,6 +67,29 @@ export default function CoursePage() {
     };
     fetchCourseData();
   }, [courseId, authLoading]);
+  
+  const handleClearAnnotations = () => {
+    if (typeof window !== 'undefined' && typeof courseId === 'string') {
+      let keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(`annotations-${courseId}-`)) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      toast({
+        title: "Annotations Cleared",
+        description: "All your highlights and notes for this course have been removed."
+      });
+      
+      // Force a reload to show the cleared content
+      window.location.reload();
+    }
+  };
+
 
   if (loading || authLoading) {
     return (
@@ -97,8 +123,28 @@ export default function CoursePage() {
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Course Content</h1>
+         <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Clear Annotations
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete all highlights, underlines, and notes you've made in this course. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleClearAnnotations}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <Card>
         <CardHeader>
