@@ -1,8 +1,11 @@
+
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const McqOptionSchema = z.object({
   key: z.enum(['a', 'b', 'c', 'd']),
@@ -16,6 +19,8 @@ const McqSchema = z.object({
   correctAnswer: z.enum(['a', 'b', 'c', 'd']),
 });
 
+export type Mcq = z.infer<typeof McqSchema>;
+
 const SaveMcqsSchema = z.object({
   courseId: z.string().min(1, 'Course ID is required.'),
   mcqs: z.array(McqSchema).min(1, 'At least one MCQ is required.'),
@@ -25,7 +30,7 @@ const SaveMcqsSchema = z.object({
  * Saves a list of MCQs for a specific course to Firestore.
  * This overwrites any existing MCQs for that course.
  */
-export async function saveMcqsForCourse(courseId: string, mcqs: z.infer<typeof McqSchema>[]) {
+export async function saveMcqsForCourse(courseId: string, mcqs: Mcq[]) {
   const validation = SaveMcqsSchema.safeParse({ courseId, mcqs });
 
   if (!validation.success) {
@@ -59,4 +64,38 @@ export async function saveMcqsForCourse(courseId: string, mcqs: z.infer<typeof M
       message: 'An unexpected error occurred while saving the MCQs.',
     };
   }
+}
+
+/**
+ * Retrieves the MCQs for a specific course.
+ */
+export async function getMcqsForCourse(courseId: string): Promise<Mcq[] | null> {
+    try {
+        const mcqDocRef = doc(db, 'mcqs', courseId);
+        const docSnap = await getDoc(mcqDocRef);
+
+        if (docSnap.exists()) {
+            // Returns the array of questions
+            return docSnap.data().questions as Mcq[];
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching MCQs for course ${courseId}:`, error);
+        return null;
+    }
+}
+
+
+/**
+ * Retrieves a list of all courses that have MCQs.
+ */
+export async function getCoursesWithMcqs() {
+    try {
+        const snapshot = await adminDb.collection('mcqs').get();
+        // The document ID is the course ID
+        return snapshot.docs.map(doc => doc.id);
+    } catch (error) {
+        console.error('Error fetching courses with MCQs:', error);
+        return [];
+    }
 }

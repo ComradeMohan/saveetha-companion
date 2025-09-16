@@ -2,17 +2,19 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getUnits, getTopics, Unit, Topic, getCourseNameById } from '@/app/actions/manage-course-content';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen, Loader2, FileText, Youtube, HelpCircle, Trash2 } from 'lucide-react';
+import { BookOpen, Loader2, FileText, Youtube, HelpCircle, Trash2, FileQuestion } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import TopicContent from '@/components/learn/topic-content';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { getMcqsForCourse, type Mcq } from '@/app/actions/manage-mcqs';
+import { McqQuiz } from '@/components/learn/mcq-quiz';
 
 type CourseInfo = {
   id: string;
@@ -27,46 +29,51 @@ export default function CoursePage() {
   const { loading: authLoading } = useAuth();
   const [course, setCourse] = useState<CourseInfo | null>(null);
   const [courseContent, setCourseContent] = useState<UnitWithTopics[]>([]);
+  const [mcqs, setMcqs] = useState<Mcq[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      if (authLoading || typeof courseId !== 'string') return;
+  const fetchCourseData = useCallback(async () => {
+    if (authLoading || typeof courseId !== 'string') return;
+    
+    setLoading(true);
+    try {
+      const [courseName, units, mcqData] = await Promise.all([
+          getCourseNameById(courseId),
+          getUnits(courseId),
+          getMcqsForCourse(courseId)
+      ]);
+
+      const currentCourse = { id: courseId, name: courseName || `Course ${courseId}` };
+      setCourse(currentCourse);
+      setMcqs(mcqData);
       
-      setLoading(true);
-      try {
-        const [courseName, units] = await Promise.all([
-            getCourseNameById(courseId),
-            getUnits(courseId)
-        ]);
-
-        const currentCourse = { id: courseId, name: courseName || `Course ${courseId}` };
-        setCourse(currentCourse);
-        
-        if (units.length > 0) {
-            const unitsWithTopics = await Promise.all(
-                units.map(async (unit) => {
-                    const topics = await getTopics(courseId, unit.id);
-                    return { ...unit, topics };
-                })
-            );
-            setCourseContent(unitsWithTopics);
-        }
-
-        // Save the last viewed course to localStorage
-        if (currentCourse.name) {
-          localStorage.setItem('lastViewedCourse', JSON.stringify({ id: currentCourse.id, name: currentCourse.name }));
-        }
-        
-      } catch (error) {
-        console.error("Error fetching course data:", error);
-      } finally {
-        setLoading(false);
+      if (units.length > 0) {
+          const unitsWithTopics = await Promise.all(
+              units.map(async (unit) => {
+                  const topics = await getTopics(courseId, unit.id);
+                  return { ...unit, topics };
+              })
+          );
+          setCourseContent(unitsWithTopics);
       }
-    };
+
+      if (currentCourse.name) {
+        localStorage.setItem('lastViewedCourse', JSON.stringify({ id: currentCourse.id, name: currentCourse.name }));
+      }
+      
+    } catch (error) {
+      console.error("Error fetching course data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [authLoading, courseId]);
+
+
+  useEffect(() => {
     fetchCourseData();
-  }, [courseId, authLoading]);
+  }, [fetchCourseData]);
   
   const handleClearAnnotations = () => {
     if (typeof window !== 'undefined' && typeof courseId === 'string') {
@@ -85,7 +92,6 @@ export default function CoursePage() {
         description: "All your highlights and notes for this course have been removed."
       });
       
-      // Force a reload to show the cleared content
       window.location.reload();
     }
   };
@@ -123,28 +129,43 @@ export default function CoursePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <h1 className="text-lg font-semibold md:text-2xl">Course Content</h1>
-         <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm">
-              <Trash2 className="mr-2 h-4 w-4" />
-              Clear Annotations
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete all highlights, underlines, and notes you've made in this course. This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleClearAnnotations}>Confirm</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <div className="flex items-center gap-2">
+            {mcqs && mcqs.length > 0 && (
+                <AlertDialog open={isQuizOpen} onOpenChange={setIsQuizOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button>
+                            <FileQuestion className="mr-2 h-4 w-4" />
+                            Take the Quiz
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-4xl w-full h-[90vh]">
+                        <McqQuiz mcqs={mcqs} courseName={course.name} />
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear Annotations
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete all highlights, underlines, and notes you've made in this course. This action cannot be undone.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleClearAnnotations}>Confirm</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
       </div>
       <Card>
         <CardHeader>
