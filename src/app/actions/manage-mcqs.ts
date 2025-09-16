@@ -4,8 +4,6 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { getDoc, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 const McqOptionSchema = z.object({
   key: z.enum(['a', 'b', 'c', 'd']),
@@ -71,12 +69,12 @@ export async function saveMcqsForCourse(courseId: string, mcqs: Mcq[]) {
  */
 export async function getMcqsForCourse(courseId: string): Promise<Mcq[] | null> {
     try {
-        const mcqDocRef = doc(db, 'mcqs', courseId);
-        const docSnap = await getDoc(mcqDocRef);
+        const mcqDocRef = adminDb.collection('mcqs').doc(courseId);
+        const docSnap = await mcqDocRef.get();
 
-        if (docSnap.exists()) {
+        if (docSnap.exists) {
             // Returns the array of questions
-            return docSnap.data().questions as Mcq[];
+            return docSnap.data()?.questions as Mcq[];
         }
         return null;
     } catch (error) {
