@@ -141,6 +141,12 @@ export default function CoursePage() {
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="max-w-4xl w-full h-[90vh]">
+                         <AlertDialogHeader className="sr-only">
+                            <AlertDialogTitle>Quiz: {course.name}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Complete the multiple-choice quiz for this course.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
                         <McqQuiz mcqs={mcqs} courseName={course.name} />
                     </AlertDialogContent>
                 </AlertDialog>
@@ -195,7 +201,7 @@ export default function CoursePage() {
                                            {topic.notes && (
                                                 <div>
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-2"><FileText className="h-4 w-4"/> Notes</h5>
-                                                    <TopicContent htmlContent={topic.notes} courseId={courseId} topicId={topic.id} />
+                                                    <TopicContent htmlContent={topic.notes} courseId={courseId as string} topicId={topic.id} />
                                                 </div>
                                            )}
                                            {topic.videoUrl && (
