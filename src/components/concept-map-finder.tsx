@@ -105,16 +105,14 @@ export default function ConceptMapFinder() {
         ) : hasSearched && filteredMaps.length > 0 ? (
           filteredMaps.map((map) => {
             const isPdf = map.url.toLowerCase().endsWith('.pdf');
-            const href = isPdf ? `/view-pdf/${encodeURIComponent(map.url)}` : map.url;
-            const target = isPdf ? '_self' : '_blank';
             const Icon = isPdf ? FileText : FileIcon;
 
             return (
               <Link
                 key={map.id}
-                href={href}
-                target={target}
-                rel={target === '_blank' ? 'noopener noreferrer' : ''}
+                href={map.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={cn(
                   'group rounded-xl border bg-card p-4 text-card-foreground',
                   'transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1'
