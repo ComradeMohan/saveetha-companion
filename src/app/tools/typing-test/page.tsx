@@ -146,7 +146,7 @@ export default function TypingTestPage() {
                             <div className="grid grid-cols-3 gap-4 text-center">
                                 <div className="p-4 bg-secondary/50 rounded-lg">
                                     <p className="text-sm text-muted-foreground">Time Left</p>
-                                    <p className="text-2xl font-bold">{timer}</s</p>
+                                    <p className="text-2xl font-bold">{timer}</p>
                                 </div>
                                 <div className="p-4 bg-secondary/50 rounded-lg">
                                     <p className="text-sm text-muted-foreground">Speed (WPM)</p>
