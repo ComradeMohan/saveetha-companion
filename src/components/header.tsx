@@ -199,6 +199,7 @@ export default function Header() {
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
       { href: '/tools/steganography', label: 'Steganography', icon: Eye },
+      { href: '/tools/reverse-dictionary', label: 'Reverse Dictionary', icon: Book },
   ]
 
   const handleMobileLinkClick = (href: string) => {
@@ -214,7 +215,7 @@ export default function Header() {
   return (
     <>
     <header className="fixed top-4 left-0 right-0 z-50 px-4">
-       <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 sm:px-6 liquid-glass-nav">
+       <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
         <div className="flex items-center gap-4">
           <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
             <GraduationCap className="h-6 w-6 text-primary" />

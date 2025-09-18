@@ -47,6 +47,7 @@
     "firebase": "^11.9.1",
     "firebase-admin": "^12.2.0",
     "genkit": "^1.13.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.475.0",
     "next": "15.3.3",
     "next-themes": "^0.3.0",
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
+    "@types/lodash": "^4.17.5",
     "@types/node": "^20",
     "@types/pdf-parse": "^1.1.4",
     "@types/qrcode": "^1.5.5",
