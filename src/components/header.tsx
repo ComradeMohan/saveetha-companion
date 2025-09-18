@@ -20,6 +20,7 @@ import {
   Book,
   QrCode,
   Keyboard,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -197,6 +198,7 @@ export default function Header() {
   const toolsDropdownLinks = [
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
+      { href: '/tools/steganography', label: 'Steganography', icon: Eye },
   ]
 
   const handleMobileLinkClick = (href: string) => {
