@@ -36,6 +36,10 @@ export default function QrGeneratorPage() {
         type: 'image/png',
         quality: 0.92,
         margin: 1,
+        color: {
+          dark: '#F59E0B', // Saffron (Orange) - from the primary theme color
+          light: '#00000000' // Transparent background
+        }
       });
       setQrCodeDataUrl(dataUrl);
     } catch (err) {
@@ -62,7 +66,7 @@ export default function QrGeneratorPage() {
                     QR Code Generator
                     </CardTitle>
                     <CardDescription>
-                    Enter any URL to create a downloadable QR code instantly.
+                    Enter any URL to create a downloadable, themed QR code instantly.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
