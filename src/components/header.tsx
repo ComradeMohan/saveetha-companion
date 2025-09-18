@@ -21,6 +21,10 @@ import {
   QrCode,
   Keyboard,
   Eye,
+  Calculator,
+  Lightbulb,
+  Calendar,
+  Bell,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -163,38 +167,31 @@ export default function Header() {
             setProfileDialogOpen(true);
         }
     } else {
-        // This button is not shown for logged-out users, but as a fallback:
         setIsNavigating(true);
         router.push('/login');
     }
   };
   
-  const mainNavLinks = React.useMemo(() => {
-    if (user) {
-       return [
-            { href: '/#calculators', label: 'Calculators' },
-            { href: '/#concepts', label: 'Concepts' },
-            { href: '/course-enrollment', label: 'Enrollment Alert' },
-            { href: '/certifications', label: 'Certifications' },
-            { href: '/calendar', label: 'Calendar' },
-            { href: '/updates', label: 'Updates' },
-            { href: '/contact', label: 'Contact Us' },
-        ];
-    }
-    // Links for logged-out users
-    return [
-        { href: '/certifications', label: 'Certifications' },
-        { href: '/contact', label: 'Contact Us' },
-    ];
-  }, [user]);
-
-  const featuresDropdownLinks = [
+  const loggedOutFeaturesLinks = [
       { href: '/#features', label: 'Key Features' },
       { href: '/#calculators', label: 'Calculators' },
       { href: '/#concepts', label: 'Concept Maps' },
       { href: '/#stats', label: 'Site Stats' },
   ];
   
+  const academicsLinks = [
+      { href: '/#calculators', label: 'Calculators', icon: Calculator },
+      { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
+      { href: '/course-enrollment', label: 'Enrollment Alert', icon: ClipboardList },
+      { href: '/calendar', label: 'Calendar', icon: Calendar },
+  ];
+  
+  const resourcesLinks = [
+      { href: '/certifications', label: 'Certifications', icon: Award },
+      { href: '/projects', label: 'Project Marketplace', icon: Package },
+      { href: '/updates', label: 'Updates', icon: Bell },
+  ];
+
   const toolsDropdownLinks = [
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
@@ -227,7 +224,52 @@ export default function Header() {
         
         <div className="flex shrink-0 items-center gap-2 md:gap-4">
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             {!user && (
+             {user ? (
+                <>
+                    <button
+                        onClick={handleLearnClick}
+                        className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
+                    >
+                        <Book className="h-4 w-4" />
+                        Learn
+                        <Badge variant="destructive" className="animate-bounce">New</Badge>
+                    </button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                            Academics <ChevronDown className="ml-1 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {academicsLinks.map(link => (
+                                <DropdownMenuItem key={link.href} asChild>
+                                    <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                        <link.icon className="mr-2 h-4 w-4" />
+                                        {link.label}
+                                    </Link>
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                            Resources <ChevronDown className="ml-1 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {resourcesLinks.map(link => (
+                                <DropdownMenuItem key={link.href} asChild>
+                                    <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                        <link.icon className="mr-2 h-4 w-4" />
+                                        {link.label}
+                                    </Link>
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </>
+             ) : (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
@@ -235,7 +277,7 @@ export default function Header() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        {featuresDropdownLinks.map(link => (
+                        {loggedOutFeaturesLinks.map(link => (
                             <DropdownMenuItem key={link.href} asChild>
                                 <Link href={link.href} onClick={() => setIsNavigating(true)}>{link.label}</Link>
                             </DropdownMenuItem>
@@ -260,24 +302,9 @@ export default function Header() {
                     ))}
                 </DropdownMenuContent>
              </DropdownMenu>
-             {mainNavLinks.map(link => {
-              const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
-              return (
-                <NavLink key={link.href + link.label} href={link.href} onClick={() => setIsNavigating(true)} isActive={isActive}>
-                  {link.label}
-                </NavLink>
-              );
-            })}
-            {user && (
-              <button
-                onClick={handleLearnClick}
-                className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
-              >
-                  <Book className="h-4 w-4" />
-                  Learn
-                  <Badge variant="destructive" className="animate-bounce">New</Badge>
-              </button>
-            )}
+             <NavLink href="/contact" onClick={() => setIsNavigating(true)} isActive={pathname === '/contact'}>
+                Contact Us
+             </NavLink>
           </nav>
           <ThemeToggle />
           <UserNav />
@@ -294,26 +321,29 @@ export default function Header() {
                             <GraduationCap className="h-6 w-6 text-primary" />
                             <span>Saveetha Calculator</span>
                         </Link>
-                         {!user && (
-                             featuresDropdownLinks.map(link => (
+                         {user ? (
+                            <>
+                                {academicsLinks.map(link => (
+                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                ))}
+                                {resourcesLinks.map(link => (
+                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                ))}
+                                {toolsDropdownLinks.map(link => (
+                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                ))}
+                                <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
+                                    Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
+                                </button>
+                            </>
+                         ) : (
+                             loggedOutFeaturesLinks.map(link => (
                                 <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
                                     {link.label}
                                 </Link>
                              ))
                          )}
-                         {mainNavLinks.map(link => (
-                            <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
-                                {link.label}
-                            </Link>
-                         ))}
-                         {user && (
-                              <button onClick={() => {
-                                handleLearnClick();
-                                setMobileMenuOpen(false);
-                              }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
-                                 Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
-                              </button>
-                         )}
+                         <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
                     </nav>
                 </SheetContent>
             </Sheet>
