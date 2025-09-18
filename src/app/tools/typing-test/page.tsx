@@ -52,13 +52,30 @@ export default function TypingTestPage() {
     useEffect(() => {
         startTest();
     }, [startTest]);
+    
+    const calculateResults = useCallback(() => {
+        if (!testStarted) return;
+        
+        const elapsedTime = TIME_LIMIT - timer;
+        const grossWpm = (userInput.length / 5) / (elapsedTime / 60);
+        setWpm(Math.round(grossWpm > 0 ? grossWpm : 0));
+
+        let correctChars = 0;
+        for (let i = 0; i < userInput.length; i++) {
+            if (userInput[i] === textToType[i]) {
+                correctChars++;
+            }
+        }
+        const newAccuracy = (correctChars / userInput.length) * 100;
+        setAccuracy(Math.round(newAccuracy > 0 ? newAccuracy : 0));
+    }, [userInput, testStarted, timer, textToType]);
 
     useEffect(() => {
         if (testStarted && timer > 0) {
             timerIntervalRef.current = setInterval(() => {
                 setTimer(prev => prev - 1);
             }, 1000);
-        } else if (timer === 0) {
+        } else if (timer === 0 && testStarted) {
             if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
             setTestFinished(true);
             setTestStarted(false);
@@ -67,8 +84,13 @@ export default function TypingTestPage() {
         return () => {
             if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [testStarted, timer]);
+    }, [testStarted, timer, calculateResults]);
+    
+    useEffect(() => {
+        if (testStarted && !testFinished) {
+            calculateResults();
+        }
+    }, [userInput, testStarted, testFinished, calculateResults]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (testFinished) return;
@@ -82,21 +104,6 @@ export default function TypingTestPage() {
         setUserInput(value);
     };
     
-    const calculateResults = () => {
-        const typedWords = userInput.trim().split(/\s+/);
-        const correctWords = typedWords.filter((word, index) => {
-            const originalWords = textToType.split(/\s+/);
-            return word === originalWords[index];
-        });
-        
-        const grossWpm = (userInput.length / 5) / (TIME_LIMIT / 60);
-        setWpm(Math.round(grossWpm));
-
-        const correctChars = userInput.split('').filter((char, index) => char === textToType[index]).length;
-        const newAccuracy = (correctChars / userInput.length) * 100;
-        setAccuracy(Math.round(newAccuracy) || 0);
-    };
-
     const renderText = () => {
         return textToType.split('').map((char, index) => {
             let className = 'text-muted-foreground';
