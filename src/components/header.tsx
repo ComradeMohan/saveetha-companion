@@ -25,6 +25,7 @@ import {
   Lightbulb,
   Calendar,
   Bell,
+  PenSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -197,6 +198,7 @@ export default function Header() {
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
       { href: '/tools/steganography', label: 'Steganography', icon: Eye },
       { href: '/tools/reverse-dictionary', label: 'Reverse Dictionary', icon: Book },
+      { href: '/tools/citation-generator', label: 'Citation Generator', icon: PenSquare },
   ]
 
   const handleMobileLinkClick = (href: string) => {
