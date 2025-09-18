@@ -11,10 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { PenSquare, Copy, Check } from 'lucide-react';
+import { PenSquare, Copy, Check, Wand2, Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-
-type CitationStyle = 'apa' | 'mla' | 'chicago';
+import { findCitations } from '@/ai/flows/citation-finder-flow';
+import type { CitationStyle } from '@/ai/flows/citation-finder-flow';
 
 interface FormData {
   authors: string;
@@ -32,8 +32,10 @@ export default function CitationGeneratorPage() {
   const { toast } = useToast();
   const [style, setStyle] = useState<CitationStyle>('apa');
   const [formData, setFormData] = useState<Partial<FormData>>({});
-  const [generatedCitation, setGeneratedCitation] = useState('');
+  const [generatedCitations, setGeneratedCitations] = useState<string[]>([]);
   const [isCopied, setIsCopied] = useState(false);
+  const [isFinding, setIsFinding] = useState(false);
+  const [aiText, setAiText] = useState('');
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -76,15 +78,34 @@ export default function CitationGeneratorPage() {
         }
         break;
     }
-    setGeneratedCitation(citation);
+    setGeneratedCitations([citation]);
   };
   
   const handleCopy = () => {
-    navigator.clipboard.writeText(generatedCitation).then(() => {
+    const textToCopy = generatedCitations.join('\n\n');
+    navigator.clipboard.writeText(textToCopy).then(() => {
         setIsCopied(true);
-        toast({ title: "Copied!", description: "Citation copied to clipboard." });
+        toast({ title: "Copied!", description: "Citations copied to clipboard." });
         setTimeout(() => setIsCopied(false), 2000);
     });
+  };
+
+  const handleAiFind = async () => {
+    if (!aiText.trim()) {
+        toast({ title: "Error", description: 'Please paste some text for the AI to analyze.', variant: 'destructive' });
+        return;
+    }
+    setIsFinding(true);
+    setGeneratedCitations([]);
+    try {
+        const result = await findCitations({ text: aiText, style: style });
+        setGeneratedCitations(result.citations);
+        toast({ title: 'Success', description: 'AI has generated a list of relevant citations.' });
+    } catch(e) {
+        toast({ title: 'Error', description: 'The AI could not generate citations. Please try again.', variant: 'destructive' });
+    } finally {
+        setIsFinding(false);
+    }
   };
 
   const renderFormFields = (isBook = false) => (
@@ -140,7 +161,7 @@ export default function CitationGeneratorPage() {
                 Citation Generator
               </CardTitle>
               <CardDescription>
-                Generate academic citations for your sources in APA, MLA, or Chicago style.
+                Manually format a citation or use AI to find relevant citations for your text.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -157,11 +178,28 @@ export default function CitationGeneratorPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Tabs defaultValue="website" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+              <Tabs defaultValue="ai" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="ai">Find with AI</TabsTrigger>
                   <TabsTrigger value="website">Website</TabsTrigger>
                   <TabsTrigger value="book">Book</TabsTrigger>
                 </TabsList>
+                <TabsContent value="ai" className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ai-text">Paste Your Text</Label>
+                    <Textarea 
+                        id="ai-text"
+                        placeholder="Paste a paragraph or your entire essay here, and the AI will find relevant citations for you."
+                        className="min-h-48"
+                        value={aiText}
+                        onChange={(e) => setAiText(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={handleAiFind} disabled={isFinding} className="w-full">
+                      {isFinding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
+                    Find Citations
+                  </Button>
+                </TabsContent>
                 <TabsContent value="website" className="space-y-4 pt-4">
                   {renderFormFields(false)}
                   <Button onClick={() => generateCitation('website')} className="w-full">Generate Citation</Button>
@@ -172,14 +210,18 @@ export default function CitationGeneratorPage() {
                 </TabsContent>
               </Tabs>
             </CardContent>
-            {generatedCitation && (
+            {generatedCitations.length > 0 && (
               <CardFooter className="flex-col items-start gap-2 border-t pt-6">
-                <Label>Generated Citation</Label>
-                <div className="relative w-full">
-                    <Textarea value={generatedCitation} readOnly className="pr-12 bg-secondary/50" rows={3}/>
-                     <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={handleCopy}>
+                <div className="flex justify-between items-center w-full">
+                    <Label>Generated Citations ({generatedCitations.length})</Label>
+                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleCopy}>
                         {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                      </Button>
+                </div>
+                <div className="relative w-full p-4 bg-secondary/50 rounded-md text-sm space-y-4 max-h-64 overflow-y-auto">
+                    {generatedCitations.map((citation, index) => (
+                        <p key={index} dangerouslySetInnerHTML={{ __html: citation }} />
+                    ))}
                 </div>
               </CardFooter>
             )}
