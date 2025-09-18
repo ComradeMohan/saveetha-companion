@@ -12,9 +12,13 @@ import Footer from '@/components/footer';
 const paragraphs = [
     "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing and testing fonts.",
     "Technology has revolutionized the way we live and work. From smartphones to artificial intelligence, its impact is undeniable and continues to shape our future.",
-    "Programming is the process of creating a set of instructions that tell a computer how to perform a task. It is a fundamental skill in the digital age.",
+    "Programming is the process of creating a set of instructions that tell a computer how to perform a task. It is a fundamental skill in the digital age, essential for software development.",
     "The journey of a thousand miles begins with a single step. This ancient proverb reminds us that great things are accomplished through small, consistent efforts over time.",
-    "Education is the most powerful weapon which you can use to change the world. Nelson Mandela spoke these words, highlighting the importance of learning and knowledge."
+    "Education is the most powerful weapon which you can use to change the world. Nelson Mandela spoke these words, highlighting the importance of learning and knowledge.",
+    "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles.",
+    "The sun always shines brightest after the rain. It's a reminder that even after difficult times, there is always hope and a chance for a fresh start. Keep looking forward.",
+    "In the year 2024, the stock market saw a significant rise of 15.7%, with major tech companies like Alpha Inc. and Omega Corp. leading the charge with their quarterly earnings.",
+    "Please send the report to report@example.com or call our office at (555) 123-4567 for more information. The postal code is 90210. Our address is 123 Main Street."
 ];
 
 const TIME_LIMIT = 60; // 60 seconds
@@ -56,25 +60,31 @@ export default function TypingTestPage() {
     const calculateResults = useCallback(() => {
         if (!testStarted) return;
         
-        const elapsedTime = TIME_LIMIT - timer;
-        const grossWpm = (userInput.length / 5) / (elapsedTime / 60);
+        const elapsedTimeInMinutes = (TIME_LIMIT - timer) / 60;
+        if (elapsedTimeInMinutes === 0) return;
+
+        // Gross WPM is calculated as (all typed characters / 5) / time in minutes
+        const grossWpm = (userInput.length / 5) / elapsedTimeInMinutes;
         setWpm(Math.round(grossWpm > 0 ? grossWpm : 0));
 
         let correctChars = 0;
-        for (let i = 0; i < userInput.length; i++) {
-            if (userInput[i] === textToType[i]) {
+        userInput.split('').forEach((char, index) => {
+            if (char === textToType[index]) {
                 correctChars++;
             }
-        }
+        });
+        
         const newAccuracy = (correctChars / userInput.length) * 100;
         setAccuracy(Math.round(newAccuracy > 0 ? newAccuracy : 0));
     }, [userInput, testStarted, timer, textToType]);
 
     useEffect(() => {
         if (testStarted && timer > 0) {
-            timerIntervalRef.current = setInterval(() => {
-                setTimer(prev => prev - 1);
-            }, 1000);
+            if (!timerIntervalRef.current) {
+                timerIntervalRef.current = setInterval(() => {
+                    setTimer(prev => prev - 1);
+                }, 1000);
+            }
         } else if (timer === 0 && testStarted) {
             if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
             setTestFinished(true);
