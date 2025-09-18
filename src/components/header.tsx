@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ClipboardList,
   Book,
+  QrCode,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -191,6 +192,10 @@ export default function Header() {
       { href: '/#concepts', label: 'Concept Maps' },
       { href: '/#stats', label: 'Site Stats' },
   ];
+  
+  const toolsDropdownLinks = [
+      { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
+  ]
 
   const handleMobileLinkClick = (href: string) => {
     setIsNavigating(true);
@@ -233,6 +238,23 @@ export default function Header() {
                     </DropdownMenuContent>
                  </DropdownMenu>
              )}
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                        Tools <ChevronDown className="ml-1 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {toolsDropdownLinks.map(link => (
+                        <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                <link.icon className="mr-2 h-4 w-4" />
+                                {link.label}
+                            </Link>
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+             </DropdownMenu>
              {mainNavLinks.map(link => {
               const isActive = pathname === link.href || (link.href.startsWith('/#') && pathname === '/');
               return (
