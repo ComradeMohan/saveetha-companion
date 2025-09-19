@@ -12,6 +12,19 @@ import { Trophy, ArrowRight, Loader2, Search, Users, Clock, Tag } from 'lucide-r
 import Link from 'next/link';
 import Image from 'next/image';
 import type { TransformedHackathon } from '../api/hackathons/route';
+import { cn } from '@/lib/utils';
+
+// Function to determine the badge color based on time left
+const getTimeBadgeVariant = (timeLeft: string): 'destructive' | 'default' | 'secondary' => {
+    const lowerCaseTime = timeLeft.toLowerCase();
+    if (lowerCaseTime.includes('day') || lowerCaseTime.includes('days')) {
+        const days = parseInt(lowerCaseTime.split(' ')[0], 10);
+        if (days < 7) return 'destructive';
+        if (days < 30) return 'default';
+    }
+    return 'secondary';
+};
+
 
 export default function HackathonsPage() {
     const [hackathons, setHackathons] = useState<TransformedHackathon[]>([]);
@@ -59,8 +72,8 @@ export default function HackathonsPage() {
     }, [searchTerm, hackathons]);
 
     const extractPrizeValue = (html: string) => {
-        const match = html.match(/>(\$355,000)</);
-        if (match) return match[1];
+        const match = html.match(/>\$([\d,]+)</);
+        if (match && match[1]) return `$${match[1]}`;
         // Fallback for simple strings or if regex fails
         return html.replace(/<[^>]*>/g, '');
     }
@@ -97,7 +110,7 @@ export default function HackathonsPage() {
                             {filteredHackathons.map(hackathon => (
                                 <Card key={hackathon.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                                     <CardHeader className="p-0">
-                                        <div className="relative h-48 w-full">
+                                        <div className="relative aspect-square w-full">
                                             <Image
                                                 src={hackathon.thumbnailUrl.startsWith('//') ? `https:${hackathon.thumbnailUrl}` : hackathon.thumbnailUrl}
                                                 alt={hackathon.title}
@@ -110,20 +123,22 @@ export default function HackathonsPage() {
                                         <div className="flex justify-between items-start">
                                             <Badge variant={hackathon.location === 'Online' ? 'default' : 'secondary'}>{hackathon.location}</Badge>
                                             <div className="text-right">
-                                                <p className="font-semibold text-primary">{extractPrizeValue(hackathon.prizeAmount)}</p>
-                                                <p className="text-xs text-muted-foreground">in prizes</p>
+                                                <p className="font-bold text-lg text-amber-500">{extractPrizeValue(hackathon.prizeAmount)}</p>
+                                                <p className="text-xs text-muted-foreground -mt-1">in prizes</p>
                                             </div>
                                         </div>
                                         <CardTitle className="text-lg leading-tight">{hackathon.title}</CardTitle>
                                         <p className="text-sm text-muted-foreground font-medium">{hackathon.organization}</p>
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-1.5">
                                             {hackathon.themes.map(theme => (
                                                 <Badge key={theme} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{theme}</Badge>
                                             ))}
                                         </div>
                                         <div className="flex items-center text-sm text-muted-foreground gap-4 pt-2">
                                             <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/> {hackathon.registrations.toLocaleString()} Participants</div>
-                                            <div className="flex items-center gap-1.5"><Clock className="h-4 w-4"/> {hackathon.timeLeft}</div>
+                                            <Badge variant={getTimeBadgeVariant(hackathon.timeLeft)}>
+                                                <Clock className="h-3 w-3 mr-1.5"/> {hackathon.timeLeft}
+                                            </Badge>
                                         </div>
                                     </CardContent>
                                     <CardFooter className="p-4 pt-0">
@@ -169,3 +184,4 @@ export default function HackathonsPage() {
         </div>
     );
 }
+
