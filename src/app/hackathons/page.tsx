@@ -51,8 +51,7 @@ export default function HackathonsPage() {
         const lowercasedFilter = searchTerm.toLowerCase();
         return hackathons.filter(h => 
             h.title.toLowerCase().includes(lowercasedFilter) ||
-            h.organization.toLowerCase().includes(lowercasedFilter) ||
-            h.description.toLowerCase().includes(lowercasedFilter)
+            h.organization.toLowerCase().includes(lowercasedFilter)
         );
     }, [searchTerm, hackathons]);
 
@@ -64,7 +63,7 @@ export default function HackathonsPage() {
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold tracking-tight">Hackathons & Competitions</h2>
                         <p className="text-muted-foreground mt-2">
-                            Discover upcoming hackathons, coding challenges, and innovation contests.
+                            Discover upcoming hackathons, coding challenges, and innovation contests from Devpost.
                         </p>
                     </div>
 
