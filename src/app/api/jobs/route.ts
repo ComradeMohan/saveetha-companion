@@ -38,7 +38,7 @@ export interface TransformedJob {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const limit = searchParams.get('limit') || '20';
+  const limit = searchParams.get('limit') || '100'; // Fetch a larger number for client-side pagination
 
   try {
     const response = await fetch(`https://remotive.com/api/remote-jobs?limit=${limit}`, {
