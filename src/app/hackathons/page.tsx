@@ -116,7 +116,7 @@ export default function HackathonsPage() {
                                                 alt={hackathon.title}
                                                 width={200}
                                                 height={200}
-                                                className="object-cover w-full h-48 sm:w-48 sm:h-full transition-transform duration-300 group-hover:scale-105"
+                                                className="object-cover w-full sm:w-[200px] h-48 sm:h-[200px] transition-transform duration-300 group-hover:scale-105"
                                             />
                                         </div>
                                         <div className="flex flex-col flex-grow p-4">
@@ -188,4 +188,5 @@ export default function HackathonsPage() {
             <Footer />
         </div>
     );
-}
+
+    
