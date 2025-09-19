@@ -26,6 +26,8 @@ import {
   Calendar,
   Bell,
   PenSquare,
+  Trophy,
+  Briefcase,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -190,10 +192,14 @@ export default function Header() {
   const resourcesLinks = [
       { href: '/certifications', label: 'Certifications', icon: Award },
       { href: '/projects', label: 'Project Marketplace', icon: Package },
+      { href: '/hackathons', label: 'Hackathons', icon: Trophy },
+      { href: '/internships', label: 'Internships', icon: Briefcase },
       { href: '/updates', label: 'Updates', icon: Bell },
   ];
 
   const toolsDropdownLinks = [
+      { href: '/tools/placement-prep', label: 'Placement Prep', icon: GraduationCap },
+      { href: '/tools/sql-playground', label: 'SQL Playground', icon: 'database' },
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
       { href: '/tools/steganography', label: 'Steganography', icon: Eye },
@@ -297,7 +303,7 @@ export default function Header() {
                     {toolsDropdownLinks.map(link => (
                         <DropdownMenuItem key={link.href} asChild>
                             <Link href={link.href} onClick={() => setIsNavigating(true)}>
-                                <link.icon className="mr-2 h-4 w-4" />
+                                {typeof link.icon === 'string' ? <div className="mr-2 h-4 w-4" /> : <link.icon className="mr-2 h-4 w-4" />}
                                 {link.label}
                             </Link>
                         </DropdownMenuItem>
