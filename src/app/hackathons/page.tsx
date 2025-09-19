@@ -82,7 +82,7 @@ export default function HackathonsPage() {
         <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1 pt-20 pb-12 md:py-16">
-                <div className="container mx-auto px-4 max-w-5xl">
+                <div className="container mx-auto px-4 max-w-4xl">
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold tracking-tight">Hackathons & Competitions</h2>
                         <p className="text-muted-foreground mt-2">
@@ -106,48 +106,53 @@ export default function HackathonsPage() {
                             <Loader2 className="h-8 w-8 animate-spin" />
                         </div>
                     ) : filteredHackathons.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6">
                             {filteredHackathons.map(hackathon => (
-                                <Card key={hackathon.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
-                                    <CardHeader className="p-0">
-                                        <div className="relative aspect-square w-full">
+                                 <Card key={hackathon.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
+                                    <div className="flex flex-col sm:flex-row">
+                                        <div className="flex-shrink-0">
                                             <Image
                                                 src={hackathon.thumbnailUrl.startsWith('//') ? `https:${hackathon.thumbnailUrl}` : hackathon.thumbnailUrl}
                                                 alt={hackathon.title}
-                                                fill
-                                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                                width={200}
+                                                height={200}
+                                                className="object-cover w-full h-48 sm:w-48 sm:h-full transition-transform duration-300 group-hover:scale-105"
                                             />
                                         </div>
-                                    </CardHeader>
-                                    <CardContent className="p-4 space-y-3">
-                                        <div className="flex justify-between items-start">
-                                            <Badge variant={hackathon.location === 'Online' ? 'default' : 'secondary'}>{hackathon.location}</Badge>
-                                            <div className="text-right">
-                                                <p className="font-bold text-lg text-amber-500">{extractPrizeValue(hackathon.prizeAmount)}</p>
-                                                <p className="text-xs text-muted-foreground -mt-1">in prizes</p>
+                                        <div className="flex flex-col flex-grow p-4">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <Badge variant={hackathon.location === 'Online' ? 'default' : 'secondary'}>{hackathon.location}</Badge>
+                                                <div className="text-right">
+                                                    <p className="font-bold text-lg text-amber-500">{extractPrizeValue(hackathon.prizeAmount)}</p>
+                                                    <p className="text-xs text-muted-foreground -mt-1">in prizes</p>
+                                                </div>
                                             </div>
+                                            <CardTitle className="text-lg leading-tight mb-1">{hackathon.title}</CardTitle>
+                                            <p className="text-sm text-muted-foreground font-medium mb-3">{hackathon.organization}</p>
+                                            
+                                            <div className="flex-grow space-y-3">
+                                                 <div className="flex flex-wrap gap-1.5">
+                                                    {hackathon.themes.slice(0, 4).map(theme => (
+                                                        <Badge key={theme} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{theme}</Badge>
+                                                    ))}
+                                                </div>
+                                                <div className="flex items-center text-sm text-muted-foreground gap-4">
+                                                    <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/> {hackathon.registrations.toLocaleString()} Participants</div>
+                                                    <Badge variant={getTimeBadgeVariant(hackathon.timeLeft)}>
+                                                        <Clock className="h-3 w-3 mr-1.5"/> {hackathon.timeLeft}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                            
+                                            <CardFooter className="p-0 pt-4 mt-auto">
+                                                <Button asChild className="w-full">
+                                                    <Link href={hackathon.url} target="_blank" rel="noopener noreferrer">
+                                                        View Event <ArrowRight className="ml-2 h-4 w-4" />
+                                                    </Link>
+                                                </Button>
+                                            </CardFooter>
                                         </div>
-                                        <CardTitle className="text-lg leading-tight">{hackathon.title}</CardTitle>
-                                        <p className="text-sm text-muted-foreground font-medium">{hackathon.organization}</p>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {hackathon.themes.map(theme => (
-                                                <Badge key={theme} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{theme}</Badge>
-                                            ))}
-                                        </div>
-                                        <div className="flex items-center text-sm text-muted-foreground gap-4 pt-2">
-                                            <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/> {hackathon.registrations.toLocaleString()} Participants</div>
-                                            <Badge variant={getTimeBadgeVariant(hackathon.timeLeft)}>
-                                                <Clock className="h-3 w-3 mr-1.5"/> {hackathon.timeLeft}
-                                            </Badge>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="p-4 pt-0">
-                                        <Button asChild className="w-full">
-                                            <Link href={hackathon.url} target="_blank" rel="noopener noreferrer">
-                                                View Event <ArrowRight className="ml-2 h-4 w-4" />
-                                            </Link>
-                                        </Button>
-                                    </CardFooter>
+                                    </div>
                                 </Card>
                             ))}
                         </div>
@@ -184,4 +189,3 @@ export default function HackathonsPage() {
         </div>
     );
 }
-
