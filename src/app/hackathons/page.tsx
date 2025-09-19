@@ -11,8 +11,22 @@ import { Badge } from '@/components/ui/badge';
 import { Trophy, ArrowRight, Loader2, Search, Users, Clock, Tag } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { TransformedHackathon } from '../api/hackathons/route';
 import { cn } from '@/lib/utils';
+
+// Define the type here as it cannot be imported from a route file.
+interface TransformedHackathon {
+  id: string;
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+  organization: string;
+  timeLeft: string;
+  prizeAmount: string;
+  registrations: number;
+  themes: string[];
+  location: string;
+}
+
 
 // Function to determine the badge color based on time left
 const getTimeBadgeVariant = (timeLeft: string): 'destructive' | 'default' | 'secondary' => {
@@ -34,7 +48,6 @@ export default function HackathonsPage() {
     const [totalPages, setTotalPages] = useState(1);
 
     const fetchHackathons = useCallback(async (page: number) => {
-        console.log(`[fetchHackathons] Starting fetch for page: ${page}`);
         setLoading(true);
         try {
             const response = await fetch(`/api/hackathons?page=${page}`);
@@ -42,12 +55,11 @@ export default function HackathonsPage() {
                 throw new Error('Failed to fetch hackathons');
             }
             const data = await response.json();
-            console.log('[fetchHackathons] Data received:', data);
             setHackathons(data.hackathons);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
         } catch (error) {
-            console.error("[fetchHackathons] Fetch error:", error);
+            console.error("Fetch error:", error);
         } finally {
             setLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -59,7 +71,6 @@ export default function HackathonsPage() {
     }, [fetchHackathons]);
 
     const handlePageChange = (newPage: number) => {
-        console.log(`[handlePageChange] Changing to page: ${newPage}`);
         if (newPage >= 1 && newPage <= totalPages) {
             fetchHackathons(newPage);
         }
@@ -67,6 +78,8 @@ export default function HackathonsPage() {
 
     const filteredHackathons = useMemo(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
+        if (!searchTerm) return hackathons;
+        
         return hackathons.filter(h => 
             h.title.toLowerCase().includes(lowercasedFilter) ||
             h.organization.toLowerCase().includes(lowercasedFilter) ||
@@ -113,11 +126,12 @@ export default function HackathonsPage() {
                             {filteredHackathons.map(hackathon => (
                                  <Card key={hackathon.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                                     <div className="flex flex-col sm:flex-row">
-                                        <div className="relative flex-shrink-0 w-full sm:w-[200px] h-48 sm:h-auto aspect-square">
+                                        <div className="relative flex-shrink-0 w-full sm:w-[200px] h-48 sm:h-[200px] aspect-square">
                                             <Image
                                                 src={hackathon.thumbnailUrl.startsWith('//') ? `https:${hackathon.thumbnailUrl}` : hackathon.thumbnailUrl}
                                                 alt={hackathon.title}
-                                                fill
+                                                width={200}
+                                                height={200}
                                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
                                         </div>
