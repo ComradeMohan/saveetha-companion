@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -192,7 +193,7 @@ export default function Header() {
       { href: '/certifications', label: 'Certifications', icon: Award },
       { href: '/projects', label: 'Project Marketplace', icon: Package },
       { href: '/hackathons', label: 'Hackathons', icon: Trophy },
-      { href: '/jobs', label: 'Remote Jobs', icon: Briefcase },
+      { href: '/internships', label: 'Internships', icon: Briefcase },
       { href: '/updates', label: 'Updates', icon: Bell },
   ];
 
