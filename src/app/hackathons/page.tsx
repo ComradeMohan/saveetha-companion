@@ -34,6 +34,7 @@ export default function HackathonsPage() {
     const [totalPages, setTotalPages] = useState(1);
 
     const fetchHackathons = useCallback(async (page: number) => {
+        console.log(`[fetchHackathons] Starting fetch for page: ${page}`);
         setLoading(true);
         try {
             const response = await fetch(`/api/hackathons?page=${page}`);
@@ -41,11 +42,12 @@ export default function HackathonsPage() {
                 throw new Error('Failed to fetch hackathons');
             }
             const data = await response.json();
+            console.log('[fetchHackathons] Data received:', data);
             setHackathons(data.hackathons);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
         } catch (error) {
-            console.error(error);
+            console.error("[fetchHackathons] Fetch error:", error);
         } finally {
             setLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -57,6 +59,7 @@ export default function HackathonsPage() {
     }, [fetchHackathons]);
 
     const handlePageChange = (newPage: number) => {
+        console.log(`[handlePageChange] Changing to page: ${newPage}`);
         if (newPage >= 1 && newPage <= totalPages) {
             fetchHackathons(newPage);
         }
