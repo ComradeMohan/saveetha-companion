@@ -113,13 +113,12 @@ export default function HackathonsPage() {
                             {filteredHackathons.map(hackathon => (
                                  <Card key={hackathon.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                                     <div className="flex flex-col sm:flex-row">
-                                        <div className="flex-shrink-0">
+                                        <div className="relative flex-shrink-0 w-full sm:w-[200px] h-48 sm:h-auto aspect-square">
                                             <Image
                                                 src={hackathon.thumbnailUrl.startsWith('//') ? `https:${hackathon.thumbnailUrl}` : hackathon.thumbnailUrl}
                                                 alt={hackathon.title}
-                                                width={200}
-                                                height={200}
-                                                className="object-cover w-full sm:w-[200px] h-48 sm:h-[200px] transition-transform duration-300 group-hover:scale-105"
+                                                fill
+                                                className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
                                         </div>
                                         <div className="flex flex-col flex-grow p-4">
@@ -191,6 +190,4 @@ export default function HackathonsPage() {
             <Footer />
         </div>
     );
-
-    
 }
