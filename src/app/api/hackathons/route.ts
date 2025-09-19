@@ -13,32 +13,17 @@ interface Hackathon {
   url: string;
 }
 
-// Devpost API returns a much more complex object, this is a subset
+// This interface matches the actual, observed structure from the Devpost API
 interface DevpostHackathon {
     id: number;
     title: string;
     url: string;
-    organization_name: string | null; // <-- Important: This can be null
-    submission_period_dates: {
-        start: string;
-        end: string;
+    organization_name: string | null;
+    submission_period_dates: string; // This is a pre-formatted string, e.g., "Jul 31 - Oct 01, 2025"
+    displayed_location: {
+        location: string;
     };
-    location: string;
 }
-
-function formatDateRange(start: string, end: string): string {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const startMonth = startDate.toLocaleString('default', { month: 'short' });
-    const endMonth = endDate.toLocaleString('default', { month: 'short' });
-
-    if (startDate.getMonth() === endDate.getMonth()) {
-        return `${startMonth} ${startDate.getDate()} - ${endDate.getDate()}`;
-    } else {
-        return `${startMonth} ${startDate.getDate()} - ${endMonth} ${endDate.getDate()}`;
-    }
-}
-
 
 export async function GET() {
   try {
@@ -59,9 +44,9 @@ export async function GET() {
         id: h.id.toString(),
         title: h.title,
         organization: h.organization_name || 'N/A',
-        date: formatDateRange(h.submission_period_dates.start, h.submission_period_dates.end),
-        mode: h.location.toLowerCase().includes('online') ? 'Online' : 'In-Person',
-        location: h.location,
+        date: h.submission_period_dates, // Use the pre-formatted date string directly
+        mode: h.displayed_location.location.toLowerCase().includes('online') ? 'Online' : 'In-Person',
+        location: h.displayed_location.location,
         description: `Join the ${h.title} hackathon hosted by ${h.organization_name || 'the organizers'}.`,
         url: h.url,
     }));
