@@ -18,7 +18,7 @@ interface DevpostHackathon {
     id: number;
     title: string;
     url: string;
-    organization_name: string;
+    organization_name: string | null; // <-- Important: This can be null
     submission_period_dates: {
         start: string;
         end: string;
@@ -62,7 +62,7 @@ export async function GET() {
         date: formatDateRange(h.submission_period_dates.start, h.submission_period_dates.end),
         mode: h.location.toLowerCase().includes('online') ? 'Online' : 'In-Person',
         location: h.location,
-        description: `Join the ${h.title} hackathon hosted by ${h.organization_name}.`,
+        description: `Join the ${h.title} hackathon hosted by ${h.organization_name || 'the organizers'}.`,
         url: h.url,
     }));
     
