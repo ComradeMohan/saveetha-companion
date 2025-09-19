@@ -28,6 +28,7 @@ import {
   PenSquare,
   Trophy,
   Briefcase,
+  BriefcaseBusiness,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -194,6 +195,7 @@ export default function Header() {
       { href: '/projects', label: 'Project Marketplace', icon: Package },
       { href: '/hackathons', label: 'Hackathons', icon: Trophy },
       { href: '/internships', label: 'Internships', icon: Briefcase },
+      { href: '/jobs', label: 'Remote Jobs', icon: BriefcaseBusiness },
       { href: '/updates', label: 'Updates', icon: Bell },
   ];
 
