@@ -109,10 +109,10 @@ export default function PlacementPrepPage() {
                                             {problem.category.charAt(0).toUpperCase() + problem.category.slice(1)}
                                         </Badge>
                                     </div>
+                                    {problem.tables && <CardDescription className="font-mono text-xs pt-2">Table(s): {problem.tables}</CardDescription>}
                                 </CardHeader>
                                 <CardContent className="flex-grow space-y-4">
                                     <p className="text-muted-foreground">{problem.description}</p>
-                                    {problem.tables && <p className="text-sm font-mono bg-secondary/50 p-2 rounded-md"><strong>Table(s):</strong> {problem.tables}</p>}
                                 </CardContent>
                                 <CardFooter>
                                     <Accordion type="single" collapsible className="w-full">
@@ -163,3 +163,5 @@ export default function PlacementPrepPage() {
         </div>
     );
 }
+
+    

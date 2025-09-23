@@ -1,6 +1,6 @@
 
 export type Solution = {
-    lang: 'Java' | 'Python' | 'C#' | 'NOT IN' | 'LEFT JOIN' | 'NOT EXISTS' | 'SQL';
+    lang: 'Java' | 'Python' | 'C#' | 'SQL' | 'NOT IN' | 'LEFT JOIN' | 'NOT EXISTS';
     code: string;
 };
 
@@ -14,26 +14,101 @@ export type Problem = {
 };
 
 export const problems: Problem[] = [
+    // === New Detailed SQL Questions ===
     {
         id: 1,
-        title: "Male Nurses Born After a Date",
+        title: "SQL – Flights from Amsterdam",
         category: "sql",
-        description: "Write an SQL query to display the first name and date of birth of male nurses born after 1-Jan-1982.",
-        tables: "Nurse(FirstName, DateOfBirth, Gender)",
+        description: "Display details of flights departing from 'Amsterdam' with columns: Flight_ID, Departure_Time, Destination_City, Airplane_ID.",
+        tables: "flight(FLIGHT_ID, AIRPLANE_ID, DEPARTURE_TIME, FLIGHT_FROM, FLIGHT_TO, …)",
         solutions: [
             {
                 lang: "SQL",
                 code: `SELECT 
-    FirstName AS "NURSE FIRST NAME",
-    DateOfBirth AS "DATEOFBIRTH"
-FROM Nurse
-WHERE Gender = 'Male'
-  AND DateOfBirth > '1982-01-01';`
+    FLIGHT_ID,
+    DEPARTURE_TIME,
+    FLIGHT_TO AS Destination_City,
+    AIRPLANE_ID
+FROM flight
+WHERE FLIGHT_FROM = 'Amsterdam';`
+            },
+            {
+                lang: "Python",
+                code: `import pymysql
+
+conn = pymysql.connect(host='localhost', user='root', password='', db='airport')
+cursor = conn.cursor()
+query = """
+SELECT FLIGHT_ID, DEPARTURE_TIME, FLIGHT_TO AS Destination_City, AIRPLANE_ID
+FROM flight
+WHERE FLIGHT_FROM = 'Amsterdam';
+"""
+cursor.execute(query)
+for row in cursor.fetchall():
+    print(row)`
+            },
+            {
+                lang: "Java",
+                code: `String query = "SELECT FLIGHT_ID, DEPARTURE_TIME, FLIGHT_TO AS Destination_City, AIRPLANE_ID FROM flight WHERE FLIGHT_FROM='Amsterdam'";
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery(query);
+while(rs.next()){
+    System.out.println(rs.getInt("FLIGHT_ID") + " " + rs.getString("DEPARTURE_TIME") + " " + rs.getString("Destination_City") + " " + rs.getInt("AIRPLANE_ID"));
+}`
+            },
+            {
+                lang: "C#",
+                code: `string query = "SELECT FLIGHT_ID, DEPARTURE_TIME, FLIGHT_TO AS Destination_City, AIRPLANE_ID FROM flight WHERE FLIGHT_FROM='Amsterdam'";
+SqlCommand cmd = new SqlCommand(query, conn);
+SqlDataReader reader = cmd.ExecuteReader();
+while(reader.Read()){
+    Console.WriteLine($"{reader["FLIGHT_ID"]} {reader["DEPARTURE_TIME"]} {reader["Destination_City"]} {reader["AIRPLANE_ID"]}");
+}`
             }
         ]
     },
     {
         id: 2,
+        title: "SQL – Paid Customers’ Addresses",
+        category: "sql",
+        description: "Display addresses of customers with payment status 'PAID'. Output column alias: Paid_Customer_Address.",
+        tables: "customer_address, customer_order, payment",
+        solutions: [
+            {
+                lang: "SQL",
+                code: `SELECT 
+    ca.ADDRESS AS Paid_Customer_Address
+FROM customer_address ca
+JOIN customer_order co ON ca.CUSTOMER_ID = co.CUSTOMER_ID
+JOIN payment p ON co.ORDER_ID = p.ORDER_ID
+WHERE p.STATUS = 'PAID';`
+            },
+             {
+                lang: "Python",
+                code: `query = """
+SELECT ca.ADDRESS AS Paid_Customer_Address
+FROM customer_address ca
+JOIN customer_order co ON ca.CUSTOMER_ID = co.CUSTOMER_ID
+JOIN payment p ON co.ORDER_ID = p.ORDER_ID
+WHERE p.STATUS='PAID';
+"""`
+            },
+            {
+                lang: "Java",
+                code: `String query = "SELECT ca.ADDRESS AS Paid_Customer_Address FROM customer_address ca JOIN customer_order co ON ca.CUSTOMER_ID = co.CUSTOMER_ID JOIN payment p ON co.ORDER_ID = p.ORDER_ID WHERE p.STATUS='PAID'";`
+            },
+            {
+                lang: "C#",
+                code: `string query = @"SELECT ca.ADDRESS AS Paid_Customer_Address
+                 FROM customer_address ca
+                 JOIN customer_order co ON ca.CUSTOMER_ID = co.CUSTOMER_ID
+                 JOIN payment p ON co.ORDER_ID = p.ORDER_ID
+                 WHERE p.STATUS='PAID'";`
+            }
+        ]
+    },
+     {
+        id: 3,
         title: "Users Who Never Submitted a Ticket",
         category: "sql",
         description: "Return `USER_ID`, `FIRST_NAME`, `LAST_NAME` of users who never submitted a ticket.",
@@ -60,8 +135,213 @@ WHERE NOT EXISTS (SELECT 1 FROM Tickets T WHERE U.User_ID = T.User_ID);`
             }
         ]
     },
+
+    // === New Detailed Coding Questions ===
+     {
+        id: 4,
+        title: "Coding – Economical Trip",
+        category: "coding",
+        description: "Find the minimum number of cars required for all eligible team members to go on a trip. Teams ≤ 2 members don’t go. Cars can be shared. Return -1 if not all can go.",
+        solutions: [
+            {
+                lang: "Python",
+                code: `class UserMainCode(object):
+    @classmethod
+    def findCars(cls, input1, input2, input3):
+        total_people = 0
+        available_seats = []
+        
+        for i in range(input1):
+            if input2[i] > 2:
+                total_people += input2[i]
+                available_seats.append(input3[i])
+        
+        if total_people == 0:
+            return -1
+        
+        available_seats.sort(reverse=True)
+        cars_used = 0
+        
+        for seats in available_seats:
+            if total_people <= 0:
+                break
+            total_people -= seats
+            cars_used += 1
+        
+        return -1 if total_people > 0 else cars_used`
+            },
+            {
+                lang: "Java",
+                code: `import java.util.*;
+class UserMainCode {
+    public static int findCars(int N, int[] A, int[] C) {
+        int totalPeople = 0;
+        List<Integer> seats = new ArrayList<>();
+        for(int i=0;i<N;i++){
+            if(A[i]>2){
+                totalPeople+=A[i];
+                seats.add(C[i]);
+            }
+        }
+        if(totalPeople==0) return -1;
+        seats.sort(Collections.reverseOrder());
+        int cars=0;
+        for(int s: seats){
+            if(totalPeople<=0) break;
+            totalPeople-=s;
+            cars++;
+        }
+        return totalPeople>0?-1:cars;
+    }
+}`
+            },
+            {
+                lang: "C#",
+                code: `using System;
+using System.Collections.Generic;
+class UserMainCode {
+    public static int FindCars(int N, int[] A, int[] C){
+        int total=0;
+        List<int> seats = new List<int>();
+        for(int i=0;i<N;i++){
+            if(A[i]>2){
+                total+=A[i];
+                seats.Add(C[i]);
+            }
+        }
+        if(total==0) return -1;
+        seats.Sort((a,b)=>b.CompareTo(a));
+        int cars=0;
+        foreach(int s in seats){
+            if(total<=0) break;
+            total-=s;
+            cars++;
+        }
+        return total>0?-1:cars;
+    }
+}`
+            }
+        ]
+    },
     {
-        id: 3,
+        id: 5,
+        title: "Coding – Library Books",
+        category: "coding",
+        description: "Pick books from prime-numbered shelves. Maximum K books per shelf. Return maximum books collectible.",
+        solutions: [
+             {
+                lang: "Python",
+                code: `class UserMainCode:
+    @classmethod
+    def maxBooks(cls, N, K, A):
+        def is_prime(n):
+            if n<2: return False
+            for i in range(2,int(n**0.5)+1):
+                if n%i==0: return False
+            return True
+        total=0
+        for i in range(1,N+1):
+            if is_prime(i):
+                total += min(K,A[i-1])
+        return total`
+            },
+            {
+                lang: "Java",
+                code: `class UserMainCode {
+    public static int maxBooks(int N,int K,int[] A){
+        int total=0;
+        for(int i=1;i<=N;i++){
+            if(isPrime(i)){
+                total+=Math.min(K,A[i-1]);
+            }
+        }
+        return total;
+    }
+    private static boolean isPrime(int n){
+        if(n<2) return false;
+        for(int i=2;i*i<=n;i++){
+            if(n%i==0) return false;
+        }
+        return true;
+    }
+}`
+            },
+            {
+                lang: "C#",
+                code: `using System;
+class UserMainCode{
+    public static int MaxBooks(int N,int K,int[] A){
+        int total=0;
+        for(int i=1;i<=N;i++){
+            if(IsPrime(i)){
+                total+=Math.Min(K,A[i-1]);
+            }
+        }
+        return total;
+    }
+    private static bool IsPrime(int n){
+        if(n<2) return false;
+        for(int i=2;i*i<=n;i++){
+            if(n%i==0) return false;
+        }
+        return true;
+    }
+}`
+            }
+        ]
+    },
+    {
+        id: 6,
+        title: "Coding – Sectional Garden",
+        category: "coding",
+        description: "Find the maximum water over any streak of D consecutive days where total ≥ M. Return 0 if no streak exists.",
+        solutions: [
+            {
+                lang: "Python",
+                code: `class UserMainCode:
+    @classmethod
+    def sectionalGarden(cls,D,M,A,N):
+        max_water=0
+        for i in range(N-D+1):
+            s=sum(A[i:i+D])
+            if s>=M:
+                max_water=max(max_water,s)
+        return max_water`
+            },
+            {
+                lang: "Java",
+                code: `class UserMainCode {
+    public static int sectionalGarden(int D,int M,int[] A,int N){
+        int maxWater=0;
+        for(int i=0;i<=N-D;i++){
+            int sum=0;
+            for(int j=i;j<i+D;j++) sum+=A[j];
+            if(sum>=M) maxWater=Math.max(maxWater,sum);
+        }
+        return maxWater;
+    }
+}`
+            },
+            {
+                lang: "C#",
+                code: `class UserMainCode{
+    public static int SectionalGarden(int D,int M,int[] A,int N){
+        int maxWater=0;
+        for(int i=0;i<=N-D;i++){
+            int sum=0;
+            for(int j=i;j<i+D;j++) sum+=A[j];
+            if(sum>=M) maxWater=Math.Max(maxWater,sum);
+        }
+        return maxWater;
+    }
+}`
+            }
+        ]
+    },
+    
+    // === Original Mettl Questions ===
+    {
+        id: 7,
         title: "Pair Sum Problem",
         category: "coding",
         description: "Given an integer array, form non-overlapping pairs (a, b) where `a` appears before `b` and `a < b`. Return an array of the sums. Each element can be used at most once.",
@@ -129,7 +409,7 @@ public class Solution {
         ]
     },
     {
-        id: 4,
+        id: 8,
         title: "Count Valid Blocks",
         category: "coding",
         description: "Count consecutive blocks of identical numbers where the length of the block is equal to the number itself.",
@@ -194,7 +474,7 @@ public class Solution {
         ]
     },
     {
-        id: 5,
+        id: 9,
         title: "Balanced Bloom Sum",
         category: "coding",
         description: "Sum elements `A[i]` only if two conditions are met: (1) The count of elements `< A[i]` before it equals the count of elements `> A[i]` after it. (2) The total frequency of `A[i]` in the array is less than 3.",
@@ -257,8 +537,10 @@ public class Solution {
             }
         ]
     },
+
+    // === Original Array Questions ===
     {
-        id: 6,
+        id: 10,
         title: "Find Smallest and Largest Number",
         category: "coding",
         description: "Finds the minimum and maximum values in a given array of integers.",
@@ -297,7 +579,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 7,
+        id: 11,
         title: "Find Missing Number",
         category: "coding",
         description: "Finds the single missing number in an array of consecutive integers from 1 to N.",
@@ -337,7 +619,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 8,
+        id: 12,
         title: "Find Second Largest Number",
         category: "coding",
         description: "Identifies the second largest value in an array in a single pass.",
@@ -396,7 +678,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 9,
+        id: 13,
         title: "Rearrange by Small-Large",
         category: "coding",
         description: "Sorts an array and then creates a new array by alternating the smallest and largest elements.",
@@ -450,7 +732,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 10,
+        id: 14,
         title: "Max Contiguous Subarray Sum",
         category: "coding",
         description: "Finds the maximum sum of a contiguous sub-array (Kadane's algorithm).",
@@ -497,7 +779,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 11,
+        id: 15,
         title: "Most Repeated Number",
         category: "coding",
         description: "Counts frequencies to find the number that appears most often.",
@@ -546,7 +828,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 12,
+        id: 16,
         title: "All Unique Elements",
         category: "coding",
         description: "Uses a set to get a collection of unique numbers.",
@@ -577,7 +859,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 13,
+        id: 17,
         title: "Rotate Array by N",
         category: "coding",
         description: "Rotates the array elements by a specified number of positions without creating a new array.",
@@ -634,7 +916,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 14,
+        id: 18,
         title: "Remove All Duplicates (In-Place)",
         category: "coding",
         description: "Removes duplicates from a sorted array in-place and returns the new length.",
@@ -683,7 +965,7 @@ public class ArrayProblems {
         ]
     },
     {
-        id: 15,
+        id: 19,
         title: "Move All 0s to End",
         category: "coding",
         description: "Moves all zeros to the end of the array while maintaining the relative order of non-zero elements.",
@@ -733,3 +1015,4 @@ public class ArrayProblems {
     }
 ];
 
+    
