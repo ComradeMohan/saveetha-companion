@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, Eye } from "lucide-react";
 import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -17,9 +17,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { feedKnowledge } from "@/ai/flows/knowledge-feeder";
+import { trackConceptMapView } from "@/app/actions/track-concept-map-view";
+
+interface ConceptMapWithViews extends ConceptMap {
+    viewCount?: number;
+}
 
 export default function AdminConceptMapsPage() {
-    const [conceptMaps, setConceptMaps] = useState<ConceptMap[]>([]);
+    const [conceptMaps, setConceptMaps] = useState<ConceptMapWithViews[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
     const [mapToDelete, setMapToDelete] = useState<ConceptMap | null>(null);
@@ -30,12 +35,28 @@ export default function AdminConceptMapsPage() {
     const fetchConceptMaps = useCallback(async () => {
         setLoading(true);
         try {
-            const q = query(collection(db, 'concept-maps'), orderBy('title'));
-            const querySnapshot = await getDocs(q);
-            const data: ConceptMap[] = [];
-            querySnapshot.forEach((doc) => {
-                data.push({ id: doc.id, ...doc.data() } as ConceptMap);
+            const mapsQuery = query(collection(db, 'concept-maps'), orderBy('title'));
+            const viewsQuery = collection(db, 'concept-map-analytics');
+
+            const [mapsSnapshot, viewsSnapshot] = await Promise.all([
+                getDocs(mapsQuery),
+                getDocs(viewsQuery)
+            ]);
+
+            const viewsMap = new Map<string, number>();
+            viewsSnapshot.forEach(doc => {
+                viewsMap.set(doc.id, doc.data().viewCount);
             });
+            
+            const data: ConceptMapWithViews[] = [];
+            mapsSnapshot.forEach((doc) => {
+                data.push({ 
+                    id: doc.id, 
+                    ...doc.data(),
+                    viewCount: viewsMap.get(doc.id) || 0,
+                } as ConceptMapWithViews);
+            });
+
             setConceptMaps(data);
         } catch (error) {
             console.error("Error fetching concept maps:", error);
@@ -126,6 +147,10 @@ export default function AdminConceptMapsPage() {
         });
         setIsFeeding(false);
     };
+    
+    const handleLinkClick = (mapId: string) => {
+        trackConceptMapView(mapId);
+    };
 
 
     return (
@@ -168,6 +193,7 @@ export default function AdminConceptMapsPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Name</TableHead>
+                                    <TableHead className="w-[100px] text-center">Views</TableHead>
                                     <TableHead className="w-[100px] text-center">Link</TableHead>
                                     <TableHead className="w-[100px] text-center">Actions</TableHead>
                                 </TableRow>
@@ -175,7 +201,7 @@ export default function AdminConceptMapsPage() {
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
@@ -186,7 +212,15 @@ export default function AdminConceptMapsPage() {
                                                 {map.title}
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <Button asChild variant="outline" size="icon">
+                                                 {map.viewCount && map.viewCount > 0 ? (
+                                                    <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+                                                        <Eye className="h-4 w-4" />
+                                                        <span className="font-medium">{map.viewCount}</span>
+                                                    </div>
+                                                ) : null}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <Button asChild variant="outline" size="icon" onClick={() => handleLinkClick(map.id!)}>
                                                     <Link href={map.url} target="_blank" rel="noopener noreferrer">
                                                         <ExternalLink className="h-4 w-4" />
                                                         <span className="sr-only">Open Link</span>
@@ -223,7 +257,7 @@ export default function AdminConceptMapsPage() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             {searchTerm ? "No concept maps match your search." : "No concept maps found."}
                                         </TableCell>
                                     </TableRow>

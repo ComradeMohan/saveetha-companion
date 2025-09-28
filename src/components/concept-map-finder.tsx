@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { File as FileIcon, Lightbulb, Search, FileText, Loader2 } from 'lucide-react';
+import { File as FileIcon, Lightbulb, Search, FileText, Loader2, Eye } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -11,13 +11,18 @@ import { Card } from './ui/card';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { ConceptMap } from '@/lib/concept-map-data';
+import { trackConceptMapView } from '@/app/actions/track-concept-map-view';
+
+interface ConceptMapWithViews extends ConceptMap {
+    viewCount?: number;
+}
 
 // In-memory cache for concept maps to avoid re-fetching on every search
-let conceptMapsCache: ConceptMap[] | null = null;
+let conceptMapsCache: ConceptMapWithViews[] | null = null;
 
 export default function ConceptMapFinder() {
   const [loading, setLoading] = useState(false);
-  const [allMaps, setAllMaps] = useState<ConceptMap[]>([]);
+  const [allMaps, setAllMaps] = useState<ConceptMapWithViews[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -29,12 +34,28 @@ export default function ConceptMapFinder() {
 
     setLoading(true);
     try {
-        const q = query(collection(db, 'concept-maps'), orderBy('title'));
-        const querySnapshot = await getDocs(q);
-        const mapsData: ConceptMap[] = [];
-        querySnapshot.forEach((doc) => {
-            mapsData.push({ id: doc.id, ...doc.data() } as ConceptMap);
+        const mapsQuery = query(collection(db, 'concept-maps'), orderBy('title'));
+        const viewsQuery = collection(db, 'concept-map-analytics');
+
+        const [mapsSnapshot, viewsSnapshot] = await Promise.all([
+            getDocs(mapsQuery),
+            getDocs(viewsQuery)
+        ]);
+
+        const viewsMap = new Map<string, number>();
+        viewsSnapshot.forEach(doc => {
+            viewsMap.set(doc.id, doc.data().viewCount);
         });
+
+        const mapsData: ConceptMapWithViews[] = [];
+        mapsSnapshot.forEach((doc) => {
+            mapsData.push({ 
+                id: doc.id, 
+                ...doc.data(),
+                viewCount: viewsMap.get(doc.id) || 0,
+            } as ConceptMapWithViews);
+        });
+
         conceptMapsCache = mapsData; // Cache the results
         setAllMaps(mapsData);
     } catch (error) {
@@ -68,6 +89,10 @@ export default function ConceptMapFinder() {
     const lowercasedFilter = searchTerm.toLowerCase();
     return allMaps.filter(map => map.title.toLowerCase().includes(lowercasedFilter));
   }, [searchTerm, allMaps, hasSearched]);
+
+  const handleLinkClick = (mapId: string) => {
+    trackConceptMapView(mapId);
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -113,15 +138,24 @@ export default function ConceptMapFinder() {
                 href={map.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => handleLinkClick(map.id!)}
                 className={cn(
                   'group rounded-xl border bg-card p-4 text-card-foreground',
                   'transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1'
                 )}
               >
                 <div className="flex flex-col justify-start items-start h-full">
-                  <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
-                    <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
-                  </div>
+                   <div className="flex justify-between items-start w-full">
+                        <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
+                            <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
+                        </div>
+                        {map.viewCount && map.viewCount > 0 && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Eye className="h-4 w-4" />
+                                {map.viewCount}
+                            </div>
+                        )}
+                   </div>
                   <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
                 </div>
               </Link>

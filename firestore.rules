@@ -23,6 +23,20 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // Allow public read/write for the Link Drop feature
+    match /link-drop-sessions/{sessionId} {
+      allow read, write: if true;
+    }
+    
+    // --- START: NEW RULE FOR CONCEPT MAP ANALYTICS ---
+    // Allow anyone to read the analytics data.
+    // Writes are handled by the server-side action, so client-side writes are disallowed.
+    match /concept-map-analytics/{mapId} {
+      allow read: if true;
+      allow write: if false; // All writes must go through the trusted server action
+    }
+    // --- END: NEW RULE ---
+
     // Allow anyone to read public data collections.
     match /faculty/{docId} {
       allow read: if true;
@@ -51,6 +65,9 @@ service cloud.firestore {
      match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} {
         allow read: if true;
     }
+    match /mcqs/{courseId} {
+        allow read: if request.auth != null;
+    }
 
     // Allow anyone to submit forms (contact, issues, suggestions).
     match /contact-messages/{messageId} {
@@ -65,6 +82,10 @@ service cloud.firestore {
     match /faculty-requests/{requestId} {
       allow create: if request.auth != null;
     }
+    match /course-suggestions/{suggestionId} {
+      allow create: if request.auth != null;
+    }
+
 
     // This rule is for clarity. The server-side code uses Admin access,
     // which bypasses these rules, but it's good practice to define access.
