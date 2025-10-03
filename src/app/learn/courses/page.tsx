@@ -156,11 +156,14 @@ export default function CoursesPage() {
 
 
     const comboboxOptions = useMemo(() => {
-        return allCourses.map(course => ({
-            value: course.id,
-            label: `${course.id} - ${course.name}`
-        }));
-    }, [allCourses]);
+        const gradedCourseCodes = new Set(Object.keys(studentGrades));
+        return allCourses
+            .filter(course => !gradedCourseCodes.has(course.id))
+            .map(course => ({
+                value: course.id,
+                label: `${course.id} - ${course.name}`
+            }));
+    }, [allCourses, studentGrades]);
 
     const filteredAndSortedCourses = useMemo(() => {
         let completedCourses = Object.entries(studentGrades).map(([courseCode, grade]) => {
