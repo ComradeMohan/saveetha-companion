@@ -9,7 +9,7 @@ import { ArrowRight, Bell, Calendar, Calculator, Book, Users, Lightbulb } from '
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { formatDistanceToNow } from 'date-fns';
-import ShareCard from './share-card';
+import PlayStoreCard from './play-store-card';
 
 function StatCardSkeleton() {
     return (
@@ -131,7 +131,7 @@ export default function Dashboard() {
                                 ))}
                             </CardContent>
                         </Card>
-                         <ShareCard />
+                         <PlayStoreCard />
                     </div>
                 </div>
             </div>
