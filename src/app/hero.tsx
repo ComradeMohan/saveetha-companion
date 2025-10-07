@@ -29,7 +29,7 @@ export default function Hero() {
                     <Link href="#calculators">Try the Calculators</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                    <Link href="https://play.google.com/store/apps" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://univault.live" target="_blank" rel="noopener noreferrer">
                         <PlayStoreIcon />
                         Get it on Play Store
                     </Link>
