@@ -21,19 +21,24 @@ export default function DynamicHeader() {
     
     if (loading) return null;
 
-    const showBanner = !!user;
+    const bannerMessage = user
+        ? "New Feature: The Course Enrollment auto-checker is now live! Get notified instantly."
+        : "Course Enrollment auto-checker is now live! Login to get notified instantly.";
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50">
             <div className={cn(
                 "transition-transform duration-300",
-                scrolled && showBanner ? "-translate-y-full" : "translate-y-0"
+                scrolled ? "-translate-y-full" : "translate-y-0"
             )}>
-                {showBanner && <FeatureAnnouncementBanner />}
+                <FeatureAnnouncementBanner 
+                    message={bannerMessage}
+                    showButton={!user}
+                />
             </div>
             <div className={cn(
                 "px-4 transition-all duration-300",
-                showBanner && !scrolled ? 'pt-4' : 'pt-0'
+                !scrolled ? 'pt-4' : 'pt-0'
             )}>
                  <Header />
             </div>
