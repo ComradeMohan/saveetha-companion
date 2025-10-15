@@ -203,7 +203,6 @@ export default function Header() {
   const toolsDropdownLinks = [
       { href: '/tools/placement-prep', label: 'Placement Prep', icon: GraduationCap },
       { href: '/tools/link-drop', label: 'Link Drop', icon: LinkIcon },
-      { href: '/tools/sql-playground', label: 'SQL Playground', icon: 'database' },
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
       { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
       { href: '/tools/steganography', label: 'Steganography', icon: Eye },

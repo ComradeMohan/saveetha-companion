@@ -1,205 +1,195 @@
+
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { useActionState, useEffect } from 'react';
-import { useFormStatus } from 'react-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, AlertTriangle, Play, StopCircle, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Send, ClipboardList, LogIn } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
-import { enrollInCourse } from '@/app/actions/enroll-in-course';
-import Link from 'next/link';
-
-const formSchema = z.object({
-  name: z.string(), // Hidden field
-  email: z.string().email(), // Hidden field
-  slot: z.string().min(1, 'Please select a slot.'),
-  courseCode: z.string().regex(/^[A-Z]{3}\d+$/, {
-    message: 'Must be 3 uppercase letters and numbers (e.g., CSE101).',
-  }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const initialState = {
-  type: '',
-  message: '',
-  errors: {
-    slot: [],
-    courseCode: [],
-  },
-};
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Submitting...
-        </>
-      ) : (
-        <>
-          <Send className="mr-2 h-4 w-4" /> Submit Alert
-        </>
-      )}
-    </Button>
-  );
-}
 
 export default function EnrollmentForm() {
-  const [state, formAction] = useActionState(enrollInCourse, initialState as any);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [slot, setSlot] = useState('');
+  const [courseCode, setCourseCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [checkInterval, setCheckInterval] = useState('10');
+  
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [statusText, setStatusText] = useState('Waiting...');
+  const [showStatus, setShowStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { toast } = useToast();
-  const { user, loading } = useAuth();
-  
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      slot: '',
-      courseCode: '',
-    },
-  });
+  const statusTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const slotValue = form.watch('slot');
-
-  useEffect(() => {
-    if (user) {
-      form.setValue('name', user.displayName || '');
-      form.setValue('email', user.email || '');
-    }
-  }, [user, form]);
-  
-  useEffect(() => {
-    if (state.type) {
-      toast({
-        title: state.type === 'success' ? 'Success!' : 'Error',
-        description: state.message,
-        variant: state.type === 'error' ? 'destructive' : 'default',
-      });
-      if (state.type === 'success') {
-        form.reset({
-          name: user?.displayName || '',
-          email: user?.email || '',
-          slot: '',
-          courseCode: '',
-        });
-      }
-    }
-  }, [state, toast, form, user]);
+  const API_BASE = "https://coursenotification.onrender.com/api";
 
   const slots = Array.from({ length: 26 }, (_, i) => String.fromCharCode('A'.charCodeAt(0) + i));
 
-  if (loading) {
-      return (
-          <div className="flex justify-center items-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-      )
-  }
+  const startMonitoring = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  if (!user) {
-      return (
-          <Card className="max-w-2xl mx-auto text-center">
-              <CardHeader>
-                  <CardTitle>Login Required</CardTitle>
-                  <CardDescription>You must be logged in to use the alert system.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                  <Button asChild>
-                      <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
-                  </Button>
-              </CardContent>
-          </Card>
-      )
-  }
+    const payload = { username, password, slot, courseCode, email, checkInterval };
 
+    if (Object.values(payload).some(val => val === '')) {
+        toast({ title: "Missing fields", description: "Please fill out all fields before starting.", variant: "destructive"});
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/start-checking`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.session_id) {
+            setSessionId(data.session_id);
+            setShowStatus(true);
+            setStatusText("Started monitoring...");
+            statusTimerRef.current = setInterval(() => checkStatus(data.session_id), 5000);
+            toast({ title: "Monitoring Started", description: "The system is now checking for your course." });
+        } else {
+            throw new Error(data.message || 'Failed to start session.');
+        }
+    } catch (error: any) {
+        toast({ title: "Error", description: error.message || "Could not start monitoring.", variant: "destructive" });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+  const checkStatus = async (sId: string) => {
+      if (!sId) return;
+      try {
+          const res = await fetch(`${API_BASE}/check-status/${sId}`);
+          const data = await res.json();
+          setStatusText(`Status: ${data.status}\n${data.message || ''}\nAttempts: ${data.attempts}`);
+
+          if (data.status === "found" || data.status === "error") {
+              stopMonitoring(false);
+          }
+      } catch (error) {
+          console.error("Status check failed", error);
+      }
+  };
+
+  const stopMonitoring = async (showToast = true) => {
+      if (!sessionId) return;
+      if (statusTimerRef.current) {
+          clearInterval(statusTimerRef.current);
+          statusTimerRef.current = null;
+      }
+      try {
+        await fetch(`${API_BASE}/stop-checking/${sessionId}`, { method: "POST" });
+      } catch (error) {
+        console.error("Failed to cleanly stop session on server", error);
+      }
+      if (showToast) {
+        toast({ title: "Stopped", description: "Monitoring has been stopped." });
+      }
+      setStatusText("Stopped monitoring.");
+      setTimeout(() => {
+          setShowStatus(false);
+          setSessionId(null);
+      }, 3000);
+  };
+  
+  useEffect(() => {
+    return () => {
+        if(statusTimerRef.current) {
+            clearInterval(statusTimerRef.current);
+        }
+    }
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight">Course Enrollment Alert System</h2>
-        <p className="text-muted-foreground mt-2">
-          Select your slot and enter the course code to set up an alert.
-        </p>
-      </div>
-      <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="h-6 w-6 text-primary" /> Enrollment Alert Form
-          </CardTitle>
-          <CardDescription>Your name and email are pre-filled from your profile.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form action={formAction} className="space-y-6">
-              <input type="hidden" {...form.register('name')} />
-              <input type="hidden" {...form.register('email')} />
-              <input type="hidden" name="slot" value={slotValue} />
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="slot"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slot</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a slot" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {slots.map(slot => (
-                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage>{state.errors?.slot?.[0]}</FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="courseCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Course Code</FormLabel>
-                      <FormControl>
-                        <Input 
-                            placeholder="e.g., CSE101" 
-                            {...field} 
-                            onChange={(e) => {
-                                field.onChange(e.target.value.toUpperCase())
-                            }}
-                        />
-                      </FormControl>
-                      <FormMessage>{state.errors?.courseCode?.[0]}</FormMessage>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <SubmitButton />
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+        <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold tracking-tight">Course Enrollment Alert System</h2>
+            <p className="text-muted-foreground mt-2">
+            Get an email notification the moment your desired course slot becomes available on ARMS.
+            </p>
+        </div>
+        <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Bell className="h-6 w-6 text-primary" /> Enrollment Notifier
+                </CardTitle>
+                <CardDescription>Enter your ARMS details and course info below.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form id="courseForm" onSubmit={startMonitoring} className="space-y-4">
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Important Security Notice</AlertTitle>
+                        <AlertDescription>
+                            Your ARMS credentials are required for this service but are used temporarily and are not stored. Use at your own discretion.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <Label htmlFor="username">ARMS Username</Label>
+                            <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g., 2115XXXX" required />
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="password">ARMS Password</Label>
+                            <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <Label htmlFor="slot">Slot</Label>
+                            <Select onValueChange={setSlot} value={slot}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a slot" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {slots.map(s => <SelectItem key={s} value={s}>{`Slot ${s}`}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="courseCode">Course Code</Label>
+                            <Input id="courseCode" value={courseCode} onChange={e => setCourseCode(e.target.value.toUpperCase())} placeholder="e.g., CSE101" required />
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="email">Notification Email</Label>
+                        <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your-email@example.com" required />
+                    </div>
+                     <div className="space-y-1">
+                        <Label htmlFor="checkInterval">Check Interval (seconds)</Label>
+                        <Input id="checkInterval" type="number" value={checkInterval} onChange={e => setCheckInterval(e.target.value)} placeholder="10" />
+                    </div>
+                </form>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4">
+                {!sessionId ? (
+                     <Button type="submit" form="courseForm" className="w-full" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4" />}
+                        Start Monitoring
+                    </Button>
+                ) : (
+                    <Button onClick={() => stopMonitoring()} variant="destructive" className="w-full">
+                        <StopCircle className="mr-2 h-4 w-4"/>
+                        Stop Monitoring
+                    </Button>
+                )}
+                 {showStatus && (
+                    <div className="w-full p-4 bg-muted rounded-lg text-center animate-in fade-in-50">
+                        <pre className="text-sm text-muted-foreground whitespace-pre-wrap">{statusText}</pre>
+                    </div>
+                )}
+            </CardFooter>
+        </Card>
     </div>
   );
 }
