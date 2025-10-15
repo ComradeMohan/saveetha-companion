@@ -50,7 +50,6 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
-import FeatureAnnouncementBanner from './feature-announcement-banner';
 import { Badge } from './ui/badge';
 import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
 
@@ -222,7 +221,6 @@ export default function Header() {
 
   return (
     <>
-    <header className="fixed top-16 left-0 right-0 z-50 px-4">
        <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
         <div className="flex items-center gap-4">
           <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
@@ -360,7 +358,6 @@ export default function Header() {
             </Sheet>
         </div>
        </div>
-    </header>
     <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
     </>
   );

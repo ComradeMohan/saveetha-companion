@@ -14,7 +14,8 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import FeedbackDialog from '@/components/feedback-dialog';
 import SupportButton from '@/components/support-button';
-import AuthDependentBanner from '@/components/auth-dependent-banner';
+import DynamicHeader from '@/components/dynamic-header';
+import MobileNav from '@/components/mobile-nav';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -101,12 +102,13 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <AuthProvider>
-          <AuthDependentBanner />
+          <DynamicHeader />
           <VerificationBanner key="verification-banner" />
           <FeedbackDialog />
           <main key="main-content">{children}</main>
           <Toaster key="toaster" />
           <SupportButton />
+          <MobileNav />
       </AuthProvider>
     </ThemeProvider>
   )
@@ -121,7 +123,7 @@ export default function RootLayout({
     <html lang="en" className={cn("scroll-smooth", poppins.variable)} suppressHydrationWarning>
       <head>
       </head>
-      <body className="font-body antialiased bg-background text-foreground overflow-x-hidden">
+      <body>
         <ScrollProgress />
         <MouseSpotlight />
         <Suspense fallback={<RootLayoutSkeleton />}>

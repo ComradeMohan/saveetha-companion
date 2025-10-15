@@ -1,7 +1,6 @@
 
 'use client';
 
-import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Hero from '@/app/hero';
 import { useAuth } from '@/hooks/use-auth';
@@ -28,8 +27,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col pt-16">
         {user ? <Dashboard /> : <Hero />}
 
         <section id="calculators" className="pt-20 pb-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
