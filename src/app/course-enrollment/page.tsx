@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, AlertTriangle, Play, StopCircle, Bell } from 'lucide-react';
+import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
@@ -25,6 +25,7 @@ export default function CourseEnrollmentPage() {
   const [statusText, setStatusText] = useState('Waiting...');
   const [showStatus, setShowStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
 
   const { toast } = useToast();
   const statusTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,6 +57,7 @@ export default function CourseEnrollmentPage() {
             setSessionId(data.session_id);
             setShowStatus(true);
             setStatusText("Started monitoring...");
+            setIsFinished(false);
             statusTimerRef.current = setInterval(() => checkStatus(data.session_id), 5000);
             toast({ title: "Monitoring Started", description: "The system is now checking for your course." });
         } else {
@@ -75,40 +77,51 @@ export default function CourseEnrollmentPage() {
           const data = await res.json();
           setStatusText(`Status: ${data.status}\n${data.message || ''}\nAttempts: ${data.attempts}`);
 
-          // If the course slot is found OR if there's an unrecoverable error, stop polling.
+          // If the course slot is found OR if there's an unrecoverable error, stop polling but don't clear state.
           if (data.status === "found" || data.status === "error") {
-              stopMonitoring(false); // Pass false to prevent a redundant "stopped" toast.
+              if (statusTimerRef.current) {
+                clearInterval(statusTimerRef.current);
+                statusTimerRef.current = null;
+              }
+              setIsFinished(true); // Mark as finished to change button behavior
           }
       } catch (error) {
           console.error("Status check failed", error);
-          // Optional: handle network errors during polling
           setStatusText("Status check failed. Please check your connection.");
-          stopMonitoring(false);
+           if (statusTimerRef.current) {
+                clearInterval(statusTimerRef.current);
+                statusTimerRef.current = null;
+            }
+            setIsFinished(true);
       }
   };
 
-  const stopMonitoring = async (showToast = true) => {
-      if (!sessionId) return;
+  const stopAndReset = async () => {
+      // Always clear the timer first
       if (statusTimerRef.current) {
           clearInterval(statusTimerRef.current);
           statusTimerRef.current = null;
       }
-      try {
-        await fetch(`${API_BASE}/stop-checking/${sessionId}`, { method: "POST" });
-      } catch (error) {
-        console.error("Failed to cleanly stop session on server", error);
+      
+      // If there's a session ID, tell the server to stop
+      if (sessionId) {
+          try {
+            await fetch(`${API_BASE}/stop-checking/${sessionId}`, { method: "POST" });
+          } catch (error) {
+            console.error("Failed to cleanly stop session on server", error);
+          }
       }
-      if (showToast) {
-        toast({ title: "Stopped", description: "Monitoring has been stopped." });
-      }
-      setStatusText("Stopped monitoring.");
-      setTimeout(() => {
-          setShowStatus(false);
-          setSessionId(null);
-      }, 3000);
+      
+      // Now, reset the entire UI state
+      toast({ title: "Session Cleared", description: "Monitoring has been stopped and reset." });
+      setStatusText("Waiting...");
+      setSessionId(null);
+      setShowStatus(false);
+      setIsFinished(false);
   };
   
   useEffect(() => {
+    // Cleanup on component unmount
     return () => {
         if(statusTimerRef.current) {
             clearInterval(statusTimerRef.current);
@@ -187,10 +200,15 @@ export default function CourseEnrollmentPage() {
                                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4" />}
                                 Start Monitoring
                             </Button>
-                        ) : (
-                            <Button onClick={() => stopMonitoring()} variant="destructive" className="w-full">
+                        ) : !isFinished ? (
+                             <Button onClick={stopAndReset} variant="destructive" className="w-full">
                                 <StopCircle className="mr-2 h-4 w-4"/>
                                 Stop Monitoring
+                            </Button>
+                        ) : (
+                             <Button onClick={stopAndReset} variant="outline" className="w-full">
+                                <RefreshCw className="mr-2 h-4 w-4"/>
+                                Clear and Restart
                             </Button>
                         )}
                         {showStatus && (
