@@ -75,11 +75,15 @@ export default function CourseEnrollmentPage() {
           const data = await res.json();
           setStatusText(`Status: ${data.status}\n${data.message || ''}\nAttempts: ${data.attempts}`);
 
+          // If the course slot is found OR if there's an unrecoverable error, stop polling.
           if (data.status === "found" || data.status === "error") {
-              stopMonitoring(false);
+              stopMonitoring(false); // Pass false to prevent a redundant "stopped" toast.
           }
       } catch (error) {
           console.error("Status check failed", error);
+          // Optional: handle network errors during polling
+          setStatusText("Status check failed. Please check your connection.");
+          stopMonitoring(false);
       }
   };
 
