@@ -4,10 +4,10 @@
 import { Rocket } from "lucide-react";
 
 export default function FeatureAnnouncementBanner() {
-    const announcement = "Coming Soon for Official Use: A new Course Enrollment system to help our students!";
+    const announcement = "New Feature: The Course Enrollment auto-checker is now live! Get notified instantly.";
 
     return (
-        <div className="relative z-40 w-full overflow-hidden bg-secondary text-secondary-foreground shadow-md rounded-t-full">
+        <div className="relative z-40 w-full overflow-hidden bg-secondary text-secondary-foreground shadow-md">
             <div className="flex h-10 items-center">
                 <div className="relative flex h-full items-center overflow-hidden">
                     <div className="animate-scroll-text flex whitespace-nowrap">
