@@ -19,7 +19,7 @@ export default function PlayStoreCard() {
       <CardHeader>
         <CardTitle>Get Our Mobile App</CardTitle>
         <CardDescription className="text-primary-foreground/80">
-            Access all features on the go with our official app.
+            Access all learning features on the go with our official app.coming to prodcution in few days.
         </CardDescription>
       </CardHeader>
       <CardContent>
