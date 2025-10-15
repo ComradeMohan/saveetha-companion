@@ -33,7 +33,7 @@ export default function DynamicHeader() {
             </div>
             <div className={cn(
                 "px-4 transition-all duration-300",
-                showBanner ? (scrolled ? 'pt-0' : 'pt-4') : 'pt-4'
+                showBanner && !scrolled ? 'pt-4' : 'pt-0'
             )}>
                  <Header />
             </div>
