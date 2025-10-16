@@ -209,10 +209,6 @@ export default function Stats() {
           ))}
         </div>
 
-        <div className="mt-12">
-            <Testimonials />
-        </div>
-
         {analyticsLoading ? <AnalyticsSkeleton /> : (
              <div className="mt-20">
                 <Card>
@@ -288,6 +284,10 @@ export default function Stats() {
                 </Card>
              </div>
         )}
+        
+        <div className="mt-12">
+            <Testimonials />
+        </div>
       </div>
     </section>
   );
