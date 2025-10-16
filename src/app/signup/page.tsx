@@ -20,6 +20,7 @@ export default function SignUpPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // If the user is already signed up and authenticated, redirect them to complete their profile.
     if (!authLoading && user) {
       router.push('/complete-profile');
     }
@@ -30,7 +31,7 @@ export default function SignUpPage() {
     setError(null);
     try {
       await signInWithGoogle(true);
-      // The useEffect will handle redirecting to complete-profile
+      // The useEffect will handle redirecting to complete-profile after the user state is updated.
     } catch (err: any) {
       setError(err.message);
     } finally {

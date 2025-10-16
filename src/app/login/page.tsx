@@ -37,12 +37,13 @@ export default function LoginPage() {
                     router.push('/');
                 }
             } else {
+                // This case handles a brand new user who was just created.
                 router.push('/complete-profile');
             }
         }
     };
     checkUserAndRedirect();
-  }, [user, authLoading, router, toast]);
+  }, [user, authLoading, router]);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);

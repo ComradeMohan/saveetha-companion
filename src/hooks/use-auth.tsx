@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -174,20 +175,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
 
           } else {
-             // This case handles a new user signup
-             const newProfile: UserProfileData = {
+             // This case handles a new user signup. It creates the document but doesn't set profile yet.
+             const newProfileData: UserProfileData = {
                 email: user.email!,
                 name: user.displayName!,
-                isVerified: true, // Automatically verified
+                isVerified: true,
                 photoURL: user.photoURL || undefined,
                 credits: 100, // Award 100 credits to new users
              };
              await setDoc(userDocRef, {
-                ...newProfile,
+                ...newProfileData,
                 createdAt: new Date().toISOString(),
                 lastSignInTime: user.metadata.lastSignInTime,
              });
-             setProfile(newProfile);
+             setProfile(newProfileData); // Set the profile for immediate use
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
@@ -212,44 +213,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'hd': 'saveetha.com'
     });
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        const newProfile: UserProfileData = {
-          email: user.email!,
-          name: user.displayName!,
-          isVerified: true, // Automatically verified on signup
-          photoURL: user.photoURL || undefined,
-          credits: 100, // Award 100 credits to new users
-        };
-        await setDoc(userDocRef, {
-            ...newProfile,
-            createdAt: new Date().toISOString(),
-            lastSignInTime: user.metadata.lastSignInTime,
-        });
-        setProfile(newProfile);
-        router.push('/complete-profile');
-      } else {
-        const dbProfile = userDoc.data() as UserProfileData;
-        setProfile(dbProfile);
-        if(!dbProfile.regNo) {
-            router.push('/complete-profile');
-        } else {
-            router.push('/');
-        }
-      }
-
+      // The onAuthStateChanged listener will handle the logic for new vs existing users.
+      // We just need to trigger the popup.
+      await signInWithPopup(auth, provider);
+      // Redirection is now handled in the login/signup pages' useEffect hooks.
     } catch (error: any) {
       const message = handleAuthError(error, toast);
       throw new Error(message);
     }
   };
   
-  const completeUserProfile = async (profile: CompleteUserProfile) => {
+  const completeUserProfile = async (profileData: CompleteUserProfile) => {
       if (!auth.currentUser) throw new Error("No user is signed in.");
       setIsNavigating(true);
       
@@ -257,12 +231,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userDocRef = doc(db, 'users', user.uid);
       
       await setDoc(userDocRef, {
-        regNo: profile.regNo,
-        phone: profile.phone,
+        regNo: profileData.regNo,
+        phone: profileData.phone,
       }, { merge: true });
       
-      const refreshedUser = { ...auth.currentUser } as User;
-      setUser(refreshedUser);
+      // Manually update the local profile state
+      setProfile(prev => prev ? { ...prev, ...profileData } : null);
       
       toast({
         title: 'Profile Complete!',
