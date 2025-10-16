@@ -135,7 +135,7 @@
     background: radial-gradient(
       circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
       var(--spotlight-color) 0%,
-      transparent 25%
+      transparent: 25%
     );
     pointer-events: none;
     z-index: -1;
@@ -168,7 +168,7 @@
   }
   
   .animate-scroll-text {
-    animation: scroll-text 40s linear infinite;
+    animation: scroll-text 60s linear infinite;
   }
 
   .nav-link-hover {

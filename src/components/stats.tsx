@@ -10,6 +10,7 @@ import { Skeleton } from './ui/skeleton';
 import { updateAndGetAnalytics, getVisitAnalytics } from '@/app/actions/analytics';
 import { format, endOfToday, eachDayOfInterval, subDays } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Testimonials } from './testimonials';
 
 
 interface AnalyticsData {
@@ -206,6 +207,10 @@ export default function Stats() {
               <p className="text-muted-foreground mt-2">{stat.label}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12">
+            <Testimonials />
         </div>
 
         {analyticsLoading ? <AnalyticsSkeleton /> : (

@@ -1,17 +1,18 @@
 
 'use client';
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2, Mail, Star } from "lucide-react";
 import { collection, orderBy, query, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { format, formatDistanceToNow } from "date-fns";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { toggleTestimonialStatus } from "@/app/actions/manage-testimonial";
 
 interface Message {
     id: string;
@@ -19,6 +20,7 @@ interface Message {
     email: string;
     message: string;
     status: 'Unread' | 'Read';
+    isTestimonial?: boolean;
     createdAt: string;
 }
 
@@ -26,6 +28,7 @@ export default function AdminMessagesPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+    const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
 
     const fetchMessages = useCallback(async () => {
@@ -79,10 +82,10 @@ export default function AdminMessagesPage() {
                 title: "Status Updated",
                 description: `Message marked as ${newStatus.toLowerCase()}.`
             });
-            // Update local state to reflect change immediately in the sheet
-            setSelectedMessage(prev => prev ? { ...prev, status: newStatus } : null);
-             // Optimistically update the main list as well
-            setMessages(prev => prev.map(m => m.id === selectedMessage.id ? {...m, status: newStatus} : m));
+            // Update local state to reflect change immediately in the sheet and list
+            const updatedMessage = { ...selectedMessage, status: newStatus };
+            setSelectedMessage(updatedMessage);
+            setMessages(prev => prev.map(m => m.id === selectedMessage.id ? updatedMessage : m));
         } catch (error) {
             console.error("Error updating message status:", error);
             toast({
@@ -92,6 +95,22 @@ export default function AdminMessagesPage() {
             });
         }
     }
+
+    const handleTestimonialToggle = () => {
+        if (!selectedMessage) return;
+
+        startTransition(async () => {
+            const result = await toggleTestimonialStatus(selectedMessage.id, !selectedMessage.isTestimonial);
+            if (result.type === 'success') {
+                toast({ title: 'Success', description: result.message });
+                const updatedMessage = { ...selectedMessage, isTestimonial: !selectedMessage.isTestimonial };
+                setSelectedMessage(updatedMessage);
+                setMessages(prev => prev.map(m => m.id === selectedMessage.id ? updatedMessage : m));
+            } else {
+                toast({ title: 'Error', description: result.message, variant: 'destructive' });
+            }
+        });
+    };
 
 
     return (
@@ -110,6 +129,7 @@ export default function AdminMessagesPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead className="w-10"></TableHead>
                                     <TableHead>Sender</TableHead>
                                     <TableHead>Message</TableHead>
                                     <TableHead>Status</TableHead>
@@ -119,7 +139,7 @@ export default function AdminMessagesPage() {
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
+                                        <TableCell colSpan={5} className="h-24 text-center">
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
@@ -130,6 +150,9 @@ export default function AdminMessagesPage() {
                                             className={`cursor-pointer ${message.status === 'Unread' ? 'font-bold' : ''}`}
                                             onClick={() => handleRowClick(message)}
                                         >
+                                            <TableCell className="text-center">
+                                                {message.isTestimonial && <Star className="h-4 w-4 text-amber-500 fill-amber-400" />}
+                                            </TableCell>
                                             <TableCell>
                                                 <div className="font-medium">{message.name}</div>
                                                 <div className={`text-sm ${message.status === 'Unread' ? 'text-foreground/80' : 'text-muted-foreground'}`}>{message.email}</div>
@@ -147,7 +170,7 @@ export default function AdminMessagesPage() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
+                                        <TableCell colSpan={5} className="h-24 text-center">
                                             No messages found.
                                         </TableCell>
                                     </TableRow>
@@ -182,7 +205,15 @@ export default function AdminMessagesPage() {
                                     <p className="whitespace-pre-wrap">{selectedMessage.message}</p>
                                 </div>
                             </div>
-                            <SheetFooter className="mt-8">
+                            <SheetFooter className="mt-8 flex-col sm:flex-row sm:justify-between w-full">
+                                <Button
+                                    variant={selectedMessage.isTestimonial ? "destructive" : "outline"}
+                                    onClick={handleTestimonialToggle}
+                                    disabled={isPending}
+                                >
+                                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Star className="mr-2 h-4 w-4" />}
+                                    {selectedMessage.isTestimonial ? 'Remove from Testimonials' : 'Add to Testimonials'}
+                                </Button>
                                 <Button 
                                     onClick={handleStatusToggle}
                                     variant="outline"
