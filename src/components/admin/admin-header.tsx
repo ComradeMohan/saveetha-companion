@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -30,6 +29,7 @@ import {
   School,
   PenSquare,
   FileQuestion,
+  Gift,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -47,6 +47,7 @@ const adminNavLinks = [
   { href: '/admin/mcqs', label: 'MCQs', icon: FileQuestion },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/certifications', label: 'Certifications', icon: Award },
+  { href: '/admin/credits', label: 'Credit Management', icon: Gift },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
