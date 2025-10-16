@@ -34,6 +34,7 @@ export interface UserProfileData {
   photoURL?: string;
   department?: string;
   college?: 'SSE' | 'SEC';
+  credits?: number;
 }
 
 interface CompleteUserProfile {
@@ -130,6 +131,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (userDoc.exists()) {
               const dbProfile = userDoc.data() as UserProfileData;
+              let updatedProfile = { ...dbProfile };
+              let creditsUpdated = false;
+
+              // Check if credits need to be added for an existing user
+              if (typeof dbProfile.credits === 'undefined') {
+                updatedProfile.credits = 50; // Award 50 credits to existing users
+                await updateDoc(userDocRef, { credits: 50 });
+                creditsUpdated = true;
+              }
+              
               setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
               
               const updateData: any = {
@@ -140,20 +151,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
               await updateDoc(userDocRef, updateData);
 
-              setProfile({ ...dbProfile, ...updateData });
+              setProfile({ ...updatedProfile, ...updateData });
+              
+              if (creditsUpdated) {
+                 toast({
+                    title: "🎉 Credits Added!",
+                    description: "You've been awarded 50 credits to use for the course enrollment auto-checker.",
+                 });
+              }
               
               if (!user.displayName && dbProfile?.name) {
                 await updateProfile(user, { displayName: dbProfile.name });
               }
 
           } else {
-             // This case handles a user who signed up with Google but hasn't completed their profile yet.
-             // We create a base profile and wait for them to complete it.
+             // This case handles a new user signup
              const newProfile: UserProfileData = {
                 email: user.email!,
                 name: user.displayName!,
-                isVerified: true, // Automatically verified since they are using a @saveetha.com account
+                isVerified: true, // Automatically verified
                 photoURL: user.photoURL || undefined,
+                credits: 100, // Award 100 credits to new users
              };
              await setDoc(userDocRef, {
                 ...newProfile,
@@ -177,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
@@ -197,6 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           name: user.displayName!,
           isVerified: true, // Automatically verified on signup
           photoURL: user.photoURL || undefined,
+          credits: 100, // Award 100 credits to new users
         };
         await setDoc(userDocRef, {
             ...newProfile,

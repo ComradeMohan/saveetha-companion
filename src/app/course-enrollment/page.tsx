@@ -8,12 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw } from 'lucide-react';
+import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function CourseEnrollmentPage() {
+  const { profile } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [slot, setSlot] = useState('');
@@ -170,9 +172,17 @@ export default function CourseEnrollmentPage() {
                 </div>
                 <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Bell className="h-6 w-6 text-primary" /> Enrollment Notifier
-                        </CardTitle>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2">
+                                <Bell className="h-6 w-6 text-primary" /> Enrollment Notifier
+                            </CardTitle>
+                            {profile && (
+                                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
+                                    <Star className="h-4 w-4 text-primary" />
+                                    <span>{profile.credits ?? 0} Credits</span>
+                                </div>
+                            )}
+                        </div>
                         <CardDescription>Enter your ARMS details and course info below.</CardDescription>
                     </CardHeader>
                     <CardContent>
