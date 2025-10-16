@@ -34,6 +34,26 @@ export default function CourseEnrollmentPage() {
 
   const slots = Array.from({ length: 26 }, (_, i) => String.fromCharCode('A'.charCodeAt(0) + i));
 
+  // Function to check and restore session from localStorage
+  useEffect(() => {
+    const savedSessionId = localStorage.getItem('courseEnrollmentSessionId');
+    const savedDetails = localStorage.getItem('courseEnrollmentDetails');
+    if (savedSessionId && savedDetails) {
+        const details = JSON.parse(savedDetails);
+        setUsername(details.username);
+        setSlot(details.slot);
+        setCourseCode(details.courseCode);
+        setEmail(details.email);
+        setCheckInterval(details.checkInterval);
+        
+        setSessionId(savedSessionId);
+        setShowStatus(true);
+        setStatusText("Restored session. Checking status...");
+        checkStatus(savedSessionId); // Initial check
+        statusTimerRef.current = setInterval(() => checkStatus(savedSessionId), 5000);
+    }
+  }, []);
+
   const startMonitoring = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -54,6 +74,10 @@ export default function CourseEnrollmentPage() {
         });
         const data = await res.json();
         if (data.session_id) {
+            // Save session to localStorage
+            localStorage.setItem('courseEnrollmentSessionId', data.session_id);
+            localStorage.setItem('courseEnrollmentDetails', JSON.stringify({ username, slot, courseCode, email, checkInterval }));
+
             setSessionId(data.session_id);
             setShowStatus(true);
             setStatusText("Started monitoring...");
@@ -77,13 +101,12 @@ export default function CourseEnrollmentPage() {
           const data = await res.json();
           setStatusText(`Status: ${data.status}\n${data.message || ''}\nAttempts: ${data.attempts}`);
 
-          // If the course slot is found OR if there's an unrecoverable error, stop polling but don't clear state.
           if (data.status === "found" || data.status === "error") {
               if (statusTimerRef.current) {
                 clearInterval(statusTimerRef.current);
                 statusTimerRef.current = null;
               }
-              setIsFinished(true); // Mark as finished to change button behavior
+              setIsFinished(true); 
           }
       } catch (error) {
           console.error("Status check failed", error);
@@ -111,6 +134,10 @@ export default function CourseEnrollmentPage() {
             console.error("Failed to cleanly stop session on server", error);
           }
       }
+      
+      // Clear from localStorage
+      localStorage.removeItem('courseEnrollmentSessionId');
+      localStorage.removeItem('courseEnrollmentDetails');
       
       // Now, reset the entire UI state
       toast({ title: "Session Cleared", description: "Monitoring has been stopped and reset." });
@@ -160,17 +187,17 @@ export default function CourseEnrollmentPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <Label htmlFor="username">ARMS Username</Label>
-                                    <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g., 2115XXXX" required />
+                                    <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g., 2115XXXX" required disabled={!!sessionId} />
                                 </div>
                                 <div className="space-y-1">
                                     <Label htmlFor="password">ARMS Password</Label>
-                                    <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+                                    <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required disabled={!!sessionId} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <Label htmlFor="slot">Slot</Label>
-                                    <Select onValueChange={setSlot} value={slot}>
+                                    <Select onValueChange={setSlot} value={slot} disabled={!!sessionId}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a slot" />
                                         </SelectTrigger>
@@ -181,16 +208,16 @@ export default function CourseEnrollmentPage() {
                                 </div>
                                 <div className="space-y-1">
                                     <Label htmlFor="courseCode">Course Code</Label>
-                                    <Input id="courseCode" value={courseCode} onChange={e => setCourseCode(e.target.value.toUpperCase())} placeholder="e.g., CSE101" required />
+                                    <Input id="courseCode" value={courseCode} onChange={e => setCourseCode(e.target.value.toUpperCase())} placeholder="e.g., CSE101" required disabled={!!sessionId}/>
                                 </div>
                             </div>
                             <div className="space-y-1">
                                 <Label htmlFor="email">Notification Email</Label>
-                                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your-email@example.com" required />
+                                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your-email@example.com" required disabled={!!sessionId}/>
                             </div>
                             <div className="space-y-1">
                                 <Label htmlFor="checkInterval">Check Interval (seconds)</Label>
-                                <Input id="checkInterval" type="number" value={checkInterval} onChange={e => setCheckInterval(e.target.value)} placeholder="10" />
+                                <Input id="checkInterval" type="number" value={checkInterval} onChange={e => setCheckInterval(e.target.value)} placeholder="10" disabled={!!sessionId}/>
                             </div>
                         </form>
                     </CardContent>
