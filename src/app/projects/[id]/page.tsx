@@ -10,12 +10,13 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Download, File as FileIcon } from 'lucide-react';
+import { ArrowLeft, Download, File as FileIcon, Loader2, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/hooks/use-auth';
 
 function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -28,46 +29,40 @@ function formatBytes(bytes: number, decimals = 2) {
 
 function ProjectDetailsSkeleton() {
     return (
-        <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 py-12 md:py-16 pt-24">
-                <div className="container mx-auto px-4">
-                    <Skeleton className="h-10 w-48 mb-6" />
-                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2">
-                             <Card>
-                                <CardHeader className="p-0">
-                                    <Skeleton className="w-full h-96 rounded-t-xl" />
-                                </CardHeader>
-                                <CardContent className="p-6 space-y-3">
-                                    <Skeleton className="h-6 w-24 mb-2" />
-                                    <Skeleton className="h-8 w-3/4" />
-                                    <Skeleton className="h-4 w-1/2" />
-                                    <div className="space-y-2 pt-4">
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-5/6" />
-                                    </div>
-                                </CardContent>
-                             </Card>
-                        </div>
-                        <div className="lg:col-span-1">
-                             <Card>
-                                <CardHeader>
-                                    <Skeleton className="h-8 w-3/4" />
-                                    <Skeleton className="h-4 w-full" />
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <Skeleton className="h-16 w-full" />
-                                    <Skeleton className="h-16 w-full" />
-                                    <Skeleton className="h-16 w-full" />
-                                </CardContent>
+        <div className="container mx-auto px-4">
+            <Skeleton className="h-10 w-48 mb-6" />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                        <Card>
+                        <CardHeader className="p-0">
+                            <Skeleton className="w-full h-96 rounded-t-xl" />
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-3">
+                            <Skeleton className="h-6 w-24 mb-2" />
+                            <Skeleton className="h-8 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <div className="space-y-2 pt-4">
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-5/6" />
+                            </div>
+                        </CardContent>
                             </Card>
-                        </div>
-                    </div>
                 </div>
-            </main>
-            <Footer />
+                <div className="lg:col-span-1">
+                        <Card>
+                        <CardHeader>
+                            <Skeleton className="h-8 w-3/4" />
+                            <Skeleton className="h-4 w-full" />
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
         </div>
     )
 }
@@ -76,11 +71,18 @@ function ProjectDetailsSkeleton() {
 export default function ProjectDetailsPage() {
     const params = useParams();
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const { id } = params;
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (authLoading) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+
         const fetchProject = async () => {
             if (typeof id !== 'string') return;
             setLoading(true);
@@ -95,90 +97,111 @@ export default function ProjectDetailsPage() {
                 }
             } catch (error) {
                 console.error("Error fetching project:", error);
-                // Optionally add toast notification for error
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProject();
-    }, [id, router]);
+    }, [id, router, user, authLoading]);
 
-    if (loading) {
-        return <ProjectDetailsSkeleton />;
-    }
-    
-    if (!project) {
-        return null; // or a not found component
+    const renderContent = () => {
+        if (loading || authLoading) {
+            return <ProjectDetailsSkeleton />;
+        }
+
+        if (!user) {
+             return (
+                <Card className="max-w-md mx-auto text-center">
+                    <CardHeader>
+                        <CardTitle>Access Denied</CardTitle>
+                        <CardDescription>You must be logged in to view project details.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild>
+                            <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            );
+        }
+
+        if (!project) {
+            return null;
+        }
+
+        return (
+             <div className="container mx-auto px-4">
+                    <Button asChild variant="outline" className="mb-6">
+                    <Link href="/projects">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Ecommerce
+                    </Link>
+                </Button>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2">
+                            <Card>
+                            <CardHeader className="p-0">
+                                <div className="relative w-full h-96">
+                                    <Image
+                                        src={project.thumbnailUrl}
+                                        alt={project.title}
+                                        fill
+                                        className="rounded-t-xl object-cover"
+                                    />
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <Badge variant="secondary" className="mb-2 self-start">{project.category}</Badge>
+                                <h1 className="text-3xl font-bold tracking-tight mb-2">{project.title}</h1>
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                    Published on {format(new Date(project.createdAt), 'PPP')}
+                                </p>
+                                <div className="prose dark:prose-invert max-w-none">
+                                    <p>{project.description}</p>
+                                </div>
+                            </CardContent>
+                            </Card>
+                    </div>
+                    <div className="lg:col-span-1">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Project Files</CardTitle>
+                                <CardDescription>Download the files associated with this project.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                {project.files.map((file, index) => (
+                                        <a 
+                                        key={index}
+                                        href={file.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="block"
+                                    >
+                                        <div className="flex items-center p-3 rounded-lg border bg-secondary/30 hover:bg-secondary/70 transition-colors">
+                                            <FileIcon className="h-6 w-6 mr-3 text-primary" />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium truncate">{file.name}</p>
+                                                <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
+                                            </div>
+                                            <Download className="h-5 w-5 text-muted-foreground ml-2" />
+                                        </div>
+                                    </a>
+                                ))}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+             </div>
+        )
     }
 
     return (
          <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1 pt-20 pb-12 md:py-16">
-                <div className="container mx-auto px-4">
-                     <Button asChild variant="outline" className="mb-6">
-                        <Link href="/projects">
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Ecommerce
-                        </Link>
-                    </Button>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2">
-                             <Card>
-                                <CardHeader className="p-0">
-                                    <div className="relative w-full h-96">
-                                        <Image
-                                            src={project.thumbnailUrl}
-                                            alt={project.title}
-                                            fill
-                                            className="rounded-t-xl object-cover"
-                                        />
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="p-6">
-                                    <Badge variant="secondary" className="mb-2 self-start">{project.category}</Badge>
-                                    <h1 className="text-3xl font-bold tracking-tight mb-2">{project.title}</h1>
-                                     <p className="text-sm text-muted-foreground mb-4">
-                                        Published on {format(new Date(project.createdAt), 'PPP')}
-                                    </p>
-                                    <div className="prose dark:prose-invert max-w-none">
-                                        <p>{project.description}</p>
-                                    </div>
-                                </CardContent>
-                             </Card>
-                        </div>
-                        <div className="lg:col-span-1">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Project Files</CardTitle>
-                                    <CardDescription>Download the files associated with this project.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    {project.files.map((file, index) => (
-                                         <a 
-                                            key={index}
-                                            href={file.url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="block"
-                                        >
-                                            <div className="flex items-center p-3 rounded-lg border bg-secondary/30 hover:bg-secondary/70 transition-colors">
-                                                <FileIcon className="h-6 w-6 mr-3 text-primary" />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-medium truncate">{file.name}</p>
-                                                    <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
-                                                </div>
-                                                <Download className="h-5 w-5 text-muted-foreground ml-2" />
-                                            </div>
-                                        </a>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
-                </div>
+                {renderContent()}
             </main>
             <Footer />
         </div>

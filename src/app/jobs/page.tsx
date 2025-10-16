@@ -8,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, ArrowRight, Loader2, Search, MapPin } from 'lucide-react';
+import { Briefcase, ArrowRight, Loader2, Search, MapPin, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/hooks/use-auth';
 
 interface TransformedJob {
   id: string;
@@ -52,6 +53,7 @@ const JobCardSkeleton = () => (
 )
 
 export default function JobsPage() {
+    const { user, loading: authLoading } = useAuth();
     const [allJobs, setAllJobs] = useState<TransformedJob[]>([]);
     const [visibleJobs, setVisibleJobs] = useState<TransformedJob[]>([]);
     const [loading, setLoading] = useState(true);
@@ -75,8 +77,12 @@ export default function JobsPage() {
     }, []);
 
     useEffect(() => {
-        fetchJobs();
-    }, [fetchJobs]);
+        if (user) {
+            fetchJobs();
+        } else if (!authLoading) {
+            setLoading(false);
+        }
+    }, [fetchJobs, user, authLoading]);
     
     const filteredJobs = useMemo(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
@@ -98,6 +104,103 @@ export default function JobsPage() {
     const handleLoadMore = () => {
         setJobsToShow(prev => prev + 10);
     };
+
+    const renderContent = () => {
+        if (authLoading) {
+            return (
+                <div className="flex justify-center items-center h-64">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            );
+        }
+
+        if (!user) {
+            return (
+                <Card className="max-w-md mx-auto text-center">
+                    <CardHeader>
+                        <CardTitle>Access Denied</CardTitle>
+                        <CardContent>
+                            <p className="mb-4">You must be logged in to view remote jobs.</p>
+                            <Button asChild>
+                                <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                            </Button>
+                        </CardContent>
+                    </CardHeader>
+                </Card>
+            );
+        }
+        
+        return (
+             <>
+                <div className="relative mb-8">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Search by title, company, or category..."
+                        className="pl-10 w-full"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                
+                <div className="grid grid-cols-1 gap-6">
+                    {loading && visibleJobs.length === 0 ? (
+                        Array.from({length: 5}).map((_, i) => <JobCardSkeleton key={i} />)
+                    ) : visibleJobs.length > 0 ? (
+                        visibleJobs.map(job => (
+                            <Card key={job.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
+                                <div className="p-6 flex flex-col sm:flex-row gap-6">
+                                    <div className="relative flex-shrink-0 h-16 w-16">
+                                        <Image
+                                            src={job.companyLogo}
+                                            alt={`${job.companyName} logo`}
+                                            fill
+                                            className="rounded-lg object-contain"
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <CardTitle className="text-lg leading-tight mb-1">{job.title}</CardTitle>
+                                        <p className="text-sm text-muted-foreground font-medium mb-3">{job.companyName}</p>
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
+                                                <Badge variant="secondary">{job.category}</Badge>
+                                                {job.jobType && <Badge variant="outline">{job.jobType}</Badge>}
+                                                {job.salary && <Badge variant="outline">{job.salary}</Badge>}
+                                        </div>
+                                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4"/> {job.location}</div>
+                                    </div>
+                                </div>
+                                    <CardFooter className="bg-muted/50 p-3 flex justify-between items-center">
+                                    <div className="text-xs text-muted-foreground">
+                                        Posted {formatDistanceToNow(new Date(job.publicationDate), { addSuffix: true })}
+                                    </div>
+                                    <Button asChild size="sm">
+                                        <Link href={job.url} target="_blank" rel="noopener noreferrer">
+                                            Apply Now <ArrowRight className="ml-2 h-4 w-4" />
+                                        </Link>
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        ))
+                    ) : (
+                        <Card>
+                                <CardContent className="text-center py-16 text-muted-foreground">
+                                <Briefcase className="mx-auto h-12 w-12" />
+                                <p className="mt-4">No jobs match your search. Try a different keyword.</p>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
+                
+                {visibleJobs.length < filteredJobs.length && (
+                    <div className="mt-8 text-center">
+                        <Button onClick={handleLoadMore}>
+                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Load More"}
+                        </Button>
+                    </div>
+                )}
+            </>
+        );
+    }
     
     return (
         <div className="flex min-h-screen flex-col">
@@ -110,73 +213,7 @@ export default function JobsPage() {
                             Explore remote job opportunities from various companies.
                         </p>
                     </div>
-
-                     <div className="relative mb-8">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Search by title, company, or category..."
-                            className="pl-10 w-full"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 gap-6">
-                        {loading && visibleJobs.length === 0 ? (
-                            Array.from({length: 5}).map((_, i) => <JobCardSkeleton key={i} />)
-                        ) : visibleJobs.length > 0 ? (
-                            visibleJobs.map(job => (
-                                <Card key={job.id} className="group overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
-                                    <div className="p-6 flex flex-col sm:flex-row gap-6">
-                                        <div className="relative flex-shrink-0 h-16 w-16">
-                                            <Image
-                                                src={job.companyLogo}
-                                                alt={`${job.companyName} logo`}
-                                                fill
-                                                className="rounded-lg object-contain"
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <CardTitle className="text-lg leading-tight mb-1">{job.title}</CardTitle>
-                                            <p className="text-sm text-muted-foreground font-medium mb-3">{job.companyName}</p>
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
-                                                 <Badge variant="secondary">{job.category}</Badge>
-                                                 {job.jobType && <Badge variant="outline">{job.jobType}</Badge>}
-                                                 {job.salary && <Badge variant="outline">{job.salary}</Badge>}
-                                            </div>
-                                             <div className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4"/> {job.location}</div>
-                                        </div>
-                                    </div>
-                                     <CardFooter className="bg-muted/50 p-3 flex justify-between items-center">
-                                        <div className="text-xs text-muted-foreground">
-                                           Posted {formatDistanceToNow(new Date(job.publicationDate), { addSuffix: true })}
-                                        </div>
-                                        <Button asChild size="sm">
-                                            <Link href={job.url} target="_blank" rel="noopener noreferrer">
-                                                Apply Now <ArrowRight className="ml-2 h-4 w-4" />
-                                            </Link>
-                                        </Button>
-                                    </CardFooter>
-                                </Card>
-                            ))
-                        ) : (
-                            <Card>
-                                 <CardContent className="text-center py-16 text-muted-foreground">
-                                    <Briefcase className="mx-auto h-12 w-12" />
-                                    <p className="mt-4">No jobs match your search. Try a different keyword.</p>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
-                    
-                    {visibleJobs.length < filteredJobs.length && (
-                        <div className="mt-8 text-center">
-                            <Button onClick={handleLoadMore}>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Load More
-                            </Button>
-                        </div>
-                    )}
+                    {renderContent()}
                 </div>
             </main>
             <Footer />

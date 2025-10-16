@@ -11,12 +11,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, Loader2, UploadCloud, Download, FileImage } from 'lucide-react';
+import { Eye, Loader2, UploadCloud, Download, FileImage, LogIn } from 'lucide-react';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 const DELIMITER = '|||||'; // A unique string to mark the end of the message
 
 export default function SteganographyPage() {
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('encode');
 
@@ -160,12 +163,29 @@ export default function SteganographyPage() {
     reader.readAsDataURL(decodeImage);
   };
 
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-2xl mx-auto shadow-lg">
+  const renderContent = () => {
+    if(authLoading) {
+        return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin"/></div>
+    }
+
+    if (!user) {
+        return (
+            <div className="text-center">
+                <CardHeader>
+                    <CardTitle>Access Denied</CardTitle>
+                    <CardDescription>You must be logged in to use the Steganography tool.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button asChild>
+                        <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                    </Button>
+                </CardContent>
+            </div>
+        );
+    }
+    
+    return (
+        <>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-6 w-6 text-primary" />
@@ -226,6 +246,17 @@ export default function SteganographyPage() {
                 </TabsContent>
               </Tabs>
             </CardContent>
+        </>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1 pt-20 pb-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <Card className="max-w-2xl mx-auto shadow-lg">
+            {renderContent()}
           </Card>
         </div>
       </main>

@@ -4,10 +4,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, CheckCircle, XCircle, Keyboard as KeyboardIcon } from 'lucide-react';
+import { RefreshCw, CheckCircle, XCircle, Keyboard as KeyboardIcon, LogIn, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 const paragraphs = [
     "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing and testing fonts.",
@@ -24,6 +26,7 @@ const paragraphs = [
 const TIME_LIMIT = 60; // 60 seconds
 
 export default function TypingTestPage() {
+    const { user, loading: authLoading } = useAuth();
     const [textToType, setTextToType] = useState('');
     const [userInput, setUserInput] = useState('');
     const [timer, setTimer] = useState(TIME_LIMIT);
@@ -54,8 +57,10 @@ export default function TypingTestPage() {
     }, []);
 
     useEffect(() => {
-        startTest();
-    }, [startTest]);
+        if(user) {
+            startTest();
+        }
+    }, [startTest, user]);
     
     const calculateResults = useCallback(() => {
         if (!testStarted) return;
@@ -124,63 +129,91 @@ export default function TypingTestPage() {
         });
     };
 
+    const renderContent = () => {
+        if(authLoading) {
+            return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin"/></div>
+        }
+
+        if (!user) {
+            return (
+                <div className="text-center">
+                    <CardHeader>
+                        <CardTitle>Access Denied</CardTitle>
+                        <CardDescription>You must be logged in to use the Typing Test.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild>
+                            <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                        </Button>
+                    </CardContent>
+                </div>
+            );
+        }
+
+        return (
+            <>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <KeyboardIcon className="h-6 w-6 text-primary" />
+                        Typing Speed Test
+                    </CardTitle>
+                    <CardDescription>
+                        How fast can you type? You have 60 seconds to type the text below.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div
+                        className="relative rounded-lg border p-4 text-lg font-mono tracking-wider leading-relaxed select-none"
+                        onClick={() => inputRef.current?.focus()}
+                    >
+                        {renderText()}
+                            <div className="absolute inset-0 z-0">
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={userInput}
+                                onChange={handleInputChange}
+                                className="w-full h-full opacity-0 cursor-default"
+                                disabled={testFinished}
+                                autoComplete="off"
+                                autoCorrect="off"
+                                autoCapitalize="off"
+                                spellCheck="false"
+                            />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                        <div className="p-4 bg-secondary/50 rounded-lg">
+                            <p className="text-sm text-muted-foreground">Time Left</p>
+                            <p className="text-2xl font-bold">{timer}</p>
+                        </div>
+                        <div className="p-4 bg-secondary/50 rounded-lg">
+                            <p className="text-sm text-muted-foreground">Speed (WPM)</p>
+                            <p className="text-2xl font-bold">{wpm}</p>
+                        </div>
+                        <div className="p-4 bg-secondary/50 rounded-lg">
+                            <p className="text-sm text-muted-foreground">Accuracy</p>
+                            <p className="text-2xl font-bold">{accuracy}%</p>
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter className="justify-center">
+                    <Button onClick={startTest}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Restart Test
+                    </Button>
+                </CardFooter>
+            </>
+        )
+    }
+
     return (
         <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1 pt-20 pb-12 md:py-16">
                 <div className="container mx-auto px-4">
                     <Card className="max-w-3xl mx-auto shadow-lg">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <KeyboardIcon className="h-6 w-6 text-primary" />
-                                Typing Speed Test
-                            </CardTitle>
-                            <CardDescription>
-                                How fast can you type? You have 60 seconds to type the text below.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div
-                                className="relative rounded-lg border p-4 text-lg font-mono tracking-wider leading-relaxed select-none"
-                                onClick={() => inputRef.current?.focus()}
-                            >
-                                {renderText()}
-                                 <div className="absolute inset-0 z-0">
-                                    <input
-                                        ref={inputRef}
-                                        type="text"
-                                        value={userInput}
-                                        onChange={handleInputChange}
-                                        className="w-full h-full opacity-0 cursor-default"
-                                        disabled={testFinished}
-                                        autoComplete="off"
-                                        autoCorrect="off"
-                                        autoCapitalize="off"
-                                        spellCheck="false"
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                                <div className="p-4 bg-secondary/50 rounded-lg">
-                                    <p className="text-sm text-muted-foreground">Time Left</p>
-                                    <p className="text-2xl font-bold">{timer}</p>
-                                </div>
-                                <div className="p-4 bg-secondary/50 rounded-lg">
-                                    <p className="text-sm text-muted-foreground">Speed (WPM)</p>
-                                    <p className="text-2xl font-bold">{wpm}</p>
-                                </div>
-                                <div className="p-4 bg-secondary/50 rounded-lg">
-                                    <p className="text-sm text-muted-foreground">Accuracy</p>
-                                    <p className="text-2xl font-bold">{accuracy}%</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                        <CardFooter className="justify-center">
-                            <Button onClick={startTest}>
-                                <RefreshCw className="mr-2 h-4 w-4" />
-                                Restart Test
-                            </Button>
-                        </CardFooter>
+                        {renderContent()}
                     </Card>
                 </div>
             </main>

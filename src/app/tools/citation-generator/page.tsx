@@ -11,10 +11,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { PenSquare, Copy, Check, Wand2, Loader2 } from 'lucide-react';
+import { PenSquare, Copy, Check, Wand2, Loader2, LogIn } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { findCitations } from '@/ai/flows/citation-finder-flow';
 import type { CitationStyle } from '@/ai/flows/citation-finder-flow';
+import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 interface FormData {
   authors: string;
@@ -29,6 +31,7 @@ interface FormData {
 }
 
 export default function CitationGeneratorPage() {
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [style, setStyle] = useState<CitationStyle>('apa');
   const [formData, setFormData] = useState<Partial<FormData>>({});
@@ -149,12 +152,29 @@ export default function CitationGeneratorPage() {
     </>
   );
 
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-2xl mx-auto shadow-lg">
+  const renderContent = () => {
+    if(authLoading) {
+        return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin"/></div>
+    }
+
+    if (!user) {
+        return (
+            <div className="text-center">
+                <CardHeader>
+                    <CardTitle>Access Denied</CardTitle>
+                    <CardDescription>You must be logged in to use the Citation Generator.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button asChild>
+                        <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                    </Button>
+                </CardContent>
+            </div>
+        );
+    }
+    
+    return (
+        <>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PenSquare className="h-6 w-6 text-primary" />
@@ -225,6 +245,17 @@ export default function CitationGeneratorPage() {
                 </div>
               </CardFooter>
             )}
+        </>
+    )
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1 pt-20 pb-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <Card className="max-w-2xl mx-auto shadow-lg">
+            {renderContent()}
           </Card>
         </div>
       </main>

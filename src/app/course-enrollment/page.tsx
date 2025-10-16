@@ -8,14 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw, Star } from 'lucide-react';
+import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw, Star, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 export default function CourseEnrollmentPage() {
-  const { profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [slot, setSlot] = useState('');
@@ -38,6 +39,7 @@ export default function CourseEnrollmentPage() {
 
   // Function to check and restore session from localStorage
   useEffect(() => {
+    if (!user) return;
     const savedSessionId = localStorage.getItem('courseEnrollmentSessionId');
     const savedDetails = localStorage.getItem('courseEnrollmentDetails');
     if (savedSessionId && savedDetails) {
@@ -54,7 +56,7 @@ export default function CourseEnrollmentPage() {
         checkStatus(savedSessionId); // Initial check
         statusTimerRef.current = setInterval(() => checkStatus(savedSessionId), 5000);
     }
-  }, []);
+  }, [user]);
 
   const startMonitoring = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +160,120 @@ export default function CourseEnrollmentPage() {
     }
   }, []);
 
+  const renderContent = () => {
+    if (authLoading) {
+      return (
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+
+    if (!user) {
+      return (
+        <Card className="max-w-md mx-auto text-center">
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
+            <CardDescription>You must be logged in to use the enrollment alert system.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild>
+              <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+       <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
+          <CardHeader>
+              <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                      <Bell className="h-6 w-6 text-primary" /> Enrollment Notifier
+                  </CardTitle>
+                  {profile && (
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
+                          <Star className="h-4 w-4 text-primary" />
+                          <span>{profile.credits ?? 0} Credits</span>
+                      </div>
+                  )}
+              </div>
+              <CardDescription>Enter your ARMS details and course info below.</CardDescription>
+          </CardHeader>
+          <CardContent>
+              <form id="courseForm" onSubmit={startMonitoring} className="space-y-4">
+                  <Alert variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTitle>Important Security Notice</AlertTitle>
+                      <AlertDescription>
+                          Your ARMS credentials are required for this service but are used temporarily and are not stored. Use at your own discretion.
+                      </AlertDescription>
+                  </Alert>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                          <Label htmlFor="username">ARMS Username</Label>
+                          <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g., 2115XXXX" required disabled={!!sessionId} />
+                      </div>
+                      <div className="space-y-1">
+                          <Label htmlFor="password">ARMS Password</Label>
+                          <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required disabled={!!sessionId} />
+                      </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                          <Label htmlFor="slot">Slot</Label>
+                          <Select onValueChange={setSlot} value={slot} disabled={!!sessionId}>
+                              <SelectTrigger>
+                                  <SelectValue placeholder="Select a slot" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  {slots.map(s => <SelectItem key={s} value={s}>{`Slot ${s}`}</SelectItem>)}
+                              </SelectContent>
+                          </Select>
+                      </div>
+                      <div className="space-y-1">
+                          <Label htmlFor="courseCode">Course Code</Label>
+                          <Input id="courseCode" value={courseCode} onChange={e => setCourseCode(e.target.value.toUpperCase())} placeholder="e.g., CSE101" required disabled={!!sessionId}/>
+                      </div>
+                  </div>
+                  <div className="space-y-1">
+                      <Label htmlFor="email">Notification Email</Label>
+                      <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your-email@example.com" required disabled={!!sessionId}/>
+                  </div>
+                  <div className="space-y-1">
+                      <Label htmlFor="checkInterval">Check Interval (seconds)</Label>
+                      <Input id="checkInterval" type="number" value={checkInterval} onChange={e => setCheckInterval(e.target.value)} placeholder="10" disabled={!!sessionId}/>
+                  </div>
+              </form>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+              {!sessionId ? (
+                  <Button type="submit" form="courseForm" className="w-full" disabled={isLoading}>
+                      {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4" />}
+                      Start Monitoring
+                  </Button>
+              ) : !isFinished ? (
+                    <Button onClick={stopAndReset} variant="destructive" className="w-full">
+                      <StopCircle className="mr-2 h-4 w-4"/>
+                      Stop Monitoring
+                  </Button>
+              ) : (
+                    <Button onClick={stopAndReset} variant="outline" className="w-full">
+                      <RefreshCw className="mr-2 h-4 w-4"/>
+                      Clear and Restart
+                  </Button>
+              )}
+              {showStatus && (
+                  <div className="w-full p-4 bg-muted rounded-lg text-center animate-in fade-in-50">
+                      <pre className="text-sm text-muted-foreground whitespace-pre-wrap">{statusText}</pre>
+                  </div>
+              )}
+          </CardFooter>
+      </Card>
+    );
+  }
+
   return (
      <div className="flex min-h-screen flex-col">
       <Header />
@@ -170,91 +286,7 @@ export default function CourseEnrollmentPage() {
                     Get an email notification the moment your desired course slot becomes available on ARMS.
                     </p>
                 </div>
-                <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="flex items-center gap-2">
-                                <Bell className="h-6 w-6 text-primary" /> Enrollment Notifier
-                            </CardTitle>
-                            {profile && (
-                                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
-                                    <Star className="h-4 w-4 text-primary" />
-                                    <span>{profile.credits ?? 0} Credits</span>
-                                </div>
-                            )}
-                        </div>
-                        <CardDescription>Enter your ARMS details and course info below.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form id="courseForm" onSubmit={startMonitoring} className="space-y-4">
-                            <Alert variant="destructive">
-                                <AlertTriangle className="h-4 w-4" />
-                                <AlertTitle>Important Security Notice</AlertTitle>
-                                <AlertDescription>
-                                    Your ARMS credentials are required for this service but are used temporarily and are not stored. Use at your own discretion.
-                                </AlertDescription>
-                            </Alert>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <Label htmlFor="username">ARMS Username</Label>
-                                    <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g., 2115XXXX" required disabled={!!sessionId} />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="password">ARMS Password</Label>
-                                    <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required disabled={!!sessionId} />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <Label htmlFor="slot">Slot</Label>
-                                    <Select onValueChange={setSlot} value={slot} disabled={!!sessionId}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a slot" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {slots.map(s => <SelectItem key={s} value={s}>{`Slot ${s}`}</SelectItem>)}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="courseCode">Course Code</Label>
-                                    <Input id="courseCode" value={courseCode} onChange={e => setCourseCode(e.target.value.toUpperCase())} placeholder="e.g., CSE101" required disabled={!!sessionId}/>
-                                </div>
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="email">Notification Email</Label>
-                                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your-email@example.com" required disabled={!!sessionId}/>
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="checkInterval">Check Interval (seconds)</Label>
-                                <Input id="checkInterval" type="number" value={checkInterval} onChange={e => setCheckInterval(e.target.value)} placeholder="10" disabled={!!sessionId}/>
-                            </div>
-                        </form>
-                    </CardContent>
-                    <CardFooter className="flex flex-col gap-4">
-                        {!sessionId ? (
-                            <Button type="submit" form="courseForm" className="w-full" disabled={isLoading}>
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4" />}
-                                Start Monitoring
-                            </Button>
-                        ) : !isFinished ? (
-                             <Button onClick={stopAndReset} variant="destructive" className="w-full">
-                                <StopCircle className="mr-2 h-4 w-4"/>
-                                Stop Monitoring
-                            </Button>
-                        ) : (
-                             <Button onClick={stopAndReset} variant="outline" className="w-full">
-                                <RefreshCw className="mr-2 h-4 w-4"/>
-                                Clear and Restart
-                            </Button>
-                        )}
-                        {showStatus && (
-                            <div className="w-full p-4 bg-muted rounded-lg text-center animate-in fade-in-50">
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">{statusText}</pre>
-                            </div>
-                        )}
-                    </CardFooter>
-                </Card>
+                {renderContent()}
             </div>
          </div>
       </main>
