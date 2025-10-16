@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -52,6 +51,7 @@ import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
+import { NotificationBell } from './notification-bell';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -315,6 +315,7 @@ export default function Header() {
                 Contact Us
              </NavLink>
           </nav>
+          {user && <NotificationBell />}
           <ThemeToggle />
           <UserNav />
            <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>

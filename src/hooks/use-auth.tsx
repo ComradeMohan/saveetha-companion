@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -18,7 +17,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -121,6 +120,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsNavigating(false);
   }, [pathname, searchParams]);
 
+  const createNotification = async (userId: string, message: string, type: 'credit' | 'default') => {
+    const notifsRef = collection(db, 'user_notifications', userId, 'notifications');
+    await addDoc(notifsRef, {
+      message,
+      type,
+      read: false,
+      createdAt: serverTimestamp(),
+    });
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -138,6 +147,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (typeof dbProfile.credits === 'undefined') {
                 updatedProfile.credits = 50; // Award 50 credits to existing users
                 await updateDoc(userDocRef, { credits: 50 });
+                await createNotification(
+                    user.uid,
+                    "You've been awarded 50 credits to use for the course enrollment auto-checker.",
+                    "credit"
+                );
                 creditsUpdated = true;
               }
               
@@ -153,14 +167,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
               setProfile({ ...updatedProfile, ...updateData });
               
-              if (creditsUpdated) {
-                 toast({
-                    title: "🎉 Credits Added!",
-                    description: "You've been awarded 50 credits to use for the course enrollment auto-checker.",
-                 });
-              }
-              
-              if (!user.displayName && dbProfile?.name) {
+              if (user.displayName && !dbProfile.name) {
+                await updateDoc(userDocRef, { name: user.displayName });
+              } else if (!user.displayName && dbProfile.name) {
                 await updateProfile(user, { displayName: dbProfile.name });
               }
 
@@ -195,7 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [toast]);
+  }, []);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
