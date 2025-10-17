@@ -3,6 +3,14 @@
 
 import { adminDb } from '@/lib/firebase-admin';
 import { dummyProblemsByLanguage } from '@/lib/coding-problems';
+import type { Problem } from '@/lib/coding-problems';
+import { revalidatePath } from 'next/cache';
+
+export interface FetchedProblem extends Problem {
+  id: string;
+  language: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
 
 export async function seedCodingQuestions(): Promise<{ type: 'success' | 'error', message: string }> {
   try {
@@ -25,10 +33,8 @@ export async function seedCodingQuestions(): Promise<{ type: 'success' | 'error'
       }
     }
     
-    // Note: You may want to clear the collection first if you intend this to be a reset operation.
-    // For now, it will just add the questions.
-
     await batch.commit();
+    revalidatePath('/admin/coding-questions');
 
     return { 
       type: 'success', 
@@ -38,4 +44,20 @@ export async function seedCodingQuestions(): Promise<{ type: 'success' | 'error'
     console.error("Error seeding coding questions:", error);
     return { type: 'error', message: `An unexpected error occurred: ${error.message}` };
   }
+}
+
+export async function getCodingQuestions(): Promise<FetchedProblem[]> {
+    try {
+        const snapshot = await adminDb.collection('coding-questions').orderBy('language').orderBy('title').get();
+        if (snapshot.empty) {
+            return [];
+        }
+        return snapshot.docs.map(doc => ({
+            ...(doc.data() as Omit<FetchedProblem, 'id'>),
+            id: doc.id,
+        }));
+    } catch (error) {
+        console.error("Error fetching coding questions:", error);
+        return [];
+    }
 }

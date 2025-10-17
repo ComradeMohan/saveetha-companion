@@ -1,24 +1,40 @@
+
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Loader2, List, FileJson, UploadCloud } from 'lucide-react';
+import { PlusCircle, Loader2, List, FileJson, UploadCloud, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { seedCodingQuestions } from '@/app/actions/manage-coding-questions';
+import { seedCodingQuestions, getCodingQuestions } from '@/app/actions/manage-coding-questions';
+import type { FetchedProblem } from '@/app/actions/manage-coding-questions';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Dummy data for now
 const dummyLanguages = ['Java', 'Python', 'C++', 'C'];
 const dummyDifficulties = ['Easy', 'Medium', 'Hard'];
 
 export default function AdminCodingQuestionsPage() {
     const [loading, setLoading] = useState(false);
+    const [questions, setQuestions] = useState<FetchedProblem[]>([]);
+    const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
     const [isSeeding, startSeedingTransition] = useTransition();
     const { toast } = useToast();
+
+    const fetchQuestions = async () => {
+        setIsLoadingQuestions(true);
+        const fetchedQuestions = await getCodingQuestions();
+        setQuestions(fetchedQuestions);
+        setIsLoadingQuestions(false);
+    }
+    
+    useEffect(() => {
+        fetchQuestions();
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,8 +54,18 @@ export default function AdminCodingQuestionsPage() {
                 description: result.message,
                 variant: result.type === 'error' ? 'destructive' : 'default',
             });
+            if (result.type === 'success') {
+                fetchQuestions(); // Refresh the list after seeding
+            }
         });
     }
+
+    const groupedQuestions = useMemo(() => {
+        return questions.reduce((acc, q) => {
+            (acc[q.language] = acc[q.language] || []).push(q);
+            return acc;
+        }, {} as Record<string, FetchedProblem[]>);
+    }, [questions]);
 
     return (
         <div className="space-y-6">
@@ -111,11 +137,39 @@ export default function AdminCodingQuestionsPage() {
                         <CardDescription>A list of all questions currently in the bank.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-64 border-2 border-dashed rounded-lg">
-                            <List className="h-10 w-10 mb-4" />
-                            <h3 className="text-lg font-semibold">No Questions Yet</h3>
-                            <p className="text-sm">Use the "Seed" button to populate with dummy data, or add one using the form.</p>
-                        </div>
+                         {isLoadingQuestions ? (
+                            <div className="flex justify-center items-center h-64">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        ) : questions.length > 0 ? (
+                            <ScrollArea className="h-[70vh]">
+                                <div className="space-y-4">
+                                {Object.entries(groupedQuestions).map(([language, qs]) => (
+                                    <div key={language}>
+                                        <h3 className="font-semibold text-lg capitalize mb-2">{language}</h3>
+                                        <div className="space-y-2 border-l-2 pl-4 ml-2">
+                                            {qs.map(q => (
+                                                <div key={q.id} className="p-3 bg-secondary/50 rounded-md">
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="font-medium">{q.title}</p>
+                                                        <Badge variant={q.difficulty === 'easy' ? 'default' : q.difficulty === 'medium' ? 'secondary' : 'destructive'} className="capitalize">
+                                                            {q.difficulty}
+                                                        </Badge>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                                </div>
+                            </ScrollArea>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-64 border-2 border-dashed rounded-lg">
+                                <FileText className="h-10 w-10 mb-4" />
+                                <h3 className="text-lg font-semibold">No Questions Found</h3>
+                                <p className="text-sm">Use the "Seed" button to populate with dummy data, or add one using the form.</p>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
