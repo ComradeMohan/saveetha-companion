@@ -27,6 +27,7 @@ export default function LearnCodingPage() {
     }, [filter]);
 
     const sandboxLanguages = [
+        { name: 'Sandbox', icon: Play, url: 'https://www.onlinegdb.com/' },
         { name: 'Java', icon: Coffee, url: 'https://www.online-java.com/' },
         { name: 'C++', icon: FileJson, url: 'https://www.onlinegdb.com/online_c++_compiler' },
         { name: 'C#', icon: Hash, url: 'https://www.onlinegdb.com/online_csharp_compiler' }
@@ -49,7 +50,7 @@ export default function LearnCodingPage() {
             
             <section>
                 <h2 className="text-xl font-semibold mb-4 text-center">Coding Sandboxes</h2>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {sandboxLanguages.map(lang => (
                         <Card key={lang.name} className="text-center">
                             <CardContent className="p-6">
