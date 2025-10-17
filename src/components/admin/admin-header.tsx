@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -30,6 +31,8 @@ import {
   PenSquare,
   FileQuestion,
   Gift,
+  GitBranch,
+  Code
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -55,8 +58,10 @@ const adminNavLinks = [
 ];
 
 const learnNavLinks = [
-    { href: '/learn', label: 'Roadmap', icon: LayoutDashboard },
+    { href: '/learn/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/learn', label: 'Roadmap', icon: GitBranch },
     { href: '/learn/courses', label: 'My Courses', icon: BookOpen },
+    { href: '/learn/coding', label: 'Coding', icon: Code },
     { href: '/learn/profile', label: 'Profile', icon: UserCircle },
 ]
 
