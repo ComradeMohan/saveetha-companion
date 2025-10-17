@@ -17,7 +17,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/s
 import { MonacoCodeEditor } from '@/components/editor/MonacoCodeEditor';
 import { LabAIChatAssistant } from '@/components/student/LabAIChatAssistant';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Play, Trash2, PlusCircle, FileCode, Terminal, AlertTriangle, ClipboardType, Share, PanelLeftOpen, X, GripHorizontal, Sparkles, Users } from 'lucide-react';
+import { Loader2, Save, Play, Trash2, PlusCircle, FileCode, Terminal, AlertTriangle, ClipboardType, Share, PanelLeftOpen, X, GripHorizontal, Sparkles, Users, MonitorX } from 'lucide-react';
 import type { ProgrammingLanguage, SavedProgram } from '@/types';
 import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
@@ -741,6 +741,18 @@ export default function StudentSandboxPage() {
           <p className="text-muted-foreground">Please log in to use the sandbox.</p>
       </div>
     );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center text-center p-4">
+        <MonitorX className="h-16 w-16 text-destructive mb-4" />
+        <h2 className="text-xl font-semibold">Sandbox Not Available</h2>
+        <p className="text-muted-foreground mt-2">
+          The code sandbox is not available on mobile devices. Please use a desktop or tablet for the best experience.
+        </p>
+      </div>
+    )
   }
 
   const isSandboxDisabled = programmingLanguages.length === 0 && !selectedLanguage;

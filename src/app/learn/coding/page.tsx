@@ -27,10 +27,10 @@ export default function LearnCodingPage() {
     }, [filter]);
 
     const sandboxLanguages = [
-        { name: 'Sandbox', icon: Play, url: 'https://www.onlinegdb.com/' },
-        { name: 'Java', icon: Coffee, url: 'https://www.online-java.com/' },
-        { name: 'C++', icon: FileJson, url: 'https://www.onlinegdb.com/online_c++_compiler' },
-        { name: 'C#', icon: Hash, url: 'https://www.onlinegdb.com/online_csharp_compiler' }
+        { name: 'Sandbox', icon: Play, url: '/tools/sandbox' },
+        { name: 'Java', icon: Coffee, url: '/tools/sandbox' },
+        { name: 'C++', icon: FileJson, url: '/tools/sandbox' },
+        { name: 'C#', icon: Hash, url: '/tools/sandbox' }
     ];
 
     if (loading) {
@@ -58,7 +58,7 @@ export default function LearnCodingPage() {
                                 <h3 className="text-lg font-semibold">{lang.name}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">Practice in a live environment.</p>
                                 <Button asChild>
-                                    <Link href={lang.url} target="_blank" rel="noopener noreferrer">
+                                    <Link href={lang.url}>
                                         <Play className="mr-2 h-4 w-4" /> Start Coding
                                     </Link>
                                 </Button>

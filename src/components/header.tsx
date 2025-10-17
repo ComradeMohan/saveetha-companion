@@ -205,7 +205,6 @@ export default function Header() {
   ];
 
   const toolsDropdownLinks = [
-      { href: '/tools/sandbox', label: 'Sandbox', icon: Code },
       { href: '/tools/placement-prep', label: 'Placement Prep', icon: GraduationCap },
       { href: '/tools/link-drop', label: 'Link Drop', icon: LinkIcon },
       { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
@@ -331,12 +330,12 @@ export default function Header() {
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="flex flex-col">
-                    <SheetHeader>
+                <SheetContent side="left" className="flex flex-col p-0">
+                    <SheetHeader className="p-4 border-b">
                         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
-                    <ScrollArea className="flex-1 -mx-6">
-                        <nav className="grid gap-6 text-lg font-medium mt-8 px-6">
+                    <ScrollArea className="flex-1">
+                        <nav className="grid gap-6 text-lg font-medium mt-4 px-6">
                             <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold mb-4">
                                 <GraduationCap className="h-6 w-6 text-primary" />
                                 <span>Saveetha Calculator</span>
