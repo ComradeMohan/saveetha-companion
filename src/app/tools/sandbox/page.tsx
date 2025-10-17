@@ -377,5 +377,5 @@ export default function StudentSandboxPage() {
             </div>
         </div>
     </main>
-  
-    
+  );
+}
