@@ -28,6 +28,14 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const MIN_BOTTOM_PANEL_HEIGHT = 100;
 const DEFAULT_BOTTOM_PANEL_HEIGHT = 250;
 
+// Define specific languages for the sandbox
+const SANDBOX_LANGUAGES: Omit<ProgrammingLanguage, 'id'>[] = [
+    { name: 'Python', iconName: 'FileCode' }, // Using a generic icon
+    { name: 'Java', iconName: 'FileCode' },
+    { name: 'C++', iconName: 'FileCode' },
+    { name: 'C', iconName: 'FileCode' },
+];
+
 const getIconComponent = (iconName?: string): React.FC<React.SVGProps<SVGSVGElement>> => {
   if (iconName && LucideIcons[iconName as keyof typeof LucideIcons]) {
     return LucideIcons[iconName as keyof typeof LucideIcons] as React.FC<React.SVGProps<SVGSVGElement>>;
@@ -60,39 +68,19 @@ def main():
 if __name__ == "__main__":
     main()
 `;
-  } else if (lowerLang === 'javascript') {
-    return `// Welcome to the Sandbox! Start coding in JavaScript.
-// Use the "Sample Input" tab below to provide input for your program.
-// Input is typically read line by line from process.stdin.
+  } else if (lowerLang === 'c' || lowerLang === 'c++') {
+     return `// Welcome to the Sandbox! Start coding in C/C++.
+#include <iostream>
 
-function main() {
-    console.log("Hello from JavaScript Sandbox!");
-
-    // Example for reading input (requires 'readline' module in execution environment):
-    /*
-    const readline = require('readline');
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-        terminal: false
-    });
-
-    let lines = [];
-    rl.on('line', (line) => {
-        lines.push(line);
-    });
-
-    rl.on('close', () => {
-        console.log("Received all input lines:", lines);
-        if (lines.length > 0) {
-            console.log("First line was:", lines[0]);
-        }
-        // Process lines here
-    });
-    */
+int main() {
+    std::cout << "Hello from C++/C Sandbox!" << std::endl;
+    // Example of reading input:
+    // std::string name;
+    // std::cout << "Enter your name (from Sample Input):" << std::endl;
+    // std::cin >> name;
+    // std::cout << "Hello, " << name << "!" << std::endl;
+    return 0;
 }
-
-main();
 `;
   } else if (lowerLang === 'java') {
     return `// Welcome to the Sandbox! Start coding in Java.
@@ -113,17 +101,6 @@ public class Main {
         // if (scanner.hasNextLine()) {
         //    String name = scanner.nextLine();
         //    System.out.println("Hello, " + name + "!");
-        // }
-        
-        // System.out.println("Enter an integer:");
-        // if (scanner.hasNextInt()) {
-        //    int number = scanner.nextInt();
-        //    System.out.println("You entered the number: " + number);
-        // } else if (scanner.hasNextLine()) { 
-        //    scanner.nextLine(); 
-        //    System.out.println("That wasn't an integer.");
-        // } else {
-        //    System.out.println("No further input provided.");
         // }
         
         scanner.close();
@@ -188,7 +165,7 @@ export default function StudentSandboxPage() {
         languageToLoad = availableLangs.find(lang => lang.id === programData.languageId) || null;
     }
     if(!languageToLoad && programData.languageName) {
-        languageToLoad = availableLangs.find(lang => lang.name === programData.languageName) || null;
+        languageToLoad = availableLangs.find(lang => lang.name.toLowerCase() === programData.languageName?.toLowerCase()) || null;
     }
     
     setSelectedLanguage(languageToLoad);
@@ -197,16 +174,14 @@ export default function StudentSandboxPage() {
                     ? getDefaultCodeForLanguage(languageToLoad?.name)
                     : programData.code;
 
-    // In live collaboration, always accept the incoming code.
-    // Otherwise, only update if the code is different to avoid cursor jumps.
     if (isLiveUpdate || newCode !== currentCode) {
         setCurrentCode(newCode);
     }
     
-    if (!isLiveUpdate && !languageToLoad && programData.languageName && (programData.languageName !== "Placements" && programData.languageName !== "Aptitude")) {
+    if (!isLiveUpdate && !languageToLoad && programData.languageName) {
          toast({
             title: "Language Mismatch",
-            description: `The language "${programData.languageName}" this program was saved/shared with is not currently available for solving. Code loaded as plaintext.`,
+            description: `The language "${programData.languageName}" is not available in the sandbox. Code loaded as plaintext.`,
             variant: "default"
         });
     }
@@ -303,27 +278,20 @@ export default function StudentSandboxPage() {
     toast({ title: "New Program Ready", description: "Editor cleared. You can start coding." });
   }, [programmingLanguages, selectedLanguage, loadProgramIntoEditor, toast]);
 
-  // Main useEffect to orchestrate all data loading and state initialization.
   useEffect(() => {
     const loadSandboxData = async () => {
-        if (!user?.uid || !profile?.college) {
-            if (!authLoading) toast({ title: "Error", description: "User or college information not found.", variant: "destructive" });
+        if (!user?.uid) {
+            if (!authLoading) toast({ title: "Error", description: "User information not found.", variant: "destructive" });
             setIsLoadingPageData(false);
             return;
         }
 
         setIsLoadingPageData(true);
-        let fetchedCollegeLanguages: ProgrammingLanguage[] = [];
+        const staticLangs = SANDBOX_LANGUAGES.map((lang, index) => ({...lang, id: `static-${index}`}));
+        setProgrammingLanguages(staticLangs);
         let fetchedPrograms: SavedProgram[] = [];
-        let actualProgrammingLangs: ProgrammingLanguage[] = [];
 
         try {
-            const langsRef = collection(db, 'colleges', profile.college, 'languages');
-            const langsSnap = await getDocs(query(langsRef, orderBy('name', 'asc')));
-            fetchedCollegeLanguages = langsSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as ProgrammingLanguage));
-            actualProgrammingLangs = fetchedCollegeLanguages.filter(lang => lang.name !== "Placements" && lang.name !== "Aptitude");
-            setProgrammingLanguages(actualProgrammingLangs);
-
             const programsRef = collection(db, 'users', user.uid, 'savedPrograms');
             const programsSnap = await getDocs(query(programsRef, orderBy('updatedAt', 'desc')));
             fetchedPrograms = programsSnap.docs.map(docSnap => ({ 
@@ -336,16 +304,16 @@ export default function StudentSandboxPage() {
 
         } catch (error) {
             console.error("Error loading sandbox:", error);
-            toast({ title: "Error", description: "Could not load sandbox data.", variant: "destructive" });
+            toast({ title: "Error", description: "Could not load your saved programs.", variant: "destructive" });
             setIsLoadingPageData(false);
             return;
         }
-
+        
         const shareUserId = searchParams.get('userId');
         const shareProgramId = searchParams.get('programId');
         const isCollaboration = searchParams.get('live') === 'true';
 
-        router.replace('/tools/sandbox', { scroll: false }); // Clean URL after processing params
+        router.replace('/tools/sandbox', { scroll: false });
 
         if (shareUserId && shareProgramId) {
              const programDocRef = doc(db, 'users', shareUserId, 'savedPrograms', shareProgramId);
@@ -353,7 +321,7 @@ export default function StudentSandboxPage() {
              if (programSnap.exists()) {
                 const sharedProgramData = {id: programSnap.id, ...programSnap.data(), userId: shareUserId} as SavedProgram;
                 if (isCollaboration) {
-                    setupCollaborationListener(shareUserId, shareProgramId, actualProgrammingLangs);
+                    setupCollaborationListener(shareUserId, shareProgramId, staticLangs);
                     setActiveProgramId(shareProgramId);
                     toast({ title: "Collaborative Session Started", description: `You are now editing a shared program. Changes will be synced.` });
                 } else {
@@ -375,8 +343,7 @@ export default function StudentSandboxPage() {
     } else if (!authLoading && !user) {
         setIsLoadingPageData(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, profile, authLoading]);
+  }, [user, authLoading, toast, router, searchParams, handleLoadProgram, handleNewProgram, setupCollaborationListener]);
 
 
   const handleSaveProgram = useCallback(async () => {
@@ -406,13 +373,12 @@ export default function StudentSandboxPage() {
     };
 
     try {
-      if (activeProgramId && !isCollaborating) { // Only allow saving if not in collab mode or if it's your own program
+      if (activeProgramId && !isCollaborating) { 
         const programDocRef = doc(db, 'users', user.uid, 'savedPrograms', activeProgramId);
         await updateDoc(programDocRef, programDataToSave);
         setSavedPrograms(prev => prev.map(p => p.id === activeProgramId ? { ...p, ...programDataToSave, id: activeProgramId, updatedAt: new Date() } : p).sort((a,b) => (b.updatedAt as Date).valueOf() - (a.updatedAt as Date).valueOf()));
         toast({ title: "Program Updated!", description: `"${programDataToSave.title}" has been updated.` });
       } else {
-        // If collaborating or new, create a new saved program for the current user
         programDataToSave.createdAt = serverTimestamp();
         const programsCollectionRef = collection(db, 'users', user.uid, 'savedPrograms');
         const newDocRef = await addDoc(programsCollectionRef, programDataToSave);
@@ -420,7 +386,7 @@ export default function StudentSandboxPage() {
         
         setActiveProgramId(newDocRef.id);
         setSavedPrograms(prev => [newProgram, ...prev].sort((a,b) => (b.updatedAt as Date).valueOf() - (a.updatedAt as Date).valueOf()));
-        setIsCollaborating(false); // New saved program is not collaborative
+        setIsCollaborating(false);
         if (collaborationListenerRef.current) {
             collaborationListenerRef.current();
             collaborationListenerRef.current = null;
@@ -568,8 +534,6 @@ export default function StudentSandboxPage() {
     }
     setIsAIChatOpen(prev => !prev);
   };
-  const getCurrentCodeForAI = () => currentCode;
-
 
   const handleMouseDownOnResizer = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -626,11 +590,7 @@ export default function StudentSandboxPage() {
       </CardHeader>
       <ScrollArea className="flex-1">
         <CardContent className="p-1">
-          {savedPrograms.length === 0 && programmingLanguages.length > 0 ? (
-            <p className="p-3 text-xs text-muted-foreground text-center">No saved programs yet. Create one and click "Save"!</p>
-          ) : programmingLanguages.length === 0 && savedPrograms.length === 0 && !selectedLanguage ? (
-            <p className="p-3 text-xs text-muted-foreground text-center">Sandbox disabled. No languages available.</p>
-          ) : (
+          {savedPrograms.length > 0 ? (
             <ul className="space-y-0.5">
               {savedPrograms.map(program => {
                 const ProgramIcon = getIconComponent(program.iconName);
@@ -713,6 +673,8 @@ export default function StudentSandboxPage() {
                 );
               })}
             </ul>
+          ) : (
+            <p className="p-3 text-xs text-muted-foreground text-center">No saved programs yet. Create one and click "Save"!</p>
           )}
         </CardContent>
       </ScrollArea>
@@ -755,11 +717,11 @@ export default function StudentSandboxPage() {
     )
   }
 
-  const isSandboxDisabled = programmingLanguages.length === 0 && !selectedLanguage;
+  const isSandboxDisabled = programmingLanguages.length === 0;
 
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" ref={sandboxContainerRef}>
+    <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] overflow-hidden" ref={sandboxContainerRef}>
       <div className="flex items-center flex-wrap gap-2 p-2 border-b bg-muted/30 shrink-0">
         <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
           <SheetTrigger asChild>
@@ -780,16 +742,16 @@ export default function StudentSandboxPage() {
           disabled={isSaving || isExecuting || isSandboxDisabled}
         />
         <Select
-          value={selectedLanguage?.id || ''}
-          onValueChange={handleLanguageChange}
-          disabled={isSaving || isExecuting || programmingLanguages.length === 0 || isCollaborating}
+          value={selectedLanguage?.name || ''}
+          onValueChange={(langName) => handleLanguageChange(programmingLanguages.find(l => l.name === langName)?.id || '')}
+          disabled={isSaving || isExecuting || isSandboxDisabled || isCollaborating}
         >
           <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
             <SelectValue placeholder="Language" />
           </SelectTrigger>
           <SelectContent>
             {programmingLanguages.length > 0 ? programmingLanguages.map(lang => (
-              <SelectItem key={lang.id} value={lang.id} className="text-xs md:text-sm">{lang.name}</SelectItem>
+              <SelectItem key={lang.id} value={lang.name} className="text-xs md:text-sm">{lang.name}</SelectItem>
             )) : <SelectItem value="none" disabled>No languages</SelectItem>}
           </SelectContent>
         </Select>
@@ -839,7 +801,7 @@ export default function StudentSandboxPage() {
             )}
             {programmingLanguages.length === 0 && !selectedLanguage && !isLoadingPageData && (
                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10 p-4">
-                    <p className="text-destructive text-center p-4 bg-card border rounded-md shadow-lg text-sm">No programming languages available in your college for the sandbox. Please contact an administrator.</p>
+                    <p className="text-destructive text-center p-4 bg-card border rounded-md shadow-lg text-sm">No programming languages available for the sandbox. Please contact an administrator.</p>
                 </div>
             )}
           </div>

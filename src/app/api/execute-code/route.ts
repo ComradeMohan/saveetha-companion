@@ -106,11 +106,12 @@ function getPistonFilename(languageName: string): string {
   if (lang === 'javascript') return 'main.js';
   if (lang === 'java') return 'Main.java';
   if (lang === 'c++' || lang === 'cpp') return 'main.cpp';
-  if (lang === 'c#' || lang === 'csharp') return 'Main.cs'; // Often Main.cs for C#
+  if (lang === 'c') return 'main.c';
+  if (lang === 'c#' || lang === 'csharp') return 'Main.cs';
   if (lang === 'typescript') return 'main.ts';
   if (lang === 'php') return 'main.php';
   if (lang === 'swift') return 'main.swift';
-  if (lang === 'kotlin') return 'Main.kt'; // Often Main.kt for Kotlin
+  if (lang === 'kotlin') return 'Main.kt';
   if (lang === 'ruby') return 'main.rb';
   if (lang === 'go') return 'main.go';
   if (lang === 'rust') return 'main.rs';
