@@ -17,6 +17,8 @@ import { Loader2, Play, PlusCircle, FileCode, Terminal, AlertTriangle, Clipboard
 import type { ProgrammingLanguage, SavedProgram } from '@/types';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 
 const MIN_BOTTOM_PANEL_HEIGHT = 100;
@@ -184,7 +186,7 @@ export default function StudentSandboxPage() {
 
   if (authLoading) {
     return (
-      <div className="flex h-[calc(100vh-theme(spacing.16))] items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -192,7 +194,7 @@ export default function StudentSandboxPage() {
   
   if (!user) {
      return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
           <p className="text-muted-foreground">Please log in to use the sandbox.</p>
       </div>
     );
@@ -200,7 +202,7 @@ export default function StudentSandboxPage() {
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full items-center justify-center text-center p-4">
+      <div className="flex flex-col h-screen items-center justify-center text-center p-4">
         <MonitorX className="h-16 w-16 text-destructive mb-4" />
         <h2 className="text-xl font-semibold">Sandbox Not Available</h2>
         <p className="text-muted-foreground mt-2">
@@ -211,105 +213,111 @@ export default function StudentSandboxPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] overflow-hidden" ref={sandboxContainerRef}>
-      <div className="flex items-center flex-wrap gap-2 p-2 border-b bg-muted/30 shrink-0">
-        <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-9 w-9 md:hidden">
-              <PanelLeftOpen className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
-            {sidebarContent(true)}
-          </SheetContent>
-        </Sheet>
-        <Select
-          value={selectedLanguage?.name || ''}
-          onValueChange={handleLanguageChange}
-        >
-          <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
-            <SelectValue placeholder="Language" />
-          </SelectTrigger>
-          <SelectContent>
-            {SANDBOX_LANGUAGES.map(lang => (
-              <SelectItem key={lang.id} value={lang.name} className="text-xs md:text-sm">{lang.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button size="sm" className="h-9 text-xs md:text-sm" variant="outline">
-          <Play className="h-4 w-4 mr-1" />
-          <span className="hidden sm:inline">Run</span>
-           <span className="sm:hidden">Run</span>
-        </Button>
-      </div>
+    <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1 pt-16">
+            <div className="flex flex-col h-[calc(100vh-theme(spacing.16))] overflow-hidden" ref={sandboxContainerRef}>
+                <div className="flex items-center flex-wrap gap-2 p-2 border-b bg-muted/30 shrink-0">
+                    <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="h-9 w-9 md:hidden">
+                        <PanelLeftOpen className="h-5 w-5" />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
+                        {sidebarContent(true)}
+                    </SheetContent>
+                    </Sheet>
+                    <Select
+                    value={selectedLanguage?.name || ''}
+                    onValueChange={handleLanguageChange}
+                    >
+                    <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
+                        <SelectValue placeholder="Language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {SANDBOX_LANGUAGES.map(lang => (
+                        <SelectItem key={lang.id} value={lang.name} className="text-xs md:text-sm">{lang.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                    </Select>
+                    <Button size="sm" className="h-9 text-xs md:text-sm" variant="outline">
+                    <Play className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Run</span>
+                    <span className="sm:hidden">Run</span>
+                    </Button>
+                </div>
 
-      <div className="flex flex-1 overflow-hidden relative"> 
-        <Card className="w-[240px] md:w-[280px] hidden md:flex flex-col border-r rounded-none shrink-0">
-          {sidebarContent()}
-        </Card>
+                <div className="flex flex-1 overflow-hidden relative"> 
+                    <Card className="w-[240px] md:w-[280px] hidden md:flex flex-col border-r rounded-none shrink-0">
+                    {sidebarContent()}
+                    </Card>
 
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-grow relative overflow-hidden">
-            <MonacoCodeEditor
-              language={selectedLanguage?.name.toLowerCase() || 'plaintext'}
-              value={currentCode}
-              onChange={(value) => setCurrentCode(value || '')}
-              height="100%"
-            />
-          </div>
-          
-          <div
-            onMouseDown={handleMouseDownOnResizer}
-            className="h-2.5 bg-muted hover:bg-accent cursor-row-resize w-full flex items-center justify-center shrink-0"
-            title="Drag to resize panel"
-          >
-            <GripHorizontal className="w-4 h-4 text-muted-foreground group-hover:text-accent-foreground" />
-          </div>
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex-grow relative overflow-hidden">
+                        <MonacoCodeEditor
+                        language={selectedLanguage?.name.toLowerCase() || 'plaintext'}
+                        value={currentCode}
+                        onChange={(value) => setCurrentCode(value || '')}
+                        height="100%"
+                        />
+                    </div>
+                    
+                    <div
+                        onMouseDown={handleMouseDownOnResizer}
+                        className="h-2.5 bg-muted hover:bg-accent cursor-row-resize w-full flex items-center justify-center shrink-0"
+                        title="Drag to resize panel"
+                    >
+                        <GripHorizontal className="w-4 h-4 text-muted-foreground group-hover:text-accent-foreground" />
+                    </div>
 
-          <div
-            className="border-t flex flex-col bg-muted/20 shrink-0 overflow-hidden"
-            style={{ height: `${bottomPanelHeight}px` }}
-          >
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
-              <TabsList className="shrink-0 rounded-none border-b bg-muted/50 justify-start px-1 md:px-2 h-9 md:h-10">
-                <TabsTrigger value="input" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
-                    <ClipboardType className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Sample Input
-                </TabsTrigger>
-                <TabsTrigger value="output" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
-                    <Terminal className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Output
-                </TabsTrigger>
-                <TabsTrigger value="errors" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
-                    <AlertTriangle className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Errors
-                </TabsTrigger>
-              </TabsList>
-              <div className="flex-1 overflow-hidden p-0 m-0">
-                <TabsContent value="input" className="h-full mt-0 p-0">
-                  <Textarea
-                    placeholder="Enter sample input for your code here..."
-                    value={sampleInput}
-                    onChange={(e) => setSampleInput(e.target.value)}
-                    className="h-full w-full resize-none border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 font-mono text-xs md:text-sm p-2 bg-background"
-                  />
-                </TabsContent>
-                <TabsContent value="output" className="h-full mt-0 p-0">
-                  <ScrollArea className="h-full bg-background">
-                    <pre className="p-2 text-xs md:text-sm whitespace-pre-wrap font-mono min-h-full">
-                      {output}
-                    </pre>
-                  </ScrollArea>
-                </TabsContent>
-                <TabsContent value="errors" className="h-full mt-0 p-0">
-                  <ScrollArea className="h-full bg-background">
-                    <pre className="p-2 text-xs md:text-sm text-destructive whitespace-pre-wrap font-mono min-h-full">
-                      {errorOutput}
-                    </pre>
-                  </ScrollArea>
-                </TabsContent>
-              </div>
-            </Tabs>
-          </div>
-        </div>
-      </div>
+                    <div
+                        className="border-t flex flex-col bg-muted/20 shrink-0 overflow-hidden"
+                        style={{ height: `${bottomPanelHeight}px` }}
+                    >
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
+                        <TabsList className="shrink-0 rounded-none border-b bg-muted/50 justify-start px-1 md:px-2 h-9 md:h-10">
+                            <TabsTrigger value="input" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
+                                <ClipboardType className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Sample Input
+                            </TabsTrigger>
+                            <TabsTrigger value="output" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
+                                <Terminal className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Output
+                            </TabsTrigger>
+                            <TabsTrigger value="errors" className="text-xs px-2 py-1 md:px-3 md:py-1.5 h-auto data-[state=active]:bg-background">
+                                <AlertTriangle className="mr-1 h-3 w-3 md:h-3.5 md:w-3.5"/> Errors
+                            </TabsTrigger>
+                        </TabsList>
+                        <div className="flex-1 overflow-hidden p-0 m-0">
+                            <TabsContent value="input" className="h-full mt-0 p-0">
+                            <Textarea
+                                placeholder="Enter sample input for your code here..."
+                                value={sampleInput}
+                                onChange={(e) => setSampleInput(e.target.value)}
+                                className="h-full w-full resize-none border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 font-mono text-xs md:text-sm p-2 bg-background"
+                            />
+                            </TabsContent>
+                            <TabsContent value="output" className="h-full mt-0 p-0">
+                            <ScrollArea className="h-full bg-background">
+                                <pre className="p-2 text-xs md:text-sm whitespace-pre-wrap font-mono min-h-full">
+                                {output}
+                                </pre>
+                            </ScrollArea>
+                            </TabsContent>
+                            <TabsContent value="errors" className="h-full mt-0 p-0">
+                            <ScrollArea className="h-full bg-background">
+                                <pre className="p-2 text-xs md:text-sm text-destructive whitespace-pre-wrap font-mono min-h-full">
+                                {errorOutput}
+                                </pre>
+                            </ScrollArea>
+                            </TabsContent>
+                        </div>
+                        </Tabs>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <Footer />
     </div>
   );
 }
