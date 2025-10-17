@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { dummyProblemsByLanguage } from '@/lib/coding-problems';
 import type { Problem } from '@/lib/coding-problems';
+import { Badge } from '@/components/ui/badge';
 
 const MIN_BOTTOM_PANEL_HEIGHT = 100;
 const DEFAULT_BOTTOM_PANEL_HEIGHT = 250;
