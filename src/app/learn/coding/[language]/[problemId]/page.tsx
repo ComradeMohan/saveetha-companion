@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -225,7 +226,7 @@ export default function ProblemSolvingPage() {
                              <Badge variant={problem.difficulty === 'easy' ? 'default' : problem.difficulty === 'medium' ? 'secondary' : 'destructive'} className="capitalize">{problem.difficulty}</Badge>
                              <p className="text-sm text-muted-foreground">{problem.description}</p>
                              
-                             {problem.testCases.map((tc, index) => (
+                             {problem.testCases.slice(0, 2).map((tc, index) => (
                                 <div key={index}>
                                     <h4 className="font-semibold text-sm">Example {index + 1}:</h4>
                                     <pre className="mt-1 p-2 bg-secondary/50 rounded-md text-xs font-mono">
