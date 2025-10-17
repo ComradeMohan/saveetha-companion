@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -32,7 +31,7 @@ import {
   FileQuestion,
   Gift,
   GitBranch,
-  Code
+  Code,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -48,6 +47,7 @@ const adminNavLinks = [
   { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
   { href: '/admin/course-content', label: 'Course Content', icon: PenSquare },
   { href: '/admin/mcqs', label: 'MCQs', icon: FileQuestion },
+  { href: '/admin/coding-questions', label: 'Coding Questions', icon: Code },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
   { href: '/admin/certifications', label: 'Certifications', icon: Award },
   { href: '/admin/credits', label: 'Credit Management', icon: Gift },
