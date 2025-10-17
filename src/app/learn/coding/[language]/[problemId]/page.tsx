@@ -218,8 +218,16 @@ export default function ProblemSolvingPage() {
         </div>
 
         <div className="flex flex-1 overflow-hidden relative">
-            {isDescriptionPanelOpen && (
-                 <Card className="w-[40%] md:w-[35%] flex flex-col border-r rounded-none shrink-0">
+            <div
+                className={cn(
+                    "flex-shrink-0 transition-all duration-300 ease-in-out",
+                    isDescriptionPanelOpen ? "w-[40%] md:w-[35%]" : "w-0"
+                )}
+            >
+                 <Card className={cn(
+                    "h-full flex flex-col border-r rounded-none transition-opacity duration-300",
+                     isDescriptionPanelOpen ? "opacity-100" : "opacity-0"
+                 )}>
                     <CardContent className="p-0 flex-1 overflow-y-auto">
                          <div className="p-4 space-y-4">
                              <h2 className="text-xl font-bold">{problem.title}</h2>
@@ -239,7 +247,7 @@ export default function ProblemSolvingPage() {
                          </div>
                     </CardContent>
                 </Card>
-            )}
+            </div>
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="flex-grow relative overflow-hidden">
