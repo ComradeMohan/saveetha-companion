@@ -46,6 +46,7 @@ import {
     SheetContent,
     SheetHeader,
     SheetTitle,
+    SheetTrigger,
 } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
