@@ -50,7 +50,7 @@ export default function LearnCodingPage() {
             
             <section>
                 <h2 className="text-xl font-semibold mb-4 text-center">Coding Sandboxes</h2>
-                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {sandboxLanguages.map(lang => (
                         <Card key={lang.name} className="text-center">
                             <CardContent className="p-6">
