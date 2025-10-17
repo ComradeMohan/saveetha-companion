@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { Loader2, Code, Database, BrainCircuit, Play, Coffee, FileJson, Hash } from 'lucide-react';
+import { Loader2, Code, Database, BrainCircuit, Play, FileJson, Hash } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +41,7 @@ export default function LearnCodingPage() {
 
     const sandboxLanguages = [
         { name: 'Sandbox', icon: Play, url: '/tools/sandbox', isPractice: false },
-        { name: 'Java', icon: Coffee, url: '/learn/coding/java', isPractice: true },
+        { name: 'Java', icon: FileJson, url: '/learn/coding/java', isPractice: true },
         { name: 'Python', icon: PythonIcon, url: '/learn/coding/python', isPractice: true },
         { name: 'C++', icon: FileJson, url: '/learn/coding/cpp', isPractice: true },
         { name: 'C', icon: Hash, url: '/learn/coding/c', isPractice: true }

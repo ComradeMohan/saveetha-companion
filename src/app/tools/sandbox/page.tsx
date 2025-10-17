@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -16,7 +17,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/s
 import { MonacoCodeEditor } from '@/components/editor/MonacoCodeEditor';
 import { LabAIChatAssistant } from '@/components/student/LabAIChatAssistant';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Play, Trash2, PlusCircle, FileCode, Terminal, AlertTriangle, ClipboardType, Share, PanelLeftOpen, X, GripHorizontal, Sparkles, Users } from 'lucide-react';
+import { Loader2, Save, Play, Trash2, PlusCircle, FileCode, Terminal, AlertTriangle, ClipboardType, Share, PanelLeftOpen, X, GripHorizontal, Sparkles, Users, MonitorX } from 'lucide-react';
 import type { ProgrammingLanguage, SavedProgram } from '@/types';
 import { cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
@@ -126,16 +127,8 @@ export default function StudentSandboxPage() {
     }
 
     let languageToLoad: ProgrammingLanguage | null = null;
-    const languageFromUrl = searchParams.get('language');
-
-    if (languageFromUrl) {
-      languageToLoad = availableLangs.find(lang => lang.id === languageFromUrl) || null;
-    } else if(programData.languageId) {
+    if (programData.languageId) {
         languageToLoad = availableLangs.find(lang => lang.id === programData.languageId) || null;
-    }
-    
-    if(!languageToLoad && programData.languageName) {
-        languageToLoad = availableLangs.find(lang => lang.name === programData.languageName) || null;
     }
     
     setSelectedLanguage(languageToLoad);
@@ -161,7 +154,7 @@ export default function StudentSandboxPage() {
         setErrorOutput('');
         setActiveTab("input");
     }
-  }, [toast, currentCode, searchParams]);
+  }, [toast, currentCode]);
 
   const handleEditorChange = (newCode: string | undefined) => {
     if (newCode === undefined || newCode === currentCode) return;
@@ -234,13 +227,7 @@ export default function StudentSandboxPage() {
     setIsCollaborating(false);
     setActiveProgramId(null);
     
-    const languageFromUrl = searchParams.get('language');
-    let langForNewProgram;
-    if(languageFromUrl){
-      langForNewProgram = programmingLanguages.find(l => l.id === languageFromUrl) || (programmingLanguages.length > 0 ? programmingLanguages[0] : null);
-    } else {
-      langForNewProgram = selectedLanguage || (programmingLanguages.length > 0 ? programmingLanguages[0] : null);
-    }
+    const langForNewProgram = selectedLanguage || (programmingLanguages.length > 0 ? programmingLanguages[0] : null);
     
     const newProgramDefaults: Partial<SavedProgram> = { 
       title: 'Untitled-1', 
@@ -253,7 +240,7 @@ export default function StudentSandboxPage() {
     loadProgramIntoEditor(newProgramDefaults, programmingLanguages);
     setIsMobileSidebarOpen(false);
     toast({ title: "New Program Ready", description: "Editor cleared. You can start coding." });
-  }, [programmingLanguages, selectedLanguage, loadProgramIntoEditor, toast, searchParams]);
+  }, [programmingLanguages, selectedLanguage, loadProgramIntoEditor, toast]);
 
   useEffect(() => {
     const loadSandboxData = async () => {
@@ -684,9 +671,9 @@ export default function StudentSandboxPage() {
   
    if (isMobile) {
     return (
-      <main className="flex-1 pt-16 flex h-full items-center justify-center text-center p-4">
+      <main className="flex-1 flex h-full items-center justify-center text-center p-4">
         <div className="flex flex-col items-center">
-          <LucideIcons.MonitorX className="h-16 w-16 text-destructive mb-4" />
+          <MonitorX className="h-16 w-16 text-destructive mb-4" />
           <h2 className="text-xl font-semibold">Sandbox Not Available</h2>
           <p className="text-muted-foreground mt-2">
             The code sandbox is not available on mobile devices. Please use a desktop or tablet for the best experience.
@@ -724,7 +711,7 @@ export default function StudentSandboxPage() {
             <Select
             value={selectedLanguage?.id || ''}
             onValueChange={handleLanguageChange}
-            disabled={isSaving || isExecuting || programmingLanguages.length === 0 || isCollaborating || !!searchParams.get('language')}
+            disabled={isSaving || isExecuting || programmingLanguages.length === 0 || isCollaborating}
             >
             <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
                 <SelectValue placeholder="Language" />
