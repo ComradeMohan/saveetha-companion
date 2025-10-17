@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -43,6 +44,8 @@ import {
 import {
     Sheet,
     SheetContent,
+    SheetHeader,
+    SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -326,6 +329,9 @@ export default function Header() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left">
+                    <SheetHeader>
+                        <SheetTitle className="text-left">Navigation Menu</SheetTitle>
+                    </SheetHeader>
                     <nav className="grid gap-6 text-lg font-medium mt-8">
                         <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold">
                             <GraduationCap className="h-6 w-6 text-primary" />
