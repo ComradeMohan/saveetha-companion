@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -10,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MonacoCodeEditor } from '@/components/editor/MonacoCodeEditor';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Play, Upload, Terminal, AlertTriangle, ClipboardType, PanelLeft, X, GripHorizontal, FileText, CheckCircle, Lightbulb } from 'lucide-react';
+import { Loader2, Play, Upload, Terminal, AlertTriangle, ClipboardType, PanelLeft, X, GripHorizontal, FileText, CheckCircle, Lightbulb, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { dummyProblemsByLanguage } from '@/lib/coding-problems';
