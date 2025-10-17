@@ -46,7 +46,6 @@ import {
     SheetContent,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
@@ -55,6 +54,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
 import { NotificationBell } from './notification-bell';
+import { ScrollArea } from './ui/scroll-area';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -328,39 +328,41 @@ export default function Header() {
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent side="left" className="flex flex-col">
                     <SheetHeader>
-                        <SheetTitle className="text-left">Navigation Menu</SheetTitle>
+                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
-                    <nav className="grid gap-6 text-lg font-medium mt-8">
-                        <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold">
-                            <GraduationCap className="h-6 w-6 text-primary" />
-                            <span>Saveetha Calculator</span>
-                        </Link>
-                         {user ? (
-                            <>
-                                {academicsLinks.map(link => (
-                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                ))}
-                                {resourcesLinks.map(link => (
-                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                ))}
-                                {toolsDropdownLinks.map(link => (
-                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                ))}
-                                <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
-                                    Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
-                                </button>
-                            </>
-                         ) : (
-                             loggedOutFeaturesLinks.map(link => (
-                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
-                                    {link.label}
-                                </Link>
-                             ))
-                         )}
-                         <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
-                    </nav>
+                    <ScrollArea className="flex-1 -mx-6">
+                        <nav className="grid gap-6 text-lg font-medium mt-8 px-6">
+                            <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold mb-4">
+                                <GraduationCap className="h-6 w-6 text-primary" />
+                                <span>Saveetha Calculator</span>
+                            </Link>
+                            {user ? (
+                                <>
+                                    {academicsLinks.map(link => (
+                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                    ))}
+                                    {resourcesLinks.map(link => (
+                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                    ))}
+                                    {toolsDropdownLinks.map(link => (
+                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                    ))}
+                                    <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
+                                        Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
+                                    </button>
+                                </>
+                            ) : (
+                                loggedOutFeaturesLinks.map(link => (
+                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
+                                        {link.label}
+                                    </Link>
+                                ))
+                            )}
+                            <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
+                        </nav>
+                    </ScrollArea>
                 </SheetContent>
             </Sheet>
         </div>
