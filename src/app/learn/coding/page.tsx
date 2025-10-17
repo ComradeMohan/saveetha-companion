@@ -15,6 +15,19 @@ import Link from 'next/link';
 
 type FilterType = 'all' | 'sql' | 'coding';
 
+// Define a simple Python icon component
+const PythonIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M13.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+    <path d="M10.5 14.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+    <path d="M13.5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+    <path d="M10.5 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+    <path d="M4 14v-4a2 2 0 0 1 2-2h4"/>
+    <path d="M20 10v4a2 2 0 0 1-2 2h-4"/>
+  </svg>
+);
+
+
 export default function LearnCodingPage() {
     const { loading } = useAuth();
     const [filter, setFilter] = useState<FilterType>('all');
@@ -27,10 +40,11 @@ export default function LearnCodingPage() {
     }, [filter]);
 
     const sandboxLanguages = [
-        { name: 'Sandbox', icon: Play, url: '/tools/sandbox' },
-        { name: 'Java', icon: Coffee, url: '/tools/sandbox' },
-        { name: 'C++', icon: FileJson, url: '/tools/sandbox' },
-        { name: 'C#', icon: Hash, url: '/tools/sandbox' }
+        { name: 'Sandbox', icon: Play, url: '/tools/sandbox', isPractice: false },
+        { name: 'Java', icon: Coffee, url: '/learn/coding/java', isPractice: true },
+        { name: 'Python', icon: PythonIcon, url: '/learn/coding/python', isPractice: true },
+        { name: 'C++', icon: FileJson, url: '/learn/coding/cpp', isPractice: true },
+        { name: 'C', icon: Hash, url: '/learn/coding/c', isPractice: true }
     ];
 
     if (loading) {
@@ -49,14 +63,16 @@ export default function LearnCodingPage() {
             </header>
             
             <section>
-                <h2 className="text-xl font-semibold mb-4 text-center">Coding Sandboxes</h2>
-                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <h2 className="text-xl font-semibold mb-4 text-center">Coding Practice</h2>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                     {sandboxLanguages.map(lang => (
                         <Card key={lang.name} className="text-center">
                             <CardContent className="p-6">
                                 <lang.icon className="h-12 w-12 text-primary mx-auto mb-4" />
                                 <h3 className="text-lg font-semibold">{lang.name}</h3>
-                                <p className="text-sm text-muted-foreground mb-4">Practice in a live environment.</p>
+                                <p className="text-sm text-muted-foreground mb-4">
+                                  {lang.isPractice ? 'Practice problems' : 'Live environment'}
+                                </p>
                                 <Button asChild>
                                     <Link href={lang.url}>
                                         <Play className="mr-2 h-4 w-4" /> Start Coding
