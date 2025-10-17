@@ -207,7 +207,7 @@ export default function CourseEnrollmentPage() {
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Important Security Notice</AlertTitle>
                       <AlertDescription>
-                          Your ARMS credentials are required for this service but are used temporarily and are not stored. Use at your own discretion.
+                          Your ARMS credentials are required but are not stored. Each session runs for a maximum of 30 minutes. For best results, use this tool only when courses are actively being released. Use at your own discretion.
                       </AlertDescription>
                   </Alert>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
