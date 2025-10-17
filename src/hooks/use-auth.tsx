@@ -26,6 +26,7 @@ import { Loader2 } from 'lucide-react';
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 
 export interface UserProfileData {
+  uid: string;
   name: string;
   email: string;
   regNo?: string;
@@ -141,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (userDoc.exists()) {
               const dbProfile = userDoc.data() as UserProfileData;
-              let updatedProfile = { ...dbProfile };
+              let updatedProfile = { ...dbProfile, uid: user.uid };
               let creditsUpdated = false;
 
               // Check if credits need to be added for an existing user
@@ -177,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
              // This case handles a new user signup. It creates the document but doesn't set profile yet.
              const newProfileData: UserProfileData = {
+                uid: user.uid,
                 email: user.email!,
                 name: user.displayName!,
                 isVerified: true,

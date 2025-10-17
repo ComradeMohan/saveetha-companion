@@ -30,7 +30,7 @@ const DEFAULT_BOTTOM_PANEL_HEIGHT = 250;
 
 // Define specific languages for the sandbox
 const SANDBOX_LANGUAGES: Omit<ProgrammingLanguage, 'id'>[] = [
-    { name: 'Python', iconName: 'FileCode' }, // Using a generic icon
+    { name: 'Python', iconName: 'FileCode' },
     { name: 'Java', iconName: 'FileCode' },
     { name: 'C++', iconName: 'FileCode' },
     { name: 'C', iconName: 'FileCode' },
@@ -699,7 +699,7 @@ export default function StudentSandboxPage() {
   
   if (!user) {
      return (
-      <div className="flex h-[calc(100vh-theme(spacing.16))] items-center justify-center">
+      <div className="flex h-full items-center justify-center">
           <p className="text-muted-foreground">Please log in to use the sandbox.</p>
       </div>
     );
@@ -742,16 +742,16 @@ export default function StudentSandboxPage() {
           disabled={isSaving || isExecuting || isSandboxDisabled}
         />
         <Select
-          value={selectedLanguage?.name || ''}
-          onValueChange={(langName) => handleLanguageChange(programmingLanguages.find(l => l.name === langName)?.id || '')}
-          disabled={isSaving || isExecuting || isSandboxDisabled || isCollaborating}
+          value={selectedLanguage?.id || ''}
+          onValueChange={handleLanguageChange}
+          disabled={isSaving || isExecuting || programmingLanguages.length === 0 || isCollaborating}
         >
           <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
             <SelectValue placeholder="Language" />
           </SelectTrigger>
           <SelectContent>
             {programmingLanguages.length > 0 ? programmingLanguages.map(lang => (
-              <SelectItem key={lang.id} value={lang.name} className="text-xs md:text-sm">{lang.name}</SelectItem>
+              <SelectItem key={lang.id} value={lang.id} className="text-xs md:text-sm">{lang.name}</SelectItem>
             )) : <SelectItem value="none" disabled>No languages</SelectItem>}
           </SelectContent>
         </Select>
@@ -801,7 +801,7 @@ export default function StudentSandboxPage() {
             )}
             {programmingLanguages.length === 0 && !selectedLanguage && !isLoadingPageData && (
                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10 p-4">
-                    <p className="text-destructive text-center p-4 bg-card border rounded-md shadow-lg text-sm">No programming languages available for the sandbox. Please contact an administrator.</p>
+                    <p className="text-destructive text-center p-4 bg-card border rounded-md shadow-lg text-sm">No programming languages available in your college for the sandbox. Please contact an administrator.</p>
                 </div>
             )}
           </div>
