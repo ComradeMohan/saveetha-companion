@@ -217,11 +217,11 @@ export default function ProblemSolvingPage() {
             </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden relative">
+        <div className="flex flex-1 overflow-hidden">
             <div
                 className={cn(
-                    "flex-shrink-0 transition-all duration-300 ease-in-out",
-                    isDescriptionPanelOpen ? "w-[40%] md:w-[35%]" : "w-0"
+                    "flex-shrink-0 bg-background transition-all duration-300 ease-in-out",
+                    isDescriptionPanelOpen ? "w-[40%] md:w-[35%]" : "w-0 hidden"
                 )}
             >
                  <Card className={cn(
@@ -269,7 +269,9 @@ export default function ProblemSolvingPage() {
                         <div className="flex-1 overflow-auto p-0 m-0">
                             <TabsContent value="testcases" className="h-full mt-0 p-2 font-mono text-xs">
                                 {isSubmitting ? (
-                                    <div className="flex h-full items-center justify-center"><Loader2 className="h-5 w-5 animate-spin" /></div>
+                                    <div className="flex h-full items-center justify-center text-muted-foreground gap-2">
+                                      <Loader2 className="h-4 w-4 animate-spin"/> Running test cases...
+                                    </div>
                                 ) : testCaseResults.length > 0 ? (
                                     <div className="space-y-2">
                                         {allTestsPassed && (
