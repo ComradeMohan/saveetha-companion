@@ -17,6 +17,7 @@ import { Loader2, Play, PlusCircle, FileCode, Terminal, AlertTriangle, Clipboard
 import type { ProgrammingLanguage, SavedProgram } from '@/types';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSearchParams } from 'next/navigation';
 
 
 const MIN_BOTTOM_PANEL_HEIGHT = 100;
@@ -70,6 +71,7 @@ public class Main {
 export default function StudentSandboxPage() {
   const { user, loading: authLoading } = useAuth();
   const isMobile = useIsMobile();
+  const searchParams = useSearchParams();
   
   const [currentProgramTitle, setCurrentProgramTitle] = useState('Untitled-1');
   const [currentCode, setCurrentCode] = useState<string>('');
@@ -86,9 +88,16 @@ export default function StudentSandboxPage() {
   const startYRef = useRef(0);
   const initialHeightRef = useRef(0);
   const sandboxContainerRef = useRef<HTMLDivElement>(null);
+  const languageFromUrl = searchParams.get('language');
 
   const handleNewProgram = useCallback(() => {
-    const lang = selectedLanguage || SANDBOX_LANGUAGES[0];
+    let lang;
+    if (languageFromUrl) {
+      lang = SANDBOX_LANGUAGES.find(l => l.id === languageFromUrl) || SANDBOX_LANGUAGES[0];
+    } else {
+      lang = selectedLanguage || SANDBOX_LANGUAGES[0];
+    }
+    
     setCurrentProgramTitle('Untitled-1');
     setSelectedLanguage(lang);
     setCurrentCode(getDefaultCodeForLanguage(lang.name));
@@ -97,13 +106,14 @@ export default function StudentSandboxPage() {
     setErrorOutput('Errors will appear here.');
     setActiveTab('output');
     setIsMobileSidebarOpen(false);
-  }, [selectedLanguage]);
+  }, [selectedLanguage, languageFromUrl]);
 
   useEffect(() => {
     handleNewProgram();
   }, [handleNewProgram]);
 
   const handleLanguageChange = (langName: string) => {
+    if (languageFromUrl) return; // Do not allow change if language is from URL
     const newSelectedLang = SANDBOX_LANGUAGES.find(l => l.name === langName);
     if (newSelectedLang) {
       setSelectedLanguage(newSelectedLang);
@@ -184,7 +194,7 @@ export default function StudentSandboxPage() {
 
   if (authLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-full items-center justify-center pt-16">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -192,7 +202,7 @@ export default function StudentSandboxPage() {
   
   if (!user) {
      return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-full items-center justify-center pt-16">
           <p className="text-muted-foreground">Please log in to use the sandbox.</p>
       </div>
     );
@@ -200,7 +210,7 @@ export default function StudentSandboxPage() {
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full items-center justify-center text-center p-4">
+      <div className="flex flex-col h-full items-center justify-center text-center p-4 pt-16">
         <MonitorX className="h-16 w-16 text-destructive mb-4" />
         <h2 className="text-xl font-semibold">Sandbox Not Available</h2>
         <p className="text-muted-foreground mt-2">
@@ -225,8 +235,9 @@ export default function StudentSandboxPage() {
                 </SheetContent>
                 </Sheet>
                 <Select
-                value={selectedLanguage?.name || ''}
-                onValueChange={handleLanguageChange}
+                  value={selectedLanguage?.name || ''}
+                  onValueChange={handleLanguageChange}
+                  disabled={!!languageFromUrl}
                 >
                 <SelectTrigger className="w-auto md:w-[160px] h-9 bg-background text-xs md:text-sm">
                     <SelectValue placeholder="Language" />

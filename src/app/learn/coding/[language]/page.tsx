@@ -53,7 +53,7 @@ export default function LanguagePracticePage() {
                         </CardHeader>
                         <CardContent className="space-y-3">
                             {questions.map(q => (
-                                <Link key={q.id} href="/tools/sandbox" className="block p-3 rounded-md hover:bg-muted transition-colors">
+                                <Link key={q.id} href={`/tools/sandbox?language=${language}`} className="block p-3 rounded-md hover:bg-muted transition-colors">
                                     <p className="font-semibold">{q.id}. {q.title}</p>
                                     <p className="text-xs text-muted-foreground line-clamp-2">{q.description}</p>
                                 </Link>
