@@ -72,6 +72,7 @@ export default function StudentSandboxPage() {
   const { user, loading: authLoading } = useAuth();
   const isMobile = useIsMobile();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   
   const [currentProgramTitle, setCurrentProgramTitle] = useState('Untitled-1');
   const [currentCode, setCurrentCode] = useState<string>('');
@@ -83,6 +84,7 @@ export default function StudentSandboxPage() {
   const [activeTab, setActiveTab] = useState("output"); 
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  const [isExecuting, setIsExecuting] = useState(false);
   const [bottomPanelHeight, setBottomPanelHeight] = useState(DEFAULT_BOTTOM_PANEL_HEIGHT);
   const [isResizing, setIsResizing] = useState(false);
   const startYRef = useRef(0);
@@ -123,6 +125,57 @@ export default function StudentSandboxPage() {
       setActiveTab("output");
     }
   };
+  
+  const handleRunCode = useCallback(async () => {
+    if (!selectedLanguage || !currentCode.trim()) {
+      toast({ title: "Cannot Run", description: "Please select a language and write some code.", variant: "destructive" });
+      return;
+    }
+    setIsExecuting(true);
+    setOutput('');
+    setErrorOutput('');
+    setActiveTab("output");
+
+    try {
+      const response = await fetch('/api/execute-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: selectedLanguage.name,
+          code: currentCode,
+          sampleInput: sampleInput,
+          executionType: 'run', 
+        }),
+      });
+      
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.executionError || result.compileError || result.message || "Code execution request failed");
+      }
+
+      if (result.compileError) {
+        setErrorOutput(`Compilation Error:\n${result.compileError}`);
+        setOutput(result.generalOutput || '');
+        setActiveTab("errors");
+      } else if (result.executionError) {
+        setErrorOutput(`Runtime Error:\n${result.executionError}`);
+        setOutput(result.generalOutput || '');
+        setActiveTab("errors");
+      } else {
+        const displayedOutput = result.generalOutput || (result.testCaseResults && result.testCaseResults[0]?.actualOutput) || "Execution complete. No output or specific result format received.";
+        setOutput(displayedOutput);
+        setErrorOutput('');
+      }
+    } catch (error: any) {
+      console.error("Error running code:", error);
+      setErrorOutput(`Error: ${error.message}`);
+      setActiveTab("errors");
+      toast({ title: "Execution Error", description: error.message, variant: "destructive" });
+    } finally {
+      setIsExecuting(false);
+    }
+  }, [selectedLanguage, currentCode, sampleInput, toast]);
 
   const handleMouseDownOnResizer = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -194,29 +247,29 @@ export default function StudentSandboxPage() {
 
   if (authLoading) {
     return (
-      <div className="flex h-full items-center justify-center pt-16">
+      <main className="flex-1 pt-16 flex items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
+      </main>
     );
   }
   
   if (!user) {
      return (
-      <div className="flex h-full items-center justify-center pt-16">
+      <main className="flex-1 pt-16 flex items-center justify-center">
           <p className="text-muted-foreground">Please log in to use the sandbox.</p>
-      </div>
+      </main>
     );
   }
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full items-center justify-center text-center p-4 pt-16">
+      <main className="flex-1 pt-16 flex flex-col h-full items-center justify-center text-center p-4">
         <MonitorX className="h-16 w-16 text-destructive mb-4" />
         <h2 className="text-xl font-semibold">Sandbox Not Available</h2>
         <p className="text-muted-foreground mt-2">
           The code sandbox is not available on mobile devices. Please use a desktop or tablet for the best experience.
         </p>
-      </div>
+      </main>
     )
   }
 
@@ -248,8 +301,8 @@ export default function StudentSandboxPage() {
                     ))}
                 </SelectContent>
                 </Select>
-                <Button size="sm" className="h-9 text-xs md:text-sm" variant="outline">
-                <Play className="h-4 w-4 mr-1" />
+                <Button onClick={handleRunCode} size="sm" className="h-9 text-xs md:text-sm" variant="outline" disabled={isExecuting || !currentCode.trim() || !selectedLanguage}>
+                {isExecuting ? <Loader2 className="animate-spin h-4 w-4 mr-1" /> : <Play className="h-4 w-4 mr-1" />}
                 <span className="hidden sm:inline">Run</span>
                 <span className="sm:hidden">Run</span>
                 </Button>
@@ -306,14 +359,14 @@ export default function StudentSandboxPage() {
                         <TabsContent value="output" className="h-full mt-0 p-0">
                         <ScrollArea className="h-full bg-background">
                             <pre className="p-2 text-xs md:text-sm whitespace-pre-wrap font-mono min-h-full">
-                            {output}
+                            {isExecuting ? <Loader2 className="h-5 w-5 animate-spin" /> : (output || "Code output will appear here.")}
                             </pre>
                         </ScrollArea>
                         </TabsContent>
                         <TabsContent value="errors" className="h-full mt-0 p-0">
                         <ScrollArea className="h-full bg-background">
                             <pre className="p-2 text-xs md:text-sm text-destructive whitespace-pre-wrap font-mono min-h-full">
-                            {errorOutput}
+                             {isExecuting ? <Loader2 className="h-5 w-5 animate-spin" /> : (errorOutput || "Errors will appear here.")}
                             </pre>
                         </ScrollArea>
                         </TabsContent>
@@ -324,5 +377,5 @@ export default function StudentSandboxPage() {
             </div>
         </div>
     </main>
-  );
-}
+  
+    
