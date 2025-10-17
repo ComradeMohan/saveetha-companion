@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { Loader2, Code, Database } from 'lucide-react';
+import { Loader2, Code, Database, BrainCircuit, Play, Coffee, FileJson, Hash } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { problems } from '@/lib/placement-prep-data';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type FilterType = 'all' | 'sql' | 'coding';
 
@@ -25,6 +26,12 @@ export default function LearnCodingPage() {
         return problems.filter(p => p.category === filter);
     }, [filter]);
 
+    const sandboxLanguages = [
+        { name: 'Java', icon: Coffee, url: 'https://www.online-java.com/' },
+        { name: 'C++', icon: FileJson, url: 'https://www.onlinegdb.com/online_c++_compiler' },
+        { name: 'C#', icon: Hash, url: 'https://www.onlinegdb.com/online_csharp_compiler' }
+    ];
+
     if (loading) {
         return (
             <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
@@ -34,11 +41,31 @@ export default function LearnCodingPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             <header className="text-center">
                 <h1 className="text-2xl md:text-3xl font-bold">Comprehensive Programming Study Guide</h1>
                 <p className="text-md text-muted-foreground mt-2">A merged collection of Mettl and common array problems.</p>
             </header>
+            
+            <section>
+                <h2 className="text-xl font-semibold mb-4 text-center">Coding Sandboxes</h2>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {sandboxLanguages.map(lang => (
+                        <Card key={lang.name} className="text-center">
+                            <CardContent className="p-6">
+                                <lang.icon className="h-12 w-12 text-primary mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold">{lang.name}</h3>
+                                <p className="text-sm text-muted-foreground mb-4">Practice in a live environment.</p>
+                                <Button asChild>
+                                    <Link href={lang.url} target="_blank" rel="noopener noreferrer">
+                                        <Play className="mr-2 h-4 w-4" /> Start Coding
+                                    </Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </section>
             
             <nav className="flex justify-center items-center bg-card p-1 rounded-lg shadow-sm max-w-sm mx-auto border">
                 <div className="flex space-x-1 w-full">
