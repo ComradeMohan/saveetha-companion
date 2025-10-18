@@ -373,6 +373,139 @@ export const dummyProblemsByLanguage: {
                     { input: '[1,2,3,4,5]\n9', expectedOutput: '[3,4]' },
                 ] 
             },
+            {
+                id: 57,
+                title: "Print Non-Prime Numbers in a Range",
+                description: "Write a program to print all the Non-Prime (composite) numbers between two given integers A and B.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '12\n19', expectedOutput: '12\n14\n15\n16\n18' },
+                    { input: '1\n10', expectedOutput: '4\n6\n8\n9\n10' },
+                    { input: '20\n30', expectedOutput: '20\n21\n22\n24\n25\n26\n27\n28\n30' },
+                    { input: '50\n60', expectedOutput: '50\n51\n52\n54\n55\n56\n57\n58\n60' },
+                    { input: '90\n100', expectedOutput: '90\n91\n92\n93\n94\n95\n96\n98\n99\n100' },
+                    { input: '2\n11', expectedOutput: '4\n6\n8\n9\n10' },
+                    { input: '10\n20', expectedOutput: '10\n12\n14\n15\n16\n18\n20' },
+                    { input: '13\n23', expectedOutput: '14\n15\n16\n18\n20\n21\n22' },
+                    { input: '70\n75', expectedOutput: '70\n72\n74\n75' },
+                    { input: '5\n5', expectedOutput: '' },
+                ]
+            },
+            {
+                id: 58,
+                title: "Perfect Number Checker",
+                description: "Write a program to determine if a given number is a Perfect number. A perfect number is a positive integer that is equal to the sum of its proper divisors.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '6', expectedOutput: '6 is a Perfect Number' },
+                    { input: '28', expectedOutput: '28 is a Perfect Number' },
+                    { input: '12', expectedOutput: '12 is not a Perfect Number' },
+                    { input: '1', expectedOutput: '1 is not a Perfect Number' },
+                    { input: '496', expectedOutput: '496 is a Perfect Number' },
+                    { input: '100', expectedOutput: '100 is not a Perfect Number' },
+                    { input: '8128', expectedOutput: '8128 is a Perfect Number' },
+                    { input: '7', expectedOutput: '7 is not a Perfect Number' },
+                    { input: '30', expectedOutput: '30 is not a Perfect Number' },
+                    { input: '27', expectedOutput: '27 is not a Perfect Number' },
+                ]
+            },
+            {
+                id: 59,
+                title: "Sum of Digits (Single Digit)",
+                description: "Write a program to find the sum of digits of a number until the sum becomes a single digit.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '143', expectedOutput: '8' },
+                    { input: '99', expectedOutput: '9' },
+                    { input: '12345', expectedOutput: '6' },
+                    { input: '8', expectedOutput: '8' },
+                    { input: '9876', expectedOutput: '3' },
+                    { input: '199', expectedOutput: '1' },
+                    { input: '555', expectedOutput: '6' },
+                    { input: '10', expectedOutput: '1' },
+                    { input: '123456789', expectedOutput: '9' },
+                    { input: '678', expectedOutput: '3' },
+                ]
+            },
+            {
+                id: 60,
+                title: "Armstrong Number Checker",
+                description: "Write a program to find whether a given number is an Armstrong number or not (A number that is equal to the sum of its own digits each raised to the power of the number of digits).",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '153', expectedOutput: 'Armstrong Number' },
+                    { input: '370', expectedOutput: 'Armstrong Number' },
+                    { input: '123', expectedOutput: 'Not an Armstrong Number' },
+                    { input: '9474', expectedOutput: 'Armstrong Number' },
+                    { input: '1', expectedOutput: 'Armstrong Number' },
+                    { input: '1634', expectedOutput: 'Armstrong Number' },
+                    { input: '200', expectedOutput: 'Not an Armstrong Number' },
+                    { input: '8208', expectedOutput: 'Armstrong Number' },
+                    { input: '407', expectedOutput: 'Armstrong Number' },
+                    { input: '9', expectedOutput: 'Armstrong Number' },
+                ]
+            },
+            {
+                id: 61,
+                title: "Harshad Number Checker",
+                description: "Write a program to determine if a given number is a Harshad number (a number that is divisible by the sum of its digits).",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '21', expectedOutput: 'Harshad Number' },
+                    { input: '18', expectedOutput: 'Harshad Number' },
+                    { input: '13', expectedOutput: 'Not a Harshad Number' },
+                    { input: '156', expectedOutput: 'Harshad Number' },
+                    { input: '10', expectedOutput: 'Harshad Number' },
+                    { input: '157', expectedOutput: 'Not a Harshad Number' },
+                    { input: '48', expectedOutput: 'Harshad Number' },
+                    { input: '11', expectedOutput: 'Not a Harshad Number' },
+                    { input: '120', expectedOutput: 'Harshad Number' },
+                    { input: '19', expectedOutput: 'Not a Harshad Number' },
+                ]
+            },
+            {
+                id: 62,
+                title: "Happy Number Checker",
+                description: "Write a program to find if a given number is a Happy number. A happy number is a number which ends in 1 when you repeatedly replace it with the sum of the square of each digit.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '19', expectedOutput: 'True' },
+                    { input: '2', expectedOutput: 'False' },
+                    { input: '7', expectedOutput: 'True' },
+                    { input: '4', expectedOutput: 'False' },
+                    { input: '1', expectedOutput: 'True' },
+                    { input: '13', expectedOutput: 'True' },
+                    { input: '20', expectedOutput: 'False' },
+                    { input: '97', expectedOutput: 'True' },
+                    { input: '100', expectedOutput: 'True' },
+                    { input: '11', expectedOutput: 'False' },
+                ]
+            },
+             {
+                id: 64,
+                title: "Simple Interest Calculator",
+                description: "Calculate simple interest. Senior citizen females get 15% ROI, senior citizen males get 12%, and all others get 10%.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '200000\n3\nN\nM', expectedOutput: 'SI= 60000.0' },
+                    { input: '10000\n5\nY\nF', expectedOutput: 'SI= 7500.0' },
+                    { input: '5000\n2\nY\nM', expectedOutput: 'SI= 1200.0' },
+                    { input: '100000\n10\nN\nF', expectedOutput: 'SI= 100000.0' },
+                    { input: '25000\n4\nY\nF', expectedOutput: 'SI= 15000.0' },
+                    { input: '7500\n1\nN\nM', expectedOutput: 'SI= 750.0' },
+                    { input: '50000\n1\nY\nM', expectedOutput: 'SI= 6000.0' },
+                    { input: '12000\n2\nN\nF', expectedOutput: 'SI= 2400.0' },
+                    { input: '1000\n20\nY\nF', expectedOutput: 'SI= 3000.0' },
+                    { input: '1\n1\nN\nM', expectedOutput: 'SI= 0.1' },
+                ]
+            }
         ],
         medium: [
             { 
@@ -393,6 +526,25 @@ export const dummyProblemsByLanguage: {
                     { input: 'ohomm', expectedOutput: '3' },
                     { input: 'abcdefg', expectedOutput: '7' },
                 ] 
+            },
+            {
+                id: 63,
+                title: "Tech Number Checker",
+                description: "A number is a tech number if the number has an even number of digits and when the number is split into two halves, the sum of the halves squared is equal to the original number.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '3025', expectedOutput: 'Tech number' },
+                    { input: '2025', expectedOutput: 'Tech number' },
+                    { input: '81', expectedOutput: 'Not a Tech number' }, // Note: 81 is (8+1)^2 = 81 but not split from a 4-digit number.
+                    { input: '1234', expectedOutput: 'Not a Tech number' },
+                    { input: '9801', expectedOutput: 'Tech number' },
+                    { input: '100', expectedOutput: 'Not a Tech number' },
+                    { input: '49', expectedOutput: 'Not a Tech number' },
+                    { input: '1', expectedOutput: 'Not a Tech number' },
+                    { input: '494209', expectedOutput: 'Tech number' },
+                    { input: '121', expectedOutput: 'Not a Tech number' },
+                ]
             },
         ],
         hard: [
