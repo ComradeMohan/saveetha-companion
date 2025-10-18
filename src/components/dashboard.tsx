@@ -30,8 +30,8 @@ export default function Dashboard() {
     const { data, loading } = useDashboardData();
 
     const quickLinks = [
-        { href: '/#calculators', label: 'Calculators', icon: Calculator },
-        { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
+        { href: '/course-enrollment', label: 'Course Enrollment', icon: Calculator },
+        { href: '/learn/coding', label: 'coding', icon: Lightbulb },
         { href: '/calendar', label: 'Calendar', icon: Calendar },
         { href: '/updates', label: 'Updates', icon: Bell },
     ];
