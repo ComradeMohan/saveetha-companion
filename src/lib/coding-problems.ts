@@ -64,12 +64,47 @@ export const dummyProblemsByLanguage: {
                 testCases: [ { input: 'TEMPLE', expectedOutput: 'ELPMET' } ]
             },
             {
+                id: 2,
+                title: "Convert String to Integer",
+                description: "Write a program to convert the given string to an integer.",
+                difficulty: 'easy',
+                defaultCode: javaDefault,
+                testCases: [ { input: '1234', expectedOutput: '1234' } ]
+            },
+            {
+                id: 3,
+                title: "Validate Username",
+                description: "Write a program to check if an entered username is valid by comparing it to a saved username. Get both inputs from the user.",
+                difficulty: 'easy',
+                defaultCode: javaDefault,
+                testCases: [
+                    { input: 'admin\nadmin', expectedOutput: 'username is valid' },
+                    { input: 'user\nadmin', expectedOutput: 'username is invalid' }
+                ]
+            },
+            {
+                id: 5,
+                title: "Print Special Characters",
+                description: "Write a program to print the special characters separately and print the number of special characters in the line.",
+                difficulty: 'easy',
+                defaultCode: javaDefault,
+                testCases: [ { input: 'Modi Birthday @ September 17, #&$%', expectedOutput: '@ , # & $ % \nNumber of special characters: 5' } ]
+            },
+            {
                 id: 6,
                 title: "Count vowels in a statement",
                 description: "Write a program to print the number of vowels in the given statement.",
                 difficulty: 'easy',
                 defaultCode: javaDefault,
                 testCases: [ { input: 'Saveetha School of Engineering', expectedOutput: '12' } ]
+            },
+            {
+                id: 7,
+                title: "Separate Vowels and Consonants",
+                description: "Write a program to print consonants and vowels separately in the given word.",
+                difficulty: 'easy',
+                defaultCode: javaDefault,
+                testCases: [ { input: 'Engineering', expectedOutput: 'vowels:Eieeiconconants:ngr' } ]
             },
             {
                 id: 8,
@@ -90,7 +125,7 @@ export const dummyProblemsByLanguage: {
                 defaultCode: javaDefault,
                 testCases: [ { input: 'we can play the game', expectedOutput: 'w cn ply thgm' } ]
             },
-             {
+            {
                 id: 16,
                 title: "Right Triangle Star Pattern",
                 description: "Write a program to print a right triangle star pattern for a given number of rows 'n'.",
@@ -122,7 +157,7 @@ export const dummyProblemsByLanguage: {
                     { input: '25', expectedOutput: 'Eligible to vote' }
                 ]
             },
-             {
+            {
                 id: 33,
                 title: "Print Fibonacci series",
                 description: "Write a program to print the Fibonacci series up to the nth term.",
@@ -285,17 +320,6 @@ export const dummyProblemsByLanguage: {
             }
         ],
         hard: [
-            {
-                id: 3,
-                title: "Validate Username",
-                description: "Write a program to check if an entered username is valid by comparing it to a saved username. Get both inputs from the user.",
-                difficulty: 'hard',
-                defaultCode: javaDefault,
-                testCases: [
-                    { input: 'admin\nadmin', expectedOutput: 'username is valid' },
-                    { input: 'user\nadmin', expectedOutput: 'username is invalid' }
-                ]
-            },
              {
                 id: 48,
                 title: "Duplicate Zeros",
@@ -354,229 +378,190 @@ export const dummyProblemsByLanguage: {
     },
     python: {
         easy: [
-            { 
-                id: 1, 
-                title: 'Two Sum', 
-                description: 'Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`. You may assume that each input would have exactly one solution, and you may not use the same element twice.', 
-                difficulty: 'easy', 
-                defaultCode: pythonDefault, 
-                testCases: [
-                    { input: '[2,7,11,15]\n9', expectedOutput: '[0,1]' },
-                    { input: '[3,2,4]\n6', expectedOutput: '[1,2]' },
-                    { input: '[3,3]\n6', expectedOutput: '[0,1]' },
-                    { input: '[-1, -5, 5, 10]\n4', expectedOutput: '[1,2]' },
-                    { input: '[10,20,30,40]\n70', expectedOutput: '[2,3]' },
-                    { input: '[5,5,5,5]\n10', expectedOutput: '[0,1]' },
-                    { input: '[-10,7,19,15]\n9', expectedOutput: '[0,2]' },
-                    { input: '[0,4,3,0]\n0', expectedOutput: '[0,3]' },
-                    { input: '[100,200,350,400]\n550', expectedOutput: '[1,2]' },
-                    { input: '[1,2,3,4,5]\n9', expectedOutput: '[3,4]' },
-                ] 
-            },
             {
-                id: 57,
-                title: "Print Non-Prime Numbers in a Range",
+                id: 101,
+                title: "Non-Prime Numbers in a Range",
                 description: "Write a program to print all the Non-Prime (composite) numbers between two given integers A and B.",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '12\n19', expectedOutput: '12\n14\n15\n16\n18' },
-                    { input: '1\n10', expectedOutput: '4\n6\n8\n9\n10' },
-                    { input: '20\n30', expectedOutput: '20\n21\n22\n24\n25\n26\n27\n28\n30' },
-                    { input: '50\n60', expectedOutput: '50\n51\n52\n54\n55\n56\n57\n58\n60' },
-                    { input: '90\n100', expectedOutput: '90\n91\n92\n93\n94\n95\n96\n98\n99\n100' },
-                    { input: '2\n11', expectedOutput: '4\n6\n8\n9\n10' },
-                    { input: '10\n20', expectedOutput: '10\n12\n14\n15\n16\n18\n20' },
-                    { input: '13\n23', expectedOutput: '14\n15\n16\n18\n20\n21\n22' },
-                    { input: '70\n75', expectedOutput: '70\n72\n74\n75' },
-                    { input: '5\n5', expectedOutput: '' },
+                    { input: '1\n10', expectedOutput: '4\n6\n8\n9\n10' }
                 ]
             },
             {
-                id: 58,
+                id: 102,
+                title: "Leap Year Anniversary",
+                description: "Find if the year of a given Anniversary is a leap year. If it is, print the next leap year anniversary. If not, print the previous one.",
+                difficulty: 'easy',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '04/11/1947', expectedOutput: '1947 is not the Leap Year\nPrevious Leap year: 1944' },
+                    { input: '01/01/2000', expectedOutput: '2000 is Leap Year\nNext leap year: 2004' }
+                ]
+            },
+            {
+                id: 103,
                 title: "Perfect Number Checker",
-                description: "Write a program to determine if a given number is a Perfect number. A perfect number is a positive integer that is equal to the sum of its proper divisors.",
+                description: "Write a program to determine if a given number is a Perfect number (a positive integer equal to the sum of its proper divisors).",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '6', expectedOutput: '6 is a Perfect Number' },
                     { input: '28', expectedOutput: '28 is a Perfect Number' },
-                    { input: '12', expectedOutput: '12 is not a Perfect Number' },
-                    { input: '1', expectedOutput: '1 is not a Perfect Number' },
-                    { input: '496', expectedOutput: '496 is a Perfect Number' },
-                    { input: '100', expectedOutput: '100 is not a Perfect Number' },
-                    { input: '8128', expectedOutput: '8128 is a Perfect Number' },
-                    { input: '7', expectedOutput: '7 is not a Perfect Number' },
-                    { input: '30', expectedOutput: '30 is not a Perfect Number' },
-                    { input: '27', expectedOutput: '27 is not a Perfect Number' },
+                    { input: '12', expectedOutput: '12 is not a Perfect Number' }
                 ]
             },
             {
-                id: 59,
+                id: 105,
                 title: "Sum of Digits (Single Digit)",
                 description: "Write a program to find the sum of digits of a number until the sum becomes a single digit.",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '143', expectedOutput: '8' },
-                    { input: '99', expectedOutput: '9' },
-                    { input: '12345', expectedOutput: '6' },
-                    { input: '8', expectedOutput: '8' },
-                    { input: '9876', expectedOutput: '3' },
-                    { input: '199', expectedOutput: '1' },
-                    { input: '555', expectedOutput: '6' },
-                    { input: '10', expectedOutput: '1' },
-                    { input: '123456789', expectedOutput: '9' },
-                    { input: '678', expectedOutput: '3' },
+                    { input: '99', expectedOutput: '9' }
                 ]
             },
             {
-                id: 60,
+                id: 106,
                 title: "Armstrong Number Checker",
-                description: "Write a program to find whether a given number is an Armstrong number or not (A number that is equal to the sum of its own digits each raised to the power of the number of digits).",
+                description: "Write a program to find whether a given number is an Armstrong number or not.",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '153', expectedOutput: 'Armstrong Number' },
-                    { input: '370', expectedOutput: 'Armstrong Number' },
-                    { input: '123', expectedOutput: 'Not an Armstrong Number' },
-                    { input: '9474', expectedOutput: 'Armstrong Number' },
-                    { input: '1', expectedOutput: 'Armstrong Number' },
-                    { input: '1634', expectedOutput: 'Armstrong Number' },
-                    { input: '200', expectedOutput: 'Not an Armstrong Number' },
-                    { input: '8208', expectedOutput: 'Armstrong Number' },
-                    { input: '407', expectedOutput: 'Armstrong Number' },
-                    { input: '9', expectedOutput: 'Armstrong Number' },
+                    { input: '123', expectedOutput: 'Not a Armstrong Number' }
                 ]
             },
             {
-                id: 61,
+                id: 107,
                 title: "Harshad Number Checker",
-                description: "Write a program to determine if a given number is a Harshad number (a number that is divisible by the sum of its digits).",
+                description: "Write a program to determine if a given number is a Harshad number (divisible by the sum of its digits).",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '21', expectedOutput: 'Harshad Number' },
-                    { input: '18', expectedOutput: 'Harshad Number' },
-                    { input: '13', expectedOutput: 'Not a Harshad Number' },
-                    { input: '156', expectedOutput: 'Harshad Number' },
-                    { input: '10', expectedOutput: 'Harshad Number' },
-                    { input: '157', expectedOutput: 'Not a Harshad Number' },
-                    { input: '48', expectedOutput: 'Harshad Number' },
-                    { input: '11', expectedOutput: 'Not a Harshad Number' },
-                    { input: '120', expectedOutput: 'Harshad Number' },
-                    { input: '19', expectedOutput: 'Not a Harshad Number' },
+                    { input: '13', expectedOutput: 'Not a Harshad Number' }
                 ]
             },
             {
-                id: 62,
+                id: 108,
                 title: "Happy Number Checker",
-                description: "Write a program to find if a given number is a Happy number. A happy number is a number which ends in 1 when you repeatedly replace it with the sum of the square of each digit.",
+                description: "Find if a number is a Happy number (ends in 1 when you repeatedly replace it with the sum of the square of each digit).",
                 difficulty: 'easy',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '19', expectedOutput: 'True' },
-                    { input: '2', expectedOutput: 'False' },
-                    { input: '7', expectedOutput: 'True' },
-                    { input: '4', expectedOutput: 'False' },
-                    { input: '1', expectedOutput: 'True' },
-                    { input: '13', expectedOutput: 'True' },
-                    { input: '20', expectedOutput: 'False' },
-                    { input: '97', expectedOutput: 'True' },
-                    { input: '100', expectedOutput: 'True' },
-                    { input: '11', expectedOutput: 'False' },
+                    { input: '2', expectedOutput: 'False' }
                 ]
             },
-             {
-                id: 64,
-                title: "Simple Interest Calculator",
-                description: "Calculate simple interest. Senior citizen females get 15% ROI, senior citizen males get 12%, and all others get 10%.",
-                difficulty: 'easy',
-                defaultCode: pythonDefault,
-                testCases: [
-                    { input: '200000\n3\nN\nM', expectedOutput: 'SI= 60000.0' },
-                    { input: '10000\n5\nY\nF', expectedOutput: 'SI= 7500.0' },
-                    { input: '5000\n2\nY\nM', expectedOutput: 'SI= 1200.0' },
-                    { input: '100000\n10\nN\nF', expectedOutput: 'SI= 100000.0' },
-                    { input: '25000\n4\nY\nF', expectedOutput: 'SI= 15000.0' },
-                    { input: '7500\n1\nN\nM', expectedOutput: 'SI= 750.0' },
-                    { input: '50000\n1\nY\nM', expectedOutput: 'SI= 6000.0' },
-                    { input: '12000\n2\nN\nF', expectedOutput: 'SI= 2400.0' },
-                    { input: '1000\n20\nY\nF', expectedOutput: 'SI= 3000.0' },
-                    { input: '1\n1\nN\nM', expectedOutput: 'SI= 0.1' },
-                ]
-            }
         ],
         medium: [
-            { 
-                id: 2, 
-                title: 'Longest Substring Without Repeating Characters', 
-                description: 'Given a string `s`, find the length of the longest substring without repeating characters.', 
-                difficulty: 'medium', 
-                defaultCode: pythonDefault, 
+            {
+                id: 201,
+                title: "Pythagorean Triplets",
+                description: "Write a program to generate Pythagorean Triplets for the given limit.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
                 testCases: [
-                    { input: 'abcabcbb', expectedOutput: '3' },
-                    { input: 'bbbbb', expectedOutput: '1' },
-                    { input: 'pwwkew', expectedOutput: '3' },
-                    { input: '', expectedOutput: '0' },
-                    { input: 'a', expectedOutput: '1' },
-                    { input: 'au', expectedOutput: '2' },
-                    { input: 'dvdf', expectedOutput: '3' },
-                    { input: 'anviaj', expectedOutput: '5' },
-                    { input: 'ohomm', expectedOutput: '3' },
-                    { input: 'abcdefg', expectedOutput: '7' },
-                ] 
+                    { input: '10', expectedOutput: '3 4 5\n8 6 10' }
+                ]
             },
             {
-                id: 63,
+                id: 202,
                 title: "Tech Number Checker",
-                description: "A number is a tech number if the number has an even number of digits and when the number is split into two halves, the sum of the halves squared is equal to the original number.",
+                description: "A number is a tech number if it has an even number of digits and when split into two halves, the sum of the halves squared is equal to the original number.",
                 difficulty: 'medium',
                 defaultCode: pythonDefault,
                 testCases: [
                     { input: '3025', expectedOutput: 'Tech number' },
-                    { input: '2025', expectedOutput: 'Tech number' },
-                    { input: '81', expectedOutput: 'Not a Tech number' }, // Note: 81 is (8+1)^2 = 81 but not split from a 4-digit number.
-                    { input: '1234', expectedOutput: 'Not a Tech number' },
-                    { input: '9801', expectedOutput: 'Tech number' },
-                    { input: '100', expectedOutput: 'Not a Tech number' },
-                    { input: '49', expectedOutput: 'Not a Tech number' },
-                    { input: '1', expectedOutput: 'Not a Tech number' },
-                    { input: '494209', expectedOutput: 'Tech number' },
-                    { input: '121', expectedOutput: 'Not a Tech number' },
+                    { input: '1234', expectedOutput: 'Not a Tech number' }
+                ]
+            },
+            {
+                id: 203,
+                title: "Simple Interest Calculator",
+                description: "Calculate simple interest. Senior citizen females get 15% ROI, senior citizen males get 12%, and all others get 10%.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '200000\n3\nN\nM', expectedOutput: 'SI= 60000.0' },
+                    { input: '10000\n5\nY\nF', expectedOutput: 'SI= 7500.0' }
+                ]
+            },
+            {
+                id: 204,
+                title: "Nth Factor",
+                description: "Find the number of factors for a given number and print the Nth factor.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '100\n4', expectedOutput: 'Number of factors: 9\n4th factor is: 5' }
+                ]
+            },
+            {
+                id: 205,
+                title: "Add Binary",
+                description: "Given two binary strings a and b, return their sum as a binary string.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '11\n1', expectedOutput: '100' }
+                ]
+            },
+            {
+                id: 206,
+                title: "Matrix Multiplication",
+                description: "Write a program for matrix multiplication of two 2x2 matrices.",
+                difficulty: 'medium',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '[[1,2],[5,3]]\n[[2,3],[4,1]]', expectedOutput: '[[10, 5], [22, 18]]' }
                 ]
             },
         ],
         hard: [
-            { 
-                id: 3, 
-                title: 'Trapping Rain Water', 
-                description: 'Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.', 
-                difficulty: 'hard', 
+            {
+                id: 301,
+                title: "Kth Smallest in Multiplication Table",
+                description: "Given three integers M, N and K. Consider a grid of M * N, where mat[i][j] = i * j. Return the Kth smallest element.",
+                difficulty: 'hard',
                 defaultCode: pythonDefault,
                 testCases: [
-                    { input: '[0,1,0,2,1,0,1,3,2,1,2,1]', expectedOutput: '6' },
-                    { input: '[4,2,0,3,2,5]', expectedOutput: '9' },
-                    { input: '[]', expectedOutput: '0' },
-                    { input: '[1]', expectedOutput: '0' },
-                    { input: '[1,2,3,4,5]', expectedOutput: '0' },
-                    { input: '[5,4,3,2,1]', expectedOutput: '0' },
-                    { input: '[4,2,3]', expectedOutput: '1' },
-                    { input: '[5,2,1,2,1,5]', expectedOutput: '14' },
-                    { input: '[5,5,1,7,1,1,5,2,7,6]', expectedOutput: '23' },
-                    { input: '[2,0,2]', expectedOutput: '2' },
+                    { input: '3\n3\n5', expectedOutput: '3' }
+                ]
+            },
+            {
+                id: 302,
+                title: "Spiral Matrix",
+                description: "Given an m x n matrix, return all elements of the matrix in spiral order.",
+                difficulty: 'hard',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '[[2,5,3],[6,4,1],[9,7,8]]', expectedOutput: '[2, 5, 3, 1, 8, 7, 9, 6]' }
+                ]
+            },
+            {
+                id: 303,
+                title: "Climbing Stairs",
+                description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+                difficulty: 'hard',
+                defaultCode: pythonDefault,
+                testCases: [
+                    { input: '5', expectedOutput: '8' }
                 ]
             },
         ]
     },
     cpp: {
         easy: [
-            { 
-                id: 1, 
-                title: 'Reverse Integer', 
-                description: 'Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^31 - 1], then return 0.', 
-                difficulty: 'easy', 
-                defaultCode: cppDefault, 
+            {
+                id: 1,
+                title: 'Reverse Integer',
+                description: 'Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^31 - 1], then return 0.',
+                difficulty: 'easy',
+                defaultCode: cppDefault,
                 testCases: [
                     { input: '123', expectedOutput: '321' },
                     { input: '-123', expectedOutput: '-321' },
@@ -588,15 +573,15 @@ export const dummyProblemsByLanguage: {
                     { input: '-1', expectedOutput: '-1' },
                     { input: '100', expectedOutput: '1' },
                     { input: '901000', expectedOutput: '109' },
-                ] 
+                ]
             },
         ],
         medium: [
-             { 
-                id: 2, 
-                title: '3Sum', 
-                description: 'Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and nums[i] + nums[j] + nums[k] == 0. Notice that the solution set must not contain duplicate triplets.', 
-                difficulty: 'medium', 
+             {
+                id: 2,
+                title: '3Sum',
+                description: 'Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and nums[i] + nums[j] + nums[k] == 0. Notice that the solution set must not contain duplicate triplets.',
+                difficulty: 'medium',
                 defaultCode: cppDefault,
                 testCases: [
                     { input: '[-1,0,1,2,-1,-4]', expectedOutput: '[[-1,-1,2],[-1,0,1]]' },
@@ -613,11 +598,11 @@ export const dummyProblemsByLanguage: {
             },
         ],
         hard: [
-            { 
-                id: 3, 
-                title: 'N-Queens', 
-                description: 'The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other. Given an integer n, return all distinct solutions to the n-queens puzzle. You may return the answer in any order. Each solution contains a distinct board configuration of the n-queens\' placement, where \'Q\' and \'.\' both indicate a queen and an empty space, respectively.', 
-                difficulty: 'hard', 
+            {
+                id: 3,
+                title: 'N-Queens',
+                description: 'The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other. Given an integer n, return all distinct solutions to the n-queens puzzle. You may return the answer in any order. Each solution contains a distinct board configuration of the n-queens\' placement, where \'Q\' and \'.\' both indicate a queen and an empty space, respectively.',
+                difficulty: 'hard',
                 defaultCode: cppDefault,
                 testCases: [
                     { input: '4', expectedOutput: '[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]' },
@@ -636,12 +621,12 @@ export const dummyProblemsByLanguage: {
     },
      c: {
         easy: [
-            { 
-                id: 1, 
-                title: 'Find Factorial', 
-                description: 'Calculate the factorial of a non-negative integer n. The factorial of a number n is the product of all positive integers up to n. Factorial of 0 is 1.', 
-                difficulty: 'easy', 
-                defaultCode: cppDefault.replace('iostream', 'stdio.h').replace('std::cout << "Hello from C++/C Sandbox!" << std::endl;', 'printf("Hello from C Sandbox!\\n");'), 
+            {
+                id: 1,
+                title: 'Find Factorial',
+                description: 'Calculate the factorial of a non-negative integer n. The factorial of a number n is the product of all positive integers up to n. Factorial of 0 is 1.',
+                difficulty: 'easy',
+                defaultCode: cppDefault.replace('iostream', 'stdio.h').replace('std::cout << "Hello from C++/C Sandbox!" << std::endl;', 'printf("Hello from C Sandbox!\\n");'),
                 testCases: [
                     { input: '5', expectedOutput: '120' },
                     { input: '0', expectedOutput: '1' },
@@ -651,12 +636,14 @@ export const dummyProblemsByLanguage: {
                     { input: '7', expectedOutput: '5040' },
                     { input: '12', expectedOutput: '479001600' },
                     { input: '2', expectedOutput: '2' },
-                    { input: '15', expectedOutput: '1307674368000' }, 
+                    { input: '15', expectedOutput: '1307674368000' },
                     { input: '4', expectedOutput: '24' },
-                ] 
+                ]
             },
         ],
         medium: [],
         hard: []
     }
 };
+
+    
