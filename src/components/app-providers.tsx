@@ -8,6 +8,7 @@ import FeedbackDialog from '@/components/feedback-dialog';
 import SupportButton from '@/components/support-button';
 import DynamicHeader from '@/components/dynamic-header';
 import MobileNav from '@/components/mobile-nav';
+import NotificationHandler from './NotificationHandler';
 
 function MainContent({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
       <FeedbackDialog />
       <main key="main-content">{children}</main>
       <SupportButton />
+      <NotificationHandler />
       <MobileNav />
     </>
   );

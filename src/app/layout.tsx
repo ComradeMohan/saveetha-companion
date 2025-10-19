@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppProviders } from '@/components/app-providers';
-import NotificationHandler from '@/components/notification-permission-banner';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -103,7 +102,6 @@ export default function RootLayout({
               {children}
             </AppProviders>
         </Suspense>
-        <NotificationHandler/>
         <Toaster />
         
         {/* Google Analytics Scripts */}

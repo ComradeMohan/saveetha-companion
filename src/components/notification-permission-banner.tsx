@@ -1,6 +1,9 @@
 
 'use client';
 
+// This component is no longer used, as notification logic is now handled automatically
+// by the NotificationHandler component. It is kept for reference.
+
 import { Button } from '@/components/ui/button';
 import { Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,8 +14,6 @@ interface NotificationPermissionBannerProps {
     onDismiss: () => void;
 }
 
-// This component is no longer used, as the permission is requested automatically.
-// Kept for reference or future use. It is not currently rendered.
 export default function NotificationPermissionBanner({ show, onEnable, onDismiss }: NotificationPermissionBannerProps) {
     if (!show) {
         return null;

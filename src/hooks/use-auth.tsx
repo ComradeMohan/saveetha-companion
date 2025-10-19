@@ -62,7 +62,6 @@ interface AuthContextType {
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
   logout: () => Promise<void>;
-  setupFCM: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -135,52 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       createdAt: serverTimestamp(),
     });
   };
-
-  const setupFCM = useCallback(async () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser || !messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
-      console.warn('FCM setup skipped: Missing user, messaging service, or VAPID key.');
-      return;
-    }
-
-    try {
-      if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator) {
-        if (Notification.permission === 'default') {
-          const permission = await Notification.requestPermission();
-          if (permission === 'granted') {
-            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
-            if (fcmToken) {
-              const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
-              await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
-              toast({
-                title: "Notifications Enabled!",
-                description: `Your FCM token is: ${fcmToken.substring(0, 20)}...`,
-              });
-              // Send a test notification
-              new Notification('Test Notification', {
-                body: 'Push notifications are now working!',
-                icon: '/icons/icon-192x192.png'
-              });
-            }
-          } else {
-            toast({
-              title: "Notifications Not Enabled",
-              description: "You have blocked notifications. You can enable them in your browser settings.",
-              variant: "destructive"
-            });
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error setting up FCM:', error);
-      toast({
-        title: "Notification Error",
-        description: "Could not set up push notifications. This can happen if the VAPID key is wrong or if the service worker failed to register.",
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
-
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -255,9 +208,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
 
-          // Automatically ask for notification permission on load if not already set.
-          setupFCM();
-
         } catch(error){
           console.error("Error updating user document:", error);
           setUser(user);
@@ -271,7 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [pathname, router, toast, setupFCM]);
+  }, [pathname, router, toast]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
@@ -355,7 +305,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     completeUserProfile,
     updateUserAcademicProfile,
     logout,
-    setupFCM,
   };
 
   function PageLoader() {
