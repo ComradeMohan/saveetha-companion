@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -12,6 +13,7 @@ const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
+  { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
@@ -24,7 +26,6 @@ const adminNavLinks = [
   { href: '/admin/certifications', label: 'Certifications', icon: Award },
   { href: '/admin/credits', label: 'Credit Management', icon: Gift },
   { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/tutor', label: 'AI Tutor', icon: BrainCircuit },
   { href: '/admin/course-suggestions', label: 'Course Suggestions', icon: FileQuestion },
 ];

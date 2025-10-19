@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { db, messaging } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -18,7 +18,7 @@ interface Notification {
   message: string;
   read: boolean;
   createdAt: any;
-  type: 'credit' | 'default';
+  type: 'credit' | 'default' | 'announcement';
 }
 
 export function NotificationBell() {
@@ -29,6 +29,8 @@ export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isEnabling, setIsEnabling] = useState(false);
+  const hasAutoOpened = useRef(false);
+
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -37,7 +39,7 @@ export function NotificationBell() {
   }, []);
 
   useEffect(() => {
-    if (!user || permission !== 'granted') return;
+    if (!user) return;
 
     const notifsRef = collection(db, 'user_notifications', user.uid, 'notifications');
     const q = query(notifsRef, orderBy('createdAt', 'desc'));
@@ -54,14 +56,25 @@ export function NotificationBell() {
       });
       setNotifications(notifsData);
       setUnreadCount(count);
+
+      // Auto-open logic
+      if (count > 0 && !hasAutoOpened.current) {
+        const sessionKey = 'notifAutoOpened';
+        const sessionValue = sessionStorage.getItem(sessionKey);
+        if (!sessionValue) {
+           setIsOpen(true);
+           hasAutoOpened.current = true;
+           sessionStorage.setItem(sessionKey, 'true');
+        }
+      }
     });
 
     return () => unsubscribe();
-  }, [user, permission]);
+  }, [user]);
 
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
-    if (!open && unreadCount > 0 && user && permission === 'granted') {
+    if (!open && unreadCount > 0 && user) {
       const unreadNotifs = notifications.filter(n => !n.read);
       for (const notif of unreadNotifs) {
         const notifRef = doc(db, 'user_notifications', user.uid, 'notifications', notif.id);
@@ -98,12 +111,11 @@ export function NotificationBell() {
                     description: "Your device is now registered for push notifications.",
                 });
 
-                // Send a test notification
                  navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification('Saveetha Companion', {
                         body: 'You have successfully enabled notifications!',
                         icon: '/favicon.ico',
-                        data: { url: window.location.origin } // Payload
+                        data: { url: window.location.origin }
                     });
                 });
 
@@ -127,6 +139,8 @@ export function NotificationBell() {
     switch (type) {
       case 'credit':
         return <Gift className="h-5 w-5 text-primary" />;
+      case 'announcement':
+        return <Bell className="h-5 w-5 text-blue-500" />;
       default:
         return <Bell className="h-5 w-5 text-muted-foreground" />;
     }

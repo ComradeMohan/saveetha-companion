@@ -30,30 +30,47 @@ export async function createUpdate(prevState: any, formData: FormData) {
     const { title, description, link } = validatedFields.data;
 
     try {
-        // 1. Save the update to Firestore
+        const timestamp = adminDb.FieldValue.serverTimestamp();
+
+        // 1. Save the update to the public 'updates' collection
         await adminDb.collection('updates').add({
             title,
             description,
             link: link || null,
-            createdAt: adminDb.FieldValue.serverTimestamp(),
+            createdAt: timestamp,
         });
         
         revalidatePath('/admin/updates');
         revalidatePath('/updates');
 
-        // 2. Send Push Notifications
+        // 2. Distribute the notification to all users' notification subcollections
         const usersSnapshot = await adminDb.collection('users').get();
+        if (!usersSnapshot.empty) {
+            const batch = adminDb.batch();
+            usersSnapshot.docs.forEach(userDoc => {
+                const notificationRef = adminDb.collection('user_notifications').doc(userDoc.id).collection('notifications').doc();
+                batch.set(notificationRef, {
+                    message: description,
+                    title: title, // Optional: might be useful later
+                    type: 'announcement',
+                    read: false,
+                    createdAt: timestamp,
+                });
+            });
+            await batch.commit();
+        }
+
+        // 3. Send FCM Push Notifications (optional, for real-time alerts)
         const fcmTokens: string[] = [];
-        
         for (const userDoc of usersSnapshot.docs) {
             const tokensCollection = await userDoc.ref.collection('fcmTokens').get();
             if (!tokensCollection.empty) {
-                tokensCollection.forEach(tokenDoc => {
-                    fcmTokens.push(tokenDoc.id);
-                });
+                tokensCollection.forEach(tokenDoc => fcmTokens.push(tokenDoc.id));
             }
         }
         
+        let notificationMessage = `${usersSnapshot.size} users notified in-app.`;
+
         if (fcmTokens.length > 0) {
             const message = {
                 notification: {
@@ -62,24 +79,22 @@ export async function createUpdate(prevState: any, formData: FormData) {
                 },
                 webpush: {
                     fcmOptions: {
-                      link: link || 'https://saveetha-companion.web.app/updates' // Fallback to updates page
+                      link: link || 'https://saveetha-companion.web.app/updates'
                     }
                 },
                 tokens: fcmTokens,
             };
 
             const response = await getMessaging().sendEachForMulticast(message);
-            console.log(`${response.successCount} messages were sent successfully`);
-            return { 
-              type: 'success', 
-              message: `Update posted and notifications sent to ${fcmTokens.length} devices.`
-            };
+            notificationMessage += ` ${response.successCount} push notifications sent.`;
         } else {
-             return { 
-              type: 'success', 
-              message: `Update posted successfully. No devices are subscribed for notifications.`
-            };
+             notificationMessage += ` No devices subscribed for push notifications.`
         }
+        
+         return { 
+            type: 'success', 
+            message: notificationMessage
+        };
         
     } catch (error: any) {
         console.error('Error creating update or sending notification:', error);

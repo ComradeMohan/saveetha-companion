@@ -45,7 +45,7 @@ function SubmitButton() {
             ) : (
                 <>
                     <Send className="mr-2 h-4 w-4" />
-                    Post Update
+                    Post Update & Notify Users
                 </>
             )}
         </Button>
@@ -126,14 +126,22 @@ export default function AdminUpdatesPage() {
     
     return (
         <>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="flex items-center justify-between">
+            <div>
+                <h2 className="text-3xl font-bold tracking-tight">Post an Update</h2>
+                <p className="text-muted-foreground">
+                    Create a new announcement for all users.
+                </p>
+            </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mt-6">
             <div className="w-full">
                 <Card>
                     <form action={formAction} ref={formRef}>
                         <CardHeader>
-                            <CardTitle>Create an Update</CardTitle>
+                            <CardTitle>Create Announcement</CardTitle>
                             <CardDescription>
-                                This will be saved and shown on the public Updates page.
+                                This will be saved to the public Updates page and sent as a notification to each user's bell.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
