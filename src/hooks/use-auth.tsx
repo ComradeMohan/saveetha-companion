@@ -136,15 +136,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const setupFCM = useCallback(async () => {
+ const setupFCM = useCallback(async () => {
     const currentUser = auth.currentUser;
     if (!currentUser || !messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
-      console.warn('FCM is not configured or user not logged in.');
+      console.warn('FCM setup skipped: Missing user, messaging service, or VAPID key.');
       return;
     }
 
     if (typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'default') {
+        console.log("Requesting notification permission...");
         try {
           const permission = await Notification.requestPermission();
           if (permission === 'granted') {
@@ -154,20 +155,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               await setDoc(tokenRef, { createdAt: serverTimestamp() });
               toast({
                 title: "Notifications Enabled!",
-                description: "You will now receive updates from the university.",
+                description: "You will now receive important updates.",
               });
             }
           } else {
             console.warn('Notification permission not granted.');
+            toast({
+              title: "Notifications Not Enabled",
+              description: "You can enable notifications later from your browser settings.",
+              variant: "default"
+            });
           }
         } catch (error) {
           console.error('Error setting up FCM:', error);
           toast({
             title: "Notification Error",
-            description: "Could not set up push notifications. You may need to enable them in your browser settings.",
+            description: "Could not set up push notifications. Please check your browser settings.",
             variant: "destructive"
           });
         }
+      } else if (Notification.permission === 'granted') {
+         // User has already granted permission, just get token and save
+         const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
+         if(fcmToken) {
+            const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
+            await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
+         }
+      } else {
+         console.log('Notification permission is:', Notification.permission);
       }
     }
   }, [toast]);
@@ -370,4 +385,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-

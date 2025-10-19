@@ -1,15 +1,10 @@
+// This file must be in the public folder.
 
-// This service worker file is intentionally left blank.
-// It is required for Firebase Cloud Messaging to work in the background,
-// but the default Firebase SDK logic handles everything automatically
-// as long as this file is present and served from the root of the public directory.
-//
-// You can add custom background message handling here if needed in the future.
-// For example:
-/*
-import { initializeApp } from "firebase/app";
-import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
+// Scripts for firebase and firebase messaging
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
@@ -20,18 +15,52 @@ const firebaseConfig = {
   measurementId: "G-MFMFF0EKNW"
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// Initialize the Firebase app in the service worker
+firebase.initializeApp(firebaseConfig);
 
-onBackgroundMessage(messaging, (payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+// Retrieve an instance of Firebase Messaging so that it can handle background messages.
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
   
+  // Customize the notification here
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/icon-192x192.png'
+    icon: "/favicon.ico", // Ensure you have a favicon.ico in your public folder
+    data: {
+      url: payload.fcmOptions.link || '/' // The URL to open when the notification is clicked
+    }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
-*/
+
+// Handle notification click event
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close(); // Close the notification
+
+    const urlToOpen = event.notification.data.url;
+
+    // This looks for an existing window and focuses it, otherwise opens a new one
+    event.waitUntil(
+        clients.matchAll({
+            type: 'window',
+            includeUncontrolled: true
+        }).then((clientList) => {
+            for (let i = 0; i < clientList.length; i++) {
+                const client = clientList[i];
+                if (client.url === urlToOpen && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
+});

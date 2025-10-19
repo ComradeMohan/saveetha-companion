@@ -64,13 +64,13 @@ export async function createUpdate(prevState: any, formData: FormData) {
                 tokens: fcmTokens,
             };
 
-            await getMessaging().sendEachForMulticast(message);
-            console.log(`FCM notification sent to ${fcmTokens.length} tokens.`);
+            const response = await getMessaging().sendEachForMulticast(message);
+            console.log(`${response.successCount} messages were sent successfully`);
         }
         
         return { 
             type: 'success', 
-            message: `Update posted and notifications sent successfully!` 
+            message: `Update posted and notifications sent to ${fcmTokens.length} devices.`
         };
 
     } catch (error: any) {

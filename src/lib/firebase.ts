@@ -21,7 +21,8 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const messaging = (typeof window !== 'undefined') ? getMessaging(app) : null;
+// Conditionally initialize messaging for client-side only
+const messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
 
 
 export { app, auth, db, storage, messaging };
