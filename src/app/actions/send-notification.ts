@@ -100,7 +100,6 @@ export async function sendNotification(prevState: any, formData: FormData) {
                     notification: { 
                         title, 
                         body: message,
-                        icon: '/favicon.ico',
                     },
                      webpush: {
                         fcmOptions: {
