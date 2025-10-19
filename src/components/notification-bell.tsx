@@ -4,10 +4,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { db, messaging } from '@/lib/firebase';
-import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch, deleteDoc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bell, Gift, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Bell, Gift, Loader2, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -78,7 +78,6 @@ export function NotificationBell() {
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
     if (open && unreadCount > 0 && user) {
-      // Mark all as read when popover opens
       const batch = writeBatch(db);
       notifications.forEach(notif => {
         if (!notif.read) {
@@ -87,6 +86,27 @@ export function NotificationBell() {
         }
       });
       await batch.commit();
+    }
+  };
+
+  const handleDeleteNotification = async (e: React.MouseEvent, notificationId: string) => {
+    e.stopPropagation(); // Prevent the popover from closing
+    if (!user) return;
+
+    try {
+        const notifRef = doc(db, 'user_notifications', user.uid, 'notifications', notificationId);
+        await deleteDoc(notifRef);
+        toast({
+            title: "Notification Deleted",
+            description: "The notification has been removed.",
+        });
+    } catch (error) {
+        console.error("Error deleting notification:", error);
+        toast({
+            title: "Error",
+            description: "Could not delete the notification.",
+            variant: "destructive",
+        });
     }
   };
 
@@ -179,13 +199,13 @@ export function NotificationBell() {
               <div
                 key={notif.id}
                 className={cn(
-                  "p-4 border-b flex items-start gap-3",
+                  "p-4 border-b flex items-start gap-3 group relative",
                   !notif.read && "bg-secondary/50"
                 )}
               >
                 <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold">{notif.title}</p>
+                  {notif.title && <p className="text-sm font-semibold">{notif.title}</p>}
                   <p className="text-sm text-muted-foreground">{notif.message}</p>
                   {notif.link && (
                     <Button asChild variant="link" size="sm" className="p-0 h-auto mt-1">
@@ -198,6 +218,15 @@ export function NotificationBell() {
                     {notif.createdAt?.toDate ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : ''}
                   </p>
                 </div>
+                 <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100"
+                    onClick={(e) => handleDeleteNotification(e, notif.id)}
+                    >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span className="sr-only">Delete notification</span>
+                </Button>
               </div>
             ))
           ) : (
