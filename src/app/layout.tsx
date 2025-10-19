@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppProviders } from '@/components/app-providers';
+import NotificationHandler from '@/components/notification-permission-banner';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   },
   description: 'The ultimate tool for Saveetha Engineering College students. Instantly calculate your Saveetha CGPA and attendance percentage. Find faculty info, concept maps, and important university updates all in one place.',
   keywords: ['Saveetha CGPA', 'Saveetha attendance calculator', 'Saveetha Calculator', 'Saveetha attendance', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
-  authors: [{ name: 'comrademohan', url: 'https://github.com/comrademohan' }],
+  authors: [{ name: 'comrademohan', url: 'https://github.com' }],
   creator: 'comrademohan',
   openGraph: {
     title: 'Saveetha Calculator: CGPA & Attendance',
@@ -102,6 +103,7 @@ export default function RootLayout({
               {children}
             </AppProviders>
         </Suspense>
+        <NotificationHandler/>
         <Toaster />
         
         {/* Google Analytics Scripts */}

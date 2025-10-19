@@ -143,11 +143,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (typeof window !== 'undefined' && 'Notification' in window) {
+    if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator) {
       try {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
+          const fcmToken = await getToken(messaging, { 
+            vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
+            serviceWorkerRegistration: registration,
+          });
           if (fcmToken) {
             const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
             await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
@@ -168,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Error setting up FCM:', error);
         toast({
           title: "Notification Error",
-          description: "Could not set up push notifications. Please check your browser settings.",
+          description: "Could not set up push notifications. Please check your browser settings and ensure you are on a secure (HTTPS) connection.",
           variant: "destructive"
         });
       }
