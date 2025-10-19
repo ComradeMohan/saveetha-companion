@@ -97,7 +97,11 @@ export async function sendNotification(prevState: any, formData: FormData) {
             // Send push notifications for the chunk
             if (fcmTokensForChunk.length > 0) {
                 const fcmMessage = {
-                    notification: { title, body: message },
+                    notification: { 
+                        title, 
+                        body: message,
+                        icon: '/favicon.ico',
+                    },
                      webpush: {
                         fcmOptions: {
                           link: link || 'https://saveetha-companion.web.app/updates'
