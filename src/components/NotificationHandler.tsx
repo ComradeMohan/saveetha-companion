@@ -19,48 +19,50 @@ export default function NotificationHandler() {
         return;
       }
       
-      // Request permission if it's in the default state
-      if (Notification.permission === 'default') {
-        try {
-          const permission = await Notification.requestPermission();
-          if (permission !== 'granted') {
-            console.log('Notification permission denied.');
-            return;
-          }
-        } catch (error) {
-          console.error('Error requesting notification permission.', error);
-          return;
+      try {
+        if (Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                console.log('Notification permission was not granted.');
+                toast({
+                    title: "Notifications Disabled",
+                    description: "You won't receive push notifications for important updates.",
+                    variant: "default"
+                });
+                return;
+            }
         }
-      }
 
-      // If permission is granted, get the token and save it
-      if (Notification.permission === 'granted') {
-        try {
-          const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
-          if (fcmToken) {
-            const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
-            await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
+        if (Notification.permission === 'granted') {
+            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
             
-            // Show toast and send test notification
-            toast({
-              title: "Notifications Enabled!",
-              description: `Your device is now registered for push notifications. Token: ${fcmToken.substring(0, 20)}...`,
-            });
-            
-            new Notification('Notifications Enabled', {
-              body: 'You will now receive updates from Saveetha Companion.',
-              icon: '/icons/icon-192x192.png',
-            });
+            if (fcmToken) {
+                const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
+                await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
+                
+                // Show a toast and send a test notification only once, perhaps by checking session storage
+                const tokenSentKey = `fcm_token_sent_${fcmToken.slice(-10)}`;
+                if (!sessionStorage.getItem(tokenSentKey)) {
+                     toast({
+                        title: "Notifications Enabled!",
+                        description: "Your device is now registered for push notifications.",
+                    });
+                    
+                    new Notification('Notifications Enabled', {
+                        body: 'You will now receive updates from Saveetha Companion.',
+                    });
 
-          }
-        } catch (error) {
-          console.error('An error occurred while retrieving token. ', error);
+                    sessionStorage.setItem(tokenSentKey, 'true');
+                }
+            }
+        }
+      } catch (error) {
+          console.error('An error occurred while setting up notifications: ', error);
           toast({
-            title: "Notification Error",
-            description: "Could not set up push notifications. Please ensure your browser is supported and try again.",
+            title: "Notification Setup Error",
+            description: "Could not set up push notifications. Please check your browser settings and try again.",
             variant: "destructive"
           });
-        }
       }
     };
     
