@@ -242,9 +242,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
-          
-          // Set up FCM notifications
-          await setupFCM();
 
         } catch(error){
           console.error("Error updating user document:", error);

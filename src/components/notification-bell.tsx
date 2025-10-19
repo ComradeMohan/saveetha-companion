@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, Gift } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface Notification {
   id: string;
@@ -20,7 +21,8 @@ interface Notification {
 }
 
 export function NotificationBell() {
-  const { user } = useAuth();
+  const { user, setupFCM } = useAuth();
+  const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +50,20 @@ export function NotificationBell() {
     return () => unsubscribe();
   }, [user]);
 
+  const handleTriggerClick = async () => {
+    // If popover is about to open, check for notification permission
+    if (!isOpen) {
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+        toast({
+          title: "Enable Notifications",
+          description: "Clicking the bell again will ask for permission to send you updates.",
+        });
+        await setupFCM(); // This will trigger the requestPermission flow
+      }
+    }
+    setIsOpen(!isOpen);
+  };
+
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
     if (!open && unreadCount > 0) {
@@ -73,7 +89,7 @@ export function NotificationBell() {
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" onClick={handleTriggerClick}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 flex h-4 w-4">
@@ -103,7 +119,7 @@ export function NotificationBell() {
                 <div className="flex-1">
                   <p className="text-sm">{notif.message}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true })}
+                    {notif.createdAt?.toDate ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : ''}
                   </p>
                 </div>
               </div>
