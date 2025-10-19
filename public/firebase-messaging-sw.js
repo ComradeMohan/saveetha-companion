@@ -1,10 +1,6 @@
-// This file MUST be in the /public folder
+importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js');
 
-// We need to import the Firebase apps scripts
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
@@ -15,38 +11,33 @@ const firebaseConfig = {
   measurementId: "G-MFMFF0EKNW"
 };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging(app);
+firebase.initializeApp(firebaseConfig);
 
-// Handle background messages
+const messaging = firebase.messaging();
+
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon || '/favicon.ico',
-    // Add custom data to the notification
+    icon: '/favicon.ico',
     data: {
-      url: payload.data.url || '/' // URL to open on click
+        url: payload.data?.link || '/' // Use link from data payload or fallback to homepage
     }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-
-// Handle notification click event
 self.addEventListener('notificationclick', (event) => {
-    console.log('Notification clicked: ', event.notification);
-    event.notification.close();
-
-    const urlToOpen = event.notification.data.url || '/';
+    event.notification.close(); // Close the notification
+    
+    // This is the URL passed from the onBackgroundMessage data
+    const urlToOpen = event.notification.data.url;
 
     event.waitUntil(
         clients.matchAll({
-            type: "window",
+            type: 'window',
             includeUncontrolled: true
         }).then((clientList) => {
             // If a window for this origin is already open, focus it.
