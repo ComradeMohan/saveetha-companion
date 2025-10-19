@@ -1,43 +1,18 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Bell, X } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export default function NotificationPermissionBanner() {
-    const { user, loading, setupFCM } = useAuth();
-    const [showBanner, setShowBanner] = useState(false);
+interface NotificationPermissionBannerProps {
+    show: boolean;
+    onEnable: () => void;
+    onDismiss: () => void;
+}
 
-    useEffect(() => {
-        if (!loading && user && typeof window !== 'undefined' && 'Notification' in window) {
-            if (Notification.permission === 'default') {
-                // Only show banner if permission is 'default' (not granted or denied)
-                const bannerDismissed = localStorage.getItem('notificationBannerDismissed');
-                if (!bannerDismissed) {
-                    setShowBanner(true);
-                }
-            } else {
-                setShowBanner(false);
-            }
-        } else {
-            setShowBanner(false);
-        }
-    }, [user, loading]);
-
-    const handleEnable = async () => {
-        await setupFCM();
-        setShowBanner(false); // Hide banner after interaction
-    };
-
-    const handleDismiss = () => {
-        setShowBanner(false);
-        localStorage.setItem('notificationBannerDismissed', 'true');
-    };
-
-    if (!showBanner) {
+export default function NotificationPermissionBanner({ show, onEnable, onDismiss }: NotificationPermissionBannerProps) {
+    if (!show) {
         return null;
     }
 
@@ -58,8 +33,8 @@ export default function NotificationPermissionBanner() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                        <Button size="sm" onClick={handleEnable}>Enable Notifications</Button>
-                        <Button size="sm" variant="ghost" onClick={handleDismiss}>Dismiss</Button>
+                        <Button size="sm" onClick={onEnable}>Enable Notifications</Button>
+                        <Button size="sm" variant="ghost" onClick={onDismiss}>Dismiss</Button>
                     </div>
                 </div>
             </div>

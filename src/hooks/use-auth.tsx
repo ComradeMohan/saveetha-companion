@@ -58,6 +58,8 @@ interface AuthContextType {
   isAdmin: boolean;
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
+  showNotificationBanner: boolean;
+  setShowNotificationBanner: (show: boolean) => void;
   signInWithGoogle: (isSignUp?: boolean) => Promise<void>;
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
@@ -116,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -137,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
  const setupFCM = useCallback(async () => {
+    setShowNotificationBanner(false);
     const currentUser = auth.currentUser;
     if (!currentUser || !messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
       console.warn('FCM setup skipped: Missing user, messaging service, or VAPID key.');
@@ -150,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
           if (fcmToken) {
             const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
-            await setDoc(tokenRef, { createdAt: serverTimestamp() });
+            await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
             toast({
               title: "Notifications Enabled!",
               description: "You will now receive important updates.",
@@ -248,6 +252,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
+
+          // Check for notification permission
+          if (typeof window !== 'undefined' && 'Notification' in window) {
+            if (Notification.permission === 'default') {
+                const bannerDismissed = localStorage.getItem('notificationBannerDismissed');
+                if (!bannerDismissed) {
+                    setShowNotificationBanner(true);
+                }
+            }
+          }
         } catch(error){
           console.error("Error updating user document:", error);
           setUser(user);
@@ -256,6 +270,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
+        setShowNotificationBanner(false);
       }
       setLoading(false);
     });
@@ -341,6 +356,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin,
     isNavigating,
     setIsNavigating,
+    showNotificationBanner,
+    setShowNotificationBanner,
     signInWithGoogle,
     completeUserProfile,
     updateUserAcademicProfile,

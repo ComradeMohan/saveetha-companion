@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/hooks/use-auth';
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
@@ -96,6 +96,18 @@ function RootLayoutSkeleton() {
 function AppProviders({ children }: { children: React.ReactNode }) {
   'use client';
 
+  const { showNotificationBanner, setShowNotificationBanner, setupFCM } = useAuth();
+  
+  const handleEnableNotifications = () => {
+    setupFCM();
+    setShowNotificationBanner(false);
+  };
+  
+  const handleDismissBanner = () => {
+    localStorage.setItem('notificationBannerDismissed', 'true');
+    setShowNotificationBanner(false);
+  };
+
   return (
     <ThemeProvider
       attribute="class"
@@ -110,7 +122,11 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <Toaster key="toaster" />
           <SupportButton />
           <MobileNav />
-          <NotificationPermissionBanner />
+           <NotificationPermissionBanner 
+            show={showNotificationBanner}
+            onEnable={handleEnableNotifications}
+            onDismiss={handleDismissBanner}
+          />
       </AuthProvider>
     </ThemeProvider>
   )
