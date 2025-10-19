@@ -1,7 +1,19 @@
-importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js');
 
-const firebaseConfig = {
+// A service worker file is required to show notifications,
+// even if you are only using the notification payload.
+// This is because the service worker is needed to handle background
+// messages and notification click events.
+
+// Give the service worker access to Firebase Messaging.
+// Note that you can only use Firebase Messaging here, other Firebase libraries
+// are not available in the service worker.
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+
+// Initialize the Firebase app in the service worker by passing in
+// your app's Firebase config object.
+// https://firebase.google.com/docs/web/setup#config-object
+const firebaseApp = firebase.initializeApp({
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
   projectId: "saveethacgpa",
@@ -9,47 +21,62 @@ const firebaseConfig = {
   messagingSenderId: "184883570512",
   appId: "1:184883570512:web:db8e7b5eefdb61f71c6e55",
   measurementId: "G-MFMFF0EKNW"
-};
-
-firebase.initializeApp(firebaseConfig);
+});
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
+
+/**
+ * If you would like to customize notifications that are received in the
+ * background (Web app is closed or not in browser tab) then you should
+ * implement this optional method.
+ *
+ * @param {object} payload The payload from the FCM message.
+ */
+messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  const notificationTitle = payload.notification.title;
+
+  // If the payload has a notification, it is a "notification message" and is handled automatically.
+  // We do not need to show a notification here. This check prevents duplicate notifications.
+  if (payload.notification) {
+    return;
+  }
+  
+  // If it's a "data message", we need to construct the notification manually.
+  const notificationTitle = payload.data.title || 'New Message';
   const notificationOptions = {
-    body: payload.notification.body,
+    body: payload.data.body || '',
     icon: '/favicon.ico',
     data: {
-        url: payload.data?.link || '/' // Use link from data payload or fallback to homepage
+      url: payload.data.link || '/'
     }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close(); // Close the notification
-    
-    // This is the URL passed from the onBackgroundMessage data
-    const urlToOpen = event.notification.data.url;
 
-    event.waitUntil(
-        clients.matchAll({
-            type: 'window',
-            includeUncontrolled: true
-        }).then((clientList) => {
-            // If a window for this origin is already open, focus it.
-            for (const client of clientList) {
-                if (client.url === urlToOpen && 'focus' in client) {
-                    return client.focus();
-                }
-            }
-            // Otherwise, open a new window.
-            if (clients.openWindow) {
-                return clients.openWindow(urlToOpen);
-            }
-        })
-    );
+// Handle notification click events.
+self.addEventListener('notificationclick', function(event) {
+  console.log('[firebase-messaging-sw.js] Notification click Received.', event.notification);
+  
+  event.notification.close();
+
+  const urlToOpen = event.notification.data.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({
+      type: "window"
+    }).then(function(clientList) {
+      for (var i = 0; i < clientList.length; i++) {
+        var client = clientList[i];
+        if (client.url === urlToOpen && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
 });
