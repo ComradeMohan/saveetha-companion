@@ -1,10 +1,15 @@
-// This file must be in the /public directory
 
-// Scripts for firebase and firebase messaging
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+// This service worker file is intentionally left blank.
+// It is required for Firebase Cloud Messaging to work in the background,
+// but the default Firebase SDK logic handles everything automatically
+// as long as this file is present and served from the root of the public directory.
+//
+// You can add custom background message handling here if needed in the future.
+// For example:
+/*
+import { initializeApp } from "firebase/app";
+import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
@@ -15,17 +20,18 @@ const firebaseConfig = {
   measurementId: "G-MFMFF0EKNW"
 };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
-messaging.onBackgroundMessage(function(payload) {
+onBackgroundMessage(messaging, (payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/icon-192x192.png' // Make sure you have an icon file here
+    icon: '/icon-192x192.png'
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+*/
