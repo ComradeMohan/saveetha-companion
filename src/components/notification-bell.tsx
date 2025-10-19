@@ -167,46 +167,38 @@ export function NotificationBell() {
           <h4>Notifications</h4>
         </div>
         <div className="max-h-80 overflow-y-auto">
-          {permission === 'granted' ? (
-            notifications.length > 0 ? (
-              notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className={cn(
-                    "p-4 border-b flex items-start gap-3",
-                    !notif.read && "bg-secondary/50"
-                  )}
-                >
-                  <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
-                  <div className="flex-1">
-                    <p className="text-sm">{notif.message}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {notif.createdAt?.toDate ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : ''}
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground text-center p-8">
-                You have no notifications.
-              </p>
-            )
-          ) : (
-            <div className="p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                    {permission === 'denied' 
-                        ? "You have blocked notifications. Please enable them in your browser settings to receive updates."
-                        : "Enable push notifications to get important updates directly on your device."}
-                </p>
-                {permission === 'default' && (
-                    <Button onClick={handleEnableNotifications} disabled={isEnabling} className="w-full">
-                        {isEnabling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Enable Notifications
-                    </Button>
+          {notifications.length > 0 ? (
+            notifications.map((notif) => (
+              <div
+                key={notif.id}
+                className={cn(
+                  "p-4 border-b flex items-start gap-3",
+                  !notif.read && "bg-secondary/50"
                 )}
-            </div>
+              >
+                <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
+                <div className="flex-1">
+                  <p className="text-sm">{notif.message}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {notif.createdAt?.toDate ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : ''}
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground text-center p-8">
+              You have no notifications.
+            </p>
           )}
         </div>
+        {permission === 'default' && (
+          <div className="p-2 border-t">
+            <Button onClick={handleEnableNotifications} disabled={isEnabling} className="w-full" size="sm">
+              {isEnabling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Enable Push Notifications
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
