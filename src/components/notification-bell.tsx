@@ -7,11 +7,12 @@ import { db, messaging } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bell, Gift, Loader2 } from 'lucide-react';
+import { Bell, Gift, Loader2, Link as LinkIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { getToken } from 'firebase/messaging';
+import Link from 'next/link';
 
 interface Notification {
   id: string;
@@ -19,6 +20,7 @@ interface Notification {
   read: boolean;
   createdAt: any;
   type: 'credit' | 'default' | 'announcement';
+  link?: string;
 }
 
 export function NotificationBell() {
@@ -179,7 +181,14 @@ export function NotificationBell() {
                 <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
                 <div className="flex-1">
                   <p className="text-sm">{notif.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  {notif.link && (
+                    <Button asChild variant="link" size="sm" className="p-0 h-auto mt-1">
+                        <Link href={notif.link} target="_blank" rel="noopener noreferrer">
+                            <LinkIcon className="h-3 w-3 mr-1" /> View Link
+                        </Link>
+                    </Button>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1.5">
                     {notif.createdAt?.toDate ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : ''}
                   </p>
                 </div>
@@ -198,6 +207,11 @@ export function NotificationBell() {
               Enable Push Notifications
             </Button>
           </div>
+        )}
+         {permission === 'denied' && (
+            <div className="p-3 border-t text-center text-xs text-muted-foreground">
+               You have blocked notifications. Please enable them in your browser settings to receive updates.
+            </div>
         )}
       </PopoverContent>
     </Popover>

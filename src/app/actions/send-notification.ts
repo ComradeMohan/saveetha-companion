@@ -12,6 +12,7 @@ const notificationSchema = z.object({
     sendToAll: z.string().optional(),
     title: z.string().min(1, { message: 'Title is required.' }),
     message: z.string().min(1, { message: 'Message is required.' }),
+    link: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
 });
 
 export async function sendNotification(prevState: any, formData: FormData) {
@@ -20,6 +21,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
         sendToAll: formData.get('sendToAll'),
         title: formData.get('title'),
         message: formData.get('message'),
+        link: formData.get('link'),
     });
 
     if (!validatedFields.success) {
@@ -30,7 +32,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
         };
     }
     
-    const { userIds, sendToAll, title, message } = validatedFields.data;
+    const { userIds, sendToAll, title, message, link } = validatedFields.data;
     const isSendingToAll = sendToAll === 'on';
 
     if (!isSendingToAll && (!userIds || userIds.trim() === '')) {
@@ -74,6 +76,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
                     batch.set(notificationRef, {
                         title: title,
                         message: message,
+                        link: link || null,
                         type: 'default',
                         read: false,
                         createdAt: timestamp,
@@ -95,6 +98,11 @@ export async function sendNotification(prevState: any, formData: FormData) {
             if (fcmTokensForChunk.length > 0) {
                 const fcmMessage = {
                     notification: { title, body: message },
+                     webpush: {
+                        fcmOptions: {
+                          link: link || 'https://saveetha-companion.web.app/updates'
+                        }
+                    },
                     tokens: fcmTokensForChunk,
                 };
                 const response = await getMessaging().sendEachForMulticast(fcmMessage);

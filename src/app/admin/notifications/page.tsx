@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, X, Users as UsersIcon, User as UserIcon } from 'lucide-react';
+import { Loader2, Send, X, Users as UsersIcon, User as UserIcon, Link as LinkIcon } from 'lucide-react';
 import { sendNotification } from '@/app/actions/send-notification';
 import { getAllUsers, type BasicUser } from '@/app/actions/get-users';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -181,6 +181,11 @@ export default function AdminNotificationsPage() {
                             <Label htmlFor="message">Message</Label>
                             <Textarea id="message" name="message" placeholder="Your message here..." />
                              {state.errors?.message && <p className="text-sm font-medium text-destructive">{state.errors.message[0]}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="link">Link (Optional)</Label>
+                            <Input id="link" name="link" placeholder="https://example.com/more-info" />
+                             {state.errors?.link && <p className="text-sm font-medium text-destructive">{state.errors.link[0]}</p>}
                         </div>
                     </CardContent>
                     <CardFooter>
