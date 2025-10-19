@@ -1,17 +1,20 @@
+
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase'; // Import client db for client-sdk compatible serverTimestamp
 
 /**
  * Distributes 50 credits to all users who do not have a 'credits' field yet.
  * Also sends a notification to each user who receives credits.
  */
-export async function distributeInitialCredits(): Promise<{ type: 'success' | 'error', message: string }> {
+export async function distributeInitialCredits(): Promise<{ type: 'success' | 'error' | 'info', message: string }> {
   try {
     const usersSnapshot = await adminDb.collection('users').get();
     
     if (usersSnapshot.empty) {
-      return { type: 'info' as 'success', message: 'No users found in the database.' };
+      return { type: 'info', message: 'No users found in the database.' };
     }
 
     const batch = adminDb.batch();
@@ -20,7 +23,6 @@ export async function distributeInitialCredits(): Promise<{ type: 'success' | 'e
     for (const userDoc of usersSnapshot.docs) {
       const userData = userDoc.data();
       
-      // Check if 'credits' field is missing or undefined
       if (typeof userData.credits === 'undefined') {
         const userRef = adminDb.collection('users').doc(userDoc.id);
         batch.update(userRef, { credits: 50 });
@@ -30,7 +32,7 @@ export async function distributeInitialCredits(): Promise<{ type: 'success' | 'e
             message: "You've been awarded 50 credits to use for the course enrollment auto-checker!",
             type: 'credit',
             read: false,
-            createdAt: new Date(),
+            createdAt: serverTimestamp(),
         });
 
         usersUpdated++;

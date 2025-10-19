@@ -152,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 await updateDoc(userDocRef, { credits: 50 });
                 await createNotification(
                     user.uid,
-                    "You've been awarded 50 credits to use for the course enrollment auto-checker.",
+                    "You've been awarded 50 credits to use for the course enrollment auto-checker!",
                     "credit"
                 );
               }
@@ -198,6 +198,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 createdAt: new Date().toISOString(),
                 lastSignInTime: user.metadata.lastSignInTime,
              });
+             await createNotification(
+                user.uid,
+                "Welcome! You've received 100 credits to get started with our premium features.",
+                "credit"
+             );
              setProfile(newProfileData);
              // A new user's profile is always incomplete, redirect them.
              if (pathname !== '/complete-profile') {
