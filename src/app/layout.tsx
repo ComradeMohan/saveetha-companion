@@ -2,21 +2,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider, useAuth } from '@/hooks/use-auth';
-import { ThemeProvider } from '@/components/theme-provider';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
-import VerificationBanner from '@/components/verification-banner';
 import ScrollProgress from '@/components/scroll-progress';
 import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import FeedbackDialog from '@/components/feedback-dialog';
-import SupportButton from '@/components/support-button';
-import DynamicHeader from '@/components/dynamic-header';
-import MobileNav from '@/components/mobile-nav';
-import NotificationPermissionBanner from '@/components/notification-permission-banner';
+import { AppProviders } from '@/components/app-providers';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -92,58 +85,6 @@ function RootLayoutSkeleton() {
     );
 }
 
-// This new client component wraps the content that needs auth context.
-function MainContent({ children }: { children: React.ReactNode }) {
-  'use client';
-  
-  const { showNotificationBanner, setShowNotificationBanner, setupFCM } = useAuth();
-  
-  const handleEnableNotifications = () => {
-    setupFCM();
-    setShowNotificationBanner(false);
-  };
-  
-  const handleDismissBanner = () => {
-    localStorage.setItem('notificationBannerDismissed', 'true');
-    setShowNotificationBanner(false);
-  };
-
-  return (
-    <>
-      <DynamicHeader />
-      <VerificationBanner key="verification-banner" />
-      <FeedbackDialog />
-      <main key="main-content">{children}</main>
-      <Toaster key="toaster" />
-      <SupportButton />
-      <MobileNav />
-      <NotificationPermissionBanner 
-        show={showNotificationBanner}
-        onEnable={handleEnableNotifications}
-        onDismiss={handleDismissBanner}
-      />
-    </>
-  );
-}
-
-
-// The AppProviders component now correctly sets up providers.
-function AppProviders({ children }: { children: React.ReactNode }) {
-  'use client';
-
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      disableTransitionOnChange
-    >
-      <AuthProvider>
-        <MainContent>{children}</MainContent>
-      </AuthProvider>
-    </ThemeProvider>
-  )
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -161,6 +102,7 @@ export default function RootLayout({
               {children}
             </AppProviders>
         </Suspense>
+        <Toaster />
         
         {/* Google Analytics Scripts */}
         <Script
