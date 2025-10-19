@@ -1,3 +1,4 @@
+// This file must be in the /public directory
 
 // Scripts for firebase and firebase messaging
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
@@ -18,13 +19,12 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
+messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon || '/favicon.ico'
+    icon: '/icon-192x192.png' // Make sure you have an icon file here
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

@@ -17,11 +17,12 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
+import { auth, db, messaging } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { getToken } from 'firebase/messaging';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 const ALLOWED_TEST_EMAIL = 'k.nobitha666@gmail.com';
@@ -107,6 +108,31 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
     return description;
 };
 
+// FCM specific function
+const setupFCM = async (currentUser: User, toast: (options: any) => void) => {
+    if (!messaging) return;
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const fcmToken = await getToken(messaging, { vapidKey: 'BJEz22EK27pQ9gP071jZ1N74jG1b2-p-Y1FqYh4Z9w2N7Jz7s8Nf9y2S7eR5qX0L1c3Z9v8bB1n4wA' });
+            if (fcmToken) {
+                const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
+                await setDoc(tokenRef, { createdAt: serverTimestamp() });
+                console.log('FCM token saved for user.');
+            }
+        } else {
+            console.warn('Notification permission not granted.');
+        }
+    } catch (error) {
+        console.error('Error setting up FCM:', error);
+        toast({
+            title: "Notification Error",
+            description: "Could not set up push notifications. You may need to enable them in your browser settings.",
+            variant: "destructive"
+        });
+    }
+};
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -146,9 +172,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               const dbProfile = userDoc.data() as UserProfileData;
               let updatedProfile = { ...dbProfile, uid: user.uid };
 
-              // Check if credits need to be added for an existing user
               if (typeof dbProfile.credits === 'undefined') {
-                updatedProfile.credits = 50; // Award 50 credits to existing users
+                updatedProfile.credits = 50; 
                 await updateDoc(userDocRef, { credits: 50 });
                 await createNotification(
                     user.uid,
@@ -170,8 +195,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               const finalProfile = { ...updatedProfile, ...updateData };
               setProfile(finalProfile);
 
-              // **ENHANCED PROFILE COMPLETION CHECK**
-              // This runs every time the auth state is confirmed on page load.
               const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
               if (isProfileIncomplete && pathname !== '/complete-profile') {
                 router.push('/complete-profile');
@@ -182,16 +205,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               } else if (!user.displayName && dbProfile.name) {
                 await updateProfile(user, { displayName: dbProfile.name });
               }
+              
+              setupFCM(user, toast); // Setup FCM on login
 
           } else {
-             // This case handles a brand new user signup.
              const newProfileData: UserProfileData = {
                 uid: user.uid,
                 email: user.email!,
                 name: user.displayName!,
                 isVerified: true,
                 photoURL: user.photoURL || undefined,
-                credits: 100, // Award 100 credits to new users
+                credits: 100, 
              };
              await setDoc(userDocRef, {
                 ...newProfileData,
@@ -204,10 +228,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 "credit"
              );
              setProfile(newProfileData);
-             // A new user's profile is always incomplete, redirect them.
              if (pathname !== '/complete-profile') {
                 router.push('/complete-profile');
              }
+              
+             setupFCM(user, toast); // Setup FCM for new user
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
@@ -224,7 +249,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [pathname, router]);
+  }, [pathname, router, toast]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
@@ -241,7 +266,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         throw new Error('Invalid email domain.');
       }
-      // The onAuthStateChanged listener will handle redirection after successful and valid login.
     } catch (error: any) {
       if (error.message !== 'Invalid email domain.') {
         const message = handleAuthError(error, toast);
@@ -262,7 +286,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: profileData.phone,
       }, { merge: true });
       
-      // Manually update the local profile state
       setProfile(prev => prev ? { ...prev, ...profileData } : null);
       
       toast({
@@ -284,7 +307,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             department: data.department,
             college: data.college
         });
-        // Optimistically update local profile state
         setProfile(prev => prev ? { ...prev, ...data } : null);
         toast({ title: 'Success!', description: 'Your profile has been updated.' });
     } catch (error) {

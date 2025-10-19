@@ -2,6 +2,7 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
+import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
 
 const updateSchema = z.object({
@@ -28,21 +29,52 @@ export async function createUpdate(prevState: any, formData: FormData) {
     const { title, description, link } = validatedFields.data;
 
     try {
-        // Save the update to Firestore
+        // 1. Save the update to Firestore
         await adminDb.collection('updates').add({
             title,
             description,
-            link: link || null, // Store null if link is empty
+            link: link || null,
             createdAt: adminDb.FieldValue.serverTimestamp(),
         });
         
+        // 2. Send Push Notifications
+        const usersSnapshot = await adminDb.collection('users').get();
+        const fcmTokens: string[] = [];
+        
+        for (const userDoc of usersSnapshot.docs) {
+            const tokensCollection = await userDoc.ref.collection('fcmTokens').get();
+            if (!tokensCollection.empty) {
+                tokensCollection.forEach(tokenDoc => {
+                    fcmTokens.push(tokenDoc.id);
+                });
+            }
+        }
+        
+        if (fcmTokens.length > 0) {
+            const message = {
+                notification: {
+                    title: title,
+                    body: description,
+                },
+                webpush: {
+                    fcmOptions: {
+                      link: link || 'https://saveetha-companion.web.app/updates' // Fallback to updates page
+                    }
+                },
+                tokens: fcmTokens,
+            };
+
+            await getMessaging().sendEachForMulticast(message);
+            console.log(`FCM notification sent to ${fcmTokens.length} tokens.`);
+        }
+        
         return { 
             type: 'success', 
-            message: `Update posted successfully!` 
+            message: `Update posted and notifications sent successfully!` 
         };
 
     } catch (error: any) {
-        console.error('Error creating update:', error);
-        return { type: 'error', message: 'An unexpected error occurred while creating the update.' };
+        console.error('Error creating update or sending notification:', error);
+        return { type: 'error', message: 'An unexpected error occurred while processing the update.' };
     }
 }
