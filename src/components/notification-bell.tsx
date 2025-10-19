@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { db, messaging } from '@/lib/firebase';
-import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Bell, Gift, Loader2, Link as LinkIcon } from 'lucide-react';
@@ -77,12 +77,16 @@ export function NotificationBell() {
 
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
-    if (!open && unreadCount > 0 && user) {
-      const unreadNotifs = notifications.filter(n => !n.read);
-      for (const notif of unreadNotifs) {
-        const notifRef = doc(db, 'user_notifications', user.uid, 'notifications', notif.id);
-        await updateDoc(notifRef, { read: true });
-      }
+    if (open && unreadCount > 0 && user) {
+      // Mark all as read when popover opens
+      const batch = writeBatch(db);
+      notifications.forEach(notif => {
+        if (!notif.read) {
+            const notifRef = doc(db, 'user_notifications', user.uid, 'notifications', notif.id);
+            batch.update(notifRef, { read: true });
+        }
+      });
+      await batch.commit();
     }
   };
 
@@ -212,7 +216,7 @@ export function NotificationBell() {
         )}
          {permission === 'denied' && (
             <div className="p-3 border-t text-center text-xs text-muted-foreground">
-               You have blocked notifications. You can still view them here.
+               Push notifications are blocked in your browser settings.
             </div>
         )}
       </PopoverContent>

@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -25,16 +24,21 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null && request.auth.uid == userId;
     }
+    
+    // Allow users to manage their own subcollections
+    match /users/{userId}/fcmTokens/{tokenId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    match /user_notifications/{userId}/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     match /students_cgpa/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     match /student_grades/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Allow authenticated users to read their own notifications
-    match /user_notifications/{userId}/{path=**} {
-      allow read: if request.auth != null && request.auth.uid == userId;
     }
     
     // Allow anyone to read public data collections.
