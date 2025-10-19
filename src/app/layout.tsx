@@ -92,10 +92,10 @@ function RootLayoutSkeleton() {
     );
 }
 
-// Client-side provider wrapper
-function AppProviders({ children }: { children: React.ReactNode }) {
+// This new client component wraps the content that needs auth context.
+function MainContent({ children }: { children: React.ReactNode }) {
   'use client';
-
+  
   const { showNotificationBanner, setShowNotificationBanner, setupFCM } = useAuth();
   
   const handleEnableNotifications = () => {
@@ -109,24 +109,36 @@ function AppProviders({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    <>
+      <DynamicHeader />
+      <VerificationBanner key="verification-banner" />
+      <FeedbackDialog />
+      <main key="main-content">{children}</main>
+      <Toaster key="toaster" />
+      <SupportButton />
+      <MobileNav />
+      <NotificationPermissionBanner 
+        show={showNotificationBanner}
+        onEnable={handleEnableNotifications}
+        onDismiss={handleDismissBanner}
+      />
+    </>
+  );
+}
+
+
+// The AppProviders component now correctly sets up providers.
+function AppProviders({ children }: { children: React.ReactNode }) {
+  'use client';
+
+  return (
     <ThemeProvider
       attribute="class"
       defaultTheme="light"
       disableTransitionOnChange
     >
       <AuthProvider>
-          <DynamicHeader />
-          <VerificationBanner key="verification-banner" />
-          <FeedbackDialog />
-          <main key="main-content">{children}</main>
-          <Toaster key="toaster" />
-          <SupportButton />
-          <MobileNav />
-           <NotificationPermissionBanner 
-            show={showNotificationBanner}
-            onEnable={handleEnableNotifications}
-            onDismiss={handleDismissBanner}
-          />
+        <MainContent>{children}</MainContent>
       </AuthProvider>
     </ThemeProvider>
   )
