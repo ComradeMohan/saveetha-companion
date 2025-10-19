@@ -7,6 +7,7 @@ import FeatureAnnouncementBanner from './feature-announcement-banner';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import NotificationPermissionBanner from './notification-permission-banner';
 
 export default function DynamicHeader() {
     const { user, loading } = useAuth();
@@ -47,6 +48,7 @@ export default function DynamicHeader() {
             )}>
                  <Header />
             </div>
+            <NotificationPermissionBanner />
         </div>
     );
 }
