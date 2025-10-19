@@ -11,6 +11,8 @@ interface NotificationPermissionBannerProps {
     onDismiss: () => void;
 }
 
+// This component is no longer used, as the permission is requested automatically.
+// Kept for reference or future use. It is not currently rendered.
 export default function NotificationPermissionBanner({ show, onEnable, onDismiss }: NotificationPermissionBannerProps) {
     if (!show) {
         return null;
