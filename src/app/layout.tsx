@@ -16,6 +16,7 @@ import FeedbackDialog from '@/components/feedback-dialog';
 import SupportButton from '@/components/support-button';
 import DynamicHeader from '@/components/dynamic-header';
 import MobileNav from '@/components/mobile-nav';
+import NotificationPermissionBanner from '@/components/notification-permission-banner';
 
 const poppins = Poppins({ 
   subsets: ['latin'],
@@ -109,6 +110,7 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           <Toaster key="toaster" />
           <SupportButton />
           <MobileNav />
+          <NotificationPermissionBanner />
       </AuthProvider>
     </ThemeProvider>
   )

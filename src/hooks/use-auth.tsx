@@ -144,45 +144,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      if (Notification.permission === 'default') {
-        console.log("Requesting notification permission...");
-        try {
-          const permission = await Notification.requestPermission();
-          if (permission === 'granted') {
-            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
-            if (fcmToken) {
-              const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
-              await setDoc(tokenRef, { createdAt: serverTimestamp() });
-              toast({
-                title: "Notifications Enabled!",
-                description: "You will now receive important updates.",
-              });
-            }
-          } else {
-            console.warn('Notification permission not granted.');
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
+          if (fcmToken) {
+            const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
+            await setDoc(tokenRef, { createdAt: serverTimestamp() });
             toast({
-              title: "Notifications Not Enabled",
-              description: "You can enable notifications later from your browser settings.",
-              variant: "default"
+              title: "Notifications Enabled!",
+              description: "You will now receive important updates.",
             });
           }
-        } catch (error) {
-          console.error('Error setting up FCM:', error);
+        } else {
+          console.warn('Notification permission not granted.');
           toast({
-            title: "Notification Error",
-            description: "Could not set up push notifications. Please check your browser settings.",
-            variant: "destructive"
+            title: "Notifications Not Enabled",
+            description: "You can enable notifications later from your browser settings.",
+            variant: "default"
           });
         }
-      } else if (Notification.permission === 'granted') {
-         // User has already granted permission, just get token and save
-         const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
-         if(fcmToken) {
-            const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
-            await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
-         }
-      } else {
-         console.log('Notification permission is:', Notification.permission);
+      } catch (error) {
+        console.error('Error setting up FCM:', error);
+        toast({
+          title: "Notification Error",
+          description: "Could not set up push notifications. Please check your browser settings.",
+          variant: "destructive"
+        });
       }
     }
   }, [toast]);
@@ -260,8 +248,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
-          setupFCM(); // Ask for permission as soon as user state is confirmed
-
         } catch(error){
           console.error("Error updating user document:", error);
           setUser(user);
@@ -275,7 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [pathname, router, toast, setupFCM]);
+  }, [pathname, router, toast]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();

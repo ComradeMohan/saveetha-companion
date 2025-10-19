@@ -21,8 +21,7 @@ interface Notification {
 }
 
 export function NotificationBell() {
-  const { user, setupFCM } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -50,27 +49,13 @@ export function NotificationBell() {
     return () => unsubscribe();
   }, [user]);
 
-  const handleTriggerClick = async () => {
-    // If popover is about to open, check for notification permission
-    if (!isOpen) {
-      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
-        toast({
-          title: "Enable Notifications",
-          description: "Clicking the bell again will ask for permission to send you updates.",
-        });
-        await setupFCM(); // This will trigger the requestPermission flow
-      }
-    }
-    setIsOpen(!isOpen);
-  };
-
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
-    if (!open && unreadCount > 0) {
+    if (!open && unreadCount > 0 && user) {
       // Mark all as read when popover is closed
       const unreadNotifs = notifications.filter(n => !n.read);
       for (const notif of unreadNotifs) {
-        const notifRef = doc(db, 'user_notifications', user!.uid, 'notifications', notif.id);
+        const notifRef = doc(db, 'user_notifications', user.uid, 'notifications', notif.id);
         await updateDoc(notifRef, { read: true });
       }
     }
@@ -89,7 +74,7 @@ export function NotificationBell() {
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative" onClick={handleTriggerClick}>
+        <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 flex h-4 w-4">

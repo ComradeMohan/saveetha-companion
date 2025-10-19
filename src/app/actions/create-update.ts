@@ -4,6 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
 
 const updateSchema = z.object({
     title: z.string().min(1, { message: 'Title is required.' }),
@@ -37,6 +38,9 @@ export async function createUpdate(prevState: any, formData: FormData) {
             createdAt: adminDb.FieldValue.serverTimestamp(),
         });
         
+        revalidatePath('/admin/updates');
+        revalidatePath('/updates');
+
         // 2. Send Push Notifications
         const usersSnapshot = await adminDb.collection('users').get();
         const fcmTokens: string[] = [];
@@ -66,13 +70,17 @@ export async function createUpdate(prevState: any, formData: FormData) {
 
             const response = await getMessaging().sendEachForMulticast(message);
             console.log(`${response.successCount} messages were sent successfully`);
+            return { 
+              type: 'success', 
+              message: `Update posted and notifications sent to ${fcmTokens.length} devices.`
+            };
+        } else {
+             return { 
+              type: 'success', 
+              message: `Update posted successfully. No devices are subscribed for notifications.`
+            };
         }
         
-        return { 
-            type: 'success', 
-            message: `Update posted and notifications sent to ${fcmTokens.length} devices.`
-        };
-
     } catch (error: any) {
         console.error('Error creating update or sending notification:', error);
         return { type: 'error', message: 'An unexpected error occurred while processing the update.' };
