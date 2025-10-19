@@ -30,11 +30,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Saveetha Calculator: CGPA & Attendance',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
-    url: 'https://saveetha-companion.web.app', // Replace with your actual domain
+    url: 'https://saveethahub.tech', // Replace with your actual domain
     siteName: 'Saveetha Calculator',
     images: [
       {
-        url: 'https://placehold.co/1200x630.png', // Replace with a specific OG image URL
+        url: 'https://saveethahub.tech/favicon.ico', // Replace with a specific OG image URL
         width: 1200,
         height: 630,
         alt: 'Saveetha Calculator App Interface',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: 'Saveetha Calculator: CGPA & Attendance',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     // creator: '@yourtwitterhandle', // Optional: Replace with your Twitter handle
-    images: ['https://placehold.co/1200x630.png'], // Replace with your Twitter card image URL
+    images: ['https://saveethahub.tech/favicon.ico'], // Replace with your Twitter card image URL
   },
   robots: {
     index: true,

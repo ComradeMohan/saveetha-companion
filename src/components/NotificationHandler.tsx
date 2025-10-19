@@ -8,6 +8,7 @@ import { db, messaging } from '@/lib/firebase';
 import { getToken } from 'firebase/messaging';
 
 export default function NotificationHandler() {
+  console.log('NotificationHandler mounted');
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
