@@ -5,91 +5,68 @@ import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, messaging } from '@/lib/firebase';
-import { getToken } from 'firebase/messaging';
+import { getToken, onMessage } from 'firebase/messaging';
 
+/**
+ * A client-side component that handles Firebase Cloud Messaging (FCM)
+ * setup and token management once permission has been granted.
+ */
 export default function NotificationHandler() {
-  console.log('NotificationHandler mounted');
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     const setupFCM = async () => {
-      if (
-        typeof window === 'undefined' ||
-        loading ||
-        !user ||
-        !messaging ||
-        !process.env.NEXT_PUBLIC_FCM_VAPID_KEY
-      ) {
+      // Exit if not in a browser, user is not logged in, or Firebase messaging is not available.
+      if (typeof window === 'undefined' || loading || !user || !messaging) {
         return;
       }
+      
+      // Only proceed if permission is already granted.
+      if (Notification.permission === 'granted') {
+        try {
+          // Explicitly register the service worker.
+          const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
-      try {
-        // Register the service worker explicitly
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-console.log('Service Worker registered with scope:', registration.scope);
-
-if (registration.installing) {
-  console.log('Service worker installing');
-} else if (registration.waiting) {
-  console.log('Service worker installed');
-} else if (registration.active) {
-  console.log('Service worker active');
-}
-
-        if (Notification.permission === 'default') {
-          const permission = await Notification.requestPermission();
-          if (permission !== 'granted') {
-            console.log('Notification permission was not granted.');
-            toast({
-              title: "Notifications Disabled",
-              description: "You won't receive push notifications for important updates.",
-              variant: "default"
-            });
-            return;
-          }
-        }
-
-        if (Notification.permission === 'granted') {
-          // Pass the registration as option to getToken()
           const fcmToken = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
-            serviceWorkerRegistration: registration
+            serviceWorkerRegistration: swRegistration,
           });
 
           if (fcmToken) {
-            console.log('FCM Token:', fcmToken);
+            // Save the new token to Firestore.
             const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
             await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
-
-            const tokenSentKey = `fcm_token_sent_${fcmToken.slice(-10)}`;
-            if (!sessionStorage.getItem(tokenSentKey)) {
-              toast({
-                title: "Notifications Enabled!",
-                description: "Your device is now registered for push notifications.",
-              });
-
-              new Notification('Notifications Enabled', {
-                body: 'You will now receive updates from Saveetha Companion.',
-              });
-
-              sessionStorage.setItem(tokenSentKey, 'true');
-            }
+          } else {
+            console.warn('Could not get FCM token. User might need to grant permission again.');
           }
+        } catch (error) {
+          console.error('An error occurred while retrieving token. ', error);
+          toast({
+            title: "Could Not Get Notification Token",
+            description: "There was an error setting up push notifications. Please try disabling and re-enabling them.",
+            variant: "destructive"
+          });
         }
-      } catch (error) {
-        console.error('An error occurred while setting up notifications: ', error);
-        toast({
-          title: "Notification Setup Error",
-          description: "Could not set up push notifications. Please check your browser settings and try again.",
-          variant: "destructive"
-        });
       }
     };
 
     setupFCM();
+
+    // Handle foreground messages
+    if (messaging) {
+        const unsubscribe = onMessage(messaging, (payload) => {
+            console.log('Foreground message received. ', payload);
+            toast({
+                title: payload.notification?.title,
+                description: payload.notification?.body,
+            });
+        });
+        return () => unsubscribe();
+    }
+
   }, [user, loading, toast]);
 
-  // This component renders nothing visible
+  // This component renders nothing visible.
   return null;
 }

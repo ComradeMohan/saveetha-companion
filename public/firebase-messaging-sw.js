@@ -1,11 +1,10 @@
-// firebase-messaging-sw.js (to be placed in your public folder)
+// This file MUST be in the /public folder
 
-// Import Firebase scripts using importScripts
-importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js');
+// We need to import the Firebase apps scripts
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
-// Your Firebase config object (replace with your actual config)
-
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
@@ -16,26 +15,50 @@ const firebaseConfig = {
   measurementId: "G-MFMFF0EKNW"
 };
 
-
-// Initialize Firebase app in service worker
-firebase.initializeApp(firebaseConfig);
-
-// Initialize messaging instance
-const messaging = firebase.messaging();
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging(app);
 
 // Handle background messages
-messaging.onBackgroundMessage(function(payload) {
+messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  if (!payload.notification) {
-    return;
-  }
-
-  const notificationTitle = payload.notification.title || 'New Notification';
+  const notificationTitle = payload.notification.title;
   const notificationOptions = {
-    body: payload.notification.body || '',
-    icon: payload.notification.image || '/icons/icon-192x192.png'
+    body: payload.notification.body,
+    icon: payload.notification.icon || '/favicon.ico',
+    // Add custom data to the notification
+    data: {
+      url: payload.data.url || '/' // URL to open on click
+    }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+
+// Handle notification click event
+self.addEventListener('notificationclick', (event) => {
+    console.log('Notification clicked: ', event.notification);
+    event.notification.close();
+
+    const urlToOpen = event.notification.data.url || '/';
+
+    event.waitUntil(
+        clients.matchAll({
+            type: "window",
+            includeUncontrolled: true
+        }).then((clientList) => {
+            // If a window for this origin is already open, focus it.
+            for (const client of clientList) {
+                if (client.url === urlToOpen && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // Otherwise, open a new window.
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
 });
