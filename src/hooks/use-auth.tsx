@@ -24,6 +24,8 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
+const ALLOWED_TEST_EMAIL = 'k.nobitha666@gmail.com';
+
 
 export interface UserProfileData {
   uid: string;
@@ -221,15 +223,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({
-      'hd': 'saveetha.com'
-    });
     try {
-      await signInWithPopup(auth, provider);
-      // The onAuthStateChanged listener will now handle all redirection logic.
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      if (user.email && !user.email.endsWith('@saveetha.com') && user.email !== ALLOWED_TEST_EMAIL) {
+        await signOut(auth); // Sign out the user immediately
+        toast({
+            title: 'Invalid Email Domain',
+            description: 'Only @saveetha.com Google accounts are allowed to sign up or log in.',
+            variant: 'destructive',
+        });
+        throw new Error('Invalid email domain.');
+      }
+      // The onAuthStateChanged listener will handle redirection after successful and valid login.
     } catch (error: any) {
-      const message = handleAuthError(error, toast);
-      throw new Error(message);
+      if (error.message !== 'Invalid email domain.') {
+        const message = handleAuthError(error, toast);
+        throw new Error(message);
+      }
     }
   };
   
