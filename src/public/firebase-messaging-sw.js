@@ -1,10 +1,11 @@
+// firebase-messaging-sw.js (to be placed in your public folder)
 
-// This file must be in the public folder.
+// Import Firebase scripts using importScripts
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js');
 
-import { initializeApp } from 'firebase/app';
-import { getMessaging, onBackgroundMessage } from 'firebase/messaging/sw';
+// Your Firebase config object (replace with your actual config)
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
   authDomain: "saveethacgpa.firebaseapp.com",
@@ -16,22 +17,24 @@ const firebaseConfig = {
 };
 
 
-// Initialize the Firebase app in the service worker
-// Note: this is a different initialization than in your app's code
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// Initialize Firebase app in service worker
+firebase.initializeApp(firebaseConfig);
 
-onBackgroundMessage(messaging, (payload) => {
+// Initialize messaging instance
+const messaging = firebase.messaging();
+
+// Handle background messages
+messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  
+
   if (!payload.notification) {
     return;
   }
-  
+
   const notificationTitle = payload.notification.title || 'New Notification';
   const notificationOptions = {
     body: payload.notification.body || '',
-    icon: payload.notification.image || '/icons/icon-192x192.png' 
+    icon: payload.notification.image || '/icons/icon-192x192.png'
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

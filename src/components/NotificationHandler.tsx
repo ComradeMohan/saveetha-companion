@@ -34,12 +34,20 @@ export default function NotificationHandler() {
         }
 
         if (Notification.permission === 'granted') {
+
             const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
             
             if (fcmToken) {
+                console.log('FCM Token:', fcmToken);
                 const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
                 await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
                 
+              //   await fetch('/api/subscribeToTopic', {
+              //     method: 'POST',
+              //     headers: { 'Content-Type': 'application/json' },
+              //     body: JSON.stringify({ token: fcmToken, topic: 'saveetha_student' }),
+              // });
+
                 // Show a toast and send a test notification only once, perhaps by checking session storage
                 const tokenSentKey = `fcm_token_sent_${fcmToken.slice(-10)}`;
                 if (!sessionStorage.getItem(tokenSentKey)) {
