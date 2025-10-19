@@ -61,6 +61,7 @@ interface AuthContextType {
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
   logout: () => Promise<void>;
+  setupFCM: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -108,35 +109,6 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
     return description;
 };
 
-// FCM specific function
-const setupFCM = async (currentUser: User, toast: (options: any) => void) => {
-    if (!messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
-        console.warn('FCM is not configured. Missing messaging object or VAPID key.');
-        return;
-    }
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
-            if (fcmToken) {
-                const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
-                await setDoc(tokenRef, { createdAt: serverTimestamp() });
-                console.log('FCM token saved for user.');
-            }
-        } else {
-            console.warn('Notification permission not granted.');
-        }
-    } catch (error) {
-        console.error('Error setting up FCM:', error);
-        toast({
-            title: "Notification Error",
-            description: "Could not set up push notifications. You may need to enable them in your browser settings.",
-            variant: "destructive"
-        });
-    }
-};
-
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfileData | null>(null);
@@ -161,6 +133,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       read: false,
       createdAt: serverTimestamp(),
     });
+  };
+
+  const setupFCM = async () => {
+    if (!user || !messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
+        console.warn('FCM is not configured or user not logged in.');
+        return;
+    }
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
+            if (fcmToken) {
+                const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
+                await setDoc(tokenRef, { createdAt: serverTimestamp() });
+                toast({
+                    title: "Notifications Enabled!",
+                    description: "You will now receive updates from the university.",
+                });
+            }
+        } else {
+            console.warn('Notification permission not granted.');
+            toast({
+                title: "Permissions Denied",
+                description: "You will not receive push notifications.",
+                variant: 'destructive'
+            });
+        }
+    } catch (error) {
+        console.error('Error setting up FCM:', error);
+        toast({
+            title: "Notification Error",
+            description: "Could not set up push notifications. You may need to enable them in your browser settings.",
+            variant: "destructive"
+        });
+    }
   };
 
   useEffect(() => {
@@ -209,8 +216,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 await updateProfile(user, { displayName: dbProfile.name });
               }
               
-              setupFCM(user, toast); // Setup FCM on login
-
           } else {
              const newProfileData: UserProfileData = {
                 uid: user.uid,
@@ -234,8 +239,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              if (pathname !== '/complete-profile') {
                 router.push('/complete-profile');
              }
-              
-             setupFCM(user, toast); // Setup FCM for new user
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
@@ -336,6 +339,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     completeUserProfile,
     updateUserAcademicProfile,
     logout,
+    setupFCM,
   };
 
   function PageLoader() {
