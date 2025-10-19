@@ -9,3 +9,4 @@ import '@/ai/flows/course-creator-flow.ts';
 import '@/ai/flows/mcq-parser-flow.ts';
 import '@/ai/flows/citation-finder-flow.ts';
 import '@/app/actions/manage-credits.ts';
+import '@/app/actions/get-users.ts';
