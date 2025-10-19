@@ -110,11 +110,14 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
 
 // FCM specific function
 const setupFCM = async (currentUser: User, toast: (options: any) => void) => {
-    if (!messaging) return;
+    if (!messaging || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
+        console.warn('FCM is not configured. Missing messaging object or VAPID key.');
+        return;
+    }
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-            const fcmToken = await getToken(messaging, { vapidKey: 'BJEz22EK27pQ9gP071jZ1N74jG1b2-p-Y1FqYh4Z9w2N7Jz7s8Nf9y2S7eR5qX0L1c3Z9v8bB1n4wA' });
+            const fcmToken = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY });
             if (fcmToken) {
                 const tokenRef = doc(db, 'users', currentUser.uid, 'fcmTokens', fcmToken);
                 await setDoc(tokenRef, { createdAt: serverTimestamp() });
