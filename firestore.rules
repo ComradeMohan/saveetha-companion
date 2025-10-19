@@ -11,6 +11,15 @@ service cloud.firestore {
              request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
     }
 
+    // Allow public read/write for the Link Drop feature
+    match /link-drop-sessions/{sessionId} {
+      allow read, write: if true;
+    }
+
+    match /concept-map-analytics/{mapId} {
+      allow read: if true;
+      allow write: if false; // All writes must go through the trusted server action
+    }
     // Allow authenticated users to manage their own data first.
     match /users/{userId} {
       allow create: if request.auth != null;
@@ -22,21 +31,12 @@ service cloud.firestore {
     match /student_grades/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // Allow public read/write for the Link Drop feature
-    match /link-drop-sessions/{sessionId} {
-      allow read, write: if true;
-    }
-    
-    // --- START: NEW RULE FOR CONCEPT MAP ANALYTICS ---
-    // Allow anyone to read the analytics data.
-    // Writes are handled by the server-side action, so client-side writes are disallowed.
-    match /concept-map-analytics/{mapId} {
-      allow read: if true;
-      allow write: if false; // All writes must go through the trusted server action
-    }
-    // --- END: NEW RULE ---
 
+    // Allow authenticated users to read their own notifications
+    match /user_notifications/{userId}/{path=**} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+    
     // Allow anyone to read public data collections.
     match /faculty/{docId} {
       allow read: if true;
@@ -65,9 +65,6 @@ service cloud.firestore {
      match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} {
         allow read: if true;
     }
-    match /mcqs/{courseId} {
-        allow read: if request.auth != null;
-    }
 
     // Allow anyone to submit forms (contact, issues, suggestions).
     match /contact-messages/{messageId} {
@@ -83,9 +80,8 @@ service cloud.firestore {
       allow create: if request.auth != null;
     }
     match /course-suggestions/{suggestionId} {
-      allow create: if request.auth != null;
+        allow create: if request.auth != null;
     }
-
 
     // This rule is for clarity. The server-side code uses Admin access,
     // which bypasses these rules, but it's good practice to define access.

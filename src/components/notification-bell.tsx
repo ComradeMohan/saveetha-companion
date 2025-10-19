@@ -16,6 +16,7 @@ import Link from 'next/link';
 
 interface Notification {
   id: string;
+  title: string;
   message: string;
   read: boolean;
   createdAt: any;
@@ -180,7 +181,8 @@ export function NotificationBell() {
               >
                 <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
                 <div className="flex-1">
-                  <p className="text-sm">{notif.message}</p>
+                  <p className="text-sm font-semibold">{notif.title}</p>
+                  <p className="text-sm text-muted-foreground">{notif.message}</p>
                   {notif.link && (
                     <Button asChild variant="link" size="sm" className="p-0 h-auto mt-1">
                         <Link href={notif.link} target="_blank" rel="noopener noreferrer">
@@ -210,7 +212,7 @@ export function NotificationBell() {
         )}
          {permission === 'denied' && (
             <div className="p-3 border-t text-center text-xs text-muted-foreground">
-               You have blocked notifications. Please enable them in your browser settings to receive updates.
+               You have blocked notifications. You can still view them here.
             </div>
         )}
       </PopoverContent>
