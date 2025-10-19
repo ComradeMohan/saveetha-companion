@@ -4,6 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
+import { FieldValue } from 'firebase-admin/firestore'; // Import the correct FieldValue
 
 const notificationSchema = z.object({
     email: z.string().email({ message: 'A valid email address is required.' }),
@@ -38,7 +39,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
         
         const userDoc = userQuery.docs[0];
         const userId = userDoc.id;
-        const timestamp = adminDb.FieldValue.serverTimestamp();
+        const timestamp = FieldValue.serverTimestamp(); // Use the correct Admin SDK timestamp
 
         // 1. Add notification to the user's in-app notification bell
         const notificationRef = adminDb.collection('user_notifications').doc(userId).collection('notifications').doc();
