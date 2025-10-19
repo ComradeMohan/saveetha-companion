@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState, useEffect, useRef, useState, useCallback } from 'react';
@@ -131,12 +132,14 @@ export default function AdminNotificationsPage() {
                                                 {selectedUsers.map(user => (
                                                      <Badge key={user.id} variant="secondary" className="gap-1">
                                                         {user.name}
-                                                        <button
+                                                        <div
+                                                            role="button"
+                                                            aria-label={`Remove ${user.name}`}
                                                             onClick={(e) => { e.preventDefault(); handleRemoveUser(user.id); }}
-                                                            className="rounded-full hover:bg-destructive/20 p-0.5"
+                                                            className="rounded-full hover:bg-destructive/20 p-0.5 cursor-pointer"
                                                         >
                                                           <X className="h-3 w-3" />
-                                                        </button>
+                                                        </div>
                                                     </Badge>
                                                 ))}
                                             </div>
