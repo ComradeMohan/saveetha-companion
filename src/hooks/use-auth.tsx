@@ -143,7 +143,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (userDoc.exists()) {
               const dbProfile = userDoc.data() as UserProfileData;
               let updatedProfile = { ...dbProfile, uid: user.uid };
-              let creditsUpdated = false;
 
               // Check if credits need to be added for an existing user
               if (typeof dbProfile.credits === 'undefined') {
@@ -154,7 +153,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     "You've been awarded 50 credits to use for the course enrollment auto-checker.",
                     "credit"
                 );
-                creditsUpdated = true;
               }
               
               setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
@@ -167,7 +165,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
               await updateDoc(userDocRef, updateData);
 
-              setProfile({ ...updatedProfile, ...updateData });
+              const finalProfile = { ...updatedProfile, ...updateData };
+              setProfile(finalProfile);
+
+              // **ENHANCED PROFILE COMPLETION CHECK**
+              // This runs every time the auth state is confirmed on page load.
+              const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
+              if (isProfileIncomplete && pathname !== '/complete-profile') {
+                router.push('/complete-profile');
+              }
               
               if (user.displayName && !dbProfile.name) {
                 await updateDoc(userDocRef, { name: user.displayName });
@@ -176,7 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
 
           } else {
-             // This case handles a new user signup. It creates the document but doesn't set profile yet.
+             // This case handles a brand new user signup.
              const newProfileData: UserProfileData = {
                 uid: user.uid,
                 email: user.email!,
@@ -190,7 +196,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 createdAt: new Date().toISOString(),
                 lastSignInTime: user.metadata.lastSignInTime,
              });
-             setProfile(newProfileData); // Set the profile for immediate use
+             setProfile(newProfileData);
+             // A new user's profile is always incomplete, redirect them.
+             if (pathname !== '/complete-profile') {
+                router.push('/complete-profile');
+             }
           }
           const refreshedUser = { ...auth.currentUser } as User;
           setUser(refreshedUser);
@@ -207,7 +217,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [pathname, router]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
@@ -215,10 +225,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'hd': 'saveetha.com'
     });
     try {
-      // The onAuthStateChanged listener will handle the logic for new vs existing users.
-      // We just need to trigger the popup.
       await signInWithPopup(auth, provider);
-      // Redirection is now handled in the login/signup pages' useEffect hooks.
+      // The onAuthStateChanged listener will now handle all redirection logic.
     } catch (error: any) {
       const message = handleAuthError(error, toast);
       throw new Error(message);
@@ -296,8 +304,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // The main loading logic is now simplified. The skeleton shows up via layout.tsx suspense.
-  // The page loader only shows during explicit navigation events.
   return (
     <AuthContext.Provider value={value}>
       {isNavigating && <PageLoader />}
