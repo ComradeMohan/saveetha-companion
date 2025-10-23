@@ -49,7 +49,6 @@ function SubmitButton() {
 
 export function RecruitmentDialog() {
   const [showRecruitmentDialog, setShowRecruitmentDialog] = useState(false);
-  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const { user, profile, loading } = useAuth();
   const { toast } = useToast();
   const [state, formAction] = useActionState(submitRecruitmentInterest, initialState);
@@ -59,24 +58,28 @@ export function RecruitmentDialog() {
     resolver: zodResolver(recruitmentSchema),
     defaultValues: { personalEmail: '' },
   });
-
+  
   useEffect(() => {
-    if (loading || !user || profile?.recruitmentInterestSubmitted) {
-        if(profile?.recruitmentInterestSubmitted) {
-            // User has responded, so now we manage the feedback dialog
-            const feedbackLastSeen = localStorage.getItem('feedbackFormLastSeen');
-            const now = Date.now();
-            if (!feedbackLastSeen || now - parseInt(feedbackLastSeen) > ONE_HOUR) {
-                const timer = setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-                    localStorage.setItem('feedbackFormLastSeen', now.toString());
-                }, 8000); // Show feedback after 8 seconds
-                 return () => clearTimeout(timer);
-            }
-        }
+    // If auth is loading or there's no user, do nothing.
+    if (loading || !user) {
         return;
-    };
+    }
 
+    // If the user has already submitted their interest, manage the feedback dialog instead.
+    if (profile?.recruitmentInterestSubmitted === true) {
+        const feedbackLastSeen = localStorage.getItem('feedbackFormLastSeen');
+        const now = Date.now();
+        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen) > ONE_HOUR) {
+            const timer = setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+                localStorage.setItem('feedbackFormLastSeen', now.toString());
+            }, 8000); // Show feedback after 8 seconds
+             return () => clearTimeout(timer);
+        }
+        return; // Stop here if they've submitted
+    }
+    
+    // If they haven't submitted, manage the recruitment dialog.
     const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
     const now = Date.now();
 
