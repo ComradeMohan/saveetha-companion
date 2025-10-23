@@ -14,9 +14,10 @@ import {
   onAuthStateChanged,
   User,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
   signOut,
   updateProfile,
+  getRedirectResult,
 } from 'firebase/auth';
 import { auth, db, messaging } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot } from 'firebase/firestore';
@@ -227,26 +228,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, [pathname, router, toast]);
 
+    // Handle redirect result from Google sign-in
+    useEffect(() => {
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result && result.user) {
+                    const user = result.user;
+                    if (user.email && !user.email.endsWith('@saveetha.com') && user.email !== ALLOWED_TEST_EMAIL) {
+                        signOut(auth).then(() => {
+                            toast({
+                                title: 'Invalid Email Domain',
+                                description: 'Only @saveetha.com Google accounts are allowed.',
+                                variant: 'destructive',
+                            });
+                        });
+                    }
+                    // onAuthStateChanged will handle the rest
+                }
+            })
+            .catch((error) => {
+                handleAuthError(error, toast);
+            });
+    }, [toast]);
+
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      if (user.email && !user.email.endsWith('@saveetha.com') && user.email !== ALLOWED_TEST_EMAIL) {
-        await signOut(auth); // Sign out the user immediately
-        toast({
-            title: 'Invalid Email Domain',
-            description: 'Only @saveetha.com Google accounts are allowed to sign up or log in.',
-            variant: 'destructive',
-        });
-        throw new Error('Invalid email domain.');
-      }
+      // Start the redirect flow. No need to await here.
+      await signInWithRedirect(auth, provider);
     } catch (error: any) {
-      if (error.message !== 'Invalid email domain.') {
         const message = handleAuthError(error, toast);
         throw new Error(message);
-      }
     }
   };
   
