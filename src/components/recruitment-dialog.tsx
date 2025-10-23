@@ -17,6 +17,7 @@ import { Input } from './ui/input';
 import FeedbackDialog from './feedback-dialog';
 
 const RECRUITMENT_STORAGE_KEY = 'recruitmentFormLastSeen';
+const FEEDBACK_STORAGE_KEY = 'feedbackFormLastSeen';
 const ONE_HOUR = 60 * 60 * 1000;
 
 const recruitmentSchema = z.object({
@@ -58,38 +59,36 @@ export function RecruitmentDialog() {
     resolver: zodResolver(recruitmentSchema),
     defaultValues: { personalEmail: '' },
   });
-  
+
   useEffect(() => {
-    // If auth is loading or there's no user, do nothing.
     if (loading || !user) {
-        return;
+      return;
     }
 
-    // If the user has already submitted their interest, manage the feedback dialog instead.
-    if (profile?.recruitmentInterestSubmitted === true) {
-        const feedbackLastSeen = localStorage.getItem('feedbackFormLastSeen');
-        const now = Date.now();
-        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen) > ONE_HOUR) {
-            const timer = setTimeout(() => {
-                window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-                localStorage.setItem('feedbackFormLastSeen', now.toString());
-            }, 8000); // Show feedback after 8 seconds
-             return () => clearTimeout(timer);
-        }
-        return; // Stop here if they've submitted
-    }
-    
-    // If they haven't submitted, manage the recruitment dialog.
-    const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
     const now = Date.now();
+    let timer: NodeJS.Timeout;
 
-    if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen) > ONE_HOUR) {
-      const timer = setTimeout(() => {
-        setShowRecruitmentDialog(true);
-        localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
-      }, 5000);
-      return () => clearTimeout(timer);
+    if (profile?.recruitmentInterestSubmitted === true) {
+      // User has responded to recruitment, so manage the feedback dialog.
+      const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+      if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
+        timer = setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+          localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
+        }, 8000);
+      }
+    } else {
+      // User has NOT responded to recruitment, so manage the recruitment dialog.
+      const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
+      if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
+        timer = setTimeout(() => {
+          setShowRecruitmentDialog(true);
+          localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
+        }, 5000);
+      }
     }
+
+    return () => clearTimeout(timer);
   }, [user, profile, loading]);
 
   useEffect(() => {
@@ -102,7 +101,6 @@ export function RecruitmentDialog() {
       if (state.type === 'success') {
         formRef.current?.reset();
         setShowRecruitmentDialog(false);
-        // The profile will be re-fetched by useAuth and the logic will switch to showing feedback dialog
       }
     }
   }, [state, toast]);
@@ -116,13 +114,12 @@ export function RecruitmentDialog() {
     formData.append('isInterested', 'false');
     formData.append('personalEmail', '');
 
-    // Directly call the action for "Not Interested"
     formAction(formData);
     setShowRecruitmentDialog(false);
   }
 
   const getBatchYear = () => {
-    if (!profile?.regNo || profile.regNo.length < 4 || !profile.regNo.startsWith('19')) return 'N/A';
+    if (!profile?.regNo || profile.regNo.length < 4) return 'N/A';
     const yearPrefix = profile.regNo.substring(2, 4);
     const year = parseInt(yearPrefix, 10);
     if (!isNaN(year)) {
@@ -131,7 +128,6 @@ export function RecruitmentDialog() {
     return 'N/A';
   }
 
-  // Render feedback dialog separately
   if (profile?.recruitmentInterestSubmitted) {
       return <FeedbackDialog />;
   }
