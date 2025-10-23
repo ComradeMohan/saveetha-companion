@@ -25,6 +25,7 @@ import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { getToken } from 'firebase/messaging';
+import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
 const ALLOWED_TEST_EMAIL = 'k.nobitha666@gmail.com';
@@ -207,6 +208,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   "Welcome! You've received 100 credits to get started with our premium features.",
                   "credit"
                );
+               // Send welcome email
+               await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
+
                setProfile(newProfileData);
                if (pathname !== '/complete-profile') {
                   router.push('/complete-profile');
