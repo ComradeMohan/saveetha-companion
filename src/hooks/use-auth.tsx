@@ -17,9 +17,10 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  deleteUser,
 } from 'firebase/auth';
 import { auth, db, messaging } from '@/lib/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -63,6 +64,7 @@ interface AuthContextType {
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
   logout: () => Promise<void>;
+  deleteUserAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -103,6 +105,11 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
         case 'auth/too-many-requests':
             title = 'Too Many Attempts';
             description = 'Access to this account is temporarily disabled due to many failed attempts.';
+            toast({ title, description, variant: 'destructive' });
+            break;
+         case 'auth/requires-recent-login':
+            title = 'Action Required';
+            description = 'This is a sensitive action. Please sign in again before deleting your account.';
             toast({ title, description, variant: 'destructive' });
             break;
     }
@@ -290,6 +297,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const deleteUserAccount = async () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        throw new Error("No user is currently signed in.");
+    }
+    try {
+        // Step 1: Delete all Firestore data associated with the user
+        const collectionsToDelete = [
+            'students_cgpa',
+            'student_grades',
+            'user_notifications',
+        ];
+        const batch = writeBatch(db);
+
+        for (const collectionName of collectionsToDelete) {
+             batch.delete(doc(db, collectionName, currentUser.uid));
+        }
+
+        // Delete subcollections (like savedPrograms)
+        const programsRef = collection(db, 'users', currentUser.uid, 'savedPrograms');
+        const programsSnap = await getDocs(programsRef);
+        programsSnap.forEach(doc => batch.delete(doc.ref));
+        
+        // Finally, delete the main user document
+        batch.delete(doc(db, 'users', currentUser.uid));
+        
+        await batch.commit();
+
+        // Step 2: Delete the user from Firebase Authentication
+        await deleteUser(currentUser);
+        
+        toast({
+            title: 'Account Deleted',
+            description: 'Your account and all associated data have been permanently deleted.',
+        });
+        // The onAuthStateChanged listener will handle redirecting the user to the login page.
+    } catch (error: any) {
+         const message = handleAuthError(error, toast);
+         throw new Error(message);
+    }
+  };
+
   const logout = async () => {
     setIsNavigating(true);
     await signOut(auth);
@@ -307,6 +356,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     completeUserProfile,
     updateUserAcademicProfile,
     logout,
+    deleteUserAccount,
   };
 
   function PageLoader() {

@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Phone, CheckCircle2, Calculator } from 'lucide-react';
+import { User, Phone, CheckCircle2, Calculator, Trash2, Loader2 } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
@@ -13,6 +13,9 @@ import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
+
 
 interface CgpaData {
     cgpa: number;
@@ -36,14 +39,19 @@ function ProfilePageSkeleton() {
                     <Skeleton className="h-48 w-full" />
                 </div>
             </CardContent>
+             <CardFooter className="p-8 pt-0">
+                <Skeleton className="h-10 w-32" />
+            </CardFooter>
         </Card>
     )
 }
 
 export default function ProfilePage() {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, deleteUserAccount } = useAuth();
   const [cgpaData, setCgpaData] = useState<CgpaData | null>(null);
   const [loadingCgpa, setLoadingCgpa] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCgpaData = async () => {
@@ -82,6 +90,21 @@ export default function ProfilePage() {
   } satisfies ChartConfig;
 
   const isLoading = authLoading || loadingCgpa;
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+        await deleteUserAccount();
+        // The user will be redirected by the auth hook on sign out.
+    } catch (error) {
+        toast({
+            title: 'Error',
+            description: 'Failed to delete account. Please try again.',
+            variant: 'destructive',
+        });
+        setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/30">
@@ -166,6 +189,30 @@ export default function ProfilePage() {
                                 )}
                             </div>
                         </CardContent>
+                         <CardFooter className="p-6 pt-0 border-t mt-6">
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" className="mt-6">
+                                        <Trash2 className="mr-2 h-4 w-4" /> Delete My Account
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete your account, your profile, saved grades, and all other associated data.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+                                            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                            Yes, delete my account
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </CardFooter>
                     </Card>
                 ) : (
                     <div className="text-center py-10">
