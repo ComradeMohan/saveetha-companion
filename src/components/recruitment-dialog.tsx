@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useActionState, useRef, useTransition } from 'react';
@@ -62,47 +61,39 @@ export function RecruitmentDialog() {
   });
 
   useEffect(() => {
-    // Wait until auth state is fully resolved
+    // 1. Wait until authentication and profile loading is complete.
     if (loading) {
       return;
     }
-  
-    // If user has already submitted, we don't need to do anything with the recruitment dialog
-    if (profile?.recruitmentInterestSubmitted) {
-      return;
-    }
-  
-    // If we have a user and they haven't submitted, then schedule the dialog
-    if (user && !profile?.recruitmentInterestSubmitted) {
-        const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
-        const now = Date.now();
-        if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
-            const timer = setTimeout(() => {
-                setShowRecruitmentDialog(true);
-                localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }
-  }, [user, profile, loading]);
-  
-  // This separate effect handles the feedback dialog logic
-  useEffect(() => {
-    if(loading || !user) return;
-  
-    if(profile?.recruitmentInterestSubmitted) {
-      const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+
+    // 2. Decide which dialog to potentially show.
+    if (user && profile) {
       const now = Date.now();
-      if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
+
+      // Condition to show RECRUITMENT dialog
+      if (profile.recruitmentInterestSubmitted !== true) {
+        const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
+        if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
           const timer = setTimeout(() => {
-              window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-              localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
+            setShowRecruitmentDialog(true);
+            localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
+          }, 5000);
+          return () => clearTimeout(timer);
+        }
+      }
+      // Condition to show FEEDBACK dialog
+      else if (profile.recruitmentInterestSubmitted === true) {
+        const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
+          const timer = setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+            localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
           }, 8000);
           return () => clearTimeout(timer);
+        }
       }
     }
   }, [user, profile, loading]);
-
 
   useEffect(() => {
     if (state.type) {
@@ -145,6 +136,7 @@ export function RecruitmentDialog() {
     return 'N/A';
   }
 
+  // If recruitment has been submitted, this component's only job is to render the FeedbackDialog.
   if (profile?.recruitmentInterestSubmitted) {
       return <FeedbackDialog />;
   }
