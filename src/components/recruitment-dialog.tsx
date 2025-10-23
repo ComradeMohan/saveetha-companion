@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useActionState, useRef } from 'react';
+import { useState, useEffect, useActionState, useRef, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,6 +53,7 @@ export function RecruitmentDialog() {
   const { user, profile, loading } = useAuth();
   const { toast } = useToast();
   const [state, formAction] = useActionState(submitRecruitmentInterest, initialState);
+  const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
   
   const form = useForm<RecruitmentFormValues>({
@@ -62,38 +63,44 @@ export function RecruitmentDialog() {
 
   useEffect(() => {
     // Wait until auth state is fully resolved
-    if (loading || !user) {
+    if (loading) {
       return;
     }
   
-    // This is the key fix: The logic now runs inside a single, clear effect
-    // that depends on the `profile` object being loaded.
-    let timer: NodeJS.Timeout;
-    const now = Date.now();
-
-    if (profile) { // Ensure profile is loaded
-      if (profile.recruitmentInterestSubmitted) {
-        // User HAS responded to recruitment, so manage the feedback dialog.
-        const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
-          timer = setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-            localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
-          }, 8000);
-        }
-      } else {
-        // User has NOT responded to recruitment, so manage the recruitment dialog.
-        const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
-        if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
-          timer = setTimeout(() => {
-            setShowRecruitmentDialog(true);
-            localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
-          }, 5000);
-        }
-      }
+    // If user has already submitted, we don't need to do anything with the recruitment dialog
+    if (profile?.recruitmentInterestSubmitted) {
+      return;
     }
   
-    return () => clearTimeout(timer);
+    // If we have a user and they haven't submitted, then schedule the dialog
+    if (user && !profile?.recruitmentInterestSubmitted) {
+        const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
+        const now = Date.now();
+        if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
+            const timer = setTimeout(() => {
+                setShowRecruitmentDialog(true);
+                localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }
+  }, [user, profile, loading]);
+  
+  // This separate effect handles the feedback dialog logic
+  useEffect(() => {
+    if(loading || !user) return;
+  
+    if(profile?.recruitmentInterestSubmitted) {
+      const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+      const now = Date.now();
+      if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
+          const timer = setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+              localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
+          }, 8000);
+          return () => clearTimeout(timer);
+      }
+    }
   }, [user, profile, loading]);
 
 
@@ -111,7 +118,7 @@ export function RecruitmentDialog() {
     }
   }, [state, toast]);
   
-  const handleNotInterested = async () => {
+  const handleNotInterested = () => {
     const formData = new FormData();
     formData.append('name', user?.displayName || 'Anonymous');
     formData.append('userEmail', user?.email || '');
@@ -119,8 +126,11 @@ export function RecruitmentDialog() {
     formData.append('batch', getBatchYear());
     formData.append('isInterested', 'false');
     formData.append('personalEmail', '');
+    
+    startTransition(() => {
+        formAction(formData);
+    });
 
-    formAction(formData);
     setShowRecruitmentDialog(false);
   }
 
