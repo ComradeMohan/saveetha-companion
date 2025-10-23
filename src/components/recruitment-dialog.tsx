@@ -48,8 +48,8 @@ function SubmitButton() {
 }
 
 export function RecruitmentDialog() {
-  const [showDialog, setShowDialog] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [showRecruitmentDialog, setShowRecruitmentDialog] = useState(false);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const { user, profile, loading } = useAuth();
   const { toast } = useToast();
   const [state, formAction] = useActionState(submitRecruitmentInterest, initialState);
@@ -61,19 +61,33 @@ export function RecruitmentDialog() {
   });
 
   useEffect(() => {
-    if (loading || !user) return;
+    if (loading || !user || profile?.recruitmentInterestSubmitted) {
+        if(profile?.recruitmentInterestSubmitted) {
+            // User has responded, so now we manage the feedback dialog
+            const feedbackLastSeen = localStorage.getItem('feedbackFormLastSeen');
+            const now = Date.now();
+            if (!feedbackLastSeen || now - parseInt(feedbackLastSeen) > ONE_HOUR) {
+                const timer = setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+                    localStorage.setItem('feedbackFormLastSeen', now.toString());
+                }, 8000); // Show feedback after 8 seconds
+                 return () => clearTimeout(timer);
+            }
+        }
+        return;
+    };
 
-    const lastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
+    const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
     const now = Date.now();
 
-    if (!lastSeen || now - parseInt(lastSeen) > ONE_HOUR) {
+    if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen) > ONE_HOUR) {
       const timer = setTimeout(() => {
-        setShowDialog(true);
+        setShowRecruitmentDialog(true);
         localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
-      }, 5000); // Show after 5 seconds
+      }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [user, loading]);
+  }, [user, profile, loading]);
 
   useEffect(() => {
     if (state.type) {
@@ -84,19 +98,26 @@ export function RecruitmentDialog() {
       });
       if (state.type === 'success') {
         formRef.current?.reset();
-        setShowDialog(false);
+        setShowRecruitmentDialog(false);
+        // The profile will be re-fetched by useAuth and the logic will switch to showing feedback dialog
       }
     }
   }, [state, toast]);
-
-  const handleNotInterested = () => {
-    setShowDialog(false);
-    // Show the regular feedback form after a short delay
-    setTimeout(() => {
-        setShowFeedback(true);
-    }, 500); 
-  };
   
+  const handleNotInterested = async () => {
+    const formData = new FormData();
+    formData.append('name', user?.displayName || 'Anonymous');
+    formData.append('userEmail', user?.email || '');
+    formData.append('regNo', profile?.regNo || '');
+    formData.append('batch', getBatchYear());
+    formData.append('isInterested', 'false');
+    formData.append('personalEmail', '');
+
+    // Directly call the action for "Not Interested"
+    formAction(formData);
+    setShowRecruitmentDialog(false);
+  }
+
   const getBatchYear = () => {
     if (!profile?.regNo || profile.regNo.length < 4 || !profile.regNo.startsWith('19')) return 'N/A';
     const yearPrefix = profile.regNo.substring(2, 4);
@@ -107,14 +128,15 @@ export function RecruitmentDialog() {
     return 'N/A';
   }
 
-  if (!user || !profile?.regNo) return null;
-  
-  if (showFeedback) {
+  // Render feedback dialog separately
+  if (profile?.recruitmentInterestSubmitted) {
       return <FeedbackDialog />;
   }
+  
+  if (!user || !profile?.regNo) return null;
 
   return (
-    <Dialog open={showDialog} onOpenChange={setShowDialog}>
+    <Dialog open={showRecruitmentDialog} onOpenChange={setShowRecruitmentDialog}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -130,6 +152,7 @@ export function RecruitmentDialog() {
             <input type="hidden" name="userEmail" value={user.email || ''} />
             <input type="hidden" name="regNo" value={profile.regNo || ''} />
             <input type="hidden" name="batch" value={getBatchYear()} />
+            <input type="hidden" name="isInterested" value="true" />
 
             <FormField
               control={form.control}

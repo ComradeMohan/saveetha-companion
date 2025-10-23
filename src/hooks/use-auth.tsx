@@ -19,7 +19,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth, db, messaging } from '@/lib/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -40,6 +40,7 @@ export interface UserProfileData {
   department?: string;
   college?: 'SSE' | 'SEC';
   credits?: number;
+  recruitmentInterestSubmitted?: boolean;
 }
 
 interface CompleteUserProfile {
@@ -140,84 +141,87 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) {
         const userDocRef = doc(db, 'users', user.uid);
         
-        try {
-          const userDoc = await getDoc(userDocRef);
-          
-          if (userDoc.exists()) {
-              const dbProfile = userDoc.data() as UserProfileData;
-              let updatedProfile = { ...dbProfile, uid: user.uid };
+        // Use onSnapshot for real-time profile updates
+        const unsubProfile = onSnapshot(userDocRef, async (userDoc) => {
+            if (userDoc.exists()) {
+                const dbProfile = userDoc.data() as UserProfileData;
+                let updatedProfile = { ...dbProfile, uid: user.uid };
 
-              if (typeof dbProfile.credits === 'undefined') {
-                updatedProfile.credits = 50; 
-                await updateDoc(userDocRef, { credits: 50 });
-                await createNotification(
-                    user.uid,
-                    "You've been awarded 50 credits to use for the course enrollment auto-checker!",
-                    "credit"
-                );
-              }
-              
-              setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
-              
-              const updateData: any = {
+                if (typeof dbProfile.credits === 'undefined') {
+                    updatedProfile.credits = 50; 
+                    await updateDoc(userDocRef, { credits: 50 });
+                    await createNotification(
+                        user.uid,
+                        "You've been awarded 50 credits to use for the course enrollment auto-checker!",
+                        "credit"
+                    );
+                }
+                
+                setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
+                
+                const updateData: any = {
+                    lastSignInTime: user.metadata.lastSignInTime,
+                };
+                if (user.photoURL && user.photoURL !== dbProfile.photoURL) {
+                    updateData.photoURL = user.photoURL;
+                }
+                await updateDoc(userDocRef, updateData);
+
+                const finalProfile = { ...updatedProfile, ...updateData };
+                setProfile(finalProfile);
+
+                const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
+                if (isProfileIncomplete && pathname !== '/complete-profile') {
+                    router.push('/complete-profile');
+                }
+                
+                if (user.displayName && !dbProfile.name) {
+                    await updateDoc(userDocRef, { name: user.displayName });
+                } else if (!user.displayName && dbProfile.name) {
+                    await updateProfile(user, { displayName: dbProfile.name });
+                }
+                
+            } else {
+               const newProfileData: UserProfileData = {
+                  uid: user.uid,
+                  email: user.email!,
+                  name: user.displayName!,
+                  isVerified: true,
+                  photoURL: user.photoURL || undefined,
+                  credits: 100, 
+               };
+               await setDoc(userDocRef, {
+                  ...newProfileData,
+                  createdAt: new Date().toISOString(),
                   lastSignInTime: user.metadata.lastSignInTime,
-              };
-              if (user.photoURL) {
-                  updateData.photoURL = user.photoURL;
-              }
-              await updateDoc(userDocRef, updateData);
+               });
+               await createNotification(
+                  user.uid,
+                  "Welcome! You've received 100 credits to get started with our premium features.",
+                  "credit"
+               );
+               setProfile(newProfileData);
+               if (pathname !== '/complete-profile') {
+                  router.push('/complete-profile');
+               }
+            }
+            const refreshedUser = { ...auth.currentUser } as User;
+            setUser(refreshedUser);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error with profile snapshot:", error);
+            setUser(user);
+            setLoading(false);
+        });
 
-              const finalProfile = { ...updatedProfile, ...updateData };
-              setProfile(finalProfile);
+        return unsubProfile;
 
-              const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
-              if (isProfileIncomplete && pathname !== '/complete-profile') {
-                router.push('/complete-profile');
-              }
-              
-              if (user.displayName && !dbProfile.name) {
-                await updateDoc(userDocRef, { name: user.displayName });
-              } else if (!user.displayName && dbProfile.name) {
-                await updateProfile(user, { displayName: dbProfile.name });
-              }
-              
-          } else {
-             const newProfileData: UserProfileData = {
-                uid: user.uid,
-                email: user.email!,
-                name: user.displayName!,
-                isVerified: true,
-                photoURL: user.photoURL || undefined,
-                credits: 100, 
-             };
-             await setDoc(userDocRef, {
-                ...newProfileData,
-                createdAt: new Date().toISOString(),
-                lastSignInTime: user.metadata.lastSignInTime,
-             });
-             await createNotification(
-                user.uid,
-                "Welcome! You've received 100 credits to get started with our premium features.",
-                "credit"
-             );
-             setProfile(newProfileData);
-             if (pathname !== '/complete-profile') {
-                router.push('/complete-profile');
-             }
-          }
-          const refreshedUser = { ...auth.currentUser } as User;
-          setUser(refreshedUser);
-
-        } catch(error){
-          console.error("Error updating user document:", error);
-          setUser(user);
-        }
       } else {
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -258,7 +262,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: profileData.phone,
       }, { merge: true });
       
-      setProfile(prev => prev ? { ...prev, ...profileData } : null);
+      // No need to setProfile here, onSnapshot will handle it.
       
       toast({
         title: 'Profile Complete!',
@@ -279,7 +283,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             department: data.department,
             college: data.college
         });
-        setProfile(prev => prev ? { ...prev, ...data } : null);
+        // No need to setProfile here, onSnapshot will handle it.
         toast({ title: 'Success!', description: 'Your profile has been updated.' });
     } catch (error) {
         console.error("Error updating academic profile:", error);
