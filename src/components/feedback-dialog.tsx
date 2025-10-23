@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import { Input } from './ui/input';
 
-const STORAGE_KEY = 'feedbackFormLastSeen';
+const FEEDBACK_STORAGE_KEY = 'feedbackFormLastSeen';
 const ONE_HOUR = 60 * 60 * 1000;
 
 const feedbackSchema = z.object({
@@ -64,26 +64,9 @@ export default function FeedbackDialog() {
       feedback: '',
     },
   });
-
+  
   useEffect(() => {
-    if (loading || !user) {
-      return;
-    }
-
-    const lastSeen = localStorage.getItem(STORAGE_KEY);
-    const now = Date.now();
-
-    if (!lastSeen || now - parseInt(lastSeen) > ONE_HOUR) {
-      const timer = setTimeout(() => {
-        setShowDialog(true);
-        localStorage.setItem(STORAGE_KEY, now.toString());
-      }, 3000); // Show after 3 seconds of page load
-
-      return () => clearTimeout(timer);
-    }
-  }, [user, loading]);
-
-  useEffect(() => {
+    // This effect is now just for handling the form submission result
     if (state.type) {
       toast({
         title: state.type === 'success' ? 'Success!' : 'Error',
@@ -96,6 +79,14 @@ export default function FeedbackDialog() {
       }
     }
   }, [state, toast]);
+
+  // Expose a method to show the dialog
+  useEffect(() => {
+    const handleShowFeedback = () => setShowDialog(true);
+    window.addEventListener('showFeedbackDialog', handleShowFeedback);
+    return () => window.removeEventListener('showFeedbackDialog', handleShowFeedback);
+  }, []);
+
 
   if (!user) {
     return null;
