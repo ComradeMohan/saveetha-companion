@@ -1,99 +1,75 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if the user is an admin.
-    function isAdmin() {
-      return request.auth != null &&
-             request.auth.token.email_verified == true &&
-             request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
-    }
-
-    // Allow public read/write for the Link Drop feature
-    match /link-drop-sessions/{sessionId} {
-      allow read, write: if true;
-    }
-
-    match /concept-map-analytics/{mapId} {
-      allow read: if true;
-      allow write: if false; // All writes must go through the trusted server action
-    }
-    
-    // Allow authenticated users to manage their own data first.
+  
+    // Allow users to read their own profile and for admins to read all profiles
     match /users/{userId} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
-    }
-     match /users/{userId}/fcmTokens/{tokenId} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
-    }
-    match /students_cgpa/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    match /student_grades/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    match /user_notifications/{userId}/{document=**} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
     }
     
-    // Allow anyone to read public data collections.
-    match /faculty/{docId} {
-      allow read: if true;
-    }
-    match /concept-maps/{docId} {
-      allow read: if true;
-    }
-    match /updates/{docId} {
-      allow read: if true;
-    }
-    match /events/{docId} {
-      allow read: if true;
-    }
-    match /projects/{projectId} {
-      allow read: if true;
-    }
-    match /certifications/{docId} {
-      allow read: if true;
-    }
-    match /colleges/{collegeId} {
-        allow read: if true;
-    }
-    match /colleges/{collegeId}/departments/{departmentId} {
-        allow read: if true;
-    }
-     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} {
-        allow read: if true;
+    match /user_notifications/{userId}/{document=**} {
+      allow read, write, delete: if request.auth.uid == userId;
     }
 
-    // Allow anyone to submit forms (contact, issues, suggestions).
-    match /contact-messages/{messageId} {
-      allow create: if true;
+    match /students_cgpa/{userId} {
+      allow read, write: if request.auth.uid == userId;
     }
-    match /login-issues/{issueId} {
-      allow create: if true;
+
+    match /student_grades/{userId} {
+        allow read, write: if request.auth.uid == userId;
     }
-    match /enrollments/{enrollmentId} {
+    
+    match /faculty/{docId} {
+      allow read: if request.auth != null;
+    }
+    
+    match /faculty-requests/{docId} {
       allow create: if request.auth != null;
     }
-    match /faculty-requests/{requestId} {
-      allow create: if request.auth != null;
+    
+    match /concept-maps/{docId} {
+      allow read: if request.auth != null;
     }
-    match /course-suggestions/{suggestionId} {
+
+    match /pdf-knowledge-cache/{docId} {
+        allow read: if request.auth != null;
+        // Allow writes only from server-side admin code for caching
+        allow write: if false; 
+    }
+    
+    match /contact-messages/{docId} {
         allow create: if request.auth != null;
     }
 
-    // This rule is for clarity. The server-side code uses Admin access,
-    // which bypasses these rules, but it's good practice to define access.
-    // This rule effectively blocks any direct client-side access.
-    match /counter/{docId} {
-        allow read, write: if false;
+    match /login-issues/{docId} {
+        allow create: if true; // Allow anyone to report a login issue
+    }
+    
+    match /events/{docId} {
+        allow read: if request.auth != null;
+    }
+    
+    match /certifications/{docId} {
+        allow read: if request.auth != null;
     }
 
-    // As a final catch-all, give admin full access to everything else.
-    match /{document=**} {
-      allow read, write: if isAdmin();
+    match /updates/{docId} {
+        allow read: if request.auth != null;
+    }
+    
+    match /course-suggestions/{docId} {
+        allow create: if request.auth != null;
+    }
+
+    match /projects/{docId} {
+        allow read: if request.auth != null;
+    }
+
+    match /recruitment-submissions/{docId} {
+      allow create: if request.auth != null;
     }
   }
 }
