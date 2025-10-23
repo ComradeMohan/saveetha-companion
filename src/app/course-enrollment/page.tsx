@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, AlertTriangle, Play, StopCircle, Bell, RefreshCw, Star, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
@@ -276,7 +275,6 @@ export default function CourseEnrollmentPage() {
 
   return (
      <div className="flex min-h-screen flex-col">
-      <Header />
       <main className="flex-1 pt-20 pb-12 md:py-16">
         <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
