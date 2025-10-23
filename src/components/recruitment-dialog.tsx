@@ -61,35 +61,41 @@ export function RecruitmentDialog() {
   });
 
   useEffect(() => {
+    // Wait until auth state is fully resolved
     if (loading || !user) {
       return;
     }
-
-    const now = Date.now();
+  
+    // This is the key fix: The logic now runs inside a single, clear effect
+    // that depends on the `profile` object being loaded.
     let timer: NodeJS.Timeout;
+    const now = Date.now();
 
-    if (profile?.recruitmentInterestSubmitted === true) {
-      // User has responded to recruitment, so manage the feedback dialog.
-      const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-      if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
-        timer = setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-          localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
-        }, 8000);
-      }
-    } else {
-      // User has NOT responded to recruitment, so manage the recruitment dialog.
-      const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
-      if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
-        timer = setTimeout(() => {
-          setShowRecruitmentDialog(true);
-          localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
-        }, 5000);
+    if (profile) { // Ensure profile is loaded
+      if (profile.recruitmentInterestSubmitted) {
+        // User HAS responded to recruitment, so manage the feedback dialog.
+        const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
+          timer = setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
+            localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
+          }, 8000);
+        }
+      } else {
+        // User has NOT responded to recruitment, so manage the recruitment dialog.
+        const recruitmentLastSeen = localStorage.getItem(RECRUITMENT_STORAGE_KEY);
+        if (!recruitmentLastSeen || now - parseInt(recruitmentLastSeen, 10) > ONE_HOUR) {
+          timer = setTimeout(() => {
+            setShowRecruitmentDialog(true);
+            localStorage.setItem(RECRUITMENT_STORAGE_KEY, now.toString());
+          }, 5000);
+        }
       }
     }
-
+  
     return () => clearTimeout(timer);
   }, [user, profile, loading]);
+
 
   useEffect(() => {
     if (state.type) {
@@ -120,6 +126,7 @@ export function RecruitmentDialog() {
 
   const getBatchYear = () => {
     if (!profile?.regNo || profile.regNo.length < 4) return 'N/A';
+    // Correctly parse the year from the registration number (e.g., 2119XXXX -> 2019)
     const yearPrefix = profile.regNo.substring(2, 4);
     const year = parseInt(yearPrefix, 10);
     if (!isNaN(year)) {
