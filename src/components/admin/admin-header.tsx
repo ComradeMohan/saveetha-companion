@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -33,6 +32,7 @@ import {
   Gift,
   GitBranch,
   Code,
+  Hand,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -44,6 +44,7 @@ const adminNavLinks = [
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
   { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
+  { href: '/admin/recruitment', label: 'Recruitment', icon: Hand },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
