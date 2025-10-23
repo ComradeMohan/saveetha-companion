@@ -98,8 +98,8 @@ export function RecruitmentDialog() {
   };
   
   const getBatchYear = () => {
-    if (!profile?.regNo) return 'N/A';
-    const yearPrefix = profile.regNo.substring(0, 2);
+    if (!profile?.regNo || profile.regNo.length < 4 || !profile.regNo.startsWith('19')) return 'N/A';
+    const yearPrefix = profile.regNo.substring(2, 4);
     const year = parseInt(yearPrefix, 10);
     if (!isNaN(year)) {
         return `20${year}`;
