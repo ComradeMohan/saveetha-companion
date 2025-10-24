@@ -102,9 +102,6 @@ export default function Dashboard() {
                                                 </div>
                                             </div>
                                         ))}
-                                         <Button asChild variant="outline" className="w-full mt-4">
-                                            <Link href="/updates">View All Updates <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                                        </Button>
                                     </div>
                                 ) : (
                                     <p className="text-center text-muted-foreground py-10">No recent announcements.</p>
