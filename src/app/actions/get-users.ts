@@ -7,6 +7,7 @@ export interface BasicUser {
   id: string;
   name: string;
   email: string;
+  regNo?: string;
 }
 
 export async function getAllUsers(): Promise<BasicUser[]> {
@@ -21,6 +22,7 @@ export async function getAllUsers(): Promise<BasicUser[]> {
         id: doc.id,
         name: data.name || 'Unnamed User',
         email: data.email,
+        regNo: data.regNo,
       };
     });
   } catch (error) {

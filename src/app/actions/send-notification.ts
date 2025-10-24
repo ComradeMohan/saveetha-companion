@@ -10,6 +10,7 @@ import { getAllUsers } from './get-users';
 const notificationSchema = z.object({
     userIds: z.string().optional(),
     sendToAll: z.string().optional(),
+    batchYear: z.string().optional(),
     title: z.string().min(1, { message: 'Title is required.' }),
     message: z.string().min(1, { message: 'Message is required.' }),
     link: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -19,6 +20,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
     const validatedFields = notificationSchema.safeParse({
         userIds: formData.get('userIds'),
         sendToAll: formData.get('sendToAll'),
+        batchYear: formData.get('batchYear'),
         title: formData.get('title'),
         message: formData.get('message'),
         link: formData.get('link'),
@@ -32,11 +34,11 @@ export async function sendNotification(prevState: any, formData: FormData) {
         };
     }
     
-    const { userIds, sendToAll, title, message, link } = validatedFields.data;
+    const { userIds, sendToAll, batchYear, title, message, link } = validatedFields.data;
     const isSendingToAll = sendToAll === 'on';
 
-    if (!isSendingToAll && (!userIds || userIds.trim() === '')) {
-        return { type: 'error', message: 'Please select at least one recipient or choose "Send to All".' };
+    if (!isSendingToAll && !batchYear && (!userIds || userIds.trim() === '')) {
+        return { type: 'error', message: 'Please select at least one recipient, a batch, or choose "Send to All".' };
     }
 
     try {
@@ -45,12 +47,18 @@ export async function sendNotification(prevState: any, formData: FormData) {
         if (isSendingToAll) {
             const allUsers = await getAllUsers();
             targetUserIds = allUsers.map(u => u.id);
+        } else if (batchYear) {
+            const allUsers = await getAllUsers();
+            const yearCode = batchYear.slice(-2); // e.g., '22' for '2022'
+            targetUserIds = allUsers
+                .filter(u => u.regNo && u.regNo.substring(2, 4) === yearCode)
+                .map(u => u.id);
         } else {
             targetUserIds = userIds!.split(',').filter(id => id.trim() !== '');
         }
 
         if (targetUserIds.length === 0) {
-             return { type: 'error', message: 'No recipients found.' };
+             return { type: 'error', message: 'No recipients found for the selected criteria.' };
         }
 
         const timestamp = FieldValue.serverTimestamp();
