@@ -76,9 +76,11 @@ export default function Dashboard() {
                         </Card>
                         
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Recent Announcements</CardTitle>
-                                <CardDescription>Latest news and updates</CardDescription>
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle>Recent Announcements</CardTitle>
+                                    <CardDescription>Latest news and updates</CardDescription>
+                                </div>
                             </CardHeader>
                             <CardContent>
                                 {loading ? (
@@ -94,11 +96,13 @@ export default function Dashboard() {
                                                 <div className="p-2 bg-secondary rounded-lg mt-1">
                                                     <Bell className="h-4 w-4 text-secondary-foreground" />
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold text-sm">{update.title}</p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true })}
-                                                    </p>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-baseline">
+                                                        <p className="font-semibold text-sm">{update.title}</p>
+                                                        <p className="text-xs text-muted-foreground flex-shrink-0 ml-4">
+                                                            {formatDistanceToNow(update.createdAt.toDate(), { addSuffix: true })}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
