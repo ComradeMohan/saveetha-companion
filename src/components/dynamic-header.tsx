@@ -28,6 +28,8 @@ export default function DynamicHeader() {
         ? "New Feature: The Course Enrollment auto-checker is now live! Get notified instantly."
         : "Course Enrollment auto-checker is now live! Login to get notified instantly.";
 
+    const showBanner = isHomePage && !scrolled;
+
     return (
         <div className="fixed top-0 left-0 right-0 z-50">
             {isHomePage && (
@@ -42,10 +44,16 @@ export default function DynamicHeader() {
                 </div>
             )}
             <div className={cn(
-                "px-4 transition-all duration-300",
-                !scrolled && isHomePage ? 'pt-4' : 'pt-0'
+                "px-4 transition-transform duration-300",
+                showBanner ? 'translate-y-0' : '-translate-y-full top-14'
             )}>
                  <Header />
+            </div>
+             <div className={cn(
+                "px-4 transition-transform duration-300",
+                showBanner ? 'translate-y-14' : 'translate-y-0'
+            )}>
+                {!showBanner && <Header />}
             </div>
         </div>
     );
