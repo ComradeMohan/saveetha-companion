@@ -25,8 +25,8 @@ export default function DynamicHeader() {
     if (loading) return null;
 
     const bannerMessage = user
-        ? "New Feature: The Course Enrollment auto-checker is now live! Get notified instantly."
-        : "Course Enrollment auto-checker is now live! Login to get notified instantly.";
+        ? "Backend is Down for few days"
+        : "Backend has been down for few days.";
 
     const showBanner = isHomePage && !scrolled;
 
