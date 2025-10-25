@@ -1,62 +1,40 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
+# dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# Testing
+# testing
 /coverage
 
-# Next.js
+# next.js
 /.next/
 /out/
 
-# Production
+# production
 /build
 
-# Miscellaneous
+# misc
 .DS_Store
 *.pem
 
-# Logs
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Local Editor Settings
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment variables
+# local env files
+.env*.local
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Firebase
-*.firebase
-*.firebaserc
-firebase-debug.log
-# Don't commit the service account key if it's in a file
-firebase-service-account.json
+# vercel
+.vercel
 
-# Supabase
-# Ignore local Supabase generated files
-/supabase/.branches
-/supabase/.temp
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
-# Git pack files (includes .idx)
-*.idx
-*.pack
+# workspace files
+/workspace/
+/src/app/dev-login/

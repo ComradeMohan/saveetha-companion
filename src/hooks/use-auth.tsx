@@ -18,6 +18,7 @@ import {
   signOut,
   updateProfile,
   deleteUser,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { auth, db, messaging } from '@/lib/firebase';
 import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc } from 'firebase/firestore';
@@ -62,6 +63,7 @@ interface AuthContextType {
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
   signInWithGoogle: (isSignUp?: boolean) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   completeUserProfile: (profile: CompleteUserProfile) => Promise<void>;
   updateUserAcademicProfile: (data: AcademicProfile) => Promise<void>;
   logout: () => Promise<void>;
@@ -258,6 +260,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(message);
     }
   };
+
+  const signInWithEmail = async (email: string, password: string) => {
+    if (email !== ADMIN_EMAIL && email !== ALLOWED_TEST_EMAIL) {
+      throw new Error("This login method is for authorized developers only.");
+    }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged will handle the rest.
+    } catch (error: any) {
+      const message = handleAuthError(error, toast);
+      throw new Error(message);
+    }
+  };
   
   const completeUserProfile = async (profileData: CompleteUserProfile) => {
       if (!auth.currentUser) throw new Error("No user is signed in.");
@@ -357,6 +372,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isNavigating,
     setIsNavigating,
     signInWithGoogle,
+    signInWithEmail,
     completeUserProfile,
     updateUserAcademicProfile,
     logout,
