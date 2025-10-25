@@ -3,16 +3,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowDown } from 'lucide-react';
 
-const PlayStoreIcon = () => (
-  <img 
-      src="https://img.icons8.com/?size=200&id=118633&format=png" 
-      alt="Play Store" 
-      className="h-10 w-10 mr-2"
-  />
-);
-
-
-
 export default function Hero() {
   return (
     <section id="home" className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center py-20 md:py-32 animate-fade-in md:mt-0 mt-16">
@@ -27,9 +17,6 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
                  <Button asChild size="lg">
                     <Link href="/signup">Get Started</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                    <Link href="#calculators">Try the Calculators</Link>
                 </Button>
             </div>
         </div>
