@@ -95,7 +95,7 @@ export default function useDashboardData() {
         } finally {
             setLoading(false);
         }
-    }, [user, toast]);
+    }, [user]);
 
     useEffect(() => {
         fetchDashboardData();
