@@ -31,22 +31,6 @@ export default function Hero() {
                 <Button asChild size="lg" variant="outline">
                     <Link href="#calculators">Try the Calculators</Link>
                 </Button>
-                <Button
-                      asChild
-                      size="lg"
-                      className="bg-[#34A853] hover:bg-[#2C8C45] text-white border-none rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
-                    >
-                      <Link
-                        href="https://univault.live"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2"
-                      >
-                        <PlayStoreIcon />
-                        Get it on Play Store
-                      </Link>
-                    </Button>
-
             </div>
         </div>
       </div>

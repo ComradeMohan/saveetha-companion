@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
-import Dashboard from '@/components/dashboard';
 import AttendanceCalculator from '@/components/attendance-calculator';
 
 const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
@@ -28,7 +27,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 flex flex-col pt-16">
-        {user ? <Dashboard /> : <Hero />}
+        <Hero />
 
         <section id="calculators" className="pt-20 pb-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="container mx-auto px-4">
