@@ -31,6 +31,7 @@ import {
   BriefcaseBusiness,
   Link as LinkIcon,
   Code,
+  Users2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -88,7 +89,7 @@ const NavLink = React.memo(function NavLink({
 });
 
 function UserNav() {
-  const { user, logout, isAdmin, setIsNavigating } = useAuth();
+  const { user, logout, isAdmin, isBatchAdmin, setIsNavigating } = useAuth();
   const router = useRouter();
 
   if (!user) {
@@ -112,6 +113,11 @@ function UserNav() {
   const handleAdminClick = () => {
     setIsNavigating(true);
     router.push('/admin/dashboard');
+  }
+  
+  const handleBatchAdminClick = () => {
+    setIsNavigating(true);
+    router.push('/batch-admin');
   }
 
   const userInitials = user.displayName ? user.displayName.slice(0, 2).toUpperCase() : <User className="h-4 w-4" />;
@@ -146,7 +152,13 @@ function UserNav() {
         {isAdmin && (
            <DropdownMenuItem onClick={handleAdminClick}>
             <Shield className="mr-2 h-4 w-4" />
-            <span>Admin</span>
+            <span>Admin Panel</span>
+          </DropdownMenuItem>
+        )}
+        {isBatchAdmin && (
+           <DropdownMenuItem onClick={handleBatchAdminClick}>
+            <Users2 className="mr-2 h-4 w-4" />
+            <span>Batch Admin</span>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
@@ -220,7 +232,7 @@ export default function Header() {
     setMobileMenuOpen(false);
   }
 
-  if (pathname.startsWith('/learn') || pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin')) {
     return null; // Don't render this header in the admin or learning zones
   }
 

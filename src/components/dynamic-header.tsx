@@ -50,7 +50,7 @@ export default function DynamicHeader() {
                 "px-4 transition-transform duration-300",
                 // If the banner is showing, this header is positioned below it.
                 // When scrolled, it moves up to the top.
-                showBanner && isHomePage ? 'translate-y-0' : '-translate-y-full top-10'
+                showBanner && isHomePage ? 'translate-y-0' : 'top-10'
             )}>
                  <Header />
             </div>

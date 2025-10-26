@@ -29,7 +29,7 @@ import { getToken } from 'firebase/messaging';
 import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
-const ALLOWED_TEST_EMAIL = 'k.nobitha666@gmail.com';
+const BATCH_ADMIN_EMAILS = ['k.nobitha666@gmail.com'];
 
 
 export interface UserProfileData {
@@ -60,6 +60,7 @@ interface AuthContextType {
   profile: UserProfileData | null;
   loading: boolean;
   isAdmin: boolean;
+  isBatchAdmin: boolean;
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
   signInWithGoogle: (isSignUp?: boolean) => Promise<void>;
@@ -126,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBatchAdmin, setIsBatchAdmin] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -168,6 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
                 
                 setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
+                setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(dbProfile.email) && dbProfile.isVerified);
                 
                 const updateData: any = {
                     lastSignInTime: user.metadata.lastSignInTime,
@@ -181,7 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setProfile(finalProfile);
 
                 const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
-                if (isProfileIncomplete && pathname !== '/complete-profile') {
+                if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
                     router.push('/complete-profile');
                 }
                 
@@ -214,7 +217,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
 
                setProfile(newProfileData);
-               if (pathname !== '/complete-profile') {
+               if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
                   router.push('/complete-profile');
                }
             }
@@ -233,6 +236,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
+        setIsBatchAdmin(false);
         setLoading(false);
       }
     });
@@ -245,7 +249,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      if (user.email && !user.email.endsWith('@saveetha.com') && user.email !== ALLOWED_TEST_EMAIL) {
+      if (user.email && !user.email.endsWith('@saveetha.com') && !BATCH_ADMIN_EMAILS.includes(user.email)) {
          await signOut(auth); // Sign out the user immediately
          toast({
               title: 'Invalid Email Domain',
@@ -262,7 +266,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    if (email !== ADMIN_EMAIL && email !== ALLOWED_TEST_EMAIL) {
+    if (email !== ADMIN_EMAIL && !BATCH_ADMIN_EMAILS.includes(email)) {
       throw new Error("This login method is for authorized developers only.");
     }
     try {
@@ -369,6 +373,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     profile,
     loading,
     isAdmin,
+    isBatchAdmin,
     isNavigating,
     setIsNavigating,
     signInWithGoogle,
