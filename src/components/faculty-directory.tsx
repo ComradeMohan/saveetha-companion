@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import FacultyCard from './faculty-card';
 import { Search, Users, Loader2 } from 'lucide-react';

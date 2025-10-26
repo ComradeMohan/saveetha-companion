@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -87,11 +86,7 @@ export default function useDashboardData() {
 
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
-            toast({
-                title: 'Error',
-                description: 'Could not load your dashboard. Please try again later.',
-                variant: 'destructive',
-            });
+            // We remove the toast from here to prevent loops. The error is logged.
         } finally {
             setLoading(false);
         }

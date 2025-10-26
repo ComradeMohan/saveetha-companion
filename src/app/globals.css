@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -135,7 +134,7 @@
     background: radial-gradient(
       circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
       var(--spotlight-color) 0%,
-      transparent: 25%
+      transparent 25%
     );
     pointer-events: none;
     z-index: -1;
@@ -327,4 +326,20 @@
 
 .animate-ticker {
   animation: ticker-scroll 10s linear infinite;
+}
+
+@layer base {
+  .animate-slide-in-from-bottom {
+    animation: slide-in-from-bottom 0.4s ease-out forwards;
+  }
+  @keyframes slide-in-from-bottom {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
