@@ -28,6 +28,7 @@ export default function DynamicHeader() {
         ? "Backend is Down for few days"
         : "Backend has been down for few days.";
 
+    // Determine if the banner should be shown.
     const showBanner = isHomePage && !scrolled;
 
     return (
@@ -35,6 +36,7 @@ export default function DynamicHeader() {
             {isHomePage && (
                  <div className={cn(
                     "transition-transform duration-300",
+                    // Hide the banner by translating it up when scrolled
                     scrolled ? "-translate-y-full" : "translate-y-0"
                 )}>
                     <FeatureAnnouncementBanner 
@@ -43,17 +45,14 @@ export default function DynamicHeader() {
                     />
                 </div>
             )}
+            {/* The main header is now wrapped in its own transforming div */}
             <div className={cn(
                 "px-4 transition-transform duration-300",
-                showBanner ? 'translate-y-0' : '-translate-y-full top-14'
+                // If the banner is showing, this header is positioned below it.
+                // When scrolled, it moves up to the top.
+                showBanner && isHomePage ? 'translate-y-0' : '-translate-y-full top-10'
             )}>
                  <Header />
-            </div>
-             <div className={cn(
-                "px-4 transition-transform duration-300",
-                showBanner ? 'translate-y-14' : 'translate-y-0'
-            )}>
-                {!showBanner && <Header />}
             </div>
         </div>
     );
