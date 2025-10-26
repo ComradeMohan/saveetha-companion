@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ export default function DynamicHeader() {
     const showBanner = isHomePage && !scrolled;
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-50">
+        <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
             {isHomePage && (
                  <div className={cn(
                     "transition-transform duration-300",
@@ -48,6 +49,6 @@ export default function DynamicHeader() {
             )}>
                  <Header />
             </div>
-        </div>
+        </header>
     );
 }

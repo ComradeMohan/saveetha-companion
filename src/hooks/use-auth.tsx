@@ -249,7 +249,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      if (user.email && !user.email.endsWith('@saveetha.com') && !BATCH_ADMIN_EMAILS.includes(user.email)) {
+      if (user.email && !user.email.endsWith('@saveetha.com') && !BATCH_ADMIN_EMAILS.includes(user.email) && user.email !== ADMIN_EMAIL) {
          await signOut(auth); // Sign out the user immediately
          toast({
               title: 'Invalid Email Domain',
