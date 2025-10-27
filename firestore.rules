@@ -1,75 +1,129 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
   
-    // Allow users to read their own profile and for admins to read all profiles
+    // Helper functions
+    function isUserAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isUserAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isUserAuthenticated() && request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
+    }
+    
+    function isBatchAdmin() {
+      return isUserAuthenticated() && request.auth.token.email in ['k.nobitha666@gmail.com'];
+    }
+
+    // Users can read/write their own profile, admins can read/write any profile.
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
+      allow read, write: if isUser(userId) || isAdmin();
+      // FCM tokens can be written by the user.
+      match /fcmTokens/{tokenId} {
+        allow write: if isUser(userId);
+        allow read: if isAdmin();
+      }
     }
     
-    match /user_notifications/{userId}/{document=**} {
-      allow read, write, delete: if request.auth.uid == userId;
-    }
-
+    // Any authenticated user can create/read their own data.
     match /students_cgpa/{userId} {
-      allow read, write: if request.auth.uid == userId;
+      allow read, write: if isUser(userId);
     }
-
     match /student_grades/{userId} {
-        allow read, write: if request.auth.uid == userId;
+      allow read, write: if isUser(userId);
     }
     
-    match /faculty/{docId} {
-      allow read: if request.auth != null;
+    // Users can only read/write/delete their own notifications.
+    match /user_notifications/{userId}/notifications/{notificationId} {
+      allow read, write, delete: if isUser(userId);
     }
     
+    // Any authenticated user can create these documents. Admins can manage all.
+    match /contact-messages/{docId} {
+      allow create: if isUserAuthenticated();
+      allow read, update, delete: if isAdmin();
+    }
     match /faculty-requests/{docId} {
-      allow create: if request.auth != null;
+      allow create: if isUserAuthenticated();
+      allow read, delete: if isAdmin();
+    }
+    match /login-issues/{docId} {
+        allow create: if isUserAuthenticated();
+        allow read, update, delete: if isAdmin();
+    }
+     match /course-suggestions/{docId} {
+        allow create: if isUserAuthenticated();
+        allow read, delete: if isAdmin();
+    }
+    
+    // Public read for all authenticated users. Admins can manage fully.
+    // Batch Admins can create new entries.
+    match /certifications/{docId} {
+      allow read: if isUserAuthenticated();
+      allow create: if isAdmin() || isBatchAdmin();
+      allow update, delete: if isAdmin();
     }
     
     match /concept-maps/{docId} {
-      allow read: if request.auth != null;
-    }
-
-    match /pdf-knowledge-cache/{docId} {
-        allow read: if request.auth != null;
-        // Allow writes only from server-side admin code for caching
-        allow write: if false; 
+      allow read: if isUserAuthenticated();
+      allow create, update: if isAdmin() || isBatchAdmin();
+      allow delete: if isAdmin();
     }
     
-    match /contact-messages/{docId} {
-        allow create: if request.auth != null;
+    // Public collections that authenticated users can read.
+    match /faculty/{docId} {
+      allow read: if isUserAuthenticated();
+      allow create, update, delete: if isAdmin();
     }
-
-    match /login-issues/{docId} {
-        allow create: if true; // Allow anyone to report a login issue
-    }
-    
-    match /events/{docId} {
-        allow read: if request.auth != null;
-    }
-    
-    match /certifications/{docId} {
-        allow read: if request.auth != null;
-    }
-
     match /updates/{docId} {
-        allow read: if request.auth != null;
+      allow read: if isUserAuthenticated();
+      allow create, delete: if isAdmin();
+    }
+    match /events/{docId} {
+       allow read: if isUserAuthenticated();
+       allow create, delete: if isAdmin();
+    }
+    match /projects/{docId} {
+        allow read: if isUserAuthenticated();
+        allow create, delete: if isAdmin();
     }
     
-    match /course-suggestions/{docId} {
-        allow create: if request.auth != null;
+    // Anyone can create an enrollment request.
+    match /enrollments/{docId} {
+        allow create: if isUserAuthenticated();
+        allow read: if isAdmin();
     }
-
-    match /projects/{docId} {
-        allow read: if request.auth != null;
+    
+    // Analytics and cache should only be written by server-side admin actions.
+    // No client access should be allowed.
+    match /counter/{docId} {
+        allow read, write: if false;
     }
-
-    match /recruitment-submissions/{docId} {
-      allow create: if request.auth != null;
+    match /concept-map-analytics/{docId} {
+        allow read, write: if false;
+    }
+    match /pdf-knowledge-cache/{docId} {
+        allow read, write: if false;
+    }
+     match /recruitment-submissions/{docId} {
+        allow read, write: if false;
+    }
+     match /coding-questions/{docId} {
+        allow read, write: if false;
+    }
+    match /colleges/{docId=**} {
+        allow read, write: if false;
+    }
+    match /course-content/{docId=**} {
+        allow read, write: if false;
+    }
+    match /mcqs/{docId=**} {
+        allow read, write: if false;
     }
   }
 }
