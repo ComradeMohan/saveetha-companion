@@ -32,15 +32,15 @@ function ProfilePageSkeleton() {
                  <Skeleton className="h-4 w-64 mx-auto" />
             </CardHeader>
             <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
+                <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
                     <Skeleton className="h-20 w-full" />
                     <Skeleton className="h-20 w-full" />
                 </div>
-                <div>
-                    <Skeleton className="h-48 w-full" />
-                </div>
+
             </CardContent>
-             <CardFooter className="p-8 pt-0">
+             <CardFooter className="p-6 pt-0">
                 <Skeleton className="h-10 w-32" />
             </CardFooter>
         </Card>
