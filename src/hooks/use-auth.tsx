@@ -138,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsNavigating(false);
   }, [pathname, searchParams]);
 
-  const createNotification = async (userId: string, message: string, type: 'credit' | 'default') => {
+  const createNotification = useCallback(async (userId: string, message: string, type: 'credit' | 'default') => {
     const notifsRef = collection(db, 'user_notifications', userId, 'notifications');
     await addDoc(notifsRef, {
       message,
@@ -146,92 +146,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       read: false,
       createdAt: serverTimestamp(),
     });
-  };
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        setUser(user);
         const userDocRef = doc(db, 'users', user.uid);
-        
-        // Use onSnapshot for real-time profile updates
         const unsubProfile = onSnapshot(userDocRef, async (userDoc) => {
-            if (userDoc.exists()) {
-                const dbProfile = userDoc.data() as UserProfileData;
-                let updatedProfile = { ...dbProfile, uid: user.uid };
+          if (userDoc.exists()) {
+            const dbProfile = userDoc.data() as UserProfileData;
+            let updatedProfile = { ...dbProfile, uid: user.uid };
+            
+            setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
+            setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(dbProfile.email) && dbProfile.isVerified);
 
-                if (typeof dbProfile.credits === 'undefined') {
-                    updatedProfile.credits = 50; 
-                    await updateDoc(userDocRef, { credits: 50 });
-                    await createNotification(
-                        user.uid,
-                        "You've been awarded 50 credits to use for the course enrollment auto-checker!",
-                        "credit"
-                    );
-                }
-                
-                setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
-                setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(dbProfile.email) && dbProfile.isVerified);
-                
-                const updateData: any = {
-                    lastSignInTime: user.metadata.lastSignInTime,
-                };
-                if (user.photoURL && user.photoURL !== dbProfile.photoURL) {
-                    updateData.photoURL = user.photoURL;
-                }
-                await updateDoc(userDocRef, updateData);
-
-                const finalProfile = { ...updatedProfile, ...updateData };
-                setProfile(finalProfile);
-
-                const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
-                if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                    router.push('/complete-profile');
-                }
-                
-                if (user.displayName && !dbProfile.name) {
-                    await updateDoc(userDocRef, { name: user.displayName });
-                } else if (!user.displayName && dbProfile.name) {
-                    await updateProfile(user, { displayName: dbProfile.name });
-                }
-                
-            } else {
-               const newProfileData: UserProfileData = {
-                  uid: user.uid,
-                  email: user.email!,
-                  name: user.displayName!,
-                  isVerified: true,
-                  photoURL: user.photoURL || undefined,
-                  credits: 100, 
-               };
-               await setDoc(userDocRef, {
-                  ...newProfileData,
-                  createdAt: new Date().toISOString(),
-                  lastSignInTime: user.metadata.lastSignInTime,
-               });
-               await createNotification(
-                  user.uid,
-                  "Welcome! You've received 100 credits to get started with our premium features.",
-                  "credit"
-               );
-               // Send welcome email
-               await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
-
-               setProfile(newProfileData);
-               if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                  router.push('/complete-profile');
-               }
+            if (typeof dbProfile.credits === 'undefined') {
+                updatedProfile.credits = 50;
+                await updateDoc(userDocRef, { credits: 50 });
+                await createNotification(user.uid, "You've been awarded 50 credits to get started!", "credit");
             }
-            const refreshedUser = { ...auth.currentUser } as User;
-            setUser(refreshedUser);
-            setLoading(false);
+            
+            const updateData: any = { lastSignInTime: user.metadata.lastSignInTime };
+            if (user.photoURL && user.photoURL !== dbProfile.photoURL) {
+              updateData.photoURL = user.photoURL;
+            }
+            await updateDoc(userDocRef, updateData);
+
+            const finalProfile = { ...updatedProfile, ...updateData };
+            setProfile(finalProfile);
+
+            const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
+            if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
+                router.push('/complete-profile');
+            }
+          } else {
+            const newProfileData: UserProfileData = {
+              uid: user.uid,
+              email: user.email!,
+              name: user.displayName!,
+              isVerified: true,
+              photoURL: user.photoURL || undefined,
+              credits: 100,
+            };
+            await setDoc(userDocRef, { ...newProfileData, createdAt: new Date().toISOString(), lastSignInTime: user.metadata.lastSignInTime });
+            await createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
+            await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
+            
+            setProfile(newProfileData);
+            if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
+              router.push('/complete-profile');
+            }
+          }
+          setLoading(false);
         }, (error) => {
-            console.error("Error with profile snapshot:", error);
-            setUser(user);
-            setLoading(false);
+          console.error("Error with profile snapshot:", error);
+          setLoading(false);
         });
-
         return unsubProfile;
-
       } else {
         setUser(null);
         setProfile(null);
@@ -242,7 +214,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [pathname, router, toast]);
+  }, [router, pathname, createNotification]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();

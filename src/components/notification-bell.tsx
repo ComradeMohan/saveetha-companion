@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { db, messaging } from '@/lib/firebase';
-import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch, getDocs, deleteDoc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Bell, Gift, Loader2, Link as LinkIcon, Trash2 } from 'lucide-react';
@@ -42,7 +42,11 @@ export function NotificationBell() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+        setNotifications([]);
+        setUnreadCount(0);
+        return;
+    };
 
     const notifsRef = collection(db, 'user_notifications', user.uid, 'notifications');
     const q = query(notifsRef, orderBy('createdAt', 'desc'));
