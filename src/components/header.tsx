@@ -178,6 +178,15 @@ export default function Header() {
   const router = useRouter();
   const [isProfileDialogOpen, setProfileDialogOpen] = React.useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLearnClick = () => {
     if (user) {
@@ -239,149 +248,151 @@ export default function Header() {
 
   return (
     <>
-       <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
-        <div className="flex items-center gap-4">
-          <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
-            <GraduationCap className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">
-              Saveetha Calculator
-            </span>
-          </Link>
-        </div>
-        
-        <div className="flex shrink-0 items-center gap-2 md:gap-4">
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             {user ? (
-                <>
-                    <button
-                        onClick={handleLearnClick}
-                        className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
-                    >
-                        <Book className="h-4 w-4" />
-                        Learn
-                        <Badge variant="destructive" className="animate-bounce">New</Badge>
-                    </button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                            Academics <ChevronDown className="ml-1 h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {academicsLinks.map(link => (
-                                <DropdownMenuItem key={link.href} asChild>
-                                    <Link href={link.href} onClick={() => setIsNavigating(true)}>
-                                        <link.icon className="mr-2 h-4 w-4" />
-                                        {link.label}
-                                    </Link>
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                            Resources <ChevronDown className="ml-1 h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {resourcesLinks.map(link => (
-                                <DropdownMenuItem key={link.href} asChild>
-                                    <Link href={link.href} onClick={() => setIsNavigating(true)}>
-                                        <link.icon className="mr-2 h-4 w-4" />
-                                        {link.label}
-                                    </Link>
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </>
-             ) : (
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                           Features <ChevronDown className="ml-1 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        {loggedOutFeaturesLinks.map(link => (
-                            <DropdownMenuItem key={link.href} asChild>
-                                <Link href={link.href} onClick={() => setIsNavigating(true)}>{link.label}</Link>
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                 </DropdownMenu>
-             )}
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                        Tools <ChevronDown className="ml-1 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    {toolsDropdownLinks.map(link => (
-                        <DropdownMenuItem key={link.href} asChild>
-                            <Link href={link.href} onClick={() => setIsNavigating(true)}>
-                                {typeof link.icon === 'string' ? <div className="mr-2 h-4 w-4" /> : <link.icon className="mr-2 h-4 w-4" />}
-                                {link.label}
-                            </Link>
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-             </DropdownMenu>
-             <NavLink href="/contact" onClick={() => setIsNavigating(true)} isActive={pathname === '/contact'}>
-                Contact Us
-             </NavLink>
-          </nav>
-          {user && <NotificationBell />}
-          <ThemeToggle />
-          <UserNav />
-           <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="md:hidden">
-                        <Menu className="h-5 w-5"/>
-                        <span className="sr-only">Toggle Menu</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="flex flex-col p-0">
-                    <SheetHeader className="p-4 border-b">
-                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                    </SheetHeader>
-                    <ScrollArea className="flex-1">
-                        <nav className="grid gap-6 text-lg font-medium mt-4 px-6">
-                            <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold mb-4">
-                                <GraduationCap className="h-6 w-6 text-primary" />
-                                <span>Saveetha Calculator</span>
-                            </Link>
-                            {user ? (
-                                <>
+       <header className="fixed top-0 left-0 right-0 z-50 px-4 transition-all duration-300" style={{ transform: `translateY(${scrolled ? '-2.5rem' : '0rem'})`}}>
+            <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav mt-4">
+                <div className="flex items-center gap-4">
+                <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
+                    <GraduationCap className="h-6 w-6 text-primary" />
+                    <span className="hidden font-bold sm:inline-block">
+                    Saveetha Calculator
+                    </span>
+                </Link>
+                </div>
+                
+                <div className="flex shrink-0 items-center gap-2 md:gap-4">
+                <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    {user ? (
+                        <>
+                            <button
+                                onClick={handleLearnClick}
+                                className="flex items-center gap-1.5 text-sm font-medium transition-colors text-muted-foreground hover:text-primary nav-link-hover"
+                            >
+                                <Book className="h-4 w-4" />
+                                Learn
+                                <Badge variant="destructive" className="animate-bounce">New</Badge>
+                            </button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                                    Academics <ChevronDown className="ml-1 h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
                                     {academicsLinks.map(link => (
-                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                        <DropdownMenuItem key={link.href} asChild>
+                                            <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                                <link.icon className="mr-2 h-4 w-4" />
+                                                {link.label}
+                                            </Link>
+                                        </DropdownMenuItem>
                                     ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                                    Resources <ChevronDown className="ml-1 h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
                                     {resourcesLinks.map(link => (
-                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                        <DropdownMenuItem key={link.href} asChild>
+                                            <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                                <link.icon className="mr-2 h-4 w-4" />
+                                                {link.label}
+                                            </Link>
+                                        </DropdownMenuItem>
                                     ))}
-                                    {toolsDropdownLinks.map(link => (
-                                        <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                    ))}
-                                    <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
-                                        Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
-                                    </button>
-                                </>
-                            ) : (
-                                loggedOutFeaturesLinks.map(link => (
-                                    <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </>
+                    ) : (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                                Features <ChevronDown className="ml-1 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {loggedOutFeaturesLinks.map(link => (
+                                    <DropdownMenuItem key={link.href} asChild>
+                                        <Link href={link.href} onClick={() => setIsNavigating(true)}>{link.label}</Link>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
+                                Tools <ChevronDown className="ml-1 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {toolsDropdownLinks.map(link => (
+                                <DropdownMenuItem key={link.href} asChild>
+                                    <Link href={link.href} onClick={() => setIsNavigating(true)}>
+                                        {typeof link.icon === 'string' ? <div className="mr-2 h-4 w-4" /> : <link.icon className="mr-2 h-4 w-4" />}
                                         {link.label}
                                     </Link>
-                                ))
-                            )}
-                            <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
-                        </nav>
-                    </ScrollArea>
-                </SheetContent>
-            </Sheet>
-        </div>
-       </div>
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <NavLink href="/contact" onClick={() => setIsNavigating(true)} isActive={pathname === '/contact'}>
+                        Contact Us
+                    </NavLink>
+                </nav>
+                {user && <NotificationBell />}
+                <ThemeToggle />
+                <UserNav />
+                <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="md:hidden">
+                                <Menu className="h-5 w-5"/>
+                                <span className="sr-only">Toggle Menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="flex flex-col p-0">
+                            <SheetHeader className="p-4 border-b">
+                                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                            </SheetHeader>
+                            <ScrollArea className="flex-1">
+                                <nav className="grid gap-6 text-lg font-medium mt-4 px-6">
+                                    <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold mb-4">
+                                        <GraduationCap className="h-6 w-6 text-primary" />
+                                        <span>Saveetha Calculator</span>
+                                    </Link>
+                                    {user ? (
+                                        <>
+                                            {academicsLinks.map(link => (
+                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                            ))}
+                                            {resourcesLinks.map(link => (
+                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                            ))}
+                                            {toolsDropdownLinks.map(link => (
+                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
+                                            ))}
+                                            <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
+                                                Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        loggedOutFeaturesLinks.map(link => (
+                                            <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
+                                                {link.label}
+                                            </Link>
+                                        ))
+                                    )}
+                                    <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
+                                </nav>
+                            </ScrollArea>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+            </div>
+        </header>
     <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
     </>
   );

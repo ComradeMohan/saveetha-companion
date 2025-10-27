@@ -5,15 +5,17 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/hooks/use-auth';
 import VerificationBanner from '@/components/verification-banner';
 import SupportButton from '@/components/support-button';
-import DynamicHeader from '@/components/dynamic-header';
+import Header from '@/components/header';
 import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
+import FeatureAnnouncementBanner from './feature-announcement-banner';
 
 function MainContent({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <DynamicHeader />
+      <Header />
+      <FeatureAnnouncementBanner />
       <VerificationBanner key="verification-banner" />
       <RecruitmentDialog />
       <main key="main-content">{children}</main>
