@@ -248,7 +248,7 @@ export default function Header() {
 
   return (
     <>
-       <header className="fixed top-0 left-0 right-0 z-50 px-4 transition-all duration-300" style={{ transform: `translateY(${scrolled ? '-2.5rem' : '0rem'})`}}>
+       <header className="fixed top-0 left-0 right-0 z-50 px-4 transition-all duration-300" style={{ transform: `translateY(${scrolled ? '-0.5rem' : '0rem'})`}}>
             <div className="container flex h-16 items-center justify-between rounded-full border border-black/5 bg-background/30 p-2 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav mt-4">
                 <div className="flex items-center gap-4">
                 <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">

@@ -35,20 +35,11 @@ export default function DynamicHeader() {
             {isHomePage && (
                  <div className={cn(
                     "transition-transform duration-300",
-                    scrolled ? "-translate-y-full" : "translate-y-0"
+                    scrolled ? "" : "translate-y-0"
                 )}>
-                    <FeatureAnnouncementBanner 
-                        message={bannerMessage}
-                        showButton={!user}
-                    />
+                  
                 </div>
             )}
-            <div className={cn(
-                "px-4 transition-transform duration-300",
-                showBanner ? "translate-y-0" : "-translate-y-10"
-            )}>
-                 <Header />
-            </div>
         </header>
     );
 }
