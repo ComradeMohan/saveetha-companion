@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Phone, CheckCircle2, Calculator, Trash2, Loader2 } from 'lucide-react';
+import { User, Phone, CheckCircle2, Calculator, Trash2, Loader2, Building, School } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { RadialBarChart, RadialBar, PolarAngleAxis, LabelList } from 'recharts';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
+import { UpdateProfileDialog } from '@/components/update-profile-dialog';
 
 
 interface CgpaData {
@@ -51,6 +52,7 @@ export default function ProfilePage() {
   const [cgpaData, setCgpaData] = useState<CgpaData | null>(null);
   const [loadingCgpa, setLoadingCgpa] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isProfileDialogOpen, setProfileDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -106,7 +108,10 @@ export default function ProfilePage() {
     }
   };
 
+  const hasIncompleteAcademicProfile = !profile?.college || !profile?.department;
+
   return (
+    <>
     <div className="flex min-h-screen flex-col bg-muted/30">
         <Header />
         <main className="flex-1 pt-20 pb-12 md:py-16">
@@ -125,7 +130,7 @@ export default function ProfilePage() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-4">
+                             <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
                                     <User className="h-5 w-5 text-primary mt-1" />
                                     <div>
@@ -140,10 +145,34 @@ export default function ProfilePage() {
                                         <p>{profile.phone || 'Not Set'}</p>
                                     </div>
                                 </div>
+                                {hasIncompleteAcademicProfile ? (
+                                    <Card className="sm:col-span-2 flex flex-col items-center justify-center text-center p-4">
+                                        <p className="font-semibold text-sm mb-2">Academic Info Missing</p>
+                                        <p className="text-xs text-muted-foreground mb-3">Please update your college and department to access the learning roadmap.</p>
+                                        <Button onClick={() => setProfileDialogOpen(true)}>Update Profile</Button>
+                                    </Card>
+                                ) : (
+                                    <>
+                                        <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                            <School className="h-5 w-5 text-primary mt-1" />
+                                            <div>
+                                                <p className="font-semibold text-sm text-muted-foreground">Department</p>
+                                                <p>{profile.department}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                            <Building className="h-5 w-5 text-primary mt-1" />
+                                            <div>
+                                                <p className="font-semibold text-sm text-muted-foreground">College</p>
+                                                <p>{profile.college}</p>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
-                            <div className="md:col-span-1">
+                            <div className="md:col-span-2">
                                 {cgpaData ? (
-                                    <Card className="bg-secondary/30 text-center h-full flex flex-col justify-center">
+                                    <Card className="bg-secondary/30 text-center flex flex-col justify-center">
                                         <CardHeader className="pb-0">
                                             <CardTitle>Your CGPA</CardTitle>
                                         </CardHeader>
@@ -223,5 +252,7 @@ export default function ProfilePage() {
         </main>
         <Footer />
     </div>
+    <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
+    </>
   );
 }
