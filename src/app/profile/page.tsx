@@ -23,6 +23,13 @@ interface CgpaData {
     totalCredits: number;
 }
 
+interface CachedCgpa {
+    data: CgpaData;
+    timestamp: number;
+}
+
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
 function ProfilePageSkeleton() {
     return (
         <Card className="max-w-2xl mx-auto">
@@ -58,7 +65,22 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchCgpaData = async () => {
       if (user) {
-        setLoadingCgpa(true);
+        // Attempt to load from cache first
+        try {
+            const cachedItem = localStorage.getItem(`cgpaCache-${user.uid}`);
+            if (cachedItem) {
+                const { data, timestamp }: CachedCgpa = JSON.parse(cachedItem);
+                if (Date.now() - timestamp < CACHE_DURATION) {
+                    setCgpaData(data);
+                    setLoadingCgpa(false); // We have data, no need for skeleton
+                    // Optionally, you could still fetch in the background to update cache
+                }
+            }
+        } catch (e) {
+            console.error("Failed to read CGPA from cache", e);
+        }
+        
+        // Fetch from Firestore
         try {
           const { getDoc, doc } = await import('firebase/firestore');
           const { db } = await import('@/lib/firebase');
@@ -66,12 +88,21 @@ export default function ProfilePage() {
           const cgpaDocSnap = await getDoc(cgpaDocRef);
 
           if (cgpaDocSnap.exists()) {
-            setCgpaData(cgpaDocSnap.data() as CgpaData);
+            const data = cgpaDocSnap.data() as CgpaData;
+            setCgpaData(data);
+             // Save to cache
+            const cacheItem: CachedCgpa = { data, timestamp: Date.now() };
+            localStorage.setItem(`cgpaCache-${user.uid}`, JSON.stringify(cacheItem));
+          } else {
+            setCgpaData(null);
+            localStorage.removeItem(`cgpaCache-${user.uid}`); // Ensure no stale cache
           }
         } catch (error) {
           console.error("Error fetching CGPA data:", error);
         } finally {
-          setLoadingCgpa(false);
+           if(loadingCgpa) { // Only set loading to false if we haven't already from cache
+             setLoadingCgpa(false);
+           }
         }
       }
     };
@@ -79,7 +110,7 @@ export default function ProfilePage() {
     if (!authLoading) {
         fetchCgpaData();
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, loadingCgpa]);
 
   const userInitials = profile?.name ? profile.name.slice(0, 2).toUpperCase() : '?';
 
