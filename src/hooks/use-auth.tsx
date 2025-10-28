@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setIsNavigating(false);
   }, [pathname, searchParams]);
-
+  
   const createNotification = useCallback(async (userId: string, message: string, type: 'credit' | 'default') => {
     const notifsRef = collection(db, 'user_notifications', userId, 'notifications');
     await addDoc(notifsRef, {
@@ -148,12 +148,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      let profileUnsubscribe: (() => void) | undefined;
+      
       if (user) {
         setUser(user);
         const userDocRef = doc(db, 'users', user.uid);
-        const unsubProfile = onSnapshot(userDocRef, async (userDoc) => {
+        
+        profileUnsubscribe = onSnapshot(userDocRef, async (userDoc) => {
           if (userDoc.exists()) {
             const dbProfile = userDoc.data() as UserProfileData;
             let updatedProfile = { ...dbProfile, uid: user.uid };
@@ -171,7 +175,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (user.photoURL && user.photoURL !== dbProfile.photoURL) {
               updateData.photoURL = user.photoURL;
             }
-            await updateDoc(userDocRef, updateData);
+            if (Object.keys(updateData).length > 0) {
+              await updateDoc(userDocRef, updateData);
+            }
 
             const finalProfile = { ...updatedProfile, ...updateData };
             setProfile(finalProfile);
@@ -203,7 +209,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.error("Error with profile snapshot:", error);
           setLoading(false);
         });
-        return unsubProfile;
       } else {
         setUser(null);
         setProfile(null);
@@ -211,6 +216,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsBatchAdmin(false);
         setLoading(false);
       }
+      
+      return () => {
+        if (profileUnsubscribe) {
+          profileUnsubscribe();
+        }
+      };
     });
 
     return () => unsubscribe();
@@ -262,8 +273,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: profileData.phone,
       }, { merge: true });
       
-      // No need to setProfile here, onSnapshot will handle it.
-      
       toast({
         title: 'Profile Complete!',
         description: "You're all set! Welcome to the Saveetha Companion.",
@@ -283,7 +292,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             department: data.department,
             college: data.college
         });
-        // No need to setProfile here, onSnapshot will handle it.
         toast({ title: 'Success!', description: 'Your profile has been updated.' });
     } catch (error) {
         console.error("Error updating academic profile:", error);

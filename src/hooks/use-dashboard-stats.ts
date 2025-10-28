@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -56,7 +57,7 @@ export default function useDashboardStats() {
             getCountFromServer(query(messagesCol, where('status', '==', 'Unread')))
         ]);
 
-        // Fetch user list for chart (can be further optimized with pagination if needed)
+        // Fetch user list for chart
         const userListQuery = query(collection(db, 'users'));
         const userListSnapshot = await getDocs(userListQuery);
         const userList: User[] = userListSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

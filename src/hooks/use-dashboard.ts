@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { collection, query, where, getCountFromServer, getDocs, doc, getDoc, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
-import { useToast } from '@/hooks/use-toast';
 import { startOfDay, differenceInDays } from 'date-fns';
 
 interface CgpaData {
@@ -41,7 +40,6 @@ export default function useDashboardData() {
         updates: [],
     });
     const [loading, setLoading] = useState(true);
-    const { toast } = useToast();
 
     const fetchDashboardData = useCallback(async () => {
         if (!user) {

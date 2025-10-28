@@ -33,6 +33,7 @@ export function NotificationBell() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isEnabling, setIsEnabling] = useState(false);
   const hasAutoOpened = useRef(false);
+  const unsubscribeRef = useRef<() => void | null>(null);
 
 
   useEffect(() => {
@@ -42,6 +43,11 @@ export function NotificationBell() {
   }, []);
 
   useEffect(() => {
+    if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+    }
+
     if (!user) {
         setNotifications([]);
         setUnreadCount(0);
@@ -51,7 +57,7 @@ export function NotificationBell() {
     const notifsRef = collection(db, 'user_notifications', user.uid, 'notifications');
     const q = query(notifsRef, orderBy('createdAt', 'desc'));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    unsubscribeRef.current = onSnapshot(q, (snapshot) => {
       const notifsData: Notification[] = [];
       let count = 0;
       snapshot.forEach((doc) => {
@@ -76,7 +82,11 @@ export function NotificationBell() {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+        if (unsubscribeRef.current) {
+            unsubscribeRef.current();
+        }
+    };
   }, [user]);
 
   const handleOpenChange = async (open: boolean) => {
