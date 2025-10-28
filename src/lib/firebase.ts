@@ -1,3 +1,4 @@
+
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -8,7 +9,6 @@ import { getMessaging } from "firebase/messaging";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
-  // authDomain: "saveethacgpa.firebaseapp.com",
   authDomain: "saveethahub.tech",
   projectId: "saveethacgpa",
   storageBucket: "saveethacgpa.appspot.com",
