@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,7 +16,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
 import { UpdateProfileDialog } from '@/components/update-profile-dialog';
-
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface CgpaData {
     cgpa: number;
@@ -45,7 +46,6 @@ function ProfilePageSkeleton() {
                     <Skeleton className="h-20 w-full" />
                     <Skeleton className="h-20 w-full" />
                 </div>
-
             </CardContent>
              <CardFooter className="p-6 pt-0">
                 <Skeleton className="h-10 w-32" />
@@ -55,7 +55,7 @@ function ProfilePageSkeleton() {
 }
 
 export default function ProfilePage() {
-  const { user, profile, loading: authLoading, deleteUserAccount } = useAuth();
+  const { user, profile, loading, profileLoading, deleteUserAccount } = useAuth();
   const [cgpaData, setCgpaData] = useState<CgpaData | null>(null);
   const [loadingCgpa, setLoadingCgpa] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -65,52 +65,29 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchCgpaData = async () => {
       if (user) {
-        // Attempt to load from cache first
+        setLoadingCgpa(true);
         try {
-            const cachedItem = localStorage.getItem(`cgpaCache-${user.uid}`);
-            if (cachedItem) {
-                const { data, timestamp }: CachedCgpa = JSON.parse(cachedItem);
-                if (Date.now() - timestamp < CACHE_DURATION) {
-                    setCgpaData(data);
-                    setLoadingCgpa(false); // We have data, no need for skeleton
-                    // Optionally, you could still fetch in the background to update cache
-                }
-            }
-        } catch (e) {
-            console.error("Failed to read CGPA from cache", e);
-        }
-        
-        // Fetch from Firestore
-        try {
-          const { getDoc, doc } = await import('firebase/firestore');
-          const { db } = await import('@/lib/firebase');
           const cgpaDocRef = doc(db, 'students_cgpa', user.uid);
           const cgpaDocSnap = await getDoc(cgpaDocRef);
 
           if (cgpaDocSnap.exists()) {
             const data = cgpaDocSnap.data() as CgpaData;
             setCgpaData(data);
-             // Save to cache
-            const cacheItem: CachedCgpa = { data, timestamp: Date.now() };
-            localStorage.setItem(`cgpaCache-${user.uid}`, JSON.stringify(cacheItem));
           } else {
             setCgpaData(null);
-            localStorage.removeItem(`cgpaCache-${user.uid}`); // Ensure no stale cache
           }
         } catch (error) {
           console.error("Error fetching CGPA data:", error);
         } finally {
-           if(loadingCgpa) { // Only set loading to false if we haven't already from cache
-             setLoadingCgpa(false);
-           }
+           setLoadingCgpa(false);
         }
       }
     };
 
-    if (!authLoading) {
+    if (!loading) {
         fetchCgpaData();
     }
-  }, [user, authLoading, loadingCgpa]);
+  }, [user, loading]);
 
   const userInitials = profile?.name ? profile.name.slice(0, 2).toUpperCase() : '?';
 
@@ -122,7 +99,7 @@ export default function ProfilePage() {
     },
   } satisfies ChartConfig;
 
-  const isLoading = authLoading || loadingCgpa;
+  const isLoading = loading || profileLoading;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -202,7 +179,7 @@ export default function ProfilePage() {
                                 )}
                             </div>
                             <div className="md:col-span-2">
-                                {cgpaData ? (
+                                {loadingCgpa ? <Skeleton className="h-48 w-full" /> : cgpaData ? (
                                     <Card className="bg-secondary/30 text-center flex flex-col justify-center">
                                         <CardHeader className="pb-0">
                                             <CardTitle>Your CGPA</CardTitle>

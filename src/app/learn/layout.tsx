@@ -42,21 +42,22 @@ export default function LearnLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, profileLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
+    const isAuthLoading = loading || profileLoading;
+    if (!isAuthLoading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, profileLoading, router]);
 
-  if (loading || !user) {
+  if (loading || profileLoading || !user) {
     return <LearnLayoutSkeleton />;
   }
   
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <LearnSidebar />
       <div className="flex flex-col">
         <AdminHeader />

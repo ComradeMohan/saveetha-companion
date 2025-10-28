@@ -16,16 +16,14 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  updateProfile,
   deleteUser,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth, db, messaging } from '@/lib/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, onSnapshot, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc, onSnapshot } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { getToken } from 'firebase/messaging';
 import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
@@ -57,7 +55,9 @@ interface AcademicProfile {
 
 interface AuthContextType {
   user: User | null;
+  profile: UserProfileData | null;
   loading: boolean;
+  profileLoading: boolean; // New state
   isAdmin: boolean;
   isBatchAdmin: boolean;
   isNavigating: boolean;
@@ -71,10 +71,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// New context for profile data
-const ProfileContext = createContext<UserProfileData | null>(null);
-
 
 const handleAuthError = (error: any, toast: (options: any) => void): string => {
     console.error("Firebase Auth Error:", error.code, error.message);
@@ -126,7 +122,9 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isBatchAdmin, setIsBatchAdmin] = useState(false);
@@ -135,7 +133,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // End navigation loading when path changes
   useEffect(() => {
     setIsNavigating(false);
   }, [pathname, searchParams]);
@@ -150,18 +147,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
+      setProfileLoading(true);
+
       if (user) {
         setUser(user);
         setIsAdmin(user.email === ADMIN_EMAIL);
         setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(user.email ?? ''));
-
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
         
-        if (!userDoc.exists()) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const unsubscribeProfile = onSnapshot(userDocRef, (userDoc) => {
+          if (userDoc.exists()) {
+            const dbProfile = userDoc.data() as UserProfileData;
+            setProfile(dbProfile);
+            const isProfileIncomplete = !dbProfile.regNo || !dbProfile.phone;
+            if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
+                router.push('/complete-profile');
+            }
+          } else {
+            // New user scenario
             const newProfileData: UserProfileData = {
               uid: user.uid,
               email: user.email!,
@@ -170,43 +176,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               photoURL: user.photoURL || undefined,
               credits: 100,
             };
-            await setDoc(userDocRef, { ...newProfileData, createdAt: new Date().toISOString(), lastSignInTime: user.metadata.lastSignInTime });
-            await createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
-            await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
-            
-            if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                router.push('/complete-profile');
-            }
-        }
+            setDoc(userDocRef, { ...newProfileData, createdAt: new Date().toISOString(), lastSignInTime: user.metadata.lastSignInTime })
+              .then(() => {
+                setProfile(newProfileData);
+                createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
+                sendWelcomeEmail({ to: user.email!, name: user.displayName! });
+                if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
+                    router.push('/complete-profile');
+                }
+            });
+          }
+          setProfileLoading(false);
+        });
+
+        setLoading(false);
+        return () => unsubscribeProfile();
+
       } else {
         setUser(null);
+        setProfile(null);
         setIsAdmin(false);
         setIsBatchAdmin(false);
+        setLoading(false);
+        setProfileLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, [router, pathname, createNotification]);
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-        'hd': 'saveetha.com', // Hint to Google to prioritize this domain
-        'prompt': 'select_account'
+        prompt: 'select_account',
+        'hd': 'saveetha.com' 
     });
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      if (user.email && !user.email.endsWith('@saveetha.com') && !BATCH_ADMIN_EMAILS.includes(user.email) && user.email !== ADMIN_EMAIL) {
-         await signOut(auth); // Sign out the user immediately
-         toast({
-              title: 'Invalid Email Domain',
-              description: 'Only @saveetha.com Google accounts are allowed.',
-              variant: 'destructive',
-          });
-          throw new Error('Invalid email domain');
-      }
+      await signInWithPopup(auth, provider);
     } catch (error: any) {
         const message = handleAuthError(error, toast);
         throw new Error(message);
@@ -309,7 +315,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = {
     user,
+    profile,
     loading,
+    profileLoading,
     isAdmin,
     isBatchAdmin,
     isNavigating,
@@ -338,41 +346,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function ProfileProvider({ children }: { children: React.ReactNode }) {
-    const { user, loading: authLoading } = useAuth();
-    const [profile, setProfile] = useState<UserProfileData | null>(null);
-    const router = useRouter();
-    const pathname = usePathname();
-
-    useEffect(() => {
-        if (!user || authLoading) {
-            setProfile(null);
-            return;
-        }
-
-        const userDocRef = doc(db, 'users', user.uid);
-        const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
-            if (userDoc.exists()) {
-                const dbProfile = userDoc.data() as UserProfileData;
-                setProfile(dbProfile);
-                
-                const isProfileIncomplete = !dbProfile.regNo || !dbProfile.phone;
-                if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                    router.push('/complete-profile');
-                }
-            } else {
-                setProfile(null);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [user, authLoading, pathname, router]);
-
-    return (
-        <ProfileContext.Provider value={profile}>
-            {children}
-        </ProfileContext.Provider>
-    );
+// This is deprecated, use useAuth instead for profile access.
+export function ProfileProvider({ children }: { children: ReactNode }) {
+    return <>{children}</>;
 }
 
 export const useAuth = (): AuthContextType => {
@@ -383,7 +359,8 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
+// This is deprecated, useAuth hook now provides the profile directly.
 export const useProfile = (): UserProfileData | null => {
-  const context = useContext(ProfileContext);
-  return context;
+  const { profile } = useAuth();
+  return profile;
 };
