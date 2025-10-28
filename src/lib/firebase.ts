@@ -8,7 +8,8 @@ import { getMessaging } from "firebase/messaging";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
-  authDomain: "saveethacgpa.firebaseapp.com",
+  // authDomain: "saveethacgpa.firebaseapp.com",
+  authDomain: "saveethahub.tech",
   projectId: "saveethacgpa",
   storageBucket: "saveethacgpa.appspot.com",
   messagingSenderId: "184883570512",
