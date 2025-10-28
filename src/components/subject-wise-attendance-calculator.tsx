@@ -1,105 +1,168 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Percent } from 'lucide-react';
+import { Percent, Plus, Trash2, Book } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const TARGET_PERCENTAGE = 80;
 
-export default function AttendanceCalculator() {
-  const [attended, setAttended] = useState('');
-  const [total, setTotal] = useState('');
+interface Subject {
+  id: number;
+  name: string;
+  attended: string;
+  total: string;
+}
 
-  const handleAttendedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (/^\d{0,3}$/.test(e.target.value)) {
-      setAttended(e.target.value);
-    }
-  };
+const getAttendanceInfo = (attendedStr: string, totalStr: string) => {
+  const attendedNum = parseInt(attendedStr);
+  const totalNum = parseInt(totalStr);
 
-  const handleTotalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     if (/^\d{0,3}$/.test(e.target.value)) {
-      setTotal(e.target.value);
+  if (isNaN(attendedNum) || isNaN(totalNum) || totalNum <= 0 || attendedNum < 0 || attendedNum > totalNum) {
+    return { percentage: 0, message: <span className="text-muted-foreground">Invalid input.</span> };
+  }
+  
+  const currentPercentage = (attendedNum / totalNum) * 100;
+  
+  let statusMessage;
+  if (currentPercentage >= TARGET_PERCENTAGE) {
+    const bunkableClasses = Math.floor((attendedNum - (TARGET_PERCENTAGE / 100) * totalNum) / (TARGET_PERCENTAGE / 100));
+    statusMessage = <span className="text-green-600 font-semibold">You can miss {bunkableClasses} class{bunkableClasses !== 1 ? 'es' : ''}.</span>;
+  } else {
+    const neededClasses = Math.ceil(((TARGET_PERCENTAGE / 100) * totalNum - attendedNum) / (1 - (TARGET_PERCENTAGE / 100)));
+    statusMessage = <span className="text-red-600 font-semibold">Attend next {neededClasses} class{neededClasses !== 1 ? 'es' : ''}.</span>;
+  }
+  
+  return { percentage: currentPercentage, message: statusMessage };
+};
+
+
+export default function SubjectWiseAttendanceCalculator() {
+  const [subjects, setSubjects] = useState<Subject[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedSubjects = localStorage.getItem('attendanceSubjects');
+      if (savedSubjects) {
+        try {
+          const parsed = JSON.parse(savedSubjects);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        } catch (e) {
+          console.error("Failed to parse saved subjects:", e);
+        }
+      }
     }
+    return [{ id: Date.now(), name: '', attended: '', total: '' }];
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('attendanceSubjects', JSON.stringify(subjects));
+    }
+  }, [subjects]);
+  
+  const addSubject = () => {
+    setSubjects([...subjects, { id: Date.now(), name: '', attended: '', total: '' }]);
   };
   
-  const { percentage, message } = useMemo(() => {
-    const attendedNum = parseInt(attended);
-    const totalNum = parseInt(total);
-
-    if (isNaN(attendedNum) || isNaN(totalNum) || totalNum <= 0 || attendedNum < 0 || attendedNum > totalNum) {
-      return { percentage: 0, message: <span className="text-muted-foreground">Enter your class details above.</span> };
-    }
-    
-    const currentPercentage = (attendedNum / totalNum) * 100;
-
-    let statusMessage;
-    if (currentPercentage >= TARGET_PERCENTAGE) {
-      const bunkableClasses = Math.floor((attendedNum - (TARGET_PERCENTAGE / 100) * totalNum) / (TARGET_PERCENTAGE / 100));
-      if (bunkableClasses > 0) {
-        statusMessage = <span className="text-green-600 font-semibold">You can afford to miss the next {bunkableClasses} class{bunkableClasses > 1 ? 'es' : ''}.</span>;
-      } else {
-        statusMessage = <span className="text-green-600 font-semibold">You're safe, but don't miss any more classes!</span>;
-      }
-    } else {
-      const neededClasses = Math.ceil(((TARGET_PERCENTAGE / 100) * totalNum - attendedNum) / (1 - (TARGET_PERCENTAGE / 100)));
-      if (neededClasses > 0) {
-        statusMessage = <span className="text-red-600 font-semibold">You need to attend the next {neededClasses} class{neededClasses > 1 ? 'es' : ''} to reach 80%.</span>;
-      } else {
-         statusMessage = <span className="text-green-600 font-semibold">You're safe!</span>;
-      }
-    }
-
-    return { percentage: currentPercentage, message: statusMessage };
-  }, [attended, total]);
-
+  const removeSubject = (id: number) => {
+    setSubjects(subjects.filter(subject => subject.id !== id));
+  };
+  
+  const handleInputChange = (id: number, field: keyof Subject, value: string) => {
+    setSubjects(subjects.map(subject =>
+      subject.id === id ? { ...subject, [field]: value } : subject
+    ));
+  };
+  
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-primary/10 hover:-translate-y-1">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-            <Percent className="h-6 w-6 text-primary" />
-            Attendance Calculator
+          <Percent className="h-6 w-6 text-primary" />
+          Subject-Wise Attendance
         </CardTitle>
-         <CardDescription>
-          Calculate your attendance and see what it takes to reach 80%.
+        <CardDescription>
+          Add your subjects to track attendance and see what it takes to reach 80%.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-           <div className="space-y-2">
-                <Label htmlFor="attended-classes">Classes Attended</Label>
-                <Input
-                    id="attended-classes"
-                    type="number"
-                    placeholder="e.g., 40"
-                    value={attended}
-                    onChange={handleAttendedChange}
-                />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="total-classes">Total Classes</Label>
-                <Input
-                    id="total-classes"
-                    type="number"
-                    placeholder="e.g., 50"
-                    value={total}
-                    onChange={handleTotalChange}
-                />
-            </div>
-        </div>
+      <CardContent className="space-y-4 max-h-96 overflow-y-auto pr-4">
+        <AnimatePresence>
+            {subjects.map((subject, index) => {
+                 const { percentage, message } = getAttendanceInfo(subject.attended, subject.total);
+                 return (
+                    <motion.div
+                      key={subject.id}
+                      layout
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-4 border rounded-lg bg-secondary/30 space-y-3"
+                    >
+                        <div className="flex justify-between items-start gap-2">
+                           <div className="flex-1 space-y-1">
+                                <Label htmlFor={`subject-name-${subject.id}`} className="flex items-center gap-1.5 text-xs text-muted-foreground"><Book className="h-3 w-3"/>Subject Name</Label>
+                                <Input
+                                    id={`subject-name-${subject.id}`}
+                                    placeholder={`Subject ${index + 1}`}
+                                    value={subject.name}
+                                    onChange={(e) => handleInputChange(subject.id, 'name', e.target.value)}
+                                    className="h-8 font-semibold"
+                                />
+                           </div>
+                           <Button variant="ghost" size="icon" className="h-8 w-8 mt-5 text-destructive hover:bg-destructive/10" onClick={() => removeSubject(subject.id)}>
+                                <Trash2 className="h-4 w-4" />
+                           </Button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                           <div className="space-y-1">
+                             <Label htmlFor={`attended-${subject.id}`} className="text-xs text-muted-foreground">Attended</Label>
+                             <Input
+                                id={`attended-${subject.id}`}
+                                type="number"
+                                placeholder="e.g., 40"
+                                value={subject.attended}
+                                onChange={(e) => handleInputChange(subject.id, 'attended', e.target.value)}
+                                className="h-8"
+                             />
+                           </div>
+                           <div className="space-y-1">
+                             <Label htmlFor={`total-${subject.id}`} className="text-xs text-muted-foreground">Total</Label>
+                              <Input
+                                id={`total-${subject.id}`}
+                                type="number"
+                                placeholder="e.g., 50"
+                                value={subject.total}
+                                onChange={(e) => handleInputChange(subject.id, 'total', e.target.value)}
+                                className="h-8"
+                             />
+                           </div>
+                        </div>
+                        
+                         <div className="pt-2 space-y-1">
+                            <Progress value={percentage > 100 ? 100 : percentage} className="h-2" />
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="font-semibold text-primary">{percentage.toFixed(1)}%</span>
+                                <span className="text-muted-foreground">{message}</span>
+                            </div>
+                         </div>
+                    </motion.div>
+                )
+            })}
+        </AnimatePresence>
       </CardContent>
-       <CardFooter className="flex flex-col items-center justify-center bg-secondary/50 p-6 rounded-b-lg space-y-4">
-        <div className="w-full text-center">
-            <span className="text-sm font-semibold">Your Attendance</span>
-            <p className="text-4xl font-bold text-primary">{percentage.toFixed(1)}%</p>
-        </div>
-        <Progress value={percentage > 100 ? 100 : percentage} className="w-full h-2" />
-        <div className="text-center text-sm h-10 flex items-center justify-center">
-            {message}
-        </div>
+      <CardFooter>
+        <Button variant="outline" className="w-full" onClick={addSubject}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Subject
+        </Button>
       </CardFooter>
     </Card>
   );
