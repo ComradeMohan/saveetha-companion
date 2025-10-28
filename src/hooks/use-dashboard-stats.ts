@@ -36,7 +36,6 @@ export default function useDashboardStats() {
   const { toast } = useToast();
 
   const fetchStats = useCallback(async () => {
-    setLoading(true);
     try {
         const usersCol = collection(db, 'users');
         const conceptMapsCol = collection(db, 'concept-maps');

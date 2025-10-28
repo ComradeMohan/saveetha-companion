@@ -2,7 +2,7 @@
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
-import { AuthProvider } from '@/hooks/use-auth';
+import { AuthProvider, ProfileProvider } from '@/hooks/use-auth';
 import VerificationBanner from '@/components/verification-banner';
 import SupportButton from '@/components/support-button';
 import Header from '@/components/header';
@@ -34,7 +34,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <AuthProvider>
-        <MainContent>{children}</MainContent>
+        <ProfileProvider>
+            <MainContent>{children}</MainContent>
+        </ProfileProvider>
       </AuthProvider>
     </ThemeProvider>
   );

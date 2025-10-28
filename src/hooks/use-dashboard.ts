@@ -41,17 +41,12 @@ export default function useDashboardData() {
     });
     const [loading, setLoading] = useState(true);
 
-    const fetchDashboardData = useCallback(async () => {
-        if (!user) {
-            setLoading(false);
-            return;
-        }
-
+    const fetchDashboardData = useCallback(async (userId: string) => {
         setLoading(true);
         try {
             // Fetch CGPA, next event, and updates in parallel
             const [cgpaSnap, eventsSnap, updatesSnap] = await Promise.all([
-                getDoc(doc(db, 'students_cgpa', user.uid)),
+                getDoc(doc(db, 'students_cgpa', userId)),
                 getDocs(query(
                     collection(db, 'events'),
                     where('startDate', '>=', startOfDay(new Date()).toISOString()),
@@ -89,11 +84,15 @@ export default function useDashboardData() {
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, []);
 
     useEffect(() => {
-        fetchDashboardData();
-    }, [fetchDashboardData]);
+        if (user) {
+            fetchDashboardData(user.uid);
+        } else {
+            setLoading(false);
+        }
+    }, [user, fetchDashboardData]);
 
     return { data, loading };
 }

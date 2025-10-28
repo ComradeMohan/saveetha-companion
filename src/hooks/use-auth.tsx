@@ -57,7 +57,6 @@ interface AcademicProfile {
 
 interface AuthContextType {
   user: User | null;
-  profile: UserProfileData | null;
   loading: boolean;
   isAdmin: boolean;
   isBatchAdmin: boolean;
@@ -72,6 +71,10 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// New context for profile data
+const ProfileContext = createContext<UserProfileData | null>(null);
+
 
 const handleAuthError = (error: any, toast: (options: any) => void): string => {
     console.error("Firebase Auth Error:", error.code, error.message);
@@ -123,7 +126,6 @@ const handleAuthError = (error: any, toast: (options: any) => void): string => {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -151,42 +153,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      let profileUnsubscribe: (() => void) | undefined;
-      
       if (user) {
         setUser(user);
+        setIsAdmin(user.email === ADMIN_EMAIL);
+        setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(user.email ?? ''));
+
         const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
         
-        profileUnsubscribe = onSnapshot(userDocRef, async (userDoc) => {
-          if (userDoc.exists()) {
-            const dbProfile = userDoc.data() as UserProfileData;
-            let updatedProfile = { ...dbProfile, uid: user.uid };
-            
-            setIsAdmin(dbProfile.email === ADMIN_EMAIL && dbProfile.isVerified);
-            setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(dbProfile.email) && dbProfile.isVerified);
-
-            if (typeof dbProfile.credits === 'undefined') {
-                updatedProfile.credits = 50;
-                await updateDoc(userDocRef, { credits: 50 });
-                await createNotification(user.uid, "You've been awarded 50 credits to get started!", "credit");
-            }
-            
-            const updateData: any = { lastSignInTime: user.metadata.lastSignInTime };
-            if (user.photoURL && user.photoURL !== dbProfile.photoURL) {
-              updateData.photoURL = user.photoURL;
-            }
-            if (Object.keys(updateData).length > 0) {
-              await updateDoc(userDocRef, updateData);
-            }
-
-            const finalProfile = { ...updatedProfile, ...updateData };
-            setProfile(finalProfile);
-
-            const isProfileIncomplete = !finalProfile.regNo || !finalProfile.phone;
-            if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                router.push('/complete-profile');
-            }
-          } else {
+        if (!userDoc.exists()) {
             const newProfileData: UserProfileData = {
               uid: user.uid,
               email: user.email!,
@@ -199,29 +174,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
             await sendWelcomeEmail({ to: user.email!, name: user.displayName! });
             
-            setProfile(newProfileData);
             if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
-              router.push('/complete-profile');
+                router.push('/complete-profile');
             }
-          }
-          setLoading(false);
-        }, (error) => {
-          console.error("Error with profile snapshot:", error);
-          setLoading(false);
-        });
+        }
       } else {
         setUser(null);
-        setProfile(null);
         setIsAdmin(false);
         setIsBatchAdmin(false);
-        setLoading(false);
       }
-      
-      return () => {
-        if (profileUnsubscribe) {
-          profileUnsubscribe();
-        }
-      };
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -241,7 +203,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           throw new Error('Invalid email domain');
       }
-      // The onAuthStateChanged listener will handle the rest of the logic.
     } catch (error: any) {
         const message = handleAuthError(error, toast);
         throw new Error(message);
@@ -254,7 +215,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // onAuthStateChanged will handle the rest.
     } catch (error: any) {
       const message = handleAuthError(error, toast);
       throw new Error(message);
@@ -306,7 +266,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("No user is currently signed in.");
     }
     try {
-        // Step 1: Delete all Firestore data associated with the user
         const collectionsToDelete = [
             'students_cgpa',
             'student_grades',
@@ -318,24 +277,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              batch.delete(doc(db, collectionName, currentUser.uid));
         }
 
-        // Delete subcollections (like savedPrograms)
         const programsRef = collection(db, 'users', currentUser.uid, 'savedPrograms');
         const programsSnap = await getDocs(programsRef);
         programsSnap.forEach(doc => batch.delete(doc.ref));
         
-        // Finally, delete the main user document
         batch.delete(doc(db, 'users', currentUser.uid));
         
         await batch.commit();
 
-        // Step 2: Delete the user from Firebase Authentication
         await deleteUser(currentUser);
         
         toast({
             title: 'Account Deleted',
             description: 'Your account and all associated data have been permanently deleted.',
         });
-        // The onAuthStateChanged listener will handle redirecting the user to the login page.
     } catch (error: any) {
          const message = handleAuthError(error, toast);
          throw new Error(message);
@@ -350,7 +305,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = {
     user,
-    profile,
     loading,
     isAdmin,
     isBatchAdmin,
@@ -380,10 +334,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+export function ProfileProvider({ children }: { children: React.ReactNode }) {
+    const { user, loading: authLoading } = useAuth();
+    const [profile, setProfile] = useState<UserProfileData | null>(null);
+    const router = useRouter();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if (!user || authLoading) {
+            setProfile(null);
+            return;
+        }
+
+        const userDocRef = doc(db, 'users', user.uid);
+        const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
+            if (userDoc.exists()) {
+                const dbProfile = userDoc.data() as UserProfileData;
+                setProfile(dbProfile);
+                
+                const isProfileIncomplete = !dbProfile.regNo || !dbProfile.phone;
+                if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
+                    router.push('/complete-profile');
+                }
+            } else {
+                setProfile(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [user, authLoading, pathname, router]);
+
+    return (
+        <ProfileContext.Provider value={profile}>
+            {children}
+        </ProfileContext.Provider>
+    );
+}
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+  return context;
+};
+
+export const useProfile = (): UserProfileData | null => {
+  const context = useContext(ProfileContext);
   return context;
 };
