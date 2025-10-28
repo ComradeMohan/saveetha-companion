@@ -12,6 +12,12 @@ export default function Footer() {
             <Link href="/faq" className="hover:text-primary transition-colors">
                 FAQ
             </Link>
+            <Link href="/privacy" className="hover:text-primary transition-colors">
+                Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-primary transition-colors">
+                Terms of Service
+            </Link>
         </div>
         <VisitorCounter />
       </div>
