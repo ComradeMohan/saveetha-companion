@@ -26,7 +26,7 @@ export async function sendRecruitmentEmail(params: z.infer<typeof emailSchema>) 
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Saveetha Companion Recruitment <recruitment@univault.live>',
+      from: 'Saveetha Companion Recruitment <recruitment@saveethahub.tech>',
       to: ['k.nobitha666@gmail.com'],
       subject: `New Recruitment Interest: ${name}`,
       html: `
