@@ -1,5 +1,5 @@
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import MouseSpotlight from '@/components/mouse-spotlight';
@@ -61,7 +61,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  
+};
+
+export const viewport: Viewport = {
   themeColor: '#f97415',
 };
 

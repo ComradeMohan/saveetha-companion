@@ -148,6 +148,7 @@ export default function Stats() {
             }
         };
 
+        // Fetch analytics client-side to avoid server timeouts
         fetchAnalytics();
     }, []);
 

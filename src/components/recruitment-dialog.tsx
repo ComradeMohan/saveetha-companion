@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useActionState, useRef, useTransition } from 'react';
@@ -150,12 +151,12 @@ export function RecruitmentDialog() {
           <DialogTitle className="flex items-center gap-2">
             <Hand className="text-primary" /> Join the Team!
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription id="recruitment-dialog-description">
             Are you interested in handling website updates for courses, events, and more for your batch ({getBatchYear()})? Help us keep the platform up-to-date!
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form ref={formRef} action={formAction} className="space-y-4">
+          <form ref={formRef} action={formAction} className="space-y-4" aria-describedby="recruitment-dialog-description">
             <input type="hidden" name="name" value={user.displayName || 'Anonymous'} />
             <input type="hidden" name="userEmail" value={user.email || ''} />
             <input type="hidden" name="regNo" value={profile.regNo || ''} />

@@ -46,6 +46,7 @@ import {
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -356,6 +357,7 @@ export default function Header() {
                         <SheetContent side="left" className="flex flex-col p-0">
                             <SheetHeader className="p-4 border-b">
                                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                                <SheetDescription className="sr-only">Main site navigation links.</SheetDescription>
                             </SheetHeader>
                             <ScrollArea className="flex-1">
                                 <nav className="grid gap-6 text-lg font-medium mt-4 px-6">

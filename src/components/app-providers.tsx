@@ -10,20 +10,26 @@ import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
 import FeatureAnnouncementBanner from './feature-announcement-banner';
+import { usePathname } from 'next/navigation';
+
 
 function MainContent({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Header />
-      <FeatureAnnouncementBanner />
-      <VerificationBanner key="verification-banner" />
-      <RecruitmentDialog />
-      <main key="main-content">{children}</main>
-      <SupportButton />
-      <NotificationHandler />
-      <MobileNav />
-    </>
-  );
+    const pathname = usePathname();
+    const noHeaderPaths = ['/admin', '/learn', '/batch-admin', '/dev-login'];
+    const showHeader = !noHeaderPaths.some(path => pathname.startsWith(path));
+
+    return (
+        <>
+            {showHeader && <Header />}
+            {showHeader && <FeatureAnnouncementBanner />}
+            <VerificationBanner key="verification-banner" />
+            <RecruitmentDialog />
+            <main key="main-content">{children}</main>
+            {showHeader && <SupportButton />}
+            {showHeader && <MobileNav />}
+            <NotificationHandler />
+        </>
+    );
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
