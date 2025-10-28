@@ -23,7 +23,7 @@ export async function sendWelcomeEmail(params: { to: string, name: string }) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Saveetha Companion <welcome@univault.live>',
+      from: 'Saveetha Companion <welcome@saveethahub.tech>',
       to: [to],
       subject: `Welcome to Saveetha Companion, ${firstName}!`,
       html: `
