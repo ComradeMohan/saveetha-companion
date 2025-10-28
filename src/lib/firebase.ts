@@ -9,7 +9,7 @@ import { getMessaging } from "firebase/messaging";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBwjHDLTyuKHOqGTL-r5DfawStnNpOU57E",
-  authDomain: "saveethahub.tech",
+  authDomain: "saveethacgpa.firebaseapp.com",
   projectId: "saveethacgpa",
   storageBucket: "saveethacgpa.appspot.com",
   messagingSenderId: "184883570512",
@@ -27,3 +27,4 @@ const messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
 
 
 export { app, auth, db, storage, messaging };
+
