@@ -43,26 +43,30 @@ const getAttendanceInfo = (attendedStr: string, totalStr: string) => {
 
 
 export default function SubjectWiseAttendanceCalculator() {
-  const [subjects, setSubjects] = useState<Subject[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedSubjects = localStorage.getItem('attendanceSubjects');
-      if (savedSubjects) {
-        try {
-          const parsed = JSON.parse(savedSubjects);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
-          }
-        } catch (e) {
-          console.error("Failed to parse saved subjects:", e);
-        }
-      }
-    }
-    return [{ id: Date.now(), name: '', attended: '', total: '' }];
-  });
+  const [subjects, setSubjects] = useState<Subject[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('attendanceSubjects', JSON.stringify(subjects));
+    // This effect runs only on the client, avoiding hydration mismatch
+    const savedSubjects = localStorage.getItem('attendanceSubjects');
+    if (savedSubjects) {
+      try {
+        const parsed = JSON.parse(savedSubjects);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSubjects(parsed);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse saved subjects:", e);
+      }
+    }
+    // If nothing in storage, set the initial default subject
+    setSubjects([{ id: Date.now(), name: '', attended: '', total: '' }]);
+  }, []); // Empty dependency array ensures this runs once on mount on the client
+
+  useEffect(() => {
+    // This effect saves to localStorage whenever subjects change
+    if (subjects.length > 0 || localStorage.getItem('attendanceSubjects')) {
+        localStorage.setItem('attendanceSubjects', JSON.stringify(subjects));
     }
   }, [subjects]);
   
