@@ -191,6 +191,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+        'hd': 'saveetha.com', // Hint to Google to prioritize this domain
+        'prompt': 'select_account'
+    });
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
