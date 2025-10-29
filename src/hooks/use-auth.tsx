@@ -27,7 +27,6 @@ import { Loader2 } from 'lucide-react';
 import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
 const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
-const BATCH_ADMIN_EMAILS = ['k.nobitha666@gmail.com'];
 
 
 export interface UserProfileData {
@@ -151,13 +150,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       setProfileLoading(true);
+      setProfile(null);
+      setIsBatchAdmin(false);
 
       if (user) {
         setUser(user);
         setIsAdmin(user.email === ADMIN_EMAIL);
-        setIsBatchAdmin(BATCH_ADMIN_EMAILS.includes(user.email ?? ''));
         
         const userDocRef = doc(db, 'users', user.uid);
+        const batchAdminDocRef = doc(db, 'batchAdmins', user.uid);
+
+        // Check for batch admin status
+        const batchAdminSnap = await getDoc(batchAdminDocRef);
+        setIsBatchAdmin(batchAdminSnap.exists());
+        
         const unsubscribeProfile = onSnapshot(userDocRef, (userDoc) => {
           if (userDoc.exists()) {
             const dbProfile = userDoc.data() as UserProfileData;
@@ -220,8 +226,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    if (email !== ADMIN_EMAIL && !BATCH_ADMIN_EMAILS.includes(email)) {
-      throw new Error("This login method is for authorized developers only.");
+     if (email !== ADMIN_EMAIL) {
+       const batchAdminDocRef = doc(db, 'batchAdminsEmail', email);
+       const batchAdminSnap = await getDoc(batchAdminDocRef);
+       if (!batchAdminSnap.exists()) {
+           throw new Error("This login method is for authorized administrators only.");
+       }
     }
     try {
       await signInWithEmailAndPassword(auth, email, password);

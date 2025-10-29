@@ -10,7 +10,7 @@ import { getAllUsers } from './get-users';
 const notificationSchema = z.object({
     userIds: z.string().optional(),
     sendToAll: z.string().optional(),
-    batchYear: z.string().optional(),
+    batchYear: z.string().min(4, "A batch year is required.").optional(), // Make it optional at schema level, but enforce logic below
     title: z.string().min(1, { message: 'Title is required.' }),
     message: z.string().min(1, { message: 'Message is required.' }),
     link: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
