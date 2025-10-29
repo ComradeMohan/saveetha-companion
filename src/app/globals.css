@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -272,13 +273,13 @@
 }
 
 .liquid-glass-nav {
-  background: linear-gradient(270deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.2), hsl(var(--primary) / 0.1));
+  background: hsl(var(--background) / 0.3);
   background-size: 200% 200%;
   animation: liquid-gradient 10s ease infinite;
 }
 
 .dark .liquid-glass-nav {
-  background: linear-gradient(270deg, hsl(var(--primary) / 0.2), hsl(var(--secondary) / 0.3), hsl(var(--primary) / 0.2));
+  background: hsl(var(--background) / 0.3);
   background-size: 200% 200%;
   animation: liquid-gradient 10s ease infinite;
 }
