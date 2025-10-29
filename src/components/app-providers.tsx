@@ -9,7 +9,6 @@ import Header from '@/components/header';
 import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
-import FeatureAnnouncementBanner from './feature-announcement-banner';
 import { usePathname } from 'next/navigation';
 
 
@@ -21,7 +20,6 @@ function MainContent({ children }: { children: React.ReactNode }) {
     return (
         <>
             {showHeader && <Header />}
-            {showHeader && <FeatureAnnouncementBanner />}
             <VerificationBanner key="verification-banner" />
             <RecruitmentDialog />
             <main key="main-content">{children}</main>
