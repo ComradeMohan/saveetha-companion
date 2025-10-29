@@ -19,7 +19,6 @@ const certificationSchema = z.object({
  * This function operates under the batch admin's client-side permissions.
  */
 export async function addCertificationForBatchAdmin(prevState: any, formData: FormData) {
-  console.log('[DEBUG] addCertificationForBatchAdmin started.');
   const validatedFields = certificationSchema.safeParse({
     title: formData.get('title'),
     description: formData.get('description'),
@@ -28,37 +27,29 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
   });
 
   const userId = formData.get('userId') as string;
-  console.log(`[DEBUG] UserID: ${userId}`);
 
   if (!validatedFields.success) {
-    console.log('[DEBUG] Validation failed:', validatedFields.error.flatten().fieldErrors);
     return {
       type: 'error',
       message: 'Validation failed.',
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-   console.log('[DEBUG] Validation successful.');
 
   if (!userId) {
-    console.log('[DEBUG] User ID is missing.');
     return { type: 'error', message: 'User is not authenticated.' };
   }
 
   const { title, description, url, provider } = validatedFields.data;
 
   try {
-    console.log('[DEBUG] Starting Firestore transaction...');
     await runTransaction(db, async (transaction) => {
         const batchAdminRef = doc(db, 'batchAdmins', userId);
-        console.log(`[DEBUG] Transaction: Attempting to get doc at path: ${batchAdminRef.path}`);
         const batchAdminSnap = await transaction.get(batchAdminRef);
 
         if (!batchAdminSnap.exists()) {
-            console.log('[DEBUG] Transaction: Batch admin document does not exist. Aborting.');
             throw new Error('Permission Denied. You might not have the required roles to perform this action.');
         }
-        console.log('[DEBUG] Transaction: Batch admin document found.');
 
         // 1. Create the new certification document
         const newCertRef = doc(collection(db, 'certifications'));
@@ -70,7 +61,6 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
             createdBy: userId,
             createdAt: serverTimestamp(),
         };
-        console.log('[DEBUG] Transaction: Setting new certification data:', newCertData);
         transaction.set(newCertRef, newCertData);
 
         // 2. Create the activity log document
@@ -81,10 +71,8 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
             contentId: newCertRef.id,
             timestamp: serverTimestamp(),
         };
-        console.log('[DEBUG] Transaction: Setting new activity data:', newActivityData);
         transaction.set(activityRef, newActivityData);
     });
-    console.log('[DEBUG] Transaction completed successfully.');
 
     revalidatePath('/admin/certifications');
     revalidatePath('/certifications');
@@ -97,9 +85,6 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
 
   } catch (error: any) {
     console.error('[TRANSACTION_ERROR] addCertificationForBatchAdmin:', error);
-    // Log the full error object for detailed debugging
-    console.error('[FULL_ERROR_OBJECT]', JSON.stringify(error, null, 2));
-
     // Check for specific permission denied error from transaction
     if (error.message.includes('Permission Denied')) {
         return { type: 'error', message: 'Permission Denied. You might not have the required roles to perform this action.' };
