@@ -15,8 +15,6 @@ const certificationSchema = z.object({
 });
 
 export async function addCertification(prevState: any, formData: FormData) {
-  console.log('[Debug] addCertification action initiated.');
-
   const validatedFields = certificationSchema.safeParse({
     title: formData.get('title'),
     description: formData.get('description'),
@@ -26,7 +24,6 @@ export async function addCertification(prevState: any, formData: FormData) {
   });
 
   if (!validatedFields.success) {
-    console.error('[Debug] Validation failed:', validatedFields.error.flatten());
     return {
       type: 'error',
       message: 'Validation failed.',
@@ -34,19 +31,13 @@ export async function addCertification(prevState: any, formData: FormData) {
     };
   }
   
-  console.log('[Debug] Validation successful.');
-
   const { title, description, url, provider, userId } = validatedFields.data;
   
   if (!userId) {
-      console.error('[Debug] Error: User is not authenticated. userId is missing.');
       return { type: 'error', message: 'User is not authenticated.' };
   }
-  
-  console.log(`[Debug] User ID: ${userId}, Title: ${title}`);
 
   try {
-    console.log('[Debug] Attempting to add certification document...');
     const newCertRef = await addDoc(collection(db, 'certifications'), {
       title,
       description,
@@ -55,14 +46,10 @@ export async function addCertification(prevState: any, formData: FormData) {
       createdBy: userId,
       createdAt: serverTimestamp(),
     });
-    console.log(`[Debug] Certification document created with ID: ${newCertRef.id}`);
 
-    const batchAdminRef = doc(db, 'batchAdmins', userId);
-    console.log(`[Debug] Checking if user is a batch admin at path: ${batchAdminRef.path}`);
-    const batchAdminDoc = await getDoc(batchAdminRef);
-
-    if (batchAdminDoc.exists()) {
-        console.log('[Debug] User is a batch admin. Attempting to log activity.');
+    // Attempt to log activity for batch admins.
+    // This will fail silently for non-batch-admins due to security rules, which is expected.
+    try {
         const activityCollection = collection(db, 'batchAdmins', userId, 'activity');
         await addDoc(activityCollection, {
             action: `Added certification: "${title}"`,
@@ -70,23 +57,24 @@ export async function addCertification(prevState: any, formData: FormData) {
             contentId: newCertRef.id,
             timestamp: serverTimestamp(),
         });
-        console.log('[Debug] Activity logged successfully.');
-    } else {
-        console.log('[Debug] User is not a batch admin. Skipping activity log.');
+    } catch (activityError) {
+        // This error is expected for users who are not batch admins.
+        // We can log it on the server for debugging but won't show it to the user.
+        console.log(`[Info] Could not log activity for user ${userId}. This is expected if they are not a batch admin.`);
     }
+
 
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
     revalidatePath('/certifications');
     revalidatePath('/batch-admin/certifications');
 
-    console.log('[Debug] Action completed successfully.');
     return { 
       type: 'success', 
       message: `Certification '${title}' added successfully!` 
     };
   } catch (error: any) {
-    console.error('[Debug] An unexpected Firebase error occurred:', error);
+    console.error('[Critical] An unexpected Firebase error occurred during certification creation:', error);
     return { type: 'error', message: 'An unexpected firebase error occurred while adding the certification.' };
   }
 }
