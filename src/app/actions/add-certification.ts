@@ -11,7 +11,7 @@ const certificationSchema = z.object({
   description: z.string().min(1, { message: 'Description is required.' }),
   provider: z.string().min(1, { message: 'Provider is required.' }),
   url: z.string().url({ message: "Please enter a valid URL." }),
-  userId: z.string().optional(), // Added to track who is adding
+  userId: z.string().optional(), // ID of the user performing the action
 });
 
 export async function addCertification(prevState: any, formData: FormData) {
@@ -32,6 +32,10 @@ export async function addCertification(prevState: any, formData: FormData) {
   }
 
   const { title, description, url, provider, userId } = validatedFields.data;
+  
+  if (!userId) {
+      return { type: 'error', message: 'User is not authenticated.' };
+  }
 
   try {
     const newCertRef = await addDoc(collection(db, 'certifications'), {
@@ -39,25 +43,23 @@ export async function addCertification(prevState: any, formData: FormData) {
       description,
       url,
       provider,
+      createdBy: userId, // Add createdBy field as required by security rules
       createdAt: serverTimestamp(),
     });
 
-    // If a userId is provided (meaning a batch admin added it), log the activity.
-    if (userId) {
-        const batchAdminRef = doc(db, 'batchAdmins', userId);
-        const batchAdminDoc = await getDoc(batchAdminRef);
+    // Check if the user is a batch admin before trying to log activity
+    const batchAdminRef = doc(db, 'batchAdmins', userId);
+    const batchAdminDoc = await getDoc(batchAdminRef);
 
-        if (batchAdminDoc.exists()) {
-            const activityCollection = collection(db, 'batchAdmins', userId, 'activity');
-            await addDoc(activityCollection, {
-                action: `Added certification: "${title}"`,
-                contentType: 'certification',
-                contentId: newCertRef.id,
-                timestamp: serverTimestamp(),
-            });
-        }
+    if (batchAdminDoc.exists()) {
+        const activityCollection = collection(db, 'batchAdmins', userId, 'activity');
+        await addDoc(activityCollection, {
+            action: `Added certification: "${title}"`,
+            contentType: 'certification',
+            contentId: newCertRef.id,
+            timestamp: serverTimestamp(),
+        });
     }
-
 
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
