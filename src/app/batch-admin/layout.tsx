@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import AdminHeader from '@/components/admin/admin-header';
-import { GraduationCap, Megaphone, BookOpen, Award } from 'lucide-react';
+import { GraduationCap, Megaphone, BookOpen, Award, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -30,7 +30,8 @@ function BatchAdminLayoutSkeleton() {
 function Sidebar() {
     const pathname = usePathname();
     const navLinks = [
-        { href: '/batch-admin', label: 'Send Notification', icon: Megaphone },
+        { href: '/batch-admin', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/batch-admin/notifications', label: 'Send Notification', icon: Megaphone },
         { href: '/batch-admin/certifications', label: 'Certifications', icon: Award },
         { href: '/batch-admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
     ];

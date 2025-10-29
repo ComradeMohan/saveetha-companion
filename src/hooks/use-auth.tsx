@@ -20,7 +20,7 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, writeBatch, getDocs, deleteDoc as deleteFirestoreDoc, onSnapshot, runTransaction, increment } from 'firebase/firestore';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -41,6 +41,8 @@ export interface UserProfileData {
   college?: 'SSE' | 'SEC';
   credits?: number;
   recruitmentInterestSubmitted?: boolean;
+  referredBy?: string;
+  referralCount?: number;
 }
 
 interface CompleteUserProfile {
@@ -174,6 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           } else {
             // New user scenario
+            const referralId = new URLSearchParams(window.location.search).get('ref');
             const newProfileData: UserProfileData = {
               uid: user.uid,
               email: user.email!,
@@ -181,9 +184,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               isVerified: true,
               photoURL: user.photoURL || undefined,
               credits: 100,
+              referredBy: referralId || undefined,
             };
             setDoc(userDocRef, { ...newProfileData, createdAt: new Date().toISOString(), lastSignInTime: user.metadata.lastSignInTime })
-              .then(() => {
+              .then(async () => {
+                if(referralId) {
+                    const referrerAdminRef = doc(db, "batchAdmins", referralId);
+                    try {
+                        await runTransaction(db, async (transaction) => {
+                            const referrerDoc = await transaction.get(referrerAdminRef);
+                            if (referrerDoc.exists()) {
+                                transaction.update(referrerAdminRef, {
+                                    referralCount: increment(1)
+                                });
+                            }
+                        });
+                    } catch (e) {
+                        console.error("Failed to increment referral count: ", e);
+                    }
+                }
                 setProfile(newProfileData);
                 createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
                 sendWelcomeEmail({ to: user.email!, name: user.displayName! });
@@ -226,13 +245,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-     if (email !== ADMIN_EMAIL) {
-       const batchAdminDocRef = doc(db, 'batchAdminsEmail', email);
-       const batchAdminSnap = await getDoc(batchAdminDocRef);
-       if (!batchAdminSnap.exists()) {
-           throw new Error("This login method is for authorized administrators only.");
-       }
-    }
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {

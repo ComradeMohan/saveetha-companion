@@ -74,7 +74,8 @@ const learnNavLinks = [
 ];
 
 const batchAdminNavLinks = [
-    { href: '/batch-admin', label: 'Send Notification', icon: Megaphone },
+    { href: '/batch-admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/batch-admin/notifications', label: 'Send Notification', icon: Megaphone },
     { href: '/batch-admin/certifications', label: 'Certifications', icon: Award },
     { href: '/batch-admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
 ];
