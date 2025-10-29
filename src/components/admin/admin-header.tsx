@@ -34,15 +34,16 @@ import {
   GitBranch,
   Code,
   Hand,
+  UserCog,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
-  { href: '/admin/batch-admin', label: 'Batch Admins', icon: Users },
+  { href: '/admin/batch-admin', label: 'Batch Admins', icon: UserCog },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
