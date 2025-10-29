@@ -4,7 +4,7 @@
 import { useState, useEffect, useTransition } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, PlusCircle, Trash2, Eye } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getBatchAdmins, addBatchAdmin, removeBatchAdmin, type BatchAdmin } from '@/app/actions/manage-batch-admins';
 import { getAllUsers, type BasicUser } from '@/app/actions/get-users';
@@ -64,6 +64,7 @@ export default function BatchAdminManagementPage() {
       toast({
         title: result.type === 'success' ? 'Success' : 'Error',
         description: result.message,
+        variant: result.type === 'error' ? 'destructive' : 'default',
       });
       if (result.type === 'success') {
         setSelectedUserId('');
@@ -79,6 +80,7 @@ export default function BatchAdminManagementPage() {
       toast({
         title: result.type === 'success' ? 'Success' : 'Error',
         description: result.message,
+        variant: result.type === 'error' ? 'destructive' : 'default',
       });
       if (result.type === 'success') {
         fetchUsersAndAdmins();

@@ -4,6 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { sendBatchAdminWelcomeEmail } from './send-batch-admin-welcome-email';
 
 export interface BatchAdmin {
   id: string; // This will be the user's UID
@@ -34,15 +35,25 @@ export async function addBatchAdmin(formData: FormData) {
     const adminRef = adminDb.collection('batchAdmins').doc(userId);
     const userRef = adminDb.collection('users').doc(userId);
 
+    // Fetch user's name for the email
+    const userDoc = await userRef.get();
+    if (!userDoc.exists) {
+        throw new Error('User to be made admin does not exist.');
+    }
+    const userName = userDoc.data()?.name || 'New Admin';
+
     // Use a batch to perform both writes atomically
     const batchWrite = adminDb.batch();
     batchWrite.set(adminRef, { email, batch });
     batchWrite.update(userRef, { isBatchAdmin: true }); // Also mark on the user doc
     
     await batchWrite.commit();
+
+    // After successfully committing, send the welcome email
+    await sendBatchAdminWelcomeEmail({ to: email, name: userName });
     
-    revalidatePath('/admin/batch-admin');
-    return { type: 'success', message: `User ${email} has been made a batch admin.` };
+    revalidatePath('/admin/batch-admins');
+    return { type: 'success', message: `User ${email} has been made a batch admin and notified.` };
   } catch (error) {
     console.error('Error adding batch admin:', error);
     return { type: 'error', message: 'Failed to add batch admin.' };
@@ -60,7 +71,7 @@ export async function removeBatchAdmin(userId: string) {
     
     await batchWrite.commit();
 
-    revalidatePath('/admin/batch-admin');
+    revalidatePath('/admin/batch-admins');
     return { type: 'success', message: 'Batch admin removed.' };
   } catch (error) {
     console.error('Error removing batch admin:', error);

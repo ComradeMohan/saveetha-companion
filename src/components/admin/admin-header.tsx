@@ -39,6 +39,7 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ReportIssueDialog } from './report-issue-dialog';
 
 const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -146,6 +147,7 @@ export default function AdminHeader() {
        <div className="w-full flex-1">
          <h1 className="font-semibold text-lg">{siteTitle}</h1>
        </div>
+       {isBatchAdminSection && <ReportIssueDialog />}
     </header>
   );
 }
