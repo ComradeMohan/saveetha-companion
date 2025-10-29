@@ -70,15 +70,32 @@ const learnNavLinks = [
     { href: '/learn/courses', label: 'My Courses', icon: BookOpen },
     { href: '/learn/coding', label: 'Coding', icon: Code },
     { href: '/learn/profile', label: 'Profile', icon: UserCircle },
-]
+];
+
+const batchAdminNavLinks = [
+    { href: '/batch-admin', label: 'Send Notification', icon: Megaphone },
+    { href: '/batch-admin/certifications', label: 'Certifications', icon: Award },
+    { href: '/batch-admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
+];
 
 export default function AdminHeader() {
-  const { logout } = useAuth();
+  const { logout, isBatchAdmin } = useAuth();
   const pathname = usePathname();
 
   const isLearnSection = pathname.startsWith('/learn');
-  const links = isLearnSection ? learnNavLinks : adminNavLinks;
-  const siteTitle = isLearnSection ? 'Learning Zone' : 'Admin Panel';
+  const isBatchAdminSection = pathname.startsWith('/batch-admin');
+  
+  let links = adminNavLinks;
+  let siteTitle = 'Admin Panel';
+
+  if (isLearnSection) {
+      links = learnNavLinks;
+      siteTitle = 'Learning Zone';
+  } else if (isBatchAdminSection) {
+      links = batchAdminNavLinks;
+      siteTitle = 'Batch Admin';
+  }
+
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
