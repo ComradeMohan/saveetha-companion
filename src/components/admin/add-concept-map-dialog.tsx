@@ -56,28 +56,33 @@ export function AddConceptMapDialog({ onMapAdded }: AddConceptMapDialogProps) {
   });
 
   const onSubmit = async (values: ConceptMapFormValues) => {
+    if (!user) {
+        toast({ title: 'Error', description: 'You must be logged in.', variant: 'destructive'});
+        return;
+    }
     setLoading(true);
     try {
-      const newMapRef = await addDoc(collection(db, 'concept-maps'), {
+      const newMapData: any = {
         title: values.title,
         url: values.url,
         description: '', 
         createdAt: new Date().toISOString(),
-      });
+        createdBy: user.uid, // Add createdBy field
+      };
+
+      const newMapRef = await addDoc(collection(db, 'concept-maps'), newMapData);
 
       // If user is a batch admin, log activity
-      if (user?.uid) {
-         const batchAdminRef = doc(db, 'batchAdmins', user.uid);
-         const batchAdminDoc = await getDoc(batchAdminRef);
-         if (batchAdminDoc.exists()) {
-              const activityCollection = collection(db, 'batchAdmins', user.uid, 'activity');
-              await addDoc(activityCollection, {
-                  action: `Added concept map: "${values.title}"`,
-                  contentType: 'concept-map',
-                  contentId: newMapRef.id,
-                  timestamp: serverTimestamp(),
-              });
-         }
+      const batchAdminRef = doc(db, 'batchAdmins', user.uid);
+      const batchAdminDoc = await getDoc(batchAdminRef);
+      if (batchAdminDoc.exists()) {
+            const activityCollection = collection(db, 'batchAdmins', user.uid, 'activity');
+            await addDoc(activityCollection, {
+                action: `Added concept map: "${values.title}"`,
+                contentType: 'concept-map',
+                contentId: newMapRef.id,
+                timestamp: serverTimestamp(),
+            });
       }
 
       toast({

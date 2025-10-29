@@ -24,44 +24,14 @@ service cloud.firestore {
         allow read: if isAdmin() || (request.auth != null && request.auth.uid == userId);
         allow write, delete: if isAdmin();
 
-        // Allow batch admins to create activity logs for themselves.
+        // Batch admins can add to their own activity subcollection
         match /activity/{activityId} {
-          allow create: if request.auth != null && request.auth.uid == userId;
-          allow read, delete: if isAdmin();
+            allow create: if request.auth != null && request.auth.uid == userId;
+            allow read, delete: if isAdmin(); // Only main admin can read/delete logs
         }
     }
-
-    // Allow public read/write for the Link Drop feature
-    match /link-drop-sessions/{sessionId} {
-      allow read, write: if true;
-    }
-
-    match /concept-map-analytics/{mapId} {
-      allow read: if true;
-      allow write: if false; // All writes must go through the trusted server action
-    }
     
-    // Allow authenticated users to manage their own data first.
-    match /users/{userId} {
-      allow create: if request.auth != null;
-      // User can read their own profile, Admin can read any profile.
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow update, delete: if request.auth != null && request.auth.uid == userId;
-    }
-     match /users/{userId}/fcmTokens/{tokenId} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
-    }
-    match /students_cgpa/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    match /student_grades/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    match /user_notifications/{userId}/{document=**} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // PUBLIC COLLECTIONS
+    // PUBLIC COLLECTIONS (READABLE BY ANYONE)
     match /faculty/{docId} { allow read: if true; }
     match /updates/{docId} { allow read: if true; }
     match /events/{docId} { allow read: if true; }
@@ -71,24 +41,41 @@ service cloud.firestore {
     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} { allow read: if true; }
     match /mcqs/{docId} { allow read: if true; }
     match /coding-questions/{docId} { allow read: if true; }
+    match /concept-map-analytics/{mapId} { allow read: if true; }
 
-    // AUTHENTICATED READ
+    // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
     match /concept-maps/{docId} { allow read: if request.auth != null; }
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // USER-SPECIFIC DATA (ONLY THE USER CAN ACCESS)
+    match /users/{userId}/fcmTokens/{tokenId} { allow read, write, delete: if request.auth != null && request.auth.uid == userId; }
+    match /students_cgpa/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
+    match /student_grades/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
+    match /user_notifications/{userId}/{document=**} { allow read, write, delete: if request.auth != null && request.auth.uid == userId; }
 
-    // AUTHENTICATED/ADMIN WRITE
+    // ADMIN & BATCH ADMIN WRITE PERMISSIONS
     match /certifications/{docId} {
-        allow create: if isBatchAdmin() || isAdmin();
+        allow create: if (isBatchAdmin() || isAdmin()) && request.resource.data.createdBy == request.auth.uid;
         allow update, delete: if isAdmin();
     }
     match /concept-maps/{docId} {
-        allow create: if isBatchAdmin() || isAdmin();
-        allow update, delete: if isAdmin();
+        allow create: if (isBatchAdmin() || isAdmin()) && request.resource.data.createdBy == request.auth.uid;
+        allow delete: if isAdmin() || (request.auth != null && resource.data.createdBy == request.auth.uid);
+        allow update: if isAdmin();
     }
-    
-    // FORM SUBMISSIONS
+    match /faculty/{docId} {
+      allow create: if isBatchAdmin() || isAdmin();
+    }
+
+    // FORM SUBMISSIONS (PUBLIC OR AUTHENTICATED)
     match /contact-messages/{messageId} { allow create: if true; }
     match /login-issues/{issueId} { allow create: if true; }
+    match /link-drop-sessions/{sessionId} { allow read, write: if true; }
     match /enrollments/{enrollmentId} { allow create: if request.auth != null; }
     match /faculty-requests/{requestId} { allow create: if request.auth != null; }
     match /course-suggestions/{suggestionId} { allow create: if request.auth != null; }
@@ -101,8 +88,7 @@ service cloud.firestore {
         allow read, write: if false;
     }
 
-    // This rule is a final catch-all and should not be relied upon for general access.
-    // It primarily grants admins write access to collections not explicitly defined above.
+    // CATCH-ALL for remaining admin access. Should not be relied upon for general user rules.
     match /{path=**} {
       allow read, write: if isAdmin();
     }
