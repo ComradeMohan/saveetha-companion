@@ -3,157 +3,91 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // =================================
-    // Helper Functions
-    // =================================
+    // Helper function to check if the user is the main admin.
     function isAdmin() {
       return request.auth != null &&
              request.auth.token.email_verified == true &&
              request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
     }
 
+    // Helper function to check if the user is a batch admin.
     function isBatchAdmin() {
       return request.auth != null &&
              exists(/databases/$(database)/documents/batchAdmins/$(request.auth.uid));
     }
-    
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
-    }
 
-    // =================================
-    // Admin & Role-Specific Collections
-    // =================================
+    // Collection to store batch admin user IDs
     match /batchAdmins/{userId} {
-        allow read, write, delete: if isAdmin();
-    }
-    
-    match /contact-messages/{messageId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-    
-    match /login-issues/{issueId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-    
-    match /faculty-requests/{requestId} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if isAdmin();
-    }
-    
-    match /course-suggestions/{suggestionId} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if isAdmin();
-    }
-    
-    match /counter/{docId} {
-        allow read, write: if false; // Only admin SDK
-    }
-    
-    match /recruitment-submissions/{docId} {
-      allow create: if request.auth != null;
-      allow read: if isAdmin();
+      allow read, write, delete: if isAdmin();
     }
 
+    // Allow public read/write for the Link Drop feature
+    match /link-drop-sessions/{sessionId} {
+      allow read, write: if true;
+    }
 
-    // =================================
-    // User-Specific Data
-    // =================================
+    match /concept-map-analytics/{mapId} {
+      allow read: if true;
+      allow write: if false; // All writes must go through the trusted server action
+    }
+
+    // --- USER DATA ---
     match /users/{userId} {
       allow create: if request.auth != null;
-      allow read: if request.auth != null;
-      allow update, delete: if isOwner(userId);
+      // Admins can read any user profile, users can read/update their own.
+      allow read, update: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow delete: if request.auth != null && request.auth.uid == userId;
     }
-    match /users/{userId}/fcmTokens/{tokenId} {
-      allow all: if isOwner(userId);
+     match /users/{userId}/fcmTokens/{tokenId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }
     match /students_cgpa/{userId} {
-      allow all: if isOwner(userId);
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     match /student_grades/{userId} {
-      allow all: if isOwner(userId);
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     match /user_notifications/{userId}/{document=**} {
-      allow all: if isOwner(userId);
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }
 
-    // =================================
-    // Public & Authenticated Collections
-    // =================================
+    // --- PUBLIC & SEMI-PUBLIC COLLECTIONS ---
+    match /faculty/{docId} { allow read: if true; }
+    match /updates/{docId} { allow read: if true; }
+    match /events/{docId} { allow read: if true; }
+    match /projects/{projectId} { allow read: if true; }
+    match /colleges/{collegeId}/{**} { allow read: if true; }
 
-    // Collections anyone can read
-    match /faculty/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-    match /updates/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-    match /events/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
+    match /recruitment-submissions/{docId} {
+      allow create: if request.auth != null;
     }
     
-    // Collections requiring authentication to read
-    match /projects/{projectId} {
-      allow read: if request.auth != null;
-      allow create, update, delete: if isAdmin();
-    }
+    // Allow authenticated users to read, but only admins/batch-admins to create.
     match /certifications/{docId} {
       allow read: if request.auth != null;
       allow create: if isBatchAdmin() || isAdmin();
-      allow update, delete: if isAdmin();
+      allow update, delete: if isAdmin(); // Only main admin can edit/delete
     }
     match /concept-maps/{docId} {
       allow read: if request.auth != null;
       allow create: if isBatchAdmin() || isAdmin();
-      allow update, delete: if isAdmin();
-    }
-    match /concept-map-analytics/{mapId} {
-      allow read: if true;
-      allow write: if false; // Server-side only
-    }
-     match /link-drop-sessions/{sessionId} {
-      allow read, write: if request.auth != null;
-    }
-     match /enrollments/{enrollmentId} {
-      allow create: if request.auth != null;
-      allow read: if isAdmin();
+      allow update, delete: if isAdmin(); // Only main admin can edit/delete
     }
 
-    // =================================
-    // Nested College Data (Public Read)
-    // =================================
-    match /colleges/{collegeId} {
-        allow read: if true;
-        allow create, update, delete: if isAdmin();
+    // --- FORM SUBMISSIONS ---
+    match /contact-messages/{messageId} { allow create: if true; }
+    match /login-issues/{issueId} { allow create: if true; }
+    match /enrollments/{enrollmentId} { allow create: if request.auth != null; }
+    match /faculty-requests/{requestId} { allow create: if request.auth != null; }
+    match /course-suggestions/{suggestionId} { allow create: if request.auth != null; }
+
+    // --- SERVER-ONLY COLLECTIONS ---
+    match /counter/{docId} { allow read, write: if false; }
+
+    // As a final catch-all, give admin full access to collections not explicitly defined.
+    // This primarily applies to admin-only write operations on public collections.
+    match /{path=**} {
+      allow write: if isAdmin();
     }
-    match /colleges/{collegeId}/departments/{departmentId} {
-        allow read: if true;
-        allow create, update, delete: if isAdmin();
-    }
-     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} {
-        allow read: if true;
-        allow create, update, delete: if isAdmin();
-    }
-    
-    // =================================
-    // Nested Course Content
-    // =================================
-     match /course-content/{courseId}/{document=**} {
-        allow read: if request.auth != null;
-        allow write: if isAdmin();
-     }
-     match /mcqs/{courseId} {
-        allow read: if request.auth != null;
-        allow write: if isAdmin();
-     }
-     match /coding-questions/{questionId} {
-        allow read: if request.auth != null;
-        allow write: if isAdmin();
-     }
   }
 }
