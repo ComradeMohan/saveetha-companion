@@ -5,7 +5,6 @@ import { db } from '@/lib/firebase';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { collection, writeBatch, doc, getDoc, serverTimestamp, runTransaction } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
 import { adminDb } from '@/lib/firebase-admin';
 
 const certificationSchema = z.object({
@@ -13,7 +12,6 @@ const certificationSchema = z.object({
   description: z.string().min(1, { message: 'Description is required.' }),
   provider: z.string().min(1, { message: 'Provider is required.' }),
   url: z.string().url({ message: "Please enter a valid URL." }),
-  userId: z.string().optional(), // ID of the user performing the action
 });
 
 /**
@@ -26,8 +24,9 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
     description: formData.get('description'),
     provider: formData.get('provider'),
     url: formData.get('url'),
-    userId: formData.get('userId'),
   });
+
+  const userId = formData.get('userId') as string;
 
   if (!validatedFields.success) {
     return {
@@ -37,11 +36,11 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
     };
   }
 
-  const { title, description, url, provider, userId } = validatedFields.data;
-
   if (!userId) {
     return { type: 'error', message: 'User is not authenticated.' };
   }
+
+  const { title, description, url, provider } = validatedFields.data;
 
   try {
     await runTransaction(db, async (transaction) => {
@@ -97,7 +96,7 @@ export async function addCertificationForBatchAdmin(prevState: any, formData: Fo
  * For Main Admins. Uses the Admin SDK to bypass security rules for direct creation.
  * No activity logging is performed for the main admin.
  */
-export async function addCertificationForAdmin(formData: FormData) {
+export async function addCertificationForAdmin(prevState: any, formData: FormData) {
     const validatedFields = certificationSchema.safeParse({
         title: formData.get('title'),
         description: formData.get('description'),
