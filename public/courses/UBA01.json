@@ -1,0 +1,170 @@
+{
+  "course_name": "Engineering Mathematics - I",
+  "course_code": "UBA01",
+  "units": [
+    {
+      "unit_title": "Differential Calculus",
+      "topics": [
+        {
+          "topic_title": "Limits and Continuity",
+          "notes_md": "Understanding limits is fundamental to calculus. A limit describes the value that a function approaches as the input approaches some value. Continuity, on the other hand, means that the function has no breaks or jumps. Formally, a function f(x) is continuous at x = a if lim (x→a) f(x) = f(a). We explore different methods for calculating limits, including algebraic manipulation, L'Hôpital's rule, and the squeeze theorem. We also look at the different types of discontinuities such as removable, jump, and essential discontinuities. Understanding these concepts is crucial for differentiating and integrating functions.\n\nExample:\nConsider the function f(x) = (x^2 - 1) / (x - 1).  As x approaches 1, the function approaches 2.  This limit exists even though f(1) is undefined. We can simplify this expression to f(x) = x + 1, where x != 1.\n\n```python\ndef limit(f, x, a):\n  # Placeholder for limit calculation\n  return 'Limit calculation required'\n```",
+          "video_url": "https://www.youtube.com/watch?v=kfF40MiS7zA",
+          "practice_questions": [
+            "Find the limit of (x^2 - 4) / (x - 2) as x approaches 2.",
+            "Determine if the function f(x) = |x| is continuous at x = 0.",
+            "Evaluate lim (x→0) sin(x) / x.",
+            "Explain the difference between a removable and a jump discontinuity.",
+            "Use L'Hôpital's rule to find the limit of x / e^x as x approaches infinity."
+          ]
+        },
+        {
+          "topic_title": "Differentiation",
+          "notes_md": "Differentiation is the process of finding the derivative of a function. The derivative represents the instantaneous rate of change of the function.  We cover various differentiation rules, including the power rule, product rule, quotient rule, and chain rule. Implicit differentiation is also discussed, which is used when a function is not explicitly defined in terms of one variable. Higher-order derivatives represent the rate of change of the rate of change and have applications in physics and engineering.  Understanding differentiation is essential for optimization problems and curve sketching.\n\nExample:\nd/dx (x^n) = n*x^(n-1)\nd/dx (sin x) = cos x\nd/dx (cos x) = -sin x\n\n```python\ndef derivative(f, x):\n  # Placeholder for derivative calculation\n  return 'Derivative calculation required'\n```",
+          "video_url": "https://www.youtube.com/watch?v=9vKqVkMQhkQ",
+          "practice_questions": [
+            "Find the derivative of f(x) = x^3 + 2x^2 - 5x + 1.",
+            "Use the product rule to find the derivative of f(x) = x * sin(x).",
+            "Use the quotient rule to find the derivative of f(x) = (x^2 + 1) / (x - 1).",
+            "Use the chain rule to find the derivative of f(x) = sin(x^2).",
+            "Find the second derivative of f(x) = x^4 - 3x^2 + 2x."
+          ]
+        },
+        {
+          "topic_title": "Applications of Derivatives",
+          "notes_md": "Derivatives have numerous applications in optimization, related rates, and curve sketching. Optimization involves finding the maximum or minimum values of a function. Related rates problems involve finding the rate of change of one quantity in terms of the rate of change of another. Curve sketching involves using derivatives to determine the shape of a graph, including intervals of increasing and decreasing, concavity, and points of inflection. The first derivative test and second derivative test are used to find local maxima and minima. Understanding these applications is crucial for solving real-world problems in engineering and physics.\n\nFor example, we can use derivatives to optimize the dimensions of a box to maximize its volume given a fixed surface area.\n",
+          "video_url": "https://www.youtube.com/watch?v=4jvT71m0ePQ",
+          "practice_questions": [
+            "Find the maximum area of a rectangle with a perimeter of 20 cm.",
+            "A ladder 10 ft long rests against a vertical wall. If the bottom of the ladder slides away from the wall at a rate of 1 ft/s, how fast is the top of the ladder sliding down the wall when the bottom of the ladder is 6 ft from the wall?",
+            "Sketch the graph of f(x) = x^3 - 3x^2 + 2.",
+            "Find the critical points of f(x) = x^4 - 4x^3 + 1.",
+            "Determine the intervals of increasing and decreasing for f(x) = x^2 - 2x + 3."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Integral Calculus",
+      "topics": [
+        {
+          "topic_title": "Indefinite Integrals",
+          "notes_md": "Integration is the reverse process of differentiation. An indefinite integral represents the family of functions whose derivative is a given function. We cover basic integration formulas, including the power rule, trigonometric integrals, and exponential integrals. Techniques of integration, such as substitution, integration by parts, and partial fractions, are introduced. The constant of integration, C, is always added to the result of an indefinite integral. Understanding indefinite integrals is crucial for solving differential equations and finding areas and volumes.\n\nExample:\n∫ x^n dx = (x^(n+1)) / (n+1) + C, where n != -1.\n∫ sin(x) dx = -cos(x) + C\n∫ cos(x) dx = sin(x) + C\n",
+          "video_url": "https://www.youtube.com/watch?v=yIUhcWjGIE0",
+          "practice_questions": [
+            "Find the indefinite integral of f(x) = x^4 + 3x^2 - 2x + 5.",
+            "Use substitution to find the indefinite integral of f(x) = sin(x) * cos(x).",
+            "Use integration by parts to find the indefinite integral of f(x) = x * e^x.",
+            "Use partial fractions to find the indefinite integral of f(x) = 1 / (x^2 - 1).",
+            "Find the indefinite integral of f(x) = e^(2x)."
+          ]
+        },
+        {
+          "topic_title": "Definite Integrals",
+          "notes_md": "A definite integral represents the area under a curve between two limits of integration. The fundamental theorem of calculus relates differentiation and integration, stating that the derivative of the definite integral of a function is the original function. We cover properties of definite integrals, such as linearity, additivity, and symmetry. Techniques of integration, such as substitution and integration by parts, can also be used to evaluate definite integrals. Definite integrals have applications in finding areas, volumes, and average values of functions.\n\nExample:\n∫[a, b] f(x) dx = F(b) - F(a), where F'(x) = f(x).\n",
+          "video_url": "https://www.youtube.com/watch?v=U5k2WqS-01E",
+          "practice_questions": [
+            "Evaluate the definite integral of f(x) = x^2 from x = 0 to x = 2.",
+            "Use substitution to evaluate the definite integral of f(x) = sin(x^2) * 2x from x = 0 to x = sqrt(pi/2).",
+            "Use integration by parts to evaluate the definite integral of f(x) = x * cos(x) from x = 0 to x = pi/2.",
+            "Evaluate the definite integral of f(x) = e^x from x = 0 to x = 1.",
+            "Calculate the area under the curve f(x) = x^3 from x = 1 to x = 3."
+          ]
+        },
+        {
+          "topic_title": "Applications of Integrals",
+          "notes_md": "Integrals have numerous applications in finding areas between curves, volumes of solids of revolution, arc length, and surface area. The area between two curves is found by integrating the difference between the two functions. Volumes of solids of revolution can be found using the disk method, washer method, or shell method. Arc length is the length of a curve, and surface area is the area of a surface generated by revolving a curve around an axis. Understanding these applications is crucial for solving real-world problems in engineering and physics.\n\nWe can find the area between two curves f(x) and g(x) from a to b by calculating ∫[a, b] |f(x) - g(x)| dx.\n",
+          "video_url": "https://www.youtube.com/watch?v=QcEUk9AHk2s",
+          "practice_questions": [
+            "Find the area between the curves f(x) = x^2 and g(x) = x from x = 0 to x = 1.",
+            "Find the volume of the solid generated by revolving the region bounded by y = x^2, y = 0, and x = 1 about the x-axis.",
+            "Find the volume of the solid generated by revolving the region bounded by y = sqrt(x), y = 0, and x = 4 about the y-axis.",
+            "Find the arc length of the curve y = x^(3/2) from x = 0 to x = 4.",
+            "Find the surface area of the solid generated by revolving the curve y = x^2 from x = 0 to x = 1 about the x-axis."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Matrices and Linear Algebra",
+      "topics": [
+        {
+          "topic_title": "Matrix Operations",
+          "notes_md": "Matrices are rectangular arrays of numbers arranged in rows and columns. We cover basic matrix operations, including addition, subtraction, scalar multiplication, and matrix multiplication. Matrix addition and subtraction are performed element-wise, while matrix multiplication requires specific row-column multiplication rules. The transpose of a matrix is obtained by interchanging its rows and columns. These operations are fundamental to solving systems of linear equations and representing linear transformations.\n\nExample:\n```\nA = [[1, 2], [3, 4]]\nB = [[5, 6], [7, 8]]\nA + B = [[6, 8], [10, 12]]\nA * B = [[19, 22], [43, 50]]\n```",
+          "video_url": "https://www.youtube.com/watch?v=rowWM-MijjE",
+          "practice_questions": [
+            "Given A = [[1, 2], [3, 4]] and B = [[5, 6], [7, 8]], find A + B.",
+            "Given A = [[1, 2], [3, 4]] and B = [[5, 6], [7, 8]], find A * B.",
+            "Find the transpose of the matrix A = [[1, 2, 3], [4, 5, 6]].",
+            "If A is a 2x3 matrix and B is a 3x4 matrix, what are the dimensions of A * B?",
+            "Explain the conditions for matrix multiplication to be defined."
+          ]
+        },
+        {
+          "topic_title": "Determinants and Inverses",
+          "notes_md": "The determinant of a square matrix is a scalar value that provides information about the matrix's properties.  We cover methods for calculating determinants, including cofactor expansion and row reduction. A matrix is invertible if and only if its determinant is non-zero. The inverse of a matrix is used to solve systems of linear equations and perform other matrix operations. We explore methods for finding the inverse of a matrix, including using the adjoint matrix and row reduction.\n\nFor a 2x2 matrix A = [[a, b], [c, d]], det(A) = ad - bc.  If det(A) != 0, then A^-1 = (1/det(A)) * [[d, -b], [-c, a]].\n",
+          "video_url": "https://www.youtube.com/watch?v=Ip3YXDWYz94",
+          "practice_questions": [
+            "Find the determinant of the matrix A = [[1, 2], [3, 4]].",
+            "Determine if the matrix A = [[1, 2], [2, 4]] is invertible.",
+            "Find the inverse of the matrix A = [[2, 1], [1, 1]].",
+            "Use row reduction to find the determinant of the matrix A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]].",
+            "Explain the relationship between the determinant of a matrix and its invertibility."
+          ]
+        },
+        {
+          "topic_title": "Systems of Linear Equations",
+          "notes_md": "Systems of linear equations can be solved using various methods, including Gaussian elimination, Gauss-Jordan elimination, and matrix inversion. Gaussian elimination involves using row operations to transform the augmented matrix into row echelon form. Gauss-Jordan elimination transforms the augmented matrix into reduced row echelon form. Matrix inversion involves finding the inverse of the coefficient matrix and multiplying it by the constant vector. These methods are used to find the solutions to linear systems and determine if a system has a unique solution, infinitely many solutions, or no solution.\n\nConsider the system:\nx + y = 3\nx - y = 1\nWe can solve it by Gaussian elimination or using matrix inversion.\n",
+          "video_url": "https://www.youtube.com/watch?v=eDb3DRTFw5A",
+          "practice_questions": [
+            "Solve the system of equations: x + y = 5, x - y = 1.",
+            "Solve the system of equations: 2x + y = 8, x - y = 1.",
+            "Use Gaussian elimination to solve the system of equations: x + y + z = 6, x - y + z = 2, 2x + y - z = 1.",
+            "Use Gauss-Jordan elimination to solve the system of equations: x + 2y = 5, 2x + 4y = 10.",
+            "Determine if the system of equations: x + y = 2, 2x + 2y = 5 has a solution."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Ordinary Differential Equations",
+      "topics": [
+        {
+          "topic_title": "First-Order Differential Equations",
+          "notes_md": "A first-order differential equation is an equation that involves a function and its first derivative. We cover various methods for solving first-order differential equations, including separation of variables, integrating factors, and exact equations. Separation of variables involves separating the variables and integrating both sides. Integrating factors involve multiplying the equation by a function that makes it exact. Exact equations are equations that can be written as the derivative of a function of two variables. These methods are used to find the general and particular solutions to first-order differential equations.\n\nExample:\ndy/dx = f(x)g(y)\nWe can separate the variables to get dy/g(y) = f(x)dx, and then integrate both sides.\n",
+          "video_url": "https://www.youtube.com/watch?v=9VejxtA91X8",
+          "practice_questions": [
+            "Solve the differential equation dy/dx = x / y using separation of variables.",
+            "Solve the differential equation dy/dx + y = e^(-x) using an integrating factor.",
+            "Solve the differential equation (2x + y) dx + (x + 2y) dy = 0.",
+            "Find the general solution to the differential equation dy/dx = x^2 + 1.",
+            "Find the particular solution to the differential equation dy/dx = 2x, with the initial condition y(0) = 1."
+          ]
+        },
+        {
+          "topic_title": "Second-Order Linear Homogeneous Equations",
+          "notes_md": "A second-order linear homogeneous differential equation is an equation of the form ay'' + by' + cy = 0, where a, b, and c are constants. We cover methods for solving these equations, including finding the characteristic equation and using the roots of the characteristic equation to find the general solution. The roots of the characteristic equation can be real and distinct, real and repeated, or complex conjugates. The form of the general solution depends on the nature of the roots. These equations have applications in modeling oscillations and vibrations.\n\nExample:\nay'' + by' + cy = 0\nCharacteristic equation: ar^2 + br + c = 0\n",
+          "video_url": "https://www.youtube.com/watch?v=P4EdlYtQO94",
+          "practice_questions": [
+            "Solve the differential equation y'' + 3y' + 2y = 0.",
+            "Solve the differential equation y'' - 4y' + 4y = 0.",
+            "Solve the differential equation y'' + 2y' + 5y = 0.",
+            "Find the general solution to the differential equation y'' - y = 0.",
+            "Determine the nature of the roots of the characteristic equation for y'' + 4y' + 4y = 0."
+          ]
+        },
+        {
+          "topic_title": "Second-Order Linear Non-Homogeneous Equations",
+          "notes_md": "A second-order linear non-homogeneous differential equation is an equation of the form ay'' + by' + cy = f(x), where a, b, and c are constants and f(x) is a non-zero function. We cover methods for solving these equations, including the method of undetermined coefficients and variation of parameters. The method of undetermined coefficients involves guessing a particular solution based on the form of f(x). Variation of parameters involves finding a particular solution using the general solution of the homogeneous equation. These equations have applications in modeling forced oscillations and vibrations.\n\nExample:\nay'' + by' + cy = f(x)\nFirst, find the general solution to ay'' + by' + cy = 0.  Then, find a particular solution to the non-homogeneous equation.\n",
+          "video_url": "https://www.youtube.com/watch?v=vL73wGv5GLk",
+          "practice_questions": [
+            "Solve the differential equation y'' + 3y' + 2y = e^(-x) using the method of undetermined coefficients.",
+            "Solve the differential equation y'' - 4y' + 4y = x^2 using the method of undetermined coefficients.",
+            "Solve the differential equation y'' + y = sin(x) using variation of parameters.",
+            "Find a particular solution to the differential equation y'' + 2y' + y = x.",
+            "Explain the difference between the method of undetermined coefficients and variation of parameters."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,9 +1,7 @@
-
 'use client';
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
-import { getUnits, getTopics, Unit, Topic, getCourseNameById } from '@/app/actions/manage-course-content';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,23 +11,40 @@ import { Button } from '@/components/ui/button';
 import TopicContent from '@/components/learn/topic-content';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { getMcqsForCourse, type Mcq } from '@/app/actions/manage-mcqs';
 import { McqQuiz } from '@/components/learn/mcq-quiz';
 
-type CourseInfo = {
-  id: string;
-  name: string;
-};
+// Define types based on the new JSON structure
+interface Topic {
+  topic_title: string;
+  notes_md?: string;
+  video_url?: string;
+  practice_questions?: string[];
+}
 
-type UnitWithTopics = Unit & { topics: Topic[] };
+interface Unit {
+  unit_title: string;
+  topics: Topic[];
+}
+
+interface CourseData {
+  course_name: string;
+  course_code: string;
+  units: Unit[];
+}
+
+interface Mcq {
+  questionNumber: number;
+  question: string;
+  options: { key: 'a' | 'b' | 'c' | 'd'; text: string }[];
+  correctAnswer: 'a' | 'b' | 'c' | 'd';
+}
 
 export default function CoursePage() {
   const params = useParams();
   const { id: courseId } = params;
   const { loading: authLoading } = useAuth();
-  const [course, setCourse] = useState<CourseInfo | null>(null);
-  const [courseContent, setCourseContent] = useState<UnitWithTopics[]>([]);
-  const [mcqs, setMcqs] = useState<Mcq[] | null>(null);
+  const [courseData, setCourseData] = useState<CourseData | null>(null);
+  const [mcqs, setMcqs] = useState<Mcq[] | null>(null); // Keep MCQ logic if it's separate
   const [loading, setLoading] = useState(true);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const { toast } = useToast();
@@ -39,36 +54,28 @@ export default function CoursePage() {
     
     setLoading(true);
     try {
-      const [courseName, units, mcqData] = await Promise.all([
-          getCourseNameById(courseId),
-          getUnits(courseId),
-          getMcqsForCourse(courseId)
-      ]);
-
-      const currentCourse = { id: courseId, name: courseName || `Course ${courseId}` };
-      setCourse(currentCourse);
-      setMcqs(mcqData);
-      
-      if (units.length > 0) {
-          const unitsWithTopics = await Promise.all(
-              units.map(async (unit) => {
-                  const topics = await getTopics(courseId, unit.id);
-                  return { ...unit, topics };
-              })
-          );
-          setCourseContent(unitsWithTopics);
+      // Fetch course content from the JSON file
+      const res = await fetch(`/courses/${courseId}.json`);
+      if (!res.ok) {
+        throw new Error(`Course content for ${courseId} not found.`);
       }
+      const data: CourseData = await res.json();
+      setCourseData(data);
 
-      if (currentCourse.name) {
-        localStorage.setItem('lastViewedCourse', JSON.stringify({ id: currentCourse.id, name: currentCourse.name }));
-      }
+      localStorage.setItem('lastViewedCourse', JSON.stringify({ id: data.course_code, name: data.course_name }));
       
     } catch (error) {
       console.error("Error fetching course data:", error);
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      setCourseData(null);
     } finally {
       setLoading(false);
     }
-  }, [authLoading, courseId]);
+  }, [authLoading, courseId, toast]);
 
 
   useEffect(() => {
@@ -116,12 +123,12 @@ export default function CoursePage() {
     );
   }
   
-  if (!course) {
+  if (!courseData) {
     return (
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
             <div>
-              <h3 className="text-xl font-semibold">Course Not Found</h3>
-              <p className="text-muted-foreground mt-2">The requested course could not be found.</p>
+              <h3 className="text-xl font-semibold">Course Content Not Found</h3>
+              <p className="text-muted-foreground mt-2">The materials for this course have not been uploaded yet.</p>
             </div>
         </div>
     )
@@ -142,12 +149,12 @@ export default function CoursePage() {
                     </AlertDialogTrigger>
                     <AlertDialogContent className="max-w-4xl w-full h-[90vh]">
                          <AlertDialogHeader className="sr-only">
-                            <AlertDialogTitle>Quiz: {course.name}</AlertDialogTitle>
+                            <AlertDialogTitle>Quiz: {courseData.course_name}</AlertDialogTitle>
                             <AlertDialogDescription>
                                 Complete the multiple-choice quiz for this course.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <McqQuiz mcqs={mcqs} courseName={course.name} />
+                        <McqQuiz mcqs={mcqs} courseName={courseData.course_name} />
                     </AlertDialogContent>
                 </AlertDialog>
             )}
@@ -180,42 +187,44 @@ export default function CoursePage() {
                     <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <CardTitle>{course.name}</CardTitle>
-                    <CardDescription>Review the learning materials for this course ({course.id}).</CardDescription>
+                    <CardTitle>{courseData.course_name}</CardTitle>
+                    <CardDescription>Review the learning materials for this course ({courseData.course_code}).</CardDescription>
                 </div>
             </div>
         </CardHeader>
         <CardContent>
-            {courseContent.length > 0 ? (
-                <Accordion type="single" collapsible className="w-full" defaultValue={courseContent[0]?.id}>
-                    {courseContent.map(unit => (
-                        <AccordionItem key={unit.id} value={unit.id}>
+            {courseData.units.length > 0 ? (
+                <Accordion type="single" collapsible className="w-full" defaultValue={courseData.units[0]?.unit_title}>
+                    {courseData.units.map(unit => (
+                        <AccordionItem key={unit.unit_title} value={unit.unit_title}>
                             <AccordionTrigger className="text-base font-semibold hover:no-underline">
-                                {unit.title}
+                                {unit.unit_title}
                             </AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-2">
-                               {unit.topics.length > 0 ? unit.topics.map(topic => (
-                                   <div key={topic.id} className="p-4 rounded-md border bg-secondary/40">
-                                       <h4 className="font-semibold mb-3">{topic.title}</h4>
+                               {unit.topics.length > 0 ? unit.topics.map((topic, index) => (
+                                   <div key={index} className="p-4 rounded-md border bg-secondary/40">
+                                       <h4 className="font-semibold mb-3">{topic.topic_title}</h4>
                                        <div className="space-y-3">
-                                           {topic.notes && (
+                                           {topic.notes_md && (
                                                 <div>
                                                     <h5 className="flex items-center gap-2 text-sm font-semibold mb-2"><FileText className="h-4 w-4"/> Notes</h5>
-                                                    <TopicContent htmlContent={topic.notes} courseId={courseId as string} topicId={topic.id} />
+                                                    <TopicContent htmlContent={topic.notes_md} courseId={courseId as string} topicId={`topic-${index}`} />
                                                 </div>
                                            )}
-                                           {topic.videoUrl && (
+                                           {topic.video_url && (
                                                <div>
                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><Youtube className="h-4 w-4 text-red-500"/> Video</h5>
                                                     <Button asChild variant="link" className="p-0 h-auto">
-                                                        <a href={topic.videoUrl} target="_blank" rel="noopener noreferrer">{topic.videoUrl}</a>
+                                                        <a href={topic.video_url} target="_blank" rel="noopener noreferrer">{topic.video_url}</a>
                                                     </Button>
                                                </div>
                                            )}
-                                           {topic.questions && (
+                                           {topic.practice_questions && topic.practice_questions.length > 0 && (
                                                 <div>
                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><HelpCircle className="h-4 w-4 text-blue-500"/> Questions</h5>
-                                                    <p className="text-sm whitespace-pre-wrap font-mono bg-muted p-3 rounded-md">{topic.questions}</p>
+                                                    <div className="text-sm whitespace-pre-wrap font-mono bg-muted p-3 rounded-md">
+                                                        {topic.practice_questions.join('\n')}
+                                                    </div>
                                                </div>
                                            )}
                                        </div>
