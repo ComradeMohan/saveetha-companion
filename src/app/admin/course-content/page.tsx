@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useEffect, useState, useTransition, Fragment, useMemo } from 'react';
+import { useEffect, useState, useTransition, useMemo, useRef, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import {
   Card,
   CardContent,
@@ -13,9 +14,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Combobox } from '@/components/ui/combobox';
-import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2 } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic, addTopic } from '@/app/actions/manage-course-content';
+import { importCourseFromJson } from '@/app/actions/manage-course-content-json';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
 import type { Unit, Topic } from '@/app/actions/manage-course-content';
@@ -26,6 +28,18 @@ import { EditTopicDialog } from '@/components/admin/course-content/edit-topic-di
 
 
 type Course = { id: string; name: string };
+
+const jsonInitialState = { type: '', message: '' };
+
+function JsonSubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+         <Button type="submit" disabled={pending}>
+            {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <UploadCloud className="mr-2 h-4 w-4" />}
+            {pending ? 'Importing...' : 'Import from JSON'}
+        </Button>
+    )
+}
 
 
 export default function CourseContentPage() {
@@ -43,6 +57,9 @@ export default function CourseContentPage() {
   const [newUnitTitle, setNewUnitTitle] = useState('');
   const [syllabusText, setSyllabusText] = useState('');
   const [generatingCourses, setGeneratingCourses] = useState<Set<string>>(new Set());
+
+  const jsonFormRef = useRef<HTMLFormElement>(null);
+  const [jsonState, jsonFormAction] = useActionState(importCourseFromJson, jsonInitialState);
 
   // Initial data loading for dropdowns
   useEffect(() => {
@@ -89,6 +106,21 @@ export default function CourseContentPage() {
         setTopics({});
     }
   }, [units, selectedCourse]);
+
+  // Effect for JSON upload form
+    useEffect(() => {
+        if (jsonState.type) {
+            toast({
+                title: jsonState.type === 'success' ? 'Success' : 'Error',
+                description: jsonState.message,
+                variant: jsonState.type === 'error' ? 'destructive' : 'default',
+            });
+            if (jsonState.type === 'success') {
+                jsonFormRef.current?.reset();
+                refreshCourseData();
+            }
+        }
+    }, [jsonState, toast]);
 
   const refreshCourseData = async () => {
     if (selectedCourse) {
@@ -303,6 +335,26 @@ export default function CourseContentPage() {
             <div className="space-y-6">
                 <Card>
                     <CardHeader>
+                        <CardTitle>Bulk JSON Upload</CardTitle>
+                        <CardDescription>
+                            Quickly populate a course by uploading a formatted JSON file.
+                        </CardDescription>
+                    </CardHeader>
+                    <form ref={jsonFormRef} action={jsonFormAction}>
+                        <CardContent>
+                             <input type="hidden" name="courseId" value={selectedCourse} />
+                            <div className="space-y-2">
+                                <Label htmlFor="jsonFile">Course JSON File</Label>
+                                <Input id="jsonFile" name="jsonFile" type="file" accept=".json" />
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                           <JsonSubmitButton />
+                        </CardFooter>
+                    </form>
+                </Card>
+                <Card>
+                    <CardHeader>
                         <CardTitle>AI Content Generation</CardTitle>
                         <CardDescription>
                             Paste the course syllabus here to generate all units and topics automatically. This will overwrite existing content for this course.
@@ -352,7 +404,7 @@ export default function CourseContentPage() {
           </div>
       )}
 
-        {pendingCourses.length > 0 && (
+        {pendingCourses.length > 0 && !selectedCourse && (
             <Card className="mt-6">
                 <CardHeader>
                     <CardTitle>Pending Courses</CardTitle>
