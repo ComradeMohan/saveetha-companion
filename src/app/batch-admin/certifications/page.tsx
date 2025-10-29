@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { addCertification } from '@/app/actions/add-certification';
+import { useAuth } from '@/hooks/use-auth';
+
 
 const initialState = {
   type: '',
@@ -42,6 +44,7 @@ export default function BatchAdminCertificationsPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction] = useActionState(addCertification, initialState);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (state.type) {
@@ -64,6 +67,7 @@ export default function BatchAdminCertificationsPage() {
         </div>
         <Card className="max-w-2xl">
           <form ref={formRef} action={formAction}>
+            <input type="hidden" name="userId" value={user?.uid || ''} />
             <CardHeader>
               <CardTitle>Add a New Certification</CardTitle>
               <CardDescription>

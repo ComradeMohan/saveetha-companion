@@ -4,7 +4,7 @@
 import { useState, useEffect, useTransition } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, PlusCircle, Trash2, UserCog } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getBatchAdmins, addBatchAdmin, removeBatchAdmin, type BatchAdmin } from '@/app/actions/manage-batch-admins';
 import { getAllUsers, type BasicUser } from '@/app/actions/get-users';
@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Combobox } from '@/components/ui/combobox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { ViewActivityDialog } from '@/components/admin/view-activity-dialog';
 
 export default function BatchAdminManagementPage() {
   const { toast } = useToast();
@@ -155,6 +156,7 @@ export default function BatchAdminManagementPage() {
                                 <TableCell>{admin.email}</TableCell>
                                 <TableCell>{admin.batch}</TableCell>
                                 <TableCell className="text-right">
+                                    <ViewActivityDialog admin={admin} />
                                     <Button variant="ghost" size="icon" onClick={() => handleRemove(admin.id)} disabled={isPending}>
                                         <Trash2 className="h-4 w-4 text-destructive" />
                                     </Button>

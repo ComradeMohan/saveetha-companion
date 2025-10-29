@@ -26,8 +26,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
+import { adminDb } from '@/lib/firebase-admin';
 
 const conceptMapSchema = z.object({
   title: z.string().min(3, { message: 'Name must be at least 3 characters.' }),
@@ -44,6 +46,7 @@ export function AddConceptMapDialog({ onMapAdded }: AddConceptMapDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const form = useForm<ConceptMapFormValues>({
     resolver: zodResolver(conceptMapSchema),
@@ -56,18 +59,33 @@ export function AddConceptMapDialog({ onMapAdded }: AddConceptMapDialogProps) {
   const onSubmit = async (values: ConceptMapFormValues) => {
     setLoading(true);
     try {
-      await addDoc(collection(db, 'concept-maps'), {
+      const newMapRef = await addDoc(collection(db, 'concept-maps'), {
         title: values.title,
         url: values.url,
-        description: '', // This field is no longer in the form but kept for data consistency
+        description: '', 
         createdAt: new Date().toISOString(),
       });
+
+      // If user is a batch admin, log activity
+      if (user?.uid) {
+         const batchAdminRef = doc(db, 'batchAdmins', user.uid);
+         const batchAdminDoc = await getDoc(batchAdminRef);
+         if (batchAdminDoc.exists()) {
+              const activityCollection = collection(db, 'batchAdmins', user.uid, 'activity');
+              await addDoc(activityCollection, {
+                  action: `Added concept map: "${values.title}"`,
+                  contentType: 'concept-map',
+                  contentId: newMapRef.id,
+                  timestamp: serverTimestamp(),
+              });
+         }
+      }
 
       toast({
         title: 'Success',
         description: 'Concept map added successfully.',
       });
-      onMapAdded(); // Callback to refetch data
+      onMapAdded();
       form.reset({ title: '', url: '' });
       setOpen(false);
     } catch (error) {

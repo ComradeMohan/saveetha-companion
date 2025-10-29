@@ -1,6 +1,8 @@
+
 'use server';
 
 import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -10,6 +12,7 @@ const certificationSchema = z.object({
   description: z.string().min(1, { message: 'Description is required.' }),
   provider: z.string().min(1, { message: 'Provider is required.' }),
   url: z.string().url({ message: "Please enter a valid URL." }),
+  userId: z.string().optional(), // Added to track who is adding
 });
 
 export async function addCertification(prevState: any, formData: FormData) {
@@ -18,6 +21,7 @@ export async function addCertification(prevState: any, formData: FormData) {
     description: formData.get('description'),
     provider: formData.get('provider'),
     url: formData.get('url'),
+    userId: formData.get('userId'),
   });
 
   if (!validatedFields.success) {
@@ -28,16 +32,32 @@ export async function addCertification(prevState: any, formData: FormData) {
     };
   }
 
-  const { title, description, url, provider } = validatedFields.data;
+  const { title, description, url, provider, userId } = validatedFields.data;
 
   try {
-    await addDoc(collection(db, 'certifications'), {
+    const newCertRef = await addDoc(collection(db, 'certifications'), {
       title,
       description,
       url,
       provider,
       createdAt: serverTimestamp(),
     });
+
+    // If a userId is provided (meaning a batch admin added it), log the activity.
+    if (userId) {
+        const batchAdminRef = adminDb.collection('batchAdmins').doc(userId);
+        const batchAdminDoc = await batchAdminRef.get();
+
+        if (batchAdminDoc.exists) {
+            await adminDb.collection('batchAdmins').doc(userId).collection('activity').add({
+                action: `Added certification: "${title}"`,
+                contentType: 'certification',
+                contentId: newCertRef.id,
+                timestamp: serverTimestamp(),
+            });
+        }
+    }
+
 
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
@@ -49,6 +69,6 @@ export async function addCertification(prevState: any, formData: FormData) {
     };
   } catch (error: any) {
     console.error('Error creating certification:', error);
-    return { type: 'error', message: 'An unexpected firabse errorr  occurred while adding the certification.' };
+    return { type: 'error', message: 'An unexpected firebase error occurred while adding the certification.' };
   }
 }
