@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, Eye, FileText, Certificate } from 'lucide-react';
+import { Loader2, Trash2, Eye, FileText, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { collection, query, orderBy, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -114,7 +114,7 @@ export function ViewActivityDialog({ admin }: ViewActivityDialogProps) {
                 {activities.map(activity => (
                     <div key={activity.id} className="flex items-start justify-between gap-4 p-3 bg-secondary/50 rounded-lg">
                         <div className="flex items-start gap-3">
-                             {activity.contentType === 'certification' ? <Certificate className="h-4 w-4 mt-1 text-primary" /> : <FileText className="h-4 w-4 mt-1 text-primary" />}
+                             {activity.contentType === 'certification' ? <Award className="h-4 w-4 mt-1 text-primary" /> : <FileText className="h-4 w-4 mt-1 text-primary" />}
                              <div>
                                 <p className="text-sm">{activity.action}</p>
                                 <p className="text-xs text-muted-foreground">
