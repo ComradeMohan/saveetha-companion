@@ -62,7 +62,7 @@ export async function sendBatchAdminWelcomeEmail(params: { to: string, name: str
             </p>
 
             <p style="font-size: 15px; text-align: center; margin-top: 15px;">
-                💬 <a href="https://saveethahub.tech/contact" target="_blank" style="color: #007bff; text-decoration: none;">Contact Us Here</a>
+                💬 <a href="https://saveethahub.tech/contact" target="_blank" style="color: #007bff; text-decoration: none;"> If u need additnal features, any issues or access to the website data Contact Us Here</a>
             </p>
 
             <h3 style="color: #007bff; margin-top: 25px;">🌐 Connected Platforms</h3>

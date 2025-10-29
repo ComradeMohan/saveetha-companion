@@ -74,7 +74,7 @@ export default function MobileNav() {
   if (pathname.startsWith('/admin') || pathname.startsWith('/learn')) return null;
 
   return (
-    <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 h-16 animate-slide-in-from-bottom">
+    <div className="md:hidden fixed bottom-4 left-4 right-4 h-16 animate-slide-in-from-bottom">
       <div className="relative mx-auto max-w-xs h-full rounded-full border border-black/5 bg-background/30 shadow-lg backdrop-blur-xl dark:border-white/5 liquid-glass-nav">
          <nav className="flex items-center h-full justify-around">
             {navLinks.map((link, index) => {
