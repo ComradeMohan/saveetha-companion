@@ -2,128 +2,121 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-  
-    // Helper functions
-    function isUserAuthenticated() {
-      return request.auth != null;
-    }
 
-    function isUser(userId) {
-      return isUserAuthenticated() && request.auth.uid == userId;
-    }
-    
+    // Helper function to check if the user is the main admin.
     function isAdmin() {
-      return isUserAuthenticated() && request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
-    }
-    
-    function isBatchAdmin() {
-      return isUserAuthenticated() && request.auth.token.email in ['k.nobitha666@gmail.com'];
+      return request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.token.email == 'madiremohanreddy0400.sse@saveetha.com';
     }
 
-    // Users can read/write their own profile, admins can read/write any profile.
-    match /users/{userId} {
-      allow read, write: if isUser(userId) || isAdmin();
-      // FCM tokens can be written by the user.
-      match /fcmTokens/{tokenId} {
-        allow write: if isUser(userId);
-        allow read: if isAdmin();
-      }
+    // Helper function to check if the user is a batch admin.
+    function isBatchAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/batchAdmins/$(request.auth.uid));
+    }
+
+    // Collection to store batch admin user IDs
+    match /batchAdmins/{userId} {
+        allow read, write, delete: if isAdmin();
+    }
+
+    // Allow public read/write for the Link Drop feature
+    match /link-drop-sessions/{sessionId} {
+      allow read, write: if true;
+    }
+
+    match /concept-map-analytics/{mapId} {
+      allow read: if true;
+      allow write: if false; // All writes must go through the trusted server action
     }
     
-    // Any authenticated user can create/read their own data.
+    // Allow authenticated users to manage their own data first.
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+     match /users/{userId}/fcmTokens/{tokenId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
     match /students_cgpa/{userId} {
-      allow read, write: if isUser(userId);
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     match /student_grades/{userId} {
-      allow read, write: if isUser(userId);
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // Users can only read/write/delete their own notifications.
-    match /user_notifications/{userId}/notifications/{notificationId} {
-      allow read, write, delete: if isUser(userId);
+    match /user_notifications/{userId}/{document=**} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // Any authenticated user can create these documents. Admins can manage all.
-    match /contact-messages/{docId} {
-      allow create: if isUserAuthenticated();
-      allow read, update, delete: if isAdmin();
+    match /recruitment-submissions/{docId} {
+      allow create: if request.auth != null;
     }
-    match /faculty-requests/{docId} {
-      allow create: if isUserAuthenticated();
-      allow read, delete: if isAdmin();
-    }
-    match /login-issues/{docId} {
-        allow create: if isUserAuthenticated();
-        allow read, update, delete: if isAdmin();
-    }
-     match /course-suggestions/{docId} {
-        allow create: if isUserAuthenticated();
-        allow read, delete: if isAdmin();
-    }
-    
-    // Public read for all authenticated users. Admins can manage fully.
-    // Batch Admins can create new entries.
-    match /certifications/{docId} {
-      allow read: if isUserAuthenticated();
-      allow create: if isAdmin() || isBatchAdmin();
-      allow update, delete: if isAdmin();
-    }
-    
-    match /concept-maps/{docId} {
-      allow read: if isUserAuthenticated();
-      allow create, update: if isAdmin() || isBatchAdmin();
-      allow delete: if isAdmin();
-    }
-    
-    // Public collections that authenticated users can read.
+    // Allow anyone to read public data collections.
     match /faculty/{docId} {
-      allow read: if isUserAuthenticated();
-      allow create, update, delete: if isAdmin();
+      allow read: if true;
     }
+    
     match /updates/{docId} {
-      allow read: if isUserAuthenticated();
-      allow create, delete: if isAdmin();
+      allow read: if true;
     }
     match /events/{docId} {
-       allow read: if isUserAuthenticated();
-       allow create, delete: if isAdmin();
+      allow read: if true;
     }
-    match /projects/{docId} {
-        allow read: if isUserAuthenticated();
-        allow create, delete: if isAdmin();
+    match /projects/{projectId} {
+      allow read: if true;
     }
     
-    // Anyone can create an enrollment request.
-    match /enrollments/{docId} {
-        allow create: if isUserAuthenticated();
-        allow read: if isAdmin();
+    match /colleges/{collegeId} {
+        allow read: if true;
     }
-    
-    // Analytics and cache should only be written by server-side admin actions.
-    // No client access should be allowed.
+    match /colleges/{collegeId}/departments/{departmentId} {
+        allow read: if true;
+    }
+     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} {
+        allow read: if true;
+    }
+
+    // Allow Batch Admins to add to these collections
+    match /certifications/{docId} {
+      allow read: if true;
+      allow create: if isBatchAdmin() || isAdmin();
+      allow update, delete: if isAdmin(); // Only main admin can edit/delete
+    }
+
+    match /concept-maps/{docId} {
+      allow read: if true;
+      allow create: if isBatchAdmin() || isAdmin();
+      allow update, delete: if isAdmin(); // Only main admin can edit/delete
+    }
+
+
+    // Allow anyone to submit forms (contact, issues, suggestions).
+    match /contact-messages/{messageId} {
+      allow create: if true;
+    }
+    match /login-issues/{issueId} {
+      allow create: if true;
+    }
+    match /enrollments/{enrollmentId} {
+      allow create: if request.auth != null;
+    }
+    match /faculty-requests/{requestId} {
+      allow create: if request.auth != null;
+    }
+    match /course-suggestions/{suggestionId} {
+        allow create: if request.auth != null;
+    }
+
+    // This rule is for clarity. The server-side code uses Admin access,
+    // which bypasses these rules, but it's good practice to define access.
+    // This rule effectively blocks any direct client-side access.
     match /counter/{docId} {
         allow read, write: if false;
     }
-    match /concept-map-analytics/{docId} {
-        allow read, write: if false;
-    }
-    match /pdf-knowledge-cache/{docId} {
-        allow read, write: if false;
-    }
-     match /recruitment-submissions/{docId} {
-        allow read, write: if false;
-    }
-     match /coding-questions/{docId} {
-        allow read, write: if false;
-    }
-    match /colleges/{docId=**} {
-        allow read, write: if false;
-    }
-    match /course-content/{docId=**} {
-        allow read, write: if false;
-    }
-    match /mcqs/{docId=**} {
-        allow read, write: if false;
+
+    // As a final catch-all, give admin full access to everything else.
+    match /{document=**} {
+      allow read, write: if isAdmin();
     }
   }
 }
