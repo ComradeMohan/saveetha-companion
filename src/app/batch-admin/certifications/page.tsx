@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle } from 'lucide-react';
-import { addCertification } from '@/app/actions/add-certification';
+import { addCertificationForBatchAdmin } from '@/app/actions/add-certification';
 import { useAuth } from '@/hooks/use-auth';
 
 
@@ -42,7 +42,7 @@ function SubmitButton() {
 
 export default function BatchAdminCertificationsPage() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, formAction] = useActionState(addCertification, initialState);
+  const [state, formAction] = useActionState(addCertificationForBatchAdmin, initialState);
   const { toast } = useToast();
   const { user } = useAuth();
 

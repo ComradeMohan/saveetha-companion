@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Trash2, PlusCircle, ExternalLink, Search } from 'lucide-react';
-import { collection, orderBy, query, getDocs, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { collection, orderBy, query, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from 'next/link';
+import { addCertificationForAdmin } from '@/app/actions/add-certification';
 
 interface Certification {
   id: string;
@@ -23,8 +25,35 @@ interface Certification {
   url: string;
 }
 
+const initialState = {
+  type: '',
+  message: '',
+  errors: null,
+};
+
+function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending} className="w-full">
+            {pending ? (
+                <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+                </>
+            ) : (
+                <>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Certification
+                </>
+            )}
+        </Button>
+    )
+}
+
 export default function AdminCertificationsPage() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction] = useActionState(addCertificationForAdmin, initialState);
+
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [filteredCerts, setFilteredCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,10 +61,8 @@ export default function AdminCertificationsPage() {
   const [certToDelete, setCertToDelete] = useState<Certification | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
   const { toast } = useToast();
 
-  // ✅ Fetch Certifications
   const fetchCertifications = useCallback(async () => {
     setLoading(true);
     try {
@@ -60,45 +87,22 @@ export default function AdminCertificationsPage() {
   useEffect(() => {
     fetchCertifications();
   }, [fetchCertifications]);
-
-  // ✅ Handle Add
-  const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsAdding(true);
-
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
-    const provider = formData.get("provider") as string;
-    const description = formData.get("description") as string;
-    const url = formData.get("url") as string;
-
-    if (!title || !provider || !description || !url) {
-      toast({ title: "Error", description: "All fields are required.", variant: "destructive" });
-      setIsAdding(false);
-      return;
+  
+  useEffect(() => {
+    if (state.type) {
+        toast({
+            title: state.type === 'success' ? 'Success!' : 'Error',
+            description: state.message,
+            variant: state.type === 'error' ? 'destructive' : 'default',
+        });
+        if (state.type === 'success') {
+            formRef.current?.reset();
+            fetchCertifications();
+        }
     }
+  }, [state, toast, fetchCertifications]);
 
-    try {
-      await addDoc(collection(db, "certifications"), {
-        title,
-        provider,
-        description,
-        url,
-        createdAt: serverTimestamp(),
-      });
 
-      toast({ title: "Success", description: `Certification '${title}' added successfully!` });
-      formRef.current?.reset();
-      fetchCertifications();
-    } catch (error) {
-      console.error("❌ [handleAdd] Error:", error);
-      toast({ title: "Error", description: "Could not add certification.", variant: "destructive" });
-    } finally {
-      setIsAdding(false);
-    }
-  };
-
-  // ✅ Handle Search
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = certifications.filter(cert =>
@@ -106,11 +110,9 @@ export default function AdminCertificationsPage() {
       cert.provider.toLowerCase().includes(lowercasedFilter) ||
       cert.description.toLowerCase().includes(lowercasedFilter)
     );
-
     setFilteredCerts(filtered);
   }, [searchTerm, certifications]);
 
-  // ✅ Handle Delete
   const handleDeleteClick = (cert: Certification) => {
     setCertToDelete(cert);
     setIsAlertOpen(true);
@@ -142,9 +144,8 @@ export default function AdminCertificationsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* ADD FORM */}
         <Card className="lg:col-span-1">
-          <form ref={formRef} onSubmit={handleAdd}>
+          <form ref={formRef} action={formAction}>
             <CardHeader>
               <CardTitle>Add a Certification</CardTitle>
               <CardDescription>
@@ -170,24 +171,11 @@ export default function AdminCertificationsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" disabled={isAdding} className="w-full">
-                {isAdding ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Certification
-                  </>
-                )}
-              </Button>
+              <SubmitButton />
             </CardFooter>
           </form>
         </Card>
 
-        {/* CERTIFICATION LIST */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Available Certifications</CardTitle>
@@ -255,7 +243,6 @@ export default function AdminCertificationsPage() {
         </Card>
       </div>
 
-      {/* DELETE CONFIRMATION DIALOG */}
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

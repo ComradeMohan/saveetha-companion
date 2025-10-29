@@ -1,10 +1,12 @@
 
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { db } from '@/lib/firebase';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { FieldValue } from 'firebase-admin/firestore';
+import { collection, writeBatch, doc, getDoc, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { adminDb } from '@/lib/firebase-admin';
 
 const certificationSchema = z.object({
   title: z.string().min(1, { message: 'Title is required.' }),
@@ -14,7 +16,11 @@ const certificationSchema = z.object({
   userId: z.string().optional(), // ID of the user performing the action
 });
 
-export async function addCertification(prevState: any, formData: FormData) {
+/**
+ * For Batch Admins. Uses a transaction to ensure atomic writes for certification and activity log.
+ * This function operates under the batch admin's client-side permissions.
+ */
+export async function addCertificationForBatchAdmin(prevState: any, formData: FormData) {
   const validatedFields = certificationSchema.safeParse({
     title: formData.get('title'),
     description: formData.get('description'),
@@ -30,59 +36,107 @@ export async function addCertification(prevState: any, formData: FormData) {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-  
+
   const { title, description, url, provider, userId } = validatedFields.data;
-  
+
   if (!userId) {
-      return { type: 'error', message: 'User is not authenticated.' };
+    return { type: 'error', message: 'User is not authenticated.' };
   }
 
   try {
-    const batch = adminDb.batch();
+    await runTransaction(db, async (transaction) => {
+        const batchAdminRef = doc(db, 'batchAdmins', userId);
+        const batchAdminSnap = await transaction.get(batchAdminRef);
 
-    // 1. Create the certification document
-    const newCertRef = adminDb.collection('certifications').doc();
-    batch.set(newCertRef, {
-        title,
-        description,
-        url,
-        provider,
-        createdBy: userId, // Required by security rules
-        createdAt: FieldValue.serverTimestamp(),
-    });
+        if (!batchAdminSnap.exists()) {
+            throw new Error('Permission Denied. You might not have the required roles to perform this action.');
+        }
 
-    // 2. Check if the user is a batch admin
-    const batchAdminRef = adminDb.collection('batchAdmins').doc(userId);
-    const batchAdminSnap = await batchAdminRef.get();
-    
-    // 3. If they are, log the activity
-    if (batchAdminSnap.exists()) {
-        const activityRef = adminDb.collection('batchAdmins', userId, 'activity').doc();
-        batch.set(activityRef, {
+        // 1. Create the new certification document
+        const newCertRef = doc(collection(db, 'certifications'));
+        transaction.set(newCertRef, {
+            title,
+            description,
+            url,
+            provider,
+            createdBy: userId,
+            createdAt: serverTimestamp(),
+        });
+
+        // 2. Create the activity log document
+        const activityRef = doc(collection(db, 'batchAdmins', userId, 'activity'));
+        transaction.set(activityRef, {
             action: `Added certification: "${title}"`,
             contentType: 'certification',
             contentId: newCertRef.id,
-            timestamp: FieldValue.serverTimestamp(),
+            timestamp: serverTimestamp(),
         });
-    }
+    });
 
-    // 4. Commit both writes together
-    await batch.commit();
-
-    // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
     revalidatePath('/certifications');
     revalidatePath('/batch-admin/certifications');
 
-    return { 
-      type: 'success', 
-      message: `Certification '${title}' added successfully!` 
+    return {
+      type: 'success',
+      message: `Certification '${title}' added successfully!`
     };
+
   } catch (error: any) {
-    console.error('[Critical] An unexpected Firebase error occurred during certification creation:', error);
-    if (error.code === 'permission-denied' || (error.details && error.details.includes('PERMISSION_DENIED'))) {
-         return { type: 'error', message: 'Permission Denied. You might not have the required roles to perform this action.' };
+    console.error('[TRANSACTION_ERROR] addCertificationForBatchAdmin:', error);
+    // Check for specific permission denied error from transaction
+    if (error.message.includes('Permission Denied')) {
+        return { type: 'error', message: 'Permission Denied. You might not have the required roles to perform this action.' };
     }
     return { type: 'error', message: 'An unexpected firebase error occurred while adding the certification.' };
   }
+}
+
+
+/**
+ * For Main Admins. Uses the Admin SDK to bypass security rules for direct creation.
+ * No activity logging is performed for the main admin.
+ */
+export async function addCertificationForAdmin(formData: FormData) {
+    const validatedFields = certificationSchema.safeParse({
+        title: formData.get('title'),
+        description: formData.get('description'),
+        provider: formData.get('provider'),
+        url: formData.get('url'),
+    });
+
+     if (!validatedFields.success) {
+        return {
+            type: 'error' as const,
+            message: 'Validation failed.',
+            errors: validatedFields.error.flatten().fieldErrors,
+        };
+    }
+
+    const { title, description, url, provider } = validatedFields.data;
+    
+    try {
+        await adminDb.collection('certifications').add({
+            title,
+            description,
+            url,
+            provider,
+            createdBy: 'admin',
+            createdAt: new Date().toISOString(),
+        });
+
+        revalidatePath('/admin/certifications');
+        revalidatePath('/certifications');
+
+        return {
+            type: 'success' as const,
+            message: `Certification '${title}' added successfully!`
+        };
+    } catch (error) {
+        console.error('Error adding certification as admin:', error);
+        return {
+            type: 'error' as const,
+            message: 'An unexpected error occurred.'
+        };
+    }
 }
