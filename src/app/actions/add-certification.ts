@@ -2,10 +2,9 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 
 const certificationSchema = z.object({
   title: z.string().min(1, { message: 'Title is required.' }),
@@ -45,11 +44,12 @@ export async function addCertification(prevState: any, formData: FormData) {
 
     // If a userId is provided (meaning a batch admin added it), log the activity.
     if (userId) {
-        const batchAdminRef = adminDb.collection('batchAdmins').doc(userId);
-        const batchAdminDoc = await batchAdminRef.get();
+        const batchAdminRef = doc(db, 'batchAdmins', userId);
+        const batchAdminDoc = await getDoc(batchAdminRef);
 
-        if (batchAdminDoc.exists) {
-            await adminDb.collection('batchAdmins').doc(userId).collection('activity').add({
+        if (batchAdminDoc.exists()) {
+            const activityCollection = collection(db, 'batchAdmins', userId, 'activity');
+            await addDoc(activityCollection, {
                 action: `Added certification: "${title}"`,
                 contentType: 'certification',
                 contentId: newCertRef.id,
@@ -62,6 +62,8 @@ export async function addCertification(prevState: any, formData: FormData) {
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
     revalidatePath('/certifications');
+    revalidatePath('/batch-admin/certifications');
+
 
     return { 
       type: 'success', 
