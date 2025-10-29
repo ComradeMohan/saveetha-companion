@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -36,10 +37,12 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
+import { ScrollArea } from './ui/scroll-area';
 
 const adminNavLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: UserCircle },
+  { href: '/admin/batch-admin', label: 'Batch Admins', icon: Users },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
@@ -97,19 +100,21 @@ export default function AdminHeader() {
                     </Link>
                 </SheetTitle>
             </SheetHeader>
-          <nav className="grid gap-2 text-lg font-medium mt-4">
-            {links.map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-4 px-2.5 ${pathname.startsWith(link.href) ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <link.icon className="h-5 w-5" />
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-            <div className="mt-auto">
+          <ScrollArea className="flex-1">
+            <nav className="grid gap-2 text-lg font-medium my-4">
+              {links.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-4 px-2.5 ${pathname.startsWith(link.href) ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  <link.icon className="h-5 w-5" />
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </ScrollArea>
+            <div className="mt-auto border-t pt-4">
                  <button
                     onClick={logout}
                     className="flex w-full items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
