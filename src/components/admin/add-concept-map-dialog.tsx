@@ -26,10 +26,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
-import { adminDb } from '@/lib/firebase-admin';
 
 const conceptMapSchema = z.object({
   title: z.string().min(3, { message: 'Name must be at least 3 characters.' }),
