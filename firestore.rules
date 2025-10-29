@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -22,6 +23,12 @@ service cloud.firestore {
         // A user can read their own batch admin document to verify their status.
         allow read: if isAdmin() || (request.auth != null && request.auth.uid == userId);
         allow write, delete: if isAdmin();
+
+        // Allow batch admins to create activity logs for themselves.
+        match /activity/{activityId} {
+          allow create: if request.auth != null && request.auth.uid == userId;
+          allow read, delete: if isAdmin();
+        }
     }
 
     // Allow public read/write for the Link Drop feature
