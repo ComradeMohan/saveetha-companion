@@ -4,7 +4,7 @@
 import { db } from '@/lib/firebase';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc, runTransaction } from 'firebase/firestore';
 
 const certificationSchema = z.object({
   title: z.string().min(1, { message: 'Title is required.' }),
@@ -38,31 +38,33 @@ export async function addCertification(prevState: any, formData: FormData) {
   }
 
   try {
-    const newCertRef = await addDoc(collection(db, 'certifications'), {
-      title,
-      description,
-      url,
-      provider,
-      createdBy: userId,
-      createdAt: serverTimestamp(),
-    });
-
-    // Attempt to log activity for batch admins.
-    // This will fail silently for non-batch-admins due to security rules, which is expected.
-    try {
-        const activityCollection = collection(db, 'batchAdmins', userId, 'activity');
-        await addDoc(activityCollection, {
-            action: `Added certification: "${title}"`,
-            contentType: 'certification',
-            contentId: newCertRef.id,
-            timestamp: serverTimestamp(),
+    // Use a transaction to ensure both writes succeed or fail together.
+    await runTransaction(db, async (transaction) => {
+        const batchAdminRef = doc(db, 'batchAdmins', userId);
+        const batchAdminSnap = await transaction.get(batchAdminRef);
+        
+        // This is the primary operation: create the certification.
+        const newCertRef = doc(collection(db, 'certifications'));
+        transaction.set(newCertRef, {
+            title,
+            description,
+            url,
+            provider,
+            createdBy: userId,
+            createdAt: serverTimestamp(),
         });
-    } catch (activityError) {
-        // This error is expected for users who are not batch admins.
-        // We can log it on the server for debugging but won't show it to the user.
-        console.log(`[Info] Could not log activity for user ${userId}. This is expected if they are not a batch admin.`);
-    }
-
+        
+        // This is the secondary operation: log activity if user is a batch admin.
+        if (batchAdminSnap.exists()) {
+             const activityRef = doc(collection(db, 'batchAdmins', userId, 'activity'));
+             transaction.set(activityRef, {
+                action: `Added certification: "${title}"`,
+                contentType: 'certification',
+                contentId: newCertRef.id,
+                timestamp: serverTimestamp(),
+            });
+        }
+    });
 
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
@@ -75,6 +77,9 @@ export async function addCertification(prevState: any, formData: FormData) {
     };
   } catch (error: any) {
     console.error('[Critical] An unexpected Firebase error occurred during certification creation:', error);
+    if (error.code === 'permission-denied') {
+         return { type: 'error', message: 'Permission Denied. You might not have the required roles to perform this action.' };
+    }
     return { type: 'error', message: 'An unexpected firebase error occurred while adding the certification.' };
   }
 }
