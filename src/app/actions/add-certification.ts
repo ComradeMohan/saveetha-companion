@@ -1,10 +1,10 @@
 
 'use server';
 
-import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { collection, addDoc, serverTimestamp, getDoc, doc, runTransaction } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 
 const certificationSchema = z.object({
   title: z.string().min(1, { message: 'Title is required.' }),
@@ -38,33 +38,36 @@ export async function addCertification(prevState: any, formData: FormData) {
   }
 
   try {
-    // Use a transaction to ensure both writes succeed or fail together.
-    await runTransaction(db, async (transaction) => {
-        const batchAdminRef = doc(db, 'batchAdmins', userId);
-        const batchAdminSnap = await transaction.get(batchAdminRef);
-        
-        // This is the primary operation: create the certification.
-        const newCertRef = doc(collection(db, 'certifications'));
-        transaction.set(newCertRef, {
-            title,
-            description,
-            url,
-            provider,
-            createdBy: userId,
-            createdAt: serverTimestamp(),
-        });
-        
-        // This is the secondary operation: log activity if user is a batch admin.
-        if (batchAdminSnap.exists()) {
-             const activityRef = doc(collection(db, 'batchAdmins', userId, 'activity'));
-             transaction.set(activityRef, {
-                action: `Added certification: "${title}"`,
-                contentType: 'certification',
-                contentId: newCertRef.id,
-                timestamp: serverTimestamp(),
-            });
-        }
+    const batch = adminDb.batch();
+
+    // 1. Create the certification document
+    const newCertRef = adminDb.collection('certifications').doc();
+    batch.set(newCertRef, {
+        title,
+        description,
+        url,
+        provider,
+        createdBy: userId, // Required by security rules
+        createdAt: FieldValue.serverTimestamp(),
     });
+
+    // 2. Check if the user is a batch admin
+    const batchAdminRef = adminDb.collection('batchAdmins').doc(userId);
+    const batchAdminSnap = await batchAdminRef.get();
+    
+    // 3. If they are, log the activity
+    if (batchAdminSnap.exists()) {
+        const activityRef = adminDb.collection('batchAdmins', userId, 'activity').doc();
+        batch.set(activityRef, {
+            action: `Added certification: "${title}"`,
+            contentType: 'certification',
+            contentId: newCertRef.id,
+            timestamp: FieldValue.serverTimestamp(),
+        });
+    }
+
+    // 4. Commit both writes together
+    await batch.commit();
 
     // Revalidate paths so fresh data shows up
     revalidatePath('/admin/certifications');
@@ -77,7 +80,7 @@ export async function addCertification(prevState: any, formData: FormData) {
     };
   } catch (error: any) {
     console.error('[Critical] An unexpected Firebase error occurred during certification creation:', error);
-    if (error.code === 'permission-denied') {
+    if (error.code === 'permission-denied' || (error.details && error.details.includes('PERMISSION_DENIED'))) {
          return { type: 'error', message: 'Permission Denied. You might not have the required roles to perform this action.' };
     }
     return { type: 'error', message: 'An unexpected firebase error occurred while adding the certification.' };
