@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -92,7 +93,7 @@ export default function StudentSandboxPage() {
   const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
   const [currentProgramTitle, setCurrentProgramTitle] = useState('');
   const [currentCode, setCurrentCode] = useState<string>('');
-  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage | null>(SANDBOX_LANGUAGES[0] || null);
   const [isCollaborating, setIsCollaborating] = useState(false);
   const collaborationListenerRef = useRef<Unsubscribe | null>(null);
   
@@ -226,14 +227,12 @@ export default function StudentSandboxPage() {
     setIsCollaborating(false);
     setActiveProgramId(null);
     
-    const langForNewProgram = selectedLanguage || (programmingLanguages.length > 0 ? programmingLanguages[0] : null);
-    
     const newProgramDefaults: Partial<SavedProgram> = { 
       title: 'Untitled-1', 
-      code: getDefaultCodeForLanguage(langForNewProgram?.name), 
+      code: getDefaultCodeForLanguage(selectedLanguage?.name), 
       lastInput: '',
-      languageId: langForNewProgram?.id,
-      languageName: langForNewProgram?.name
+      languageId: selectedLanguage?.id,
+      languageName: selectedLanguage?.name
     };
     
     loadProgramIntoEditor(newProgramDefaults, programmingLanguages);
