@@ -1,0 +1,170 @@
+{
+  "course_name": "Data Structures",
+  "course_code": "CSA03",
+  "units": [
+    {
+      "unit_title": "Introduction to Data Structures and Arrays",
+      "topics": [
+        {
+          "topic_title": "Introduction to Data Structures",
+          "notes_md": "Data structures are fundamental building blocks for organizing and managing data efficiently. They provide a way to store, retrieve, and manipulate data in a structured manner. Common types include arrays, linked lists, stacks, queues, trees, and graphs. Choosing the right data structure depends on the specific requirements of the problem, such as the frequency of insertions, deletions, and searches. Understanding the time and space complexity of different data structure operations is crucial for designing efficient algorithms. Data structures are essential for building complex software systems, databases, and operating systems. They enable developers to write code that is both performant and maintainable. For example, using a hash table allows for near constant-time average lookup, insertion, and deletion, making it suitable for applications requiring frequent data access.\n\nConsider the difference between storing student records in a simple array versus a hash table. The array requires linear time to search for a specific record, while a hash table can achieve the same in near constant time on average.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=RBSGKlAvoiM",
+          "practice_questions": [
+            "What is a data structure?",
+            "Explain the difference between a linear and non-linear data structure.",
+            "Give examples of common data structures.",
+            "Why is it important to choose the right data structure?",
+            "Explain time and space complexity in the context of data structures."
+          ]
+        },
+        {
+          "topic_title": "Arrays: Definition and Operations",
+          "notes_md": "Arrays are the simplest and most widely used data structure. An array is a collection of elements of the same data type, stored in contiguous memory locations. Each element can be accessed directly using its index, which starts from 0. Common array operations include insertion, deletion, searching, and sorting. The efficiency of these operations depends on whether the array is sorted or unsorted. Inserting an element into a sorted array requires shifting existing elements to make space, while inserting into an unsorted array can be done in constant time. Arrays are commonly used to store lists of numbers, strings, or other data types. Multidimensional arrays can be used to represent matrices or tables.\n\n```c++\nint arr[5] = {1, 2, 3, 4, 5};\n// Accessing the third element (index 2)\nint element = arr[2]; // element will be 3\n```\n\nUnderstanding array operations and their complexities is essential for efficient programming.  Consider the trade-offs between insertion time versus access time when choosing an array versus another data structure like a linked list.",
+          "video_url": "https://www.youtube.com/watch?v=lGHTAGTm9nA",
+          "practice_questions": [
+            "What is an array?",
+            "How are elements stored in an array?",
+            "What are the common operations performed on arrays?",
+            "What is the time complexity of accessing an element in an array?",
+            "Explain how to insert and delete elements in an array."
+          ]
+        },
+        {
+          "topic_title": "Dynamic Arrays and Resizing",
+          "notes_md": "Dynamic arrays, also known as resizable arrays, are arrays that can automatically adjust their size as needed. Unlike static arrays, which have a fixed size at compile time, dynamic arrays can grow or shrink during runtime. This is typically implemented by allocating a new, larger array and copying the elements from the old array to the new one. Common implementations include ArrayList in Java and vector in C++. Resizing can be an expensive operation, as it involves copying all the elements. To mitigate this, dynamic arrays often allocate more space than is currently needed, using a growth factor (e.g., doubling the size) to reduce the frequency of resizing. Understanding the trade-offs between space usage and resizing overhead is crucial when using dynamic arrays.\n\n```java\nArrayList<Integer> list = new ArrayList<>();\nlist.add(10);\nlist.add(20);\n// The ArrayList automatically resizes as needed\n```\n\nConsider the performance implications of frequent resizing when choosing between a dynamic array and a linked list, especially when dealing with a large number of insertions.",
+          "video_url": "https://www.youtube.com/watch?v=v2sEaxU_Vp0",
+          "practice_questions": [
+            "What is a dynamic array?",
+            "How do dynamic arrays differ from static arrays?",
+            "Explain the process of resizing a dynamic array.",
+            "What are the time complexities associated with resizing?",
+            "Discuss the advantages and disadvantages of using dynamic arrays."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Linked Lists",
+      "topics": [
+        {
+          "topic_title": "Singly Linked Lists",
+          "notes_md": "A singly linked list is a linear data structure where each element, called a node, contains data and a pointer (or reference) to the next node in the sequence. The first node is called the head, and the last node's pointer is typically set to null. Singly linked lists allow for efficient insertion and deletion of elements at any position, but accessing an element requires traversing the list from the head, resulting in O(n) time complexity. Common operations include insertion, deletion, searching, and reversing the list. They are memory-efficient compared to arrays, as they only allocate space for the elements that are actually stored.\n\n```c++\nstruct Node {\n    int data;\n    Node* next;\n};\n```\n\nConsider the trade-offs between access time and insertion/deletion time when choosing a linked list versus an array.  Linked lists are particularly useful when the number of elements is unknown or changes frequently.",
+          "video_url": "https://www.youtube.com/watch?v=njFHvnepqi4",
+          "practice_questions": [
+            "What is a singly linked list?",
+            "Explain the structure of a node in a singly linked list.",
+            "What are the advantages and disadvantages of using singly linked lists?",
+            "How do you insert and delete elements in a singly linked list?",
+            "Write code to traverse a singly linked list."
+          ]
+        },
+        {
+          "topic_title": "Doubly Linked Lists",
+          "notes_md": "A doubly linked list is similar to a singly linked list, but each node also contains a pointer to the previous node in the sequence. This allows for bidirectional traversal, making it easier to navigate the list and perform operations like deletion and insertion. However, doubly linked lists require more memory than singly linked lists, as each node needs to store two pointers. Common operations include insertion, deletion, searching, and reversing the list. Deletion is more efficient in doubly linked lists compared to singly linked lists, as you can directly access the previous node without traversing from the head.\n\n```java\nclass Node {\n    int data;\n    Node prev;\n    Node next;\n}\n```\n\nConsider the memory overhead versus the improved efficiency of certain operations when choosing a doubly linked list versus a singly linked list.  Doubly linked lists are useful when frequent backward traversal is required.",
+          "video_url": "https://www.youtube.com/watch?v=JdQeNxEAj64",
+          "practice_questions": [
+            "What is a doubly linked list?",
+            "How does a doubly linked list differ from a singly linked list?",
+            "What are the advantages and disadvantages of using doubly linked lists?",
+            "How do you insert and delete elements in a doubly linked list?",
+            "Write code to traverse a doubly linked list in both directions."
+          ]
+        },
+        {
+          "topic_title": "Circular Linked Lists",
+          "notes_md": "A circular linked list is a variation of a linked list where the last node points back to the first node, forming a cycle. This eliminates the need for a null pointer at the end of the list. Circular linked lists are useful for representing repeating sequences or round-robin scheduling. Common operations include insertion, deletion, searching, and traversing the list. Traversal requires careful handling to avoid infinite loops. They can be either singly or doubly linked.  Circular linked lists can be advantageous in scenarios where continuous looping through elements is needed.\n\nConsider the implications of a circular structure when implementing traversal and other operations.  Care must be taken to avoid infinite loops.\n",
+          "video_url": "https://www.youtube.com/watch?v=QWJ-XWJ0_8g",
+          "practice_questions": [
+            "What is a circular linked list?",
+            "How does a circular linked list differ from a linear linked list?",
+            "What are the advantages and disadvantages of using circular linked lists?",
+            "How do you insert and delete elements in a circular linked list?",
+            "Write code to traverse a circular linked list, avoiding infinite loops."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Stacks and Queues",
+      "topics": [
+        {
+          "topic_title": "Stacks: LIFO Principle and Applications",
+          "notes_md": "A stack is a linear data structure that follows the Last-In, First-Out (LIFO) principle. Elements are added and removed from the top of the stack. Common operations include push (adding an element), pop (removing an element), peek (accessing the top element), and isEmpty (checking if the stack is empty). Stacks are commonly used for function call management, expression evaluation, and backtracking algorithms. Implementing a stack can be done using arrays or linked lists. The choice between the two depends on the specific requirements of the application.  Stacks are fundamental in computer science and have numerous practical applications.\n\n```python\nstack = []\nstack.append(10) # Push\nstack.append(20)\nprint(stack.pop()) # Pop: prints 20\n```\n\nConsider the LIFO nature of stacks when choosing them for specific problems.  They are particularly well-suited for scenarios where the last element added is the first one to be processed.",
+          "video_url": "https://www.youtube.com/watch?v=F1F2imiOJfk",
+          "practice_questions": [
+            "What is a stack?",
+            "Explain the LIFO principle.",
+            "What are the common operations performed on a stack?",
+            "Give examples of applications of stacks.",
+            "Implement a stack using an array."
+          ]
+        },
+        {
+          "topic_title": "Queues: FIFO Principle and Applications",
+          "notes_md": "A queue is a linear data structure that follows the First-In, First-Out (FIFO) principle. Elements are added to the rear (enqueue) and removed from the front (dequeue). Common operations include enqueue, dequeue, peek (accessing the front element), and isEmpty (checking if the queue is empty). Queues are commonly used for task scheduling, print queues, and breadth-first search algorithms. Implementing a queue can be done using arrays or linked lists. Circular queues are often used to avoid wasting space when using arrays. Queues are essential for managing resources and processing tasks in order.\n\n```c++\n#include <queue>\nstd::queue<int> q;\nq.push(10); // Enqueue\nq.push(20);\nstd::cout << q.front() << std::endl; // Peek: prints 10\nq.pop(); // Dequeue\n```\n\nConsider the FIFO nature of queues when choosing them for specific problems.  They are particularly well-suited for scenarios where elements need to be processed in the order they were received.",
+          "video_url": "https://www.youtube.com/watch?v=7Ggs6lFzDTY",
+          "practice_questions": [
+            "What is a queue?",
+            "Explain the FIFO principle.",
+            "What are the common operations performed on a queue?",
+            "Give examples of applications of queues.",
+            "Implement a queue using a linked list."
+          ]
+        },
+        {
+          "topic_title": "Priority Queues",
+          "notes_md": "A priority queue is a data structure where each element has an associated priority. Elements are dequeued based on their priority, with higher priority elements being dequeued first. Priority queues are typically implemented using heaps, which are tree-based data structures that satisfy the heap property (e.g., min-heap or max-heap). Common operations include enqueue (inserting an element with a priority), dequeue (removing the highest priority element), peek (accessing the highest priority element), and isEmpty (checking if the queue is empty). Priority queues are commonly used for task scheduling, Dijkstra's algorithm, and Huffman coding. They provide an efficient way to manage tasks or events based on their importance.\n\nConsider the use of a heap data structure when implementing a priority queue for efficient retrieval of the highest priority element.  Priority queues are essential in various optimization algorithms.\n",
+          "video_url": "https://www.youtube.com/watch?v=wptevk0bshY",
+          "practice_questions": [
+            "What is a priority queue?",
+            "How does a priority queue differ from a regular queue?",
+            "How are priority queues typically implemented?",
+            "Give examples of applications of priority queues.",
+            "Explain the heap property."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Trees",
+      "topics": [
+        {
+          "topic_title": "Binary Trees: Definition and Properties",
+          "notes_md": "A binary tree is a hierarchical data structure where each node has at most two children, referred to as the left child and the right child. The topmost node is called the root, and nodes with no children are called leaves. Binary trees are commonly used for representing hierarchical relationships, searching, and sorting. Properties of binary trees include height, depth, and balance. Different types of binary trees include complete binary trees, full binary trees, and balanced binary trees. Understanding these properties is crucial for designing efficient algorithms.  Binary trees are fundamental in computer science and have numerous applications.\n\nConsider the trade-offs between different types of binary trees when choosing one for a specific application. Balanced binary trees, like AVL trees and red-black trees, provide better performance for search operations compared to unbalanced trees.\n",
+          "video_url": "https://www.youtube.com/watch?v=qH6yxkw0vJE",
+          "practice_questions": [
+            "What is a binary tree?",
+            "Explain the terms root, leaf, and child in the context of binary trees.",
+            "What are the properties of binary trees?",
+            "What are the different types of binary trees?",
+            "Explain the difference between height and depth of a binary tree."
+          ]
+        },
+        {
+          "topic_title": "Binary Search Trees (BSTs)",
+          "notes_md": "A binary search tree (BST) is a binary tree where the value of each node is greater than or equal to the value of all nodes in its left subtree and less than or equal to the value of all nodes in its right subtree. This property allows for efficient searching, insertion, and deletion of elements. Common operations include search, insert, delete, minimum, maximum, and inorder traversal. The time complexity of these operations depends on the height of the tree, which can be O(log n) for balanced BSTs and O(n) for unbalanced BSTs. Maintaining balance is crucial for ensuring good performance.  BSTs are widely used for implementing sets and maps.\n\nConsider the importance of balancing a BST to maintain logarithmic time complexity for search operations. AVL trees and red-black trees are self-balancing BSTs.\n",
+          "video_url": "https://www.youtube.com/watch?v=gcULXE7ViZw",
+          "practice_questions": [
+            "What is a binary search tree (BST)?",
+            "What is the BST property?",
+            "What are the common operations performed on a BST?",
+            "What is the time complexity of searching in a BST?",
+            "How do you insert and delete elements in a BST?"
+          ]
+        },
+        {
+          "topic_title": "Tree Traversal Techniques",
+          "notes_md": "Tree traversal refers to the process of visiting (examining and/or processing) each node in a tree data structure exactly once. There are two main approaches to tree traversal: depth-first traversal (DFT) and breadth-first traversal (BFT). DFT includes inorder, preorder, and postorder traversals. Inorder traversal visits the left subtree, then the root, then the right subtree. Preorder traversal visits the root, then the left subtree, then the right subtree. Postorder traversal visits the left subtree, then the right subtree, then the root. BFT visits nodes level by level, starting from the root. Understanding these traversal techniques is crucial for performing various operations on trees, such as searching, printing, and copying. Each traversal method results in a different order of node visitation, making them suitable for different applications.\n\nConsider the use of recursion or iteration with a stack for implementing DFT. A queue is typically used for implementing BFT.\n",
+          "video_url": "https://www.youtube.com/watch?v=gm8DUJJhmY4",
+          "practice_questions": [
+            "What is tree traversal?",
+            "What are the different types of depth-first traversal (DFT)?",
+            "Explain inorder, preorder, and postorder traversal.",
+            "What is breadth-first traversal (BFT)?",
+            "Write code to implement inorder traversal of a binary tree."
+          ]
+        }
+      ]
+    }
+  ]
+}

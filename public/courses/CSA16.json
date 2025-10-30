@@ -1,0 +1,170 @@
+{
+  "course_name": "Data Warehousing and Data Mining",
+  "course_code": "CSA16",
+  "units": [
+    {
+      "unit_title": "Introduction to Data Warehousing",
+      "topics": [
+        {
+          "topic_title": "Data Warehouse Concepts",
+          "notes_md": "A data warehouse is a subject-oriented, integrated, time-variant, and non-volatile collection of data in support of management's decision making process. It consolidates data from various heterogeneous sources. Key characteristics include subject orientation (organized around subjects like customer or product rather than application), integration (consistent naming conventions, formats, etc.), time variance (data represents a period of time), and non-volatility (data is read-only). Data warehouses are used for analytical processing, also known as OLAP (Online Analytical Processing). In contrast to operational databases used for OLTP (Online Transaction Processing), data warehouses are designed for querying and reporting, not for real-time transaction processing.  They support business intelligence activities by providing a centralized and consistent view of data. Common architectures include data marts, enterprise data warehouses, and hybrid architectures.",
+          "video_url": "https://www.youtube.com/watch?v=jKjwr3G6p4M",
+          "practice_questions": [
+            "What are the key differences between OLTP and OLAP systems?",
+            "Explain the four characteristics of a data warehouse (subject-oriented, integrated, time-variant, and non-volatile).",
+            "Describe the different types of data warehouse architectures.",
+            "What is the purpose of data warehousing in business intelligence?",
+            "What are the advantages of using a data warehouse compared to querying operational databases directly?"
+          ]
+        },
+        {
+          "topic_title": "Data Warehouse Architecture",
+          "notes_md": "A typical data warehouse architecture involves several layers: data sources, data staging area, data warehouse, and data access tools. Data sources can include operational databases, external data feeds, and archives. The data staging area (also called ETL - Extract, Transform, Load) extracts data from sources, transforms it to a consistent format, and loads it into the data warehouse. Transformations include cleaning, integrating, and aggregating data. The data warehouse itself stores the integrated data, often in a dimensional model (star schema or snowflake schema). Data access tools allow users to query and analyze the data.  Metadata management is crucial for understanding the data lineage and ensuring data quality. Different architectures can be used such as a three-tier architecture or a simplified two-tier. The choice depends on factors such as cost, scalability and complexity.",
+          "video_url": "https://www.youtube.com/watch?v=vKiz0_uFGV0",
+          "practice_questions": [
+            "Describe the different layers of a typical data warehouse architecture.",
+            "What is ETL and what are the key steps involved?",
+            "Explain the importance of metadata management in a data warehouse.",
+            "Compare and contrast star schema and snowflake schema.",
+            "What factors influence the choice of a data warehouse architecture?"
+          ]
+        },
+        {
+          "topic_title": "Data Modeling: Star and Snowflake Schemas",
+          "notes_md": "Dimensional modeling is a data modeling technique optimized for data warehousing.  The star schema consists of a central fact table surrounded by dimension tables. The fact table contains quantitative data (measures) and foreign keys referencing the dimension tables. Dimension tables contain descriptive attributes that provide context to the facts.  The snowflake schema is a variation of the star schema where dimension tables are normalized into multiple related tables.  This reduces data redundancy but can increase query complexity. The choice between star and snowflake depends on trade-offs between query performance and data storage requirements.  Star schemas generally offer faster query performance due to denormalization, while snowflake schemas offer better data integrity due to normalization.  \n\nExample:\nFact Table: Sales\nDimensions: Time, Product, Location, Customer",
+          "video_url": "https://www.youtube.com/watch?v=cE657gG-x5s",
+          "practice_questions": [
+            "Explain the difference between a fact table and a dimension table.",
+            "Describe the star schema and its advantages.",
+            "Describe the snowflake schema and its advantages.",
+            "When would you choose a star schema over a snowflake schema?",
+            "Design a simple star schema for an online retail store."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Data Mining Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Introduction to Data Mining",
+          "notes_md": "Data mining, also known as knowledge discovery in databases (KDD), is the process of extracting patterns, insights, and knowledge from large datasets. It involves using various techniques from statistics, machine learning, and database management to uncover hidden relationships and trends. Data mining tasks include classification, clustering, association rule mining, and anomaly detection.  The data mining process typically involves data cleaning, data transformation, data selection, data mining, pattern evaluation, and knowledge representation. Applications of data mining are widespread, including customer relationship management (CRM), fraud detection, market basket analysis, and medical diagnosis. Ethical considerations are important, including privacy and bias.",
+          "video_url": "https://www.youtube.com/watch?v=A-Y1GT83QYQ",
+          "practice_questions": [
+            "What is data mining and what are its goals?",
+            "Describe the steps involved in the data mining process.",
+            "What are the main data mining tasks?",
+            "Give examples of applications of data mining in different industries.",
+            "Discuss the ethical considerations in data mining."
+          ]
+        },
+        {
+          "topic_title": "Data Preprocessing Techniques",
+          "notes_md": "Data preprocessing is a crucial step in data mining to ensure data quality and improve the performance of data mining algorithms. Common techniques include data cleaning (handling missing values, removing noise, correcting inconsistencies), data transformation (normalization, standardization, aggregation), data reduction (feature selection, dimensionality reduction), and data discretization (converting continuous attributes into discrete ones).  Missing values can be handled by imputation (replacing with mean, median, or mode) or by removing records with missing values.  Normalization scales data to a specific range (e.g., 0 to 1). Standardization transforms data to have zero mean and unit variance. Dimensionality reduction techniques like PCA (Principal Component Analysis) can reduce the number of features while preserving important information.",
+          "video_url": "https://www.youtube.com/watch?v=K_gaf08wZ8E",
+          "practice_questions": [
+            "Why is data preprocessing important in data mining?",
+            "Describe different techniques for handling missing values.",
+            "Explain the difference between normalization and standardization.",
+            "What is dimensionality reduction and why is it used?",
+            "Describe different data discretization methods."
+          ]
+        },
+        {
+          "topic_title": "Association Rule Mining: Apriori Algorithm",
+          "notes_md": "Association rule mining aims to discover interesting relationships between variables in large datasets. A classic example is market basket analysis, where rules are discovered to identify products that are frequently purchased together. The Apriori algorithm is a popular algorithm for association rule mining. It uses a level-wise approach to find frequent itemsets. It first finds frequent 1-itemsets, then uses them to generate candidate 2-itemsets, and so on. The algorithm uses the Apriori property: all subsets of a frequent itemset must also be frequent.  Support, confidence, and lift are used to evaluate the interestingness of association rules.  Support measures the frequency of an itemset. Confidence measures the reliability of a rule. Lift measures the correlation between the antecedent and consequent of a rule.  \n\nExample:\nRule: {Bread} -> {Milk}\nSupport: 0.2 (20% of transactions contain both Bread and Milk)\nConfidence: 0.7 (70% of transactions containing Bread also contain Milk)\nLift: > 1 (indicates a positive correlation)",
+          "video_url": "https://www.youtube.com/watch?v=As04de9hcJo",
+          "practice_questions": [
+            "What is association rule mining and what are its applications?",
+            "Explain the Apriori algorithm and how it works.",
+            "What is the Apriori property and why is it important?",
+            "Define support, confidence, and lift and explain how they are used to evaluate association rules.",
+            "Given a dataset of transactions, apply the Apriori algorithm to find frequent itemsets and generate association rules."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Classification Techniques",
+      "topics": [
+        {
+          "topic_title": "Decision Tree Classification",
+          "notes_md": "Decision tree classification is a supervised learning technique that uses a tree-like structure to classify instances. Each internal node represents a test on an attribute, each branch represents an outcome of the test, and each leaf node represents a class label. Decision trees are easy to interpret and visualize. Algorithms like ID3, C4.5, and CART are used to build decision trees. These algorithms use measures like information gain and Gini index to select the best attribute to split on at each node. Overfitting is a common problem in decision tree learning, and techniques like pruning are used to prevent it. Pruning involves removing branches that do not contribute significantly to the accuracy of the tree. \n\nExample:\nIf (Outlook = Sunny) and (Humidity > 70) then PlayTennis = No\nElse If (Outlook = Sunny) and (Humidity <= 70) then PlayTennis = Yes",
+          "video_url": "https://www.youtube.com/watch?v=7VeUPuFGJHk",
+          "practice_questions": [
+            "What is decision tree classification and how does it work?",
+            "Explain the difference between ID3, C4.5, and CART algorithms.",
+            "What is information gain and how is it used in decision tree learning?",
+            "What is overfitting and how can it be prevented in decision trees?",
+            "Build a decision tree for a given dataset."
+          ]
+        },
+        {
+          "topic_title": "Naive Bayes Classification",
+          "notes_md": "Naive Bayes classification is a probabilistic classifier based on Bayes' theorem with the assumption of independence between features. Despite its simplicity, it often performs well in practice, especially for text classification. Bayes' theorem states: P(A|B) = P(B|A) * P(A) / P(B), where P(A|B) is the posterior probability of A given B, P(B|A) is the likelihood of B given A, P(A) is the prior probability of A, and P(B) is the prior probability of B.  The naive assumption is that the features are conditionally independent given the class label. This assumption simplifies the calculation of the likelihood.  Naive Bayes classifiers are easy to implement and computationally efficient.  Variations include Gaussian Naive Bayes (for continuous features), Multinomial Naive Bayes (for discrete features), and Bernoulli Naive Bayes (for binary features).",
+          "video_url": "https://www.youtube.com/watch?v=O2L2Uv9pdDA",
+          "practice_questions": [
+            "What is Naive Bayes classification and how does it work?",
+            "Explain Bayes' theorem and its role in Naive Bayes classification.",
+            "What is the naive assumption and why is it important?",
+            "Describe different variations of Naive Bayes classifiers.",
+            "Apply Naive Bayes classification to a given dataset."
+          ]
+        },
+        {
+          "topic_title": "Support Vector Machines (SVM)",
+          "notes_md": "Support Vector Machines (SVM) are supervised learning models used for classification and regression. SVMs aim to find the optimal hyperplane that separates data points of different classes with the largest margin. The margin is the distance between the hyperplane and the closest data points (support vectors). SVMs can handle both linear and non-linear data by using kernel functions. Kernel functions map the data into a higher-dimensional space where a linear hyperplane can be found. Common kernel functions include linear, polynomial, and radial basis function (RBF). SVMs are effective in high-dimensional spaces and are relatively robust to outliers. Regularization is used to prevent overfitting. The C parameter controls the trade-off between maximizing the margin and minimizing the classification error. A high C value allows for fewer misclassifications but can lead to a smaller margin and overfitting.",
+          "video_url": "https://www.youtube.com/watch?v=efR1C6CvhmE",
+          "practice_questions": [
+            "What are Support Vector Machines (SVM) and how do they work?",
+            "Explain the concept of the margin in SVM.",
+            "What are kernel functions and why are they used in SVM?",
+            "What is the role of regularization in SVM?",
+            "Compare and contrast different kernel functions in SVM."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Clustering Techniques",
+      "topics": [
+        {
+          "topic_title": "K-Means Clustering",
+          "notes_md": "K-Means clustering is an unsupervised learning algorithm that aims to partition n observations into k clusters, where each observation belongs to the cluster with the nearest mean (cluster center or centroid). The algorithm starts by randomly initializing k centroids. It then iteratively assigns each observation to the nearest centroid and recalculates the centroids based on the mean of the observations in each cluster. The algorithm continues until the centroids no longer change significantly or a maximum number of iterations is reached. The number of clusters (k) needs to be specified in advance.  The elbow method can be used to determine the optimal value of k. K-Means is sensitive to the initial choice of centroids and can converge to a local optimum. Running the algorithm multiple times with different initializations can help to find a better solution.  K-Means assumes that clusters are spherical and equally sized.",
+          "video_url": "https://www.youtube.com/watch?v=4b5d3muPQmA",
+          "practice_questions": [
+            "What is K-Means clustering and how does it work?",
+            "How is the number of clusters (k) determined in K-Means?",
+            "What are the limitations of K-Means clustering?",
+            "How can the elbow method be used to find the optimal value of k?",
+            "Apply K-Means clustering to a given dataset."
+          ]
+        },
+        {
+          "topic_title": "Hierarchical Clustering",
+          "notes_md": "Hierarchical clustering is an unsupervised learning algorithm that builds a hierarchy of clusters. It can be either agglomerative (bottom-up) or divisive (top-down). Agglomerative clustering starts with each observation as a separate cluster and iteratively merges the closest clusters until all observations are in a single cluster. Divisive clustering starts with all observations in a single cluster and iteratively splits the cluster into smaller clusters until each observation is in a separate cluster. Different linkage methods can be used to measure the distance between clusters, including single linkage (minimum distance), complete linkage (maximum distance), average linkage (average distance), and centroid linkage (distance between centroids). Hierarchical clustering produces a dendrogram, which is a tree-like diagram that shows the hierarchy of clusters. The dendrogram can be used to visualize the clustering results and to determine the optimal number of clusters.",
+          "video_url": "https://www.youtube.com/watch?v=EuC-RffVj4Q",
+          "practice_questions": [
+            "What is hierarchical clustering and how does it work?",
+            "Explain the difference between agglomerative and divisive clustering.",
+            "Describe different linkage methods used in hierarchical clustering.",
+            "What is a dendrogram and how is it used in hierarchical clustering?",
+            "Apply hierarchical clustering to a given dataset."
+          ]
+        },
+        {
+          "topic_title": "Density-Based Clustering: DBSCAN",
+          "notes_md": "DBSCAN (Density-Based Spatial Clustering of Applications with Noise) is a density-based clustering algorithm that groups together data points that are closely packed together, marking as outliers points that lie alone in low-density regions. DBSCAN defines two parameters: epsilon (eps), which specifies the radius of the neighborhood around a data point, and minPts, which specifies the minimum number of data points required within the epsilon neighborhood for a point to be considered a core point. A core point is a data point that has at least minPts data points within its epsilon neighborhood. A border point is a data point that is not a core point but is within the epsilon neighborhood of a core point. A noise point is a data point that is neither a core point nor a border point. DBSCAN can discover clusters of arbitrary shape and is robust to outliers. However, it can be sensitive to the choice of parameters eps and minPts. It also struggles with clusters of varying densities.",
+          "video_url": "https://www.youtube.com/watch?v=RDZUd0ZsRZA",
+          "practice_questions": [
+            "What is DBSCAN and how does it work?",
+            "Explain the concepts of core point, border point, and noise point in DBSCAN.",
+            "What are the parameters eps and minPts in DBSCAN and how do they affect the clustering results?",
+            "What are the advantages and disadvantages of DBSCAN?",
+            "Apply DBSCAN to a given dataset."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "course_name": "Engineering Chemistry",
+  "course_code": "UBA49",
+  "units": [
+    {
+      "unit_title": "Atomic and Molecular Structure",
+      "topics": [
+        {
+          "topic_title": "Quantum Mechanics and Atomic Orbitals",
+          "notes_md": "Quantum mechanics provides the foundation for understanding atomic structure. Key concepts include wave-particle duality, the Heisenberg uncertainty principle, and the Schrödinger equation. Atomic orbitals are mathematical functions that describe the probability of finding an electron in a specific region of space around the nucleus. These orbitals are characterized by quantum numbers: principal (n), azimuthal (l), magnetic (ml), and spin (ms). The principal quantum number determines the energy level (n=1, 2, 3,...), the azimuthal quantum number defines the shape of the orbital (l=0, 1, 2,... corresponding to s, p, d,... orbitals), the magnetic quantum number specifies the orientation of the orbital in space, and the spin quantum number describes the intrinsic angular momentum of the electron.\n\nThe filling of atomic orbitals follows the Aufbau principle, Hund's rule, and the Pauli exclusion principle. These rules dictate the electronic configuration of atoms, which determines their chemical properties. For example, carbon has the electronic configuration 1s²2s²2p². Understanding these principles is crucial for predicting how atoms will interact to form molecules.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=cskgV-ihv9g",
+          "practice_questions": [
+            "Explain the significance of the Heisenberg uncertainty principle.",
+            "Describe the shapes of s, p, and d orbitals.",
+            "What are the possible values of the quantum numbers n, l, and ml for a 3p orbital?",
+            "State Hund's rule and the Pauli exclusion principle.",
+            "Write the electronic configuration of oxygen and nitrogen."
+          ]
+        },
+        {
+          "topic_title": "Molecular Orbital Theory",
+          "notes_md": "Molecular orbital (MO) theory describes the bonding in molecules in terms of molecular orbitals, which are formed by the combination of atomic orbitals. When atomic orbitals combine, they form bonding and antibonding molecular orbitals. Bonding orbitals are lower in energy and result in increased electron density between the nuclei, leading to a stable bond. Antibonding orbitals are higher in energy and have a node between the nuclei, weakening the bond.\n\nThe linear combination of atomic orbitals (LCAO) approximation is used to construct molecular orbitals. For example, the combination of two 1s atomic orbitals forms a sigma (σ) bonding orbital and a sigma* (σ*) antibonding orbital. The filling of molecular orbitals follows similar rules to atomic orbitals. The bond order, defined as (number of electrons in bonding orbitals - number of electrons in antibonding orbitals)/2, indicates the stability of the bond. A higher bond order corresponds to a stronger and shorter bond. MO theory can explain the magnetic properties of molecules, such as the paramagnetism of oxygen (O₂).\n\n",
+          "video_url": "https://www.youtube.com/watch?v=dlcQMq3hpdY",
+          "practice_questions": [
+            "Explain the difference between bonding and antibonding molecular orbitals.",
+            "Describe the LCAO approximation.",
+            "What is bond order and how is it calculated?",
+            "Draw the molecular orbital diagram for diatomic nitrogen (N₂).",
+            "Explain why oxygen (O₂) is paramagnetic according to MO theory."
+          ]
+        },
+        {
+          "topic_title": "Intermolecular Forces",
+          "notes_md": "Intermolecular forces (IMFs) are attractive or repulsive forces between molecules. These forces are responsible for many physical properties of substances, such as boiling point, melting point, and viscosity. The main types of IMFs are: London dispersion forces, dipole-dipole interactions, and hydrogen bonding.\n\nLondon dispersion forces are present in all molecules and arise from temporary fluctuations in electron distribution. Dipole-dipole interactions occur between polar molecules, which have a permanent dipole moment due to uneven electron distribution. Hydrogen bonding is a particularly strong type of dipole-dipole interaction that occurs when a hydrogen atom is bonded to a highly electronegative atom (such as oxygen, nitrogen, or fluorine). The strength of IMFs increases with increasing molecular size and polarity. Substances with strong IMFs have higher boiling points and melting points. IMFs also play a crucial role in biological systems, influencing the structure and function of proteins and DNA.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=2MAjYp8IAKI",
+          "practice_questions": [
+            "Define intermolecular forces and explain their importance.",
+            "Describe London dispersion forces and how they arise.",
+            "What is a dipole-dipole interaction and when does it occur?",
+            "Explain the characteristics of hydrogen bonding.",
+            "How do intermolecular forces affect the boiling point of a substance?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Chemical Thermodynamics",
+      "topics": [
+        {
+          "topic_title": "Basic Concepts and Laws of Thermodynamics",
+          "notes_md": "Thermodynamics deals with the relationships between heat, work, and energy. Key concepts include: system, surroundings, state functions (e.g., internal energy, enthalpy, entropy, Gibbs free energy), and processes (e.g., isothermal, adiabatic, isobaric, isochoric). The first law of thermodynamics states that energy is conserved; it cannot be created or destroyed, only transformed from one form to another. Mathematically, ΔU = q + w, where ΔU is the change in internal energy, q is the heat added to the system, and w is the work done on the system.\n\nThe second law of thermodynamics states that the entropy of an isolated system always increases or remains constant in a reversible process. Entropy (S) is a measure of the disorder or randomness of a system. The third law of thermodynamics states that the entropy of a perfect crystal at absolute zero (0 K) is zero. These laws provide the framework for understanding the spontaneity and equilibrium of chemical reactions. Understanding these fundamental principles is essential for analyzing energy changes in chemical processes.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=Dhux4DzC7cE",
+          "practice_questions": [
+            "Define system, surroundings, and state function.",
+            "State the first, second, and third laws of thermodynamics.",
+            "What is entropy and how is it related to the second law of thermodynamics?",
+            "Differentiate between isothermal, adiabatic, isobaric, and isochoric processes.",
+            "Give an example of a process that is spontaneous."
+          ]
+        },
+        {
+          "topic_title": "Enthalpy and Hess's Law",
+          "notes_md": "Enthalpy (H) is a thermodynamic property of a system that is defined as H = U + PV, where U is the internal energy, P is the pressure, and V is the volume. Enthalpy change (ΔH) is the heat absorbed or released during a chemical reaction at constant pressure. Exothermic reactions have a negative ΔH (release heat), while endothermic reactions have a positive ΔH (absorb heat).\n\nHess's law states that the enthalpy change for a reaction is independent of the pathway taken. This means that if a reaction can be carried out in multiple steps, the sum of the enthalpy changes for each step is equal to the enthalpy change for the overall reaction. Hess's law is useful for calculating enthalpy changes for reactions that are difficult to measure directly. Standard enthalpy of formation (ΔHf°) is the enthalpy change when one mole of a compound is formed from its elements in their standard states. Using standard enthalpies of formation, the enthalpy change for a reaction can be calculated as: ΔH° = ΣnΔHf°(products) - ΣnΔHf°(reactants).\n\n",
+          "video_url": "https://www.youtube.com/watch?v=SV3G-yv7j88",
+          "practice_questions": [
+            "Define enthalpy and explain its significance.",
+            "State Hess's law and provide an example of its application.",
+            "What is standard enthalpy of formation?",
+            "How can standard enthalpies of formation be used to calculate the enthalpy change for a reaction?",
+            "Differentiate between exothermic and endothermic reactions."
+          ]
+        },
+        {
+          "topic_title": "Gibbs Free Energy and Chemical Equilibrium",
+          "notes_md": "Gibbs free energy (G) is a thermodynamic potential that combines enthalpy and entropy: G = H - TS, where T is the temperature in Kelvin. The change in Gibbs free energy (ΔG) determines the spontaneity of a reaction at constant temperature and pressure. A reaction is spontaneous (or thermodynamically favorable) if ΔG < 0, non-spontaneous if ΔG > 0, and at equilibrium if ΔG = 0.\n\nThe relationship between Gibbs free energy and the equilibrium constant (K) is given by: ΔG° = -RTlnK, where R is the gas constant. The equilibrium constant indicates the extent to which a reaction will proceed to completion. A large K value indicates that the reaction favors product formation, while a small K value indicates that the reaction favors reactant formation. The Van't Hoff equation describes the temperature dependence of the equilibrium constant: d(lnK)/dT = ΔH°/RT². This equation can be used to predict how changes in temperature will affect the equilibrium position.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=wupYBgZiRE8",
+          "practice_questions": [
+            "Define Gibbs free energy and explain its significance.",
+            "How does Gibbs free energy relate to the spontaneity of a reaction?",
+            "What is the relationship between Gibbs free energy and the equilibrium constant?",
+            "State the Van't Hoff equation and explain its use.",
+            "How does temperature affect the equilibrium position of a reaction?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Chemical Kinetics",
+      "topics": [
+        {
+          "topic_title": "Reaction Rates and Rate Laws",
+          "notes_md": "Chemical kinetics is the study of reaction rates and the factors that influence them. The rate of a reaction is defined as the change in concentration of a reactant or product per unit time. Rate laws express the relationship between the reaction rate and the concentrations of reactants. For a general reaction aA + bB → cC + dD, the rate law can be written as: rate = k[A]^m[B]^n, where k is the rate constant, and m and n are the reaction orders with respect to A and B. The overall reaction order is the sum of the individual orders (m + n).\n\nReaction orders are determined experimentally and cannot be predicted from the stoichiometry of the reaction. The rate constant (k) is temperature-dependent and is specific to each reaction. Integrated rate laws relate the concentration of reactants to time and can be used to determine the reaction order. For example, a first-order reaction follows the integrated rate law: ln[A]t - ln[A]0 = -kt, where [A]t is the concentration of A at time t, and [A]0 is the initial concentration of A. Half-life (t1/2) is the time required for the concentration of a reactant to decrease to half of its initial value.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=k5m3QtH4K1E",
+          "practice_questions": [
+            "Define reaction rate and rate law.",
+            "How are reaction orders determined experimentally?",
+            "What is the significance of the rate constant?",
+            "Write the integrated rate law for a first-order reaction.",
+            "Define half-life and explain its relationship to reaction rate."
+          ]
+        },
+        {
+          "topic_title": "Activation Energy and Catalysis",
+          "notes_md": "Activation energy (Ea) is the minimum energy required for a reaction to occur. According to collision theory, reactions occur when reactant molecules collide with sufficient energy and proper orientation. The Arrhenius equation relates the rate constant (k) to the activation energy and temperature: k = Aexp(-Ea/RT), where A is the frequency factor (pre-exponential factor), R is the gas constant, and T is the temperature in Kelvin. A catalyst is a substance that speeds up a reaction without being consumed in the process. Catalysts lower the activation energy of a reaction by providing an alternative reaction pathway.\n\nThere are two main types of catalysis: homogeneous catalysis (catalyst is in the same phase as the reactants) and heterogeneous catalysis (catalyst is in a different phase from the reactants). Enzymes are biological catalysts that are highly specific and efficient. Understanding activation energy and catalysis is crucial for optimizing chemical reactions and designing new catalysts.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=VbI-1vT4M7M",
+          "practice_questions": [
+            "Define activation energy and explain its significance.",
+            "State the Arrhenius equation and explain the meaning of each term.",
+            "What is a catalyst and how does it work?",
+            "Differentiate between homogeneous and heterogeneous catalysis.",
+            "Explain the role of enzymes in biological systems."
+          ]
+        },
+        {
+          "topic_title": "Reaction Mechanisms",
+          "notes_md": "A reaction mechanism is a step-by-step sequence of elementary reactions that describe how a chemical reaction occurs. Elementary reactions are single-step reactions that cannot be broken down into simpler steps. The rate-determining step is the slowest step in the reaction mechanism and determines the overall rate of the reaction. Intermediates are species that are formed in one step of the mechanism and consumed in a subsequent step; they do not appear in the overall balanced equation.\n\nThe rate law for an elementary reaction can be determined directly from its stoichiometry. For example, if an elementary reaction is A + B → C, the rate law is rate = k[A][B]. Reaction mechanisms must be consistent with the experimentally determined rate law. Experimental techniques, such as isotope labeling and kinetic isotope effects, can be used to probe reaction mechanisms. Understanding reaction mechanisms is essential for designing and controlling chemical reactions.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=0ZT5N-kR180",
+          "practice_questions": [
+            "Define reaction mechanism and elementary reaction.",
+            "What is the rate-determining step and why is it important?",
+            "What is an intermediate and how does it differ from a reactant or product?",
+            "How is the rate law for an elementary reaction determined?",
+            "Explain how experimental techniques can be used to probe reaction mechanisms."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Electrochemistry",
+      "topics": [
+        {
+          "topic_title": "Electrochemical Cells and Electrode Potentials",
+          "notes_md": "Electrochemistry deals with the relationship between electrical energy and chemical reactions. An electrochemical cell is a device that converts chemical energy into electrical energy (galvanic cell) or vice versa (electrolytic cell). Electrochemical cells consist of two electrodes: an anode (where oxidation occurs) and a cathode (where reduction occurs). The electrodes are immersed in an electrolyte solution, which contains ions that carry the charge.\n\nElectrode potential is the measure of the potential difference between an electrode and its electrolyte. The standard electrode potential (E°) is the electrode potential measured under standard conditions (298 K, 1 atm pressure, 1 M concentration). The cell potential (Ecell) is the difference between the cathode potential and the anode potential: Ecell = Ecathode - Eanode. A positive Ecell indicates that the reaction is spontaneous (galvanic cell), while a negative Ecell indicates that the reaction is non-spontaneous (electrolytic cell).\n\n",
+          "video_url": "https://www.youtube.com/watch?v=ifQxJqL_v80",
+          "practice_questions": [
+            "Define electrochemistry and electrochemical cell.",
+            "Differentiate between galvanic and electrolytic cells.",
+            "What are the anode and cathode in an electrochemical cell?",
+            "Define electrode potential and standard electrode potential.",
+            "How is the cell potential calculated and what does its sign indicate?"
+          ]
+        },
+        {
+          "topic_title": "Nernst Equation",
+          "notes_md": "The Nernst equation relates the cell potential (Ecell) to the standard cell potential (E°cell), temperature (T), and the reaction quotient (Q). The Nernst equation is given by: Ecell = E°cell - (RT/nF)lnQ, where R is the gas constant, T is the temperature in Kelvin, n is the number of moles of electrons transferred in the balanced reaction, and F is Faraday's constant. The reaction quotient (Q) is a measure of the relative amounts of reactants and products present in a reaction at any given time. The Nernst equation is used to calculate cell potentials under non-standard conditions.\n\nFor example, consider the reaction: aA + bB → cC + dD. The reaction quotient is given by: Q = ([C]^c[D]^d)/([A]^a[B]^b). The Nernst equation is crucial for understanding how changes in concentration and temperature affect the cell potential and the spontaneity of electrochemical reactions.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=AEtzm-LSK_U",
+          "practice_questions": [
+            "State the Nernst equation and explain the meaning of each term.",
+            "What is the reaction quotient and how is it calculated?",
+            "How does the Nernst equation relate cell potential to concentration and temperature?",
+            "Describe how the Nernst equation can be used to determine the equilibrium constant.",
+            "Explain the limitations of the Nernst equation."
+          ]
+        },
+        {
+          "topic_title": "Electrolysis",
+          "notes_md": "Electrolysis is the process of using electrical energy to drive a non-spontaneous chemical reaction. Electrolysis is carried out in an electrolytic cell, which consists of two electrodes immersed in an electrolyte solution connected to an external power source. During electrolysis, oxidation occurs at the anode and reduction occurs at the cathode. The products of electrolysis depend on the nature of the electrolyte and the electrode materials.\n\nFaraday's laws of electrolysis relate the amount of substance produced or consumed during electrolysis to the quantity of electricity passed through the cell. Faraday's first law states that the mass of a substance produced or consumed at an electrode is directly proportional to the quantity of electricity passed through the cell. Faraday's second law states that the masses of different substances produced or consumed by the same quantity of electricity are proportional to their equivalent weights. Electrolysis has numerous applications, including the production of metals (e.g., aluminum), the purification of metals, and the electroplating of surfaces.\n\n",
+          "video_url": "https://www.youtube.com/watch?v=jTX6PuKj-jA",
+          "practice_questions": [
+            "Define electrolysis and explain its purpose.",
+            "Describe the process of electrolysis in an electrolytic cell.",
+            "State Faraday's laws of electrolysis.",
+            "How is the amount of substance produced during electrolysis related to the quantity of electricity passed through the cell?",
+            "Give examples of applications of electrolysis."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "course_name": "Software Engineering",
+  "course_code": "CSA10",
+  "units": [
+    {
+      "unit_title": "Introduction to Software Engineering",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Software Engineering",
+          "notes_md": "Software engineering is a discipline that applies engineering principles to the development, maintenance, and evolution of software. It encompasses a broad range of activities, including requirements elicitation, design, coding, testing, and project management. The goal is to produce high-quality software that meets the needs of its users, is reliable, maintainable, and cost-effective. Key principles include abstraction, modularity, information hiding, and separation of concerns. Software engineering also involves understanding different software development life cycle (SDLC) models like Waterfall, Agile, and Spiral, each with its own strengths and weaknesses. Understanding these fundamentals is crucial for building robust and scalable software systems.\n\nFor example, consider a simple program:\n\n```python\ndef add(x, y):\n  return x + y\n\nprint(add(5, 3))\n```",
+          "video_url": "https://www.youtube.com/watch?v=jIl1gEk3U9E",
+          "practice_questions": [
+            "What are the key principles of software engineering?",
+            "Explain the difference between software engineering and computer science.",
+            "Describe the Waterfall SDLC model.",
+            "What are the advantages and disadvantages of Agile development?",
+            "Define abstraction and modularity in the context of software design."
+          ]
+        },
+        {
+          "topic_title": "Software Development Life Cycle (SDLC) Models",
+          "notes_md": "The Software Development Life Cycle (SDLC) is a framework defining the tasks performed at each step in the software development process. Common models include Waterfall, Agile, Spiral, and V-model. The Waterfall model is a sequential approach where each phase must be completed before the next begins. Agile models, such as Scrum and Kanban, emphasize iterative development, collaboration, and flexibility. The Spiral model combines elements of iterative development and risk management. The V-model focuses on verification and validation at each stage of development. Choosing the right SDLC model depends on the project's requirements, complexity, and risk factors. Understanding the strengths and weaknesses of each model is critical for successful software development.\n\nFor example, in Agile, sprints are short development cycles (e.g., 2 weeks) with specific goals.",
+          "video_url": "https://www.youtube.com/watch?v=Q-ua-pPzQRo",
+          "practice_questions": [
+            "Compare and contrast the Waterfall and Agile SDLC models.",
+            "What are the advantages of using an iterative SDLC model?",
+            "Explain the role of risk management in the Spiral model.",
+            "Describe the V-model and its emphasis on verification and validation.",
+            "How does Scrum differ from Kanban in Agile development?"
+          ]
+        },
+        {
+          "topic_title": "Requirements Engineering",
+          "notes_md": "Requirements engineering is the process of defining, documenting, and maintaining requirements in the software development process. It involves eliciting requirements from stakeholders, analyzing and documenting them, and managing changes to requirements throughout the project lifecycle. Requirements can be functional (what the software should do) or non-functional (how well it should do it, e.g., performance, security). Techniques for requirements elicitation include interviews, surveys, brainstorming, and use case modeling. Effective requirements engineering is crucial for ensuring that the software meets the needs of its users and stakeholders. Poorly defined requirements are a major cause of project failure.\n\nFor example, a functional requirement might be 'The system shall allow users to log in with a username and password.'  A non-functional requirement might be 'The system shall respond to login requests within 2 seconds.'",
+          "video_url": "https://www.youtube.com/watch?v=Spu-5mJj5-U",
+          "practice_questions": [
+            "What is the difference between functional and non-functional requirements?",
+            "Describe different techniques for requirements elicitation.",
+            "Why is requirements engineering important for software development?",
+            "What are the challenges in managing changing requirements?",
+            "Explain the role of stakeholders in requirements engineering."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Software Design",
+      "topics": [
+        {
+          "topic_title": "Software Architecture",
+          "notes_md": "Software architecture refers to the high-level structure of a software system. It defines the components of the system, their relationships, and the principles and guidelines governing their design and evolution. Common architectural styles include layered architecture, microservices architecture, and client-server architecture. Architectural decisions have a significant impact on the system's quality attributes, such as performance, scalability, and maintainability. Designing a good software architecture involves balancing competing requirements and considering trade-offs. Documentation of the architecture is crucial for communication and understanding among stakeholders.\n\nFor instance, layered architecture separates concerns into distinct layers, such as presentation, business logic, and data access.",
+          "video_url": "https://www.youtube.com/watch?v=WXYa3Y-wncc",
+          "practice_questions": [
+            "What is software architecture and why is it important?",
+            "Describe different software architectural styles.",
+            "How does software architecture impact system quality attributes?",
+            "What are the key considerations in designing a software architecture?",
+            "Explain the role of architectural documentation."
+          ]
+        },
+        {
+          "topic_title": "Object-Oriented Design (OOD)",
+          "notes_md": "Object-Oriented Design (OOD) is a software design paradigm based on the concept of 'objects,' which contain data (attributes) and code (methods) that operate on the data. Key principles of OOD include encapsulation, inheritance, and polymorphism. Encapsulation hides the internal details of an object from the outside world. Inheritance allows creating new classes based on existing classes. Polymorphism allows objects of different classes to be treated as objects of a common type. OOD promotes modularity, reusability, and maintainability. UML diagrams are commonly used to represent object-oriented designs.\n\nFor example:\n\n```java\nclass Animal {\n  public void makeSound() {\n    System.out.println(\"Generic animal sound\");\n  }\n}\n\nclass Dog extends Animal {\n  @Override\n  public void makeSound() {\n    System.out.println(\"Woof!\");\n  }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=GhQdlIFyKog",
+          "practice_questions": [
+            "Explain the principles of encapsulation, inheritance, and polymorphism.",
+            "How does OOD promote modularity and reusability?",
+            "What are UML diagrams and how are they used in OOD?",
+            "Describe the benefits of using OOD in software development.",
+            "Give an example of how polymorphism can be implemented in Java or Python."
+          ]
+        },
+        {
+          "topic_title": "Design Patterns",
+          "notes_md": "Design patterns are reusable solutions to commonly occurring problems in software design. They represent best practices and provide a common vocabulary for discussing design issues. Common design patterns include Creational (e.g., Singleton, Factory), Structural (e.g., Adapter, Decorator), and Behavioral (e.g., Observer, Strategy). Using design patterns can improve code readability, maintainability, and reusability. Understanding design patterns is essential for experienced software developers. Applying the appropriate design pattern can significantly simplify complex design problems.\n\nFor example, the Singleton pattern ensures that only one instance of a class is created.",
+          "video_url": "https://www.youtube.com/watch?v=v9ejT8FO-7I",
+          "practice_questions": [
+            "What are design patterns and why are they useful?",
+            "Describe the different categories of design patterns.",
+            "Explain the Singleton design pattern.",
+            "Give an example of when you would use the Factory design pattern.",
+            "What are the benefits of using design patterns in software development?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Software Testing",
+      "topics": [
+        {
+          "topic_title": "Testing Fundamentals",
+          "notes_md": "Software testing is the process of evaluating a software system to detect errors and ensure that it meets its requirements. It involves executing the software with the intent of finding defects. Testing can be performed at different levels, including unit testing, integration testing, system testing, and acceptance testing. Different testing techniques include black-box testing (testing without knowledge of the internal code) and white-box testing (testing with knowledge of the internal code). Effective testing is crucial for delivering high-quality software. Testing helps to identify and fix defects before the software is released to users.\n\nFor example, unit testing involves testing individual components or functions of the software.",
+          "video_url": "https://www.youtube.com/watch?v=ILvRzYn1-Ts",
+          "practice_questions": [
+            "What is software testing and why is it important?",
+            "Describe the different levels of software testing.",
+            "What is the difference between black-box and white-box testing?",
+            "How does testing contribute to software quality?",
+            "Explain the concept of test coverage."
+          ]
+        },
+        {
+          "topic_title": "Test Case Design",
+          "notes_md": "Test case design involves creating specific test cases to verify that the software meets its requirements. A test case typically includes a description of the test, input data, expected output, and actual output. Test cases should be designed to cover different scenarios and edge cases. Common test case design techniques include equivalence partitioning, boundary value analysis, and decision table testing. Well-designed test cases can help to detect a wide range of defects. Test case management tools can be used to organize and track test cases.\n\nFor example, if testing a function that accepts an age, equivalence partitioning might involve creating test cases for valid ages, ages below the minimum, and ages above the maximum.",
+          "video_url": "https://www.youtube.com/watch?v=czLYb3o3c74",
+          "practice_questions": [
+            "What is a test case and what are its components?",
+            "Describe different test case design techniques.",
+            "What is equivalence partitioning and how is it used?",
+            "Explain boundary value analysis.",
+            "How can test case management tools help in the testing process?"
+          ]
+        },
+        {
+          "topic_title": "Test Automation",
+          "notes_md": "Test automation involves using software tools to execute test cases automatically. It can significantly reduce the time and effort required for testing. Test automation is particularly useful for regression testing, which involves re-running test cases after code changes. Common test automation tools include Selenium, JUnit, and TestNG. Test automation requires careful planning and design to ensure that the tests are reliable and maintainable. Automated tests can be integrated into the continuous integration and continuous delivery (CI/CD) pipeline.\n\nFor example, Selenium can be used to automate web browser testing.",
+          "video_url": "https://www.youtube.com/watch?v=jhk-m-P-Wp4",
+          "practice_questions": [
+            "What is test automation and why is it beneficial?",
+            "Describe different test automation tools.",
+            "How can test automation be integrated into the CI/CD pipeline?",
+            "What are the challenges in implementing test automation?",
+            "Explain the role of regression testing in test automation."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Software Maintenance and Evolution",
+      "topics": [
+        {
+          "topic_title": "Types of Software Maintenance",
+          "notes_md": "Software maintenance involves modifying a software system after delivery to correct faults, improve performance, or adapt to a changing environment. There are four main types of software maintenance: corrective maintenance (fixing defects), adaptive maintenance (modifying the software to adapt to new environments), perfective maintenance (improving the software's functionality or performance), and preventive maintenance (making changes to prevent future problems). Software maintenance is a significant part of the software lifecycle and can consume a large portion of the total cost of ownership. Effective maintenance practices are crucial for ensuring the long-term viability of a software system.\n\nFor example, applying a security patch is an example of corrective maintenance.",
+          "video_url": "https://www.youtube.com/watch?v=l35HA3f_b8c",
+          "practice_questions": [
+            "What are the different types of software maintenance?",
+            "Explain the difference between corrective and perfective maintenance.",
+            "Why is software maintenance important?",
+            "What are the challenges in software maintenance?",
+            "Describe the role of documentation in software maintenance."
+          ]
+        },
+        {
+          "topic_title": "Software Evolution",
+          "notes_md": "Software evolution refers to the ongoing process of change and adaptation that a software system undergoes throughout its lifecycle. Lehman's Laws of Software Evolution describe several key principles governing software evolution, including the law of continuing change, the law of increasing complexity, and the law of self-regulation. Software evolution is driven by changing user needs, technological advancements, and business requirements. Effective software evolution requires careful planning and management to minimize the risk of introducing new defects or destabilizing the system.\n\nFor example, adding a new feature to an existing application is an example of software evolution.",
+          "video_url": "https://www.youtube.com/watch?v=1uJs1-K0IeA",
+          "practice_questions": [
+            "What is software evolution and why is it important?",
+            "Describe Lehman's Laws of Software Evolution.",
+            "What factors drive software evolution?",
+            "How can software evolution be managed effectively?",
+            "Explain the relationship between software maintenance and software evolution."
+          ]
+        },
+        {
+          "topic_title": "Configuration Management",
+          "notes_md": "Configuration management (CM) is the process of systematically controlling changes to the configuration of a software system. It involves identifying, tracking, and managing all the components of the system, including source code, documentation, and build scripts. CM tools, such as Git, are used to manage version control, branching, and merging. Effective configuration management is crucial for ensuring the integrity and stability of a software system throughout its lifecycle. CM helps to prevent conflicts and ensure that changes are properly documented and tracked.\n\nFor example, using Git to manage different versions of source code is an example of configuration management.",
+          "video_url": "https://www.youtube.com/watch?v=2AKGXKzabyw",
+          "practice_questions": [
+            "What is configuration management and why is it important?",
+            "Describe the key activities in configuration management.",
+            "What are the benefits of using version control systems like Git?",
+            "How does configuration management contribute to software quality?",
+            "Explain the role of branching and merging in version control."
+          ]
+        }
+      ]
+    }
+  ]
+}

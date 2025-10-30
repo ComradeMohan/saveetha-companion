@@ -1,0 +1,170 @@
+{
+  "course_name": "Professional Certification (SPIC9)",
+  "course_code": "SPIC9",
+  "units": [
+    {
+      "unit_title": "Introduction to Project Management",
+      "topics": [
+        {
+          "topic_title": "Project Management Fundamentals",
+          "notes_md": "Project management is the application of processes, methods, skills, knowledge and experience to achieve specific project objectives according to the project acceptance criteria within agreed parameters. Project management has final deliverables that are constrained to a finite timescale and budget.\n\nKey concepts include:\n\n*   **Project Lifecycle:** Initiation, Planning, Execution, Monitoring & Controlling, Closure.\n*   **Project Stakeholders:** Individuals or groups with an interest in the project's outcome.\n*   **Project Constraints:** Time, Cost, Scope, Quality, Resources, Risk.\n*   **PMBOK Guide:** A standard for project management practices.\n\nUnderstanding these fundamentals is crucial for effective project execution and successful project outcomes.",
+          "video_url": "https://www.youtube.com/watch?v=GCW0j99zK4U",
+          "practice_questions": [
+            "Define project management and its key components.",
+            "Explain the different phases of the project lifecycle.",
+            "Identify the key stakeholders in a typical project.",
+            "What are the primary constraints that project managers face?",
+            "Describe the purpose of the PMBOK Guide."
+          ]
+        },
+        {
+          "topic_title": "Project Selection and Initiation",
+          "notes_md": "Project selection involves evaluating potential projects and choosing the ones that align best with the organization's strategic goals. This process often involves cost-benefit analysis, risk assessment, and alignment with business objectives.\n\nProject initiation is the process of formally starting a new project. This includes defining the project scope, identifying key stakeholders, and creating a project charter.\n\nA Project Charter formally authorizes the existence of a project and provides the project manager with the authority to apply organizational resources to project activities.\n\nKey steps in project initiation:\n\n*   Developing a project charter.\n*   Identifying stakeholders.\n*   Defining high-level project scope.",
+          "video_url": "https://www.youtube.com/watch?v=wb46-M0K_f4",
+          "practice_questions": [
+            "Explain the project selection process.",
+            "What is the purpose of a project charter?",
+            "Describe the key steps involved in project initiation.",
+            "How does project selection align with strategic goals?",
+            "Why is stakeholder identification important during initiation?"
+          ]
+        },
+        {
+          "topic_title": "Project Planning Fundamentals",
+          "notes_md": "Project planning is the process of defining how to complete a project within a certain timeframe and budget. It involves creating a detailed roadmap that outlines all the tasks, resources, and timelines required to achieve the project objectives.\n\nKey planning components:\n\n*   **Scope Management:** Defining and controlling what is and is not included in the project.\n*   **Schedule Management:** Developing a realistic project timeline.\n*   **Cost Management:** Estimating and controlling project costs.\n*   **Resource Management:** Planning and allocating resources effectively.\n*   **Risk Management:** Identifying and mitigating potential risks.\n\nEffective project planning is essential for successful project execution.",
+          "video_url": "https://www.youtube.com/watch?v=Wbs9dT-101Y",
+          "practice_questions": [
+            "What is the purpose of project planning?",
+            "Explain the key components of a project plan.",
+            "How does scope management contribute to project success?",
+            "Why is risk management an important part of project planning?",
+            "Describe the relationship between schedule and cost management."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced Planning Techniques",
+      "topics": [
+        {
+          "topic_title": "Work Breakdown Structure (WBS)",
+          "notes_md": "The Work Breakdown Structure (WBS) is a deliverable-oriented hierarchical decomposition of the work to be executed by the project team to accomplish the project objectives and create the required deliverables. It organizes and defines the total scope of the project.\n\nBenefits of using a WBS:\n\n*   Provides a clear visual representation of the project scope.\n*   Facilitates accurate cost and time estimation.\n*   Improves communication among stakeholders.\n*   Helps to identify and manage risks.\n\nA WBS typically starts with the project deliverables at the highest level and breaks them down into smaller, more manageable tasks.",
+          "video_url": "https://www.youtube.com/watch?v=OEioX-7j58k",
+          "practice_questions": [
+            "Define Work Breakdown Structure (WBS).",
+            "Explain the benefits of using a WBS in project management.",
+            "How does a WBS help in cost and time estimation?",
+            "Describe the hierarchical structure of a WBS.",
+            "How does a WBS improve communication among stakeholders?"
+          ]
+        },
+        {
+          "topic_title": "Critical Path Method (CPM)",
+          "notes_md": "The Critical Path Method (CPM) is a project management technique used to determine the longest sequence of activities that must be completed on time for the project to finish on schedule. This path determines the shortest possible duration of the project.\n\nKey concepts in CPM:\n\n*   **Activities:** Tasks that need to be completed.\n*   **Dependencies:** Relationships between activities.\n*   **Critical Path:** The longest path through the network diagram.\n*   **Slack/Float:** The amount of time an activity can be delayed without affecting the project completion date.\n\nCPM helps project managers identify critical activities and allocate resources effectively.",
+          "video_url": "https://www.youtube.com/watch?v=vJ6nE918w20",
+          "practice_questions": [
+            "Define Critical Path Method (CPM).",
+            "What is the significance of the critical path in project scheduling?",
+            "Explain the concept of slack or float in CPM.",
+            "How does CPM help in resource allocation?",
+            "How are dependencies represented in CPM?"
+          ]
+        },
+        {
+          "topic_title": "Resource Allocation and Leveling",
+          "notes_md": "Resource allocation involves assigning resources (people, equipment, materials) to project activities. Resource leveling is a technique used to adjust the project schedule to ensure that resource demands do not exceed available resources.\n\nResource leveling aims to:\n\n*   Reduce resource overallocation.\n*   Minimize project delays.\n*   Smooth resource usage over the project lifecycle.\n\nTechniques for resource leveling include delaying non-critical activities, adding resources, or adjusting activity durations.\n\nEffective resource allocation and leveling are crucial for maintaining project schedules and budgets.",
+          "video_url": "https://www.youtube.com/watch?v=x9H3_13o3S4",
+          "practice_questions": [
+            "Define resource allocation and resource leveling.",
+            "What are the goals of resource leveling?",
+            "Explain techniques used for resource leveling.",
+            "How does resource allocation impact project schedules?",
+            "Why is resource leveling important for project budget management?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Project Execution and Control",
+      "topics": [
+        {
+          "topic_title": "Project Execution Strategies",
+          "notes_md": "Project execution involves carrying out the tasks defined in the project plan. This includes managing resources, coordinating team members, and ensuring that activities are completed according to the schedule and budget.\n\nKey execution strategies:\n\n*   Effective communication and collaboration.\n*   Proactive problem-solving.\n*   Regular progress monitoring.\n*   Quality assurance.\n*   Change management.\n\nA well-defined execution strategy is essential for achieving project goals and delivering successful outcomes.",
+          "video_url": "https://www.youtube.com/watch?v=l9l-vN9w8xI",
+          "practice_questions": [
+            "Describe the key activities involved in project execution.",
+            "Explain the importance of communication and collaboration during execution.",
+            "How does proactive problem-solving contribute to project success?",
+            "What is the role of quality assurance in project execution?",
+            "Why is change management important during execution?"
+          ]
+        },
+        {
+          "topic_title": "Monitoring and Controlling Project Progress",
+          "notes_md": "Monitoring and controlling project progress involves tracking project performance against the project plan. This includes monitoring schedule, cost, and scope, and taking corrective actions when deviations occur.\n\nKey monitoring and controlling activities:\n\n*   Regular progress reports.\n*   Performance measurement (e.g., Earned Value Management).\n*   Variance analysis.\n*   Change control.\n*   Risk monitoring and mitigation.\n\nEffective monitoring and controlling ensures that the project stays on track and meets its objectives.",
+          "video_url": "https://www.youtube.com/watch?v=406-tQ6E_gU",
+          "practice_questions": [
+            "Describe the key activities involved in monitoring and controlling project progress.",
+            "What is Earned Value Management (EVM)?",
+            "Explain the purpose of variance analysis.",
+            "How does change control contribute to project success?",
+            "Why is risk monitoring and mitigation important during project control?"
+          ]
+        },
+        {
+          "topic_title": "Change Management in Projects",
+          "notes_md": "Change management is the process of managing changes to the project scope, schedule, or budget. Changes are inevitable in projects, and effective change management is crucial for minimizing their impact on project outcomes.\n\nKey components of change management:\n\n*   Change request process.\n*   Impact assessment.\n*   Change control board (CCB).\n*   Communication and stakeholder management.\n*   Documentation and tracking.\n\nA well-defined change management process ensures that changes are properly evaluated, approved, and implemented.",
+          "video_url": "https://www.youtube.com/watch?v=R4WYe4z-w0Y",
+          "practice_questions": [
+            "Define change management in the context of project management.",
+            "Describe the key components of a change management process.",
+            "What is the role of a Change Control Board (CCB)?",
+            "How does impact assessment contribute to effective change management?",
+            "Why is communication important during change management?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Project Closure and Review",
+      "topics": [
+        {
+          "topic_title": "Project Closure Process",
+          "notes_md": "Project closure is the process of formally completing the project. This includes verifying that all deliverables have been completed, obtaining stakeholder acceptance, and archiving project documentation.\n\nKey activities in project closure:\n\n*   Final deliverables acceptance.\n*   Contract closure.\n*   Financial closure.\n*   Archiving project documents.\n*   Team recognition and celebration.\n\nA thorough project closure process ensures that all project obligations are fulfilled and that lessons learned are captured for future projects.",
+          "video_url": "https://www.youtube.com/watch?v=6J2B-lBYz-Q",
+          "practice_questions": [
+            "Describe the key activities involved in the project closure process.",
+            "What is the importance of obtaining stakeholder acceptance during closure?",
+            "Explain the purpose of archiving project documents.",
+            "Why is financial closure an important step in project closure?",
+            "How does team recognition contribute to project success?"
+          ]
+        },
+        {
+          "topic_title": "Post-Project Review and Lessons Learned",
+          "notes_md": "A post-project review (also known as a project retrospective) is a meeting held after the project is completed to evaluate the project's performance and identify lessons learned. These lessons can be used to improve future project management practices.\n\nKey elements of a post-project review:\n\n*   Reviewing project objectives and outcomes.\n*   Identifying successes and challenges.\n*   Documenting lessons learned.\n*   Developing recommendations for improvement.\n*   Sharing lessons learned with the organization.\n\nPost-project reviews are essential for continuous improvement in project management.",
+          "video_url": "https://www.youtube.com/watch?v=4nSjF7o610c",
+          "practice_questions": [
+            "What is the purpose of a post-project review?",
+            "Describe the key elements of a post-project review.",
+            "How are lessons learned documented and shared?",
+            "What types of questions should be asked during a post-project review?",
+            "Why are post-project reviews important for continuous improvement?"
+          ]
+        },
+        {
+          "topic_title": "Documentation and Archiving",
+          "notes_md": "Proper documentation and archiving are critical for preserving project knowledge and ensuring that it is available for future reference. Project documentation includes project plans, reports, meeting minutes, and other relevant materials.\n\nKey aspects of documentation and archiving:\n\n*   Creating a documentation plan.\n*   Using a consistent filing system.\n*   Storing documents securely.\n*   Establishing retention policies.\n*   Making documents easily accessible.\n\nWell-organized documentation and archiving support knowledge management and facilitate future project success.",
+          "video_url": "https://www.youtube.com/watch?v=5t7hK3P-i1s",
+          "practice_questions": [
+            "Explain the importance of documentation and archiving in project management.",
+            "What types of documents should be included in project documentation?",
+            "Describe best practices for creating a documentation plan.",
+            "Why is it important to store documents securely?",
+            "How does well-organized documentation support knowledge management?"
+          ]
+        }
+      ]
+    }
+  ]
+}

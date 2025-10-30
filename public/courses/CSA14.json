@@ -1,0 +1,170 @@
+{
+  "course_name": "Compiler Design",
+  "course_code": "CSA14",
+  "units": [
+    {
+      "unit_title": "Introduction to Compilers",
+      "topics": [
+        {
+          "topic_title": "Overview of Compilation",
+          "notes_md": "Compilation is the process of translating source code written in a high-level programming language into low-level machine code that can be executed by a computer. A compiler is a software tool that performs this translation. The compilation process typically involves several phases: lexical analysis, syntax analysis, semantic analysis, intermediate code generation, code optimization, and code generation. Each phase transforms the source code into a different representation, gradually bringing it closer to the final machine code. Understanding the compilation process is crucial for optimizing code performance and debugging compiler-related issues. Compilers play a vital role in software development, enabling programmers to write code in high-level languages that are easier to understand and maintain.",
+          "video_url": "https://www.youtube.com/watch?v=Q9WwB9zH_do",
+          "practice_questions": [
+            "What are the different phases of a compiler?",
+            "Explain the role of lexical analysis in compilation.",
+            "Differentiate between a compiler and an interpreter.",
+            "Why is code optimization important in compilation?",
+            "Describe the purpose of semantic analysis."
+          ]
+        },
+        {
+          "topic_title": "Lexical Analysis",
+          "notes_md": "Lexical analysis, also known as scanning, is the first phase of the compilation process. It involves breaking the source code into a stream of tokens, where each token represents a basic building block of the language, such as keywords, identifiers, operators, and constants. The lexical analyzer, or scanner, reads the source code character by character and groups them into meaningful tokens. It also removes whitespace and comments. Regular expressions are commonly used to define the patterns for recognizing different types of tokens. For example, the regular expression `[a-zA-Z][a-zA-Z0-9]*` can be used to identify identifiers. Errors detected during lexical analysis include invalid characters or improperly formed tokens.",
+          "video_url": "https://www.youtube.com/watch?v=z0mX8G-J-b4",
+          "practice_questions": [
+            "What is the purpose of lexical analysis?",
+            "Explain the role of regular expressions in lexical analysis.",
+            "What are some common token types?",
+            "How does a lexical analyzer handle whitespace and comments?",
+            "Describe an error that might be detected during lexical analysis."
+          ]
+        },
+        {
+          "topic_title": "Syntax Analysis",
+          "notes_md": "Syntax analysis, also known as parsing, is the second phase of the compilation process. It involves checking whether the sequence of tokens produced by the lexical analyzer conforms to the grammar of the programming language. The parser constructs a parse tree, which represents the syntactic structure of the program. Context-free grammars (CFGs) are commonly used to define the syntax of programming languages. There are two main types of parsing techniques: top-down parsing and bottom-up parsing. Top-down parsing starts with the start symbol of the grammar and tries to derive the input string. Bottom-up parsing starts with the input string and tries to reduce it to the start symbol. Errors detected during syntax analysis include syntax errors, such as missing semicolons or unbalanced parentheses.",
+          "video_url": "https://www.youtube.com/watch?v=E343tX_P7Nk",
+          "practice_questions": [
+            "What is the purpose of syntax analysis?",
+            "Explain the role of context-free grammars in syntax analysis.",
+            "Differentiate between top-down and bottom-up parsing.",
+            "What is a parse tree?",
+            "Describe an error that might be detected during syntax analysis."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Semantic Analysis",
+      "topics": [
+        {
+          "topic_title": "Type Checking",
+          "notes_md": "Type checking is a crucial part of semantic analysis. It ensures that the operands of an operator are of compatible types. For example, adding an integer to a string is usually a type error. Type checking can be static or dynamic. Static type checking is performed at compile time, while dynamic type checking is performed at runtime. Static type checking can catch type errors early in the development process, while dynamic type checking provides more flexibility but can lead to runtime errors. Type systems vary in their complexity, ranging from simple type systems with basic types like integers and booleans to more complex type systems with features like polymorphism and type inference. A well-designed type system can help prevent many common programming errors.",
+          "video_url": "https://www.youtube.com/watch?v=M5Gyy1y-v5k",
+          "practice_questions": [
+            "What is the purpose of type checking?",
+            "Differentiate between static and dynamic type checking.",
+            "Give an example of a type error.",
+            "Why is type checking important for program correctness?",
+            "Explain the concept of type inference."
+          ]
+        },
+        {
+          "topic_title": "Symbol Table",
+          "notes_md": "A symbol table is a data structure used by a compiler to store information about the identifiers used in a program, such as variables, functions, and classes. The symbol table typically stores the name, type, scope, and other attributes of each identifier. During semantic analysis, the compiler uses the symbol table to resolve references to identifiers and to check for semantic errors, such as undeclared variables or duplicate declarations. The symbol table is also used during code generation to allocate memory for variables and to generate code for function calls. Efficient symbol table implementations are crucial for compiler performance, especially for large programs with many identifiers.",
+          "video_url": "https://www.youtube.com/watch?v=n51yQv4n7uQ",
+          "practice_questions": [
+            "What is a symbol table?",
+            "What information is typically stored in a symbol table?",
+            "How is the symbol table used during semantic analysis?",
+            "How is the symbol table used during code generation?",
+            "Explain the concept of scope."
+          ]
+        },
+        {
+          "topic_title": "Intermediate Code Generation",
+          "notes_md": "Intermediate code generation is the phase where the compiler translates the source code into an intermediate representation (IR). This IR is typically machine-independent and easier to optimize than the original source code. Common types of intermediate code include three-address code, quadruples, and triples. Three-address code represents each operation as an instruction with at most three operands. Quadruples and triples are similar, but they represent instructions in a more compact form. The choice of intermediate code representation depends on the specific compiler and the target architecture.  The goal of intermediate code generation is to create a representation that is both easy to generate and easy to optimize.",
+          "video_url": "https://www.youtube.com/watch?v=k7JmJ-u-z4w",
+          "practice_questions": [
+            "What is the purpose of intermediate code generation?",
+            "What are some common types of intermediate code?",
+            "What are the advantages of using intermediate code?",
+            "Explain the concept of three-address code.",
+            "How does intermediate code facilitate code optimization?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Code Optimization",
+      "topics": [
+        {
+          "topic_title": "Basic Blocks and Control Flow Graphs",
+          "notes_md": "A basic block is a sequence of instructions with a single entry point and a single exit point. This means that control flow can only enter the basic block at the beginning and can only exit at the end. A control flow graph (CFG) is a directed graph that represents the flow of control in a program. The nodes of the CFG are basic blocks, and the edges represent the possible transitions between basic blocks. CFGs are used to analyze and optimize code.  For example, they can be used to identify loops and to perform data flow analysis.  Understanding basic blocks and CFGs is essential for implementing many code optimization techniques.",
+          "video_url": "https://www.youtube.com/watch?v=mQ0B2k2K-90",
+          "practice_questions": [
+            "What is a basic block?",
+            "What is a control flow graph?",
+            "How are basic blocks and CFGs used in code optimization?",
+            "What are the entry and exit points of a basic block?",
+            "Draw a simple control flow graph for an if-else statement."
+          ]
+        },
+        {
+          "topic_title": "Data Flow Analysis",
+          "notes_md": "Data flow analysis is a technique used to gather information about the flow of data in a program. This information can be used to optimize the code. Common data flow analyses include reaching definitions, live variable analysis, and available expressions analysis. Reaching definitions analysis determines which definitions of a variable can reach a given point in the program. Live variable analysis determines which variables are live (i.e., their value might be used later) at a given point in the program. Available expressions analysis determines which expressions are available at a given point in the program. Data flow analysis is typically performed on the control flow graph of the program.",
+          "video_url": "https://www.youtube.com/watch?v=2Q1vQ2i_3_A",
+          "practice_questions": [
+            "What is data flow analysis?",
+            "What are some common data flow analyses?",
+            "How is data flow analysis used in code optimization?",
+            "Explain the concept of reaching definitions.",
+            "Explain the concept of live variable analysis."
+          ]
+        },
+        {
+          "topic_title": "Common Optimization Techniques",
+          "notes_md": "Several optimization techniques improve code efficiency.  *Constant folding* evaluates constant expressions at compile time. For example, `x = 2 + 3` becomes `x = 5`. *Dead code elimination* removes code that has no effect on the program's output. *Loop unrolling* duplicates the body of a loop to reduce loop overhead. *Strength reduction* replaces expensive operations with cheaper ones. For example, `x * 2` can be replaced with `x << 1`. These techniques, often used together, significantly enhance performance.  Consider the C code: `for (i = 0; i < 10; i++) { x = x + 2; }` Strength reduction could change `x = x + 2` to `x += 2`, potentially improving speed.",
+          "video_url": "https://www.youtube.com/watch?v=ptCm0k81nDY",
+          "practice_questions": [
+            "What is constant folding?",
+            "What is dead code elimination?",
+            "What is loop unrolling?",
+            "What is strength reduction?",
+            "Give an example of how these optimization techniques can improve code performance."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Code Generation",
+      "topics": [
+        {
+          "topic_title": "Instruction Selection",
+          "notes_md": "Instruction selection is the process of choosing the appropriate machine instructions to implement the intermediate code. This involves mapping the operations in the intermediate code to the available instructions on the target architecture. The instruction selector must consider factors such as instruction cost, register availability, and addressing modes.  The goal is to generate efficient code that utilizes the target architecture effectively.  For example, a simple addition operation in intermediate code might be translated into a single `ADD` instruction on some architectures, while on others it might require multiple instructions to load operands into registers and then perform the addition.",
+          "video_url": "https://www.youtube.com/watch?v=i9m9U-l2V7k",
+          "practice_questions": [
+            "What is instruction selection?",
+            "What factors must be considered during instruction selection?",
+            "How does the target architecture affect instruction selection?",
+            "What is the goal of instruction selection?",
+            "Give an example of how an intermediate code operation might be translated into machine instructions."
+          ]
+        },
+        {
+          "topic_title": "Register Allocation",
+          "notes_md": "Register allocation is the process of assigning registers to variables and intermediate values. Registers are fast storage locations within the CPU, so using them effectively can significantly improve code performance. However, the number of registers is limited, so the register allocator must carefully choose which variables to keep in registers and which to spill to memory. Register allocation is typically performed using graph coloring algorithms, where the nodes of the graph represent variables and the edges represent conflicts between variables that cannot be assigned to the same register. The goal is to color the graph with the minimum number of colors (registers) such that no two adjacent nodes have the same color.",
+          "video_url": "https://www.youtube.com/watch?v=s3paRj82Vag",
+          "practice_questions": [
+            "What is register allocation?",
+            "Why is register allocation important for code performance?",
+            "What is register spilling?",
+            "How are graph coloring algorithms used in register allocation?",
+            "Explain the concept of register interference."
+          ]
+        },
+        {
+          "topic_title": "Code Emission",
+          "notes_md": "Code emission is the final phase of the compilation process, where the compiler generates the actual machine code or assembly code for the target architecture. This involves translating the selected instructions and register assignments into the appropriate binary format. The code emitter must also handle tasks such as generating labels for jump targets and allocating memory for data. The generated code can then be linked with other object files and libraries to create an executable program. The quality of the emitted code directly affects the performance of the program.",
+          "video_url": "https://www.youtube.com/watch?v=4X0N9qWjz9Q",
+          "practice_questions": [
+            "What is code emission?",
+            "What tasks are performed during code emission?",
+            "How does code emission relate to the other phases of compilation?",
+            "What is the role of a linker?",
+            "How does the quality of the emitted code affect program performance?"
+          ]
+        }
+      ]
+    }
+  ]
+}

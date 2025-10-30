@@ -1,0 +1,163 @@
+{
+  "course_name": "Artificial Intelligence",
+  "course_code": "CSA17",
+  "units": [
+    {
+      "unit_title": "Introduction to Artificial Intelligence",
+      "topics": [
+        {
+          "topic_title": "What is AI?",
+          "notes_md": "Artificial Intelligence (AI) is the simulation of human intelligence processes by computer systems. These processes include learning (the acquisition of information and rules for using the information), reasoning (using rules to reach approximate or definite conclusions), and self-correction. Specific applications of AI include expert systems, speech recognition, and machine vision. AI can be categorized into narrow or weak AI, which performs a specific task, and general or strong AI, which possesses human-level intelligence. The field is rapidly evolving, with new techniques and applications emerging constantly. Understanding the foundational concepts of AI is crucial for navigating this dynamic landscape.\n\nKey goals of AI research include knowledge representation, automated reasoning, planning, machine learning, natural language processing, computer vision, robotics, and general intelligence.",
+          "video_url": "https://www.youtube.com/watch?v=JMUxmLyrhSk",
+          "practice_questions": [
+            "Define Artificial Intelligence.",
+            "Differentiate between narrow AI and general AI.",
+            "What are the key goals of AI research?",
+            "Give examples of AI applications in everyday life."
+          ]
+        },
+        {
+          "topic_title": "History of AI",
+          "notes_md": "The field of AI has a rich history, dating back to the 1950s with the Dartmouth Workshop, considered the birthplace of AI. Early AI programs focused on symbolic reasoning and problem-solving. The 1960s saw the development of early expert systems. However, AI faced funding limitations and setbacks in the 1970s, known as the first 'AI winter.' The 1980s witnessed a resurgence with expert systems and the rise of machine learning. The late 1990s and early 2000s saw advancements in machine learning algorithms and increased computing power, leading to breakthroughs in areas like computer vision and natural language processing. Today, AI is experiencing unprecedented growth, driven by deep learning and big data.",
+          "video_url": "https://www.youtube.com/watch?v=JvC2_Q6YgMo",
+          "practice_questions": [
+            "When was the Dartmouth Workshop held, and why is it significant?",
+            "What were some of the early AI programs focused on?",
+            "What is the 'AI winter'?",
+            "What factors contributed to the resurgence of AI in recent decades?"
+          ]
+        },
+        {
+          "topic_title": "AI Approaches",
+          "notes_md": "Several approaches exist within the field of AI. Symbolic AI focuses on representing knowledge using symbols and logical rules. Connectionist AI, also known as neural networks, mimics the structure of the human brain to learn patterns from data. Evolutionary AI uses evolutionary algorithms to optimize AI systems. Bayesian AI uses probabilistic reasoning to handle uncertainty. Each approach has its strengths and weaknesses, and the choice of approach depends on the specific problem being addressed. Hybrid approaches that combine multiple techniques are also common.",
+          "video_url": "https://www.youtube.com/watch?v=b9P0K5YUhss",
+          "practice_questions": [
+            "Describe the symbolic AI approach.",
+            "What is connectionist AI, and how does it work?",
+            "Explain the evolutionary AI approach.",
+            "What is Bayesian AI, and how does it handle uncertainty?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Problem Solving and Search",
+      "topics": [
+        {
+          "topic_title": "Search Algorithms",
+          "notes_md": "Search algorithms are fundamental to AI problem-solving. They explore possible solutions to find the optimal one. Uninformed search algorithms, such as Breadth-First Search (BFS) and Depth-First Search (DFS), explore the search space without any knowledge of the problem. Informed search algorithms, such as A* search, use heuristics to guide the search and improve efficiency. The choice of search algorithm depends on the characteristics of the problem, such as the size of the search space and the availability of heuristics. Understanding the trade-offs between different search algorithms is crucial for designing effective AI systems.",
+          "video_url": "https://www.youtube.com/watch?v=5oalYgMBV-4",
+          "practice_questions": [
+            "What is a search algorithm?",
+            "Differentiate between informed and uninformed search algorithms.",
+            "Explain Breadth-First Search (BFS).",
+            "Explain Depth-First Search (DFS).",
+            "Describe A* search and its use of heuristics."
+          ]
+        },
+        {
+          "topic_title": "Heuristic Functions",
+          "notes_md": "Heuristic functions provide an estimate of the cost from a given state to the goal state. They are used in informed search algorithms to guide the search process. A good heuristic function should be admissible, meaning that it never overestimates the true cost. It should also be consistent, meaning that the estimated cost from a state to the goal should be less than or equal to the cost of moving to a neighboring state plus the estimated cost from that neighbor to the goal. Designing effective heuristic functions is crucial for the performance of informed search algorithms.",
+          "video_url": "https://www.youtube.com/watch?v=nAHmnx0B-W8",
+          "practice_questions": [
+            "What is a heuristic function?",
+            "What are the properties of a good heuristic function?",
+            "Define admissibility in the context of heuristic functions.",
+            "Define consistency in the context of heuristic functions."
+          ]
+        },
+        {
+          "topic_title": "Constraint Satisfaction Problems",
+          "notes_md": "Constraint Satisfaction Problems (CSPs) involve finding a solution that satisfies a set of constraints. CSPs are commonly used to model real-world problems such as scheduling, resource allocation, and planning. A CSP consists of a set of variables, a domain of possible values for each variable, and a set of constraints that specify the allowable combinations of values. Solving a CSP involves assigning values to the variables in a way that satisfies all the constraints. Techniques for solving CSPs include backtracking search, constraint propagation, and local search.",
+          "video_url": "https://www.youtube.com/watch?v=lAXCdtLjFzs",
+          "practice_questions": [
+            "What is a Constraint Satisfaction Problem (CSP)?",
+            "What are the components of a CSP?",
+            "Give examples of real-world problems that can be modeled as CSPs.",
+            "Describe backtracking search for solving CSPs.",
+            "What is constraint propagation?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Knowledge Representation and Reasoning",
+      "topics": [
+        {
+          "topic_title": "Propositional Logic",
+          "notes_md": "Propositional logic is a formal system for representing and reasoning about logical propositions. A proposition is a statement that can be either true or false. Propositional logic uses logical connectives such as AND, OR, NOT, IMPLIES, and EQUIVALENT to combine propositions into more complex statements. Inference rules, such as Modus Ponens, are used to derive new propositions from existing ones. Propositional logic provides a foundation for automated reasoning and knowledge representation.",
+          "video_url": "https://www.youtube.com/watch?v=iF2wJkGcx2g",
+          "practice_questions": [
+            "What is propositional logic?",
+            "What is a proposition?",
+            "List the common logical connectives.",
+            "Explain Modus Ponens."
+          ]
+        },
+        {
+          "topic_title": "First-Order Logic",
+          "notes_md": "First-order logic (FOL) is a more expressive logic than propositional logic. It allows for representing objects, relations between objects, and quantifiers (e.g., 'for all' and 'there exists'). FOL uses predicates to represent properties of objects and relations between objects. Functions are used to map objects to other objects. FOL provides a powerful framework for representing complex knowledge and reasoning about it. Inference in FOL is more complex than in propositional logic, but several techniques exist, such as resolution and unification.",
+          "video_url": "https://www.youtube.com/watch?v=FoFjC3s_K1o",
+          "practice_questions": [
+            "What is first-order logic (FOL)?",
+            "How does FOL differ from propositional logic?",
+            "What are predicates and functions in FOL?",
+            "What are quantifiers in FOL?"
+          ]
+        },
+        {
+          "topic_title": "Inference Rules",
+          "notes_md": "Inference rules are used to derive new knowledge from existing knowledge. In propositional logic, common inference rules include Modus Ponens, Modus Tollens, and Resolution. In first-order logic, inference rules include Universal Instantiation and Existential Instantiation. Inference rules provide a formal mechanism for reasoning and drawing conclusions from a knowledge base. The soundness and completeness of inference rules are important considerations for ensuring the correctness and effectiveness of reasoning systems.",
+          "video_url": "https://www.youtube.com/watch?v=iF2wJkGcx2g",
+          "practice_questions": [
+            "What are inference rules?",
+            "Give examples of inference rules in propositional logic.",
+            "Give examples of inference rules in first-order logic.",
+            "What is the significance of soundness and completeness in inference rules?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Machine Learning Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Supervised Learning",
+          "notes_md": "Supervised learning involves training a model on a labeled dataset, where each data point is associated with a known target value. The goal is to learn a mapping from inputs to outputs. Common supervised learning algorithms include linear regression, logistic regression, support vector machines (SVMs), and decision trees. Supervised learning is used for tasks such as classification (predicting a category) and regression (predicting a continuous value). Evaluating the performance of a supervised learning model involves metrics such as accuracy, precision, recall, and F1-score.",
+          "video_url": "https://www.youtube.com/watch?v=i_1_Hluyx2I",
+          "practice_questions": [
+            "What is supervised learning?",
+            "What is a labeled dataset?",
+            "Give examples of supervised learning algorithms.",
+            "What are classification and regression tasks?",
+            "What are some metrics for evaluating supervised learning models?"
+          ]
+        },
+        {
+          "topic_title": "Unsupervised Learning",
+          "notes_md": "Unsupervised learning involves training a model on an unlabeled dataset, where the goal is to discover hidden patterns or structures in the data. Common unsupervised learning algorithms include clustering (e.g., k-means), dimensionality reduction (e.g., principal component analysis), and association rule mining. Unsupervised learning is used for tasks such as customer segmentation, anomaly detection, and data visualization. Evaluating the performance of an unsupervised learning model is often more subjective than in supervised learning, and involves metrics such as silhouette score and Davies-Bouldin index.",
+          "video_url": "https://www.youtube.com/watch?v=LDRbO9a6XPU",
+          "practice_questions": [
+            "What is unsupervised learning?",
+            "What is an unlabeled dataset?",
+            "Give examples of unsupervised learning algorithms.",
+            "What are some common uses for unsupervised learning?",
+            "How is the performance of unsupervised learning models evaluated?"
+          ]
+        },
+        {
+          "topic_title": "Reinforcement Learning",
+          "notes_md": "Reinforcement learning (RL) involves training an agent to make decisions in an environment to maximize a reward signal. The agent learns through trial and error, receiving feedback in the form of rewards or penalties. RL algorithms include Q-learning, SARSA, and deep reinforcement learning. RL is used for tasks such as game playing, robotics, and resource management. The performance of an RL agent is evaluated based on its cumulative reward over time. RL is particularly well-suited for problems where the optimal solution is not known in advance.",
+          "video_url": "https://www.youtube.com/watch?v=Mut_u40Sqz4",
+          "practice_questions": [
+            "What is reinforcement learning (RL)?",
+            "What is an agent and an environment in RL?",
+            "How does an agent learn in RL?",
+            "Give examples of RL algorithms.",
+            "What are some applications of RL?"
+          ]
+        }
+      ]
+    }
+  ]
+}

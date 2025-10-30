@@ -1,0 +1,170 @@
+{
+  "course_name": "Theory of Computation",
+  "course_code": "CSA13",
+  "units": [
+    {
+      "unit_title": "Introduction to Automata",
+      "topics": [
+        {
+          "topic_title": "Finite Automata (FA)",
+          "notes_md": "Finite Automata (FA) are abstract machines that recognize regular languages. They consist of a finite set of states, a set of input symbols (alphabet), a transition function, a start state, and a set of accepting states. FAs process input symbols one at a time, transitioning between states based on the input and the transition function.  FAs can be deterministic (DFA) where for each state and input symbol, there is exactly one transition, or non-deterministic (NFA) where multiple transitions or no transitions are possible. NFAs can be converted to DFAs.  The language recognized by an FA is the set of all strings that, when input to the FA, lead to an accepting state. They are used in lexical analysis of compilers, pattern matching, and hardware design.\n\nExample of a DFA:\n```\nQ = {q0, q1}\nΣ = {0, 1}\nδ(q0, 0) = q0\nδ(q0, 1) = q1\nδ(q1, 0) = q1\nδ(q1, 1) = q1\nq0 is the start state\nF = {q1} is the set of accepting states\n```",
+          "video_url": "https://www.youtube.com/watch?v=pv-FFUjKhnU",
+          "practice_questions": [
+            "Design a DFA to accept strings ending with '01'.",
+            "Convert the NFA with transitions: q0-a->q0, q0-b->q1, q1-a->q2, q1-b->q2, q2-a->q2, q2-b->q2 to a DFA.",
+            "What is the difference between a DFA and an NFA?",
+            "Explain how a DFA can be used for lexical analysis.",
+            "What is the language accepted by a DFA with a single state that is also the start and accepting state, and has a transition to itself for every input symbol?"
+          ]
+        },
+        {
+          "topic_title": "Non-Deterministic Finite Automata (NFA)",
+          "notes_md": "Non-deterministic Finite Automata (NFAs) extend the capabilities of DFAs by allowing multiple possible transitions from a given state on a given input symbol, or even transitions on an empty string (ε-transitions).  This non-determinism makes NFAs more flexible and sometimes easier to design for complex languages.  However, for every NFA, there exists an equivalent DFA that recognizes the same language, although the DFA may have exponentially more states. The conversion process involves constructing the power set of the NFA's states. NFAs are important because they often provide a more intuitive way to represent certain languages, and they are used in algorithms for regular expression matching.  ε-NFAs include transitions on the empty string, further enhancing their expressiveness. The empty string transition allows the automata to change state without consuming an input symbol. \n\nFor example, consider NFA with states {q0, q1} and alphabet {a, b} where from q0 on input 'a', we can either stay at q0 or go to q1. This illustrates non-determinism.",
+          "video_url": "https://www.youtube.com/watch?v=GvwajU_jIuc",
+          "practice_questions": [
+            "Design an NFA to accept strings containing '010' as a substring.",
+            "Convert the given NFA to a DFA (specify the NFA).",
+            "What are ε-transitions and how do they affect the behavior of an NFA?",
+            "Explain the power set construction algorithm for converting an NFA to a DFA.",
+            "Why are NFAs useful even though they can be converted to DFAs?"
+          ]
+        },
+        {
+          "topic_title": "Regular Expressions",
+          "notes_md": "Regular expressions are a concise and powerful notation for describing patterns in strings. They are built from symbols, concatenation, alternation (union), and Kleene star (repetition). Basic symbols represent individual characters, concatenation joins expressions, alternation allows for choices between expressions, and the Kleene star allows an expression to be repeated zero or more times.  Regular expressions are equivalent to finite automata; any language that can be described by a regular expression can be recognized by a finite automaton, and vice versa. This equivalence is fundamental to the theory of computation. Regular expressions are widely used in text editors, programming languages, and scripting tools for searching, replacing, and validating strings.\n\nExamples:\n- `a*b` matches any number of 'a's followed by a single 'b'.\n- `(a|b)*` matches any string of 'a's and 'b's.\n- `[0-9]+` matches one or more digits.",
+          "video_url": "https://www.youtube.com/watch?v=2EfqnRSYPb8",
+          "practice_questions": [
+            "Write a regular expression to match email addresses.",
+            "Write a regular expression to match phone numbers in a specific format.",
+            "Convert the regular expression `(a|b)*ab` to an NFA.",
+            "Explain the difference between `*` and `+` in regular expressions.",
+            "What language does the regular expression `a(ba)*b` represent?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Context-Free Grammars and Languages",
+      "topics": [
+        {
+          "topic_title": "Context-Free Grammars (CFG)",
+          "notes_md": "Context-Free Grammars (CFGs) are a formal way to define the syntax of programming languages and other structured data. A CFG consists of a set of variables (non-terminals), a set of terminal symbols, a start variable, and a set of production rules. Production rules specify how variables can be replaced by strings of terminals and variables. The language generated by a CFG is the set of all strings of terminals that can be derived from the start variable by applying the production rules. CFGs are more powerful than regular expressions and can describe languages that cannot be recognized by finite automata. They are used in parsers for programming languages, document markup languages (like HTML and XML), and data validation.\n\nExample:\nS -> aSb | ε\nThis CFG generates the language {a^n b^n | n >= 0}",
+          "video_url": "https://www.youtube.com/watch?v=k_O42yVqeuU",
+          "practice_questions": [
+            "Write a CFG to generate the language of balanced parentheses.",
+            "Write a CFG to generate the language of palindromes over the alphabet {a, b}.",
+            "What is the difference between a terminal and a non-terminal symbol in a CFG?",
+            "Explain the concept of derivation in a CFG.",
+            "Give an example of a language that can be described by a CFG but not by a regular expression."
+          ]
+        },
+        {
+          "topic_title": "Pushdown Automata (PDA)",
+          "notes_md": "Pushdown Automata (PDAs) are finite automata augmented with a stack. The stack allows PDAs to remember an unbounded amount of information, making them more powerful than FAs. PDAs can recognize context-free languages, which are languages that can be generated by context-free grammars. A PDA consists of a finite set of states, an input alphabet, a stack alphabet, a transition function, a start state, an initial stack symbol, and a set of accepting states. The transition function specifies how the PDA changes state, reads input symbols, and manipulates the stack. PDAs are used in compilers for parsing programming languages and in natural language processing for analyzing sentence structure.\n\nFor example, a PDA can recognize the language {a^n b^n | n >= 0} by pushing 'a's onto the stack and then popping them off as it reads 'b's.",
+          "video_url": "https://www.youtube.com/watch?v=ZEbrlK8sL1g",
+          "practice_questions": [
+            "Design a PDA to accept the language {a^n b^n | n >= 0}.",
+            "Design a PDA to accept the language of palindromes over the alphabet {a, b}.",
+            "How does a PDA use its stack to recognize context-free languages?",
+            "What is the difference between a PDA and a finite automaton?",
+            "Explain the relationship between PDAs and context-free grammars."
+          ]
+        },
+        {
+          "topic_title": "Normal Forms for CFGs",
+          "notes_md": "Normal forms for CFGs are standardized representations that simplify analysis and manipulation of grammars. Two common normal forms are Chomsky Normal Form (CNF) and Greibach Normal Form (GNF). In CNF, all production rules are of the form A -> BC or A -> a, where A, B, and C are variables and a is a terminal. In GNF, all production rules are of the form A -> aα, where A is a variable, a is a terminal, and α is a string of variables. Converting a CFG to CNF or GNF can be useful for parsing algorithms and for proving properties of context-free languages. The conversion process involves eliminating useless symbols, eliminating ε-productions, eliminating unit productions, and then restructuring the remaining productions to fit the desired normal form. These normal forms are crucial in parsing algorithms and compiler design.\n",
+          "video_url": "https://www.youtube.com/watch?v=6r_D7PTL06o",
+          "practice_questions": [
+            "Convert the CFG S -> aSb | ε to Chomsky Normal Form.",
+            "Convert the CFG S -> AB, A -> a, B -> b to Greibach Normal Form.",
+            "What are the advantages of using CFGs in Chomsky Normal Form?",
+            "Explain the steps involved in converting a CFG to CNF.",
+            "Explain the steps involved in converting a CFG to GNF."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Turing Machines and Computability",
+      "topics": [
+        {
+          "topic_title": "Turing Machines (TM)",
+          "notes_md": "Turing Machines (TMs) are a theoretical model of computation that consists of a finite control unit, an infinite tape, and a tape head. The tape is divided into cells, each of which can store a single symbol. The tape head can read and write symbols on the tape and move left or right. The finite control unit specifies the actions of the TM based on its current state and the symbol read by the tape head. TMs are more powerful than finite automata and pushdown automata and can compute any function that can be computed by a computer. The Church-Turing thesis states that any effective method of computation can be carried out by a Turing machine. TMs are used to define the limits of computability and to study the complexity of algorithms.\n\nA TM is formally defined as a 7-tuple (Q, Σ, Γ, δ, q0, qaccept, qreject) where:\n- Q is the set of states\n- Σ is the input alphabet\n- Γ is the tape alphabet (Σ ⊆ Γ)\n- δ: Q × Γ → Q × Γ × {L, R} is the transition function\n- q0 ∈ Q is the start state\n- qaccept ∈ Q is the accept state\n- qreject ∈ Q is the reject state",
+          "video_url": "https://www.youtube.com/watch?v=E3keLeKjPeY",
+          "practice_questions": [
+            "Design a Turing Machine to accept the language {a^n b^n c^n | n >= 0}.",
+            "Design a Turing Machine to compute the function f(n) = n + 1 in binary.",
+            "What is the Church-Turing thesis?",
+            "Explain the components of a Turing Machine.",
+            "How does a Turing Machine differ from a finite automaton?"
+          ]
+        },
+        {
+          "topic_title": "Variants of Turing Machines",
+          "notes_md": "Several variants of Turing Machines exist, each with slightly different capabilities but ultimately equivalent in computational power to the standard TM. These variants include multi-tape TMs, non-deterministic TMs, and TMs with multiple heads. Multi-tape TMs have multiple tapes and tape heads, allowing them to perform multiple operations simultaneously. Non-deterministic TMs can have multiple possible transitions for a given state and input symbol. Despite these differences, any computation that can be performed by a variant of a TM can also be performed by a standard TM. These variants are useful for simplifying the design of TMs for certain tasks and for exploring the theoretical limits of computation. For example, a multi-tape TM can simplify the simulation of parallel algorithms.\n",
+          "video_url": "https://www.youtube.com/watch?v=dNRDvSnz6jY",
+          "practice_questions": [
+            "Explain the concept of a multi-tape Turing Machine.",
+            "How does a non-deterministic Turing Machine differ from a deterministic Turing Machine?",
+            "Why are variants of Turing Machines useful?",
+            "Prove that a multi-tape Turing Machine is equivalent to a standard Turing Machine.",
+            "Give an example where a multi-tape Turing Machine is easier to design than a single-tape Turing Machine."
+          ]
+        },
+        {
+          "topic_title": "Decidability and Undecidability",
+          "notes_md": "A problem is decidable if there exists a Turing Machine that halts on every input and correctly answers whether the input is in the language or not. A problem is undecidable if no such Turing Machine exists. The Halting Problem, which asks whether a given Turing Machine will halt on a given input, is a classic example of an undecidable problem. The proof of undecidability involves showing that if the Halting Problem were decidable, it would lead to a contradiction. Undecidability has profound implications for the limits of computation, demonstrating that there are inherent limitations to what can be computed by algorithms. Many other problems in computer science are known to be undecidable, including determining whether two CFGs generate the same language.\n",
+          "video_url": "https://www.youtube.com/watch?v=wczO-90jXKQ",
+          "practice_questions": [
+            "What is the Halting Problem and why is it undecidable?",
+            "Explain the difference between a decidable and an undecidable problem.",
+            "Give an example of a problem that is known to be undecidable.",
+            "What are the implications of undecidability for computer science?",
+            "Explain the concept of reduction in the context of undecidability."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Complexity Theory",
+      "topics": [
+        {
+          "topic_title": "Time Complexity",
+          "notes_md": "Time complexity measures the amount of time an algorithm takes to run as a function of the input size. It is typically expressed using Big O notation, which provides an upper bound on the growth rate of the running time. Common time complexities include O(1) (constant time), O(log n) (logarithmic time), O(n) (linear time), O(n log n) (linearithmic time), O(n^2) (quadratic time), and O(2^n) (exponential time). Algorithms with lower time complexity are generally more efficient for large inputs. Time complexity analysis is crucial for designing efficient algorithms and for understanding the scalability of algorithms. The time complexity is determined by analyzing the number of elementary operations performed by the algorithm as a function of the input size.\n\nFor example, a linear search algorithm has a time complexity of O(n), while a binary search algorithm has a time complexity of O(log n).",
+          "video_url": "https://www.youtube.com/watch?v=D6xYjv9j8Ww",
+          "practice_questions": [
+            "What is Big O notation and how is it used to describe time complexity?",
+            "Explain the difference between O(n) and O(n^2) time complexity.",
+            "What is the time complexity of a merge sort algorithm?",
+            "How do you determine the time complexity of an algorithm?",
+            "Give an example of an algorithm with O(1) time complexity."
+          ]
+        },
+        {
+          "topic_title": "Space Complexity",
+          "notes_md": "Space complexity measures the amount of memory an algorithm uses as a function of the input size. It is also typically expressed using Big O notation. Space complexity includes the memory used by the algorithm's data structures, variables, and temporary storage. Algorithms with lower space complexity are generally more memory-efficient. Space complexity analysis is important for designing algorithms that can run on systems with limited memory resources. Similar to time complexity, space complexity is an important measure of algorithm efficiency. It helps in understanding how the memory usage grows with the input size. Some algorithms may trade off time complexity for space complexity, and vice versa.\n\nFor example, an algorithm that creates a copy of the input array will have a space complexity of O(n).",
+          "video_url": "https://www.youtube.com/watch?v=vXplI98E6c4",
+          "practice_questions": [
+            "What is space complexity and how is it measured?",
+            "Explain the difference between O(1) and O(n) space complexity.",
+            "What is the space complexity of a recursive function?",
+            "How can you reduce the space complexity of an algorithm?",
+            "Give an example of an algorithm with O(1) space complexity."
+          ]
+        },
+        {
+          "topic_title": "P and NP Classes",
+          "notes_md": "The complexity class P consists of all problems that can be solved by a deterministic Turing Machine in polynomial time. The complexity class NP consists of all problems for which a solution can be verified in polynomial time. It is unknown whether P = NP. Most computer scientists believe that P != NP, but a proof remains elusive. Many important problems in computer science are known to be NP-complete, meaning that they are in NP and that if any NP-complete problem can be solved in polynomial time, then all problems in NP can be solved in polynomial time. Examples of NP-complete problems include the Traveling Salesman Problem and the Boolean Satisfiability Problem (SAT). Understanding these classes is fundamental to understanding the limits of efficient computation.\n",
+          "video_url": "https://www.youtube.com/watch?v=eE90V6UTJgE",
+          "practice_questions": [
+            "What are the complexity classes P and NP?",
+            "What does it mean for a problem to be NP-complete?",
+            "Give an example of an NP-complete problem.",
+            "Why is the P versus NP problem important?",
+            "Explain the concept of polynomial-time reducibility."
+          ]
+        }
+      ]
+    }
+  ]
+}

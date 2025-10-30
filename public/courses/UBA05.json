@@ -1,0 +1,170 @@
+{
+  "course_name": "Engineering Mathematics II",
+  "course_code": "UBA05",
+  "units": [
+    {
+      "unit_title": "Ordinary Differential Equations (ODEs)",
+      "topics": [
+        {
+          "topic_title": "First-Order ODEs",
+          "notes_md": "First-order ordinary differential equations (ODEs) involve a single independent variable and its first derivative. They can be expressed in the form dy/dx = f(x, y). Solving first-order ODEs often involves techniques like separation of variables, where we rearrange the equation to isolate variables on each side and then integrate.  Another approach is to use integrating factors, particularly for linear first-order ODEs of the form dy/dx + P(x)y = Q(x). The integrating factor is calculated as exp(∫P(x) dx).  Understanding initial conditions is crucial for finding particular solutions.  For example, consider the ODE dy/dx = 2x. Separating variables gives dy = 2x dx. Integrating both sides yields y = x^2 + C. If we're given an initial condition, y(0) = 1, then 1 = 0^2 + C, so C = 1, and the particular solution is y = x^2 + 1.\n\n```python\n# Example using SciPy to solve dy/dx = 2x, y(0) = 1\nfrom scipy.integrate import solve_ivp\n\ndef ode_func(x, y):\n return 2*x\n\nsol = solve_ivp(ode_func, [0, 5], [1], dense_output=True)\nprint(sol.y)\n```",
+          "video_url": "https://www.youtube.com/watch?v=i8ODhUa-Q-0",
+          "practice_questions": [
+            "Solve the differential equation dy/dx = x + 1 with the initial condition y(0) = 2.",
+            "Find the general solution of dy/dx + 2y = 0.",
+            "Solve the differential equation dy/dx = y with initial condition y(0) = 1.",
+            "Determine if the differential equation (2x + y)dx + (x + 2y)dy = 0 is exact.",
+            "Find the integrating factor for the differential equation dy/dx + (1/x)y = x."
+          ]
+        },
+        {
+          "topic_title": "Second-Order Linear ODEs with Constant Coefficients",
+          "notes_md": "Second-order linear ODEs with constant coefficients are of the form ay'' + by' + cy = 0, where a, b, and c are constants. The general solution depends on the roots of the characteristic equation ar^2 + br + c = 0. If the roots r1 and r2 are real and distinct, the general solution is y = c1*e^(r1*x) + c2*e^(r2*x). If the roots are real and equal (r1 = r2 = r), the general solution is y = (c1 + c2*x)*e^(r*x). If the roots are complex conjugates (r = α ± βi), the general solution is y = e^(α*x)*(c1*cos(β*x) + c2*sin(β*x)).  For non-homogeneous equations (ay'' + by' + cy = f(x)), we find the general solution of the homogeneous equation (complementary function) and a particular solution of the non-homogeneous equation. The method of undetermined coefficients or variation of parameters can be used to find the particular solution.\n\nFor example, consider y'' + 3y' + 2y = 0. The characteristic equation is r^2 + 3r + 2 = 0, which factors as (r + 1)(r + 2) = 0.  The roots are r1 = -1 and r2 = -2.  The general solution is y = c1*e^(-x) + c2*e^(-2x).",
+          "video_url": "https://www.youtube.com/watch?v=DQtE1wG0JNU",
+          "practice_questions": [
+            "Solve y'' - 4y' + 4y = 0.",
+            "Find the general solution of y'' + 2y' + 5y = 0.",
+            "Solve y'' + 5y' + 6y = 0 with initial conditions y(0) = 1, y'(0) = 0.",
+            "Find a particular solution to y'' - 3y' + 2y = e^x.",
+            "Solve y'' + y = sin(x)."
+          ]
+        },
+        {
+          "topic_title": "Applications of ODEs",
+          "notes_md": "ODEs are widely used to model physical phenomena.  For example, Newton's law of cooling describes how the temperature of an object changes over time in response to its environment.  The equation is dT/dt = k(T - Ts), where T is the object's temperature, Ts is the surrounding temperature, and k is a constant.  Simple harmonic motion, such as the motion of a spring-mass system, is modeled by the second-order ODE mx'' + bx' + kx = 0, where m is the mass, b is the damping coefficient, and k is the spring constant.  Electrical circuits containing resistors, inductors, and capacitors (RLC circuits) can also be modeled using ODEs. The current in the circuit satisfies an equation of the form L(d^2I/dt^2) + R(dI/dt) + (1/C)I = V(t), where L is the inductance, R is the resistance, C is the capacitance, and V(t) is the voltage source. These models allow us to predict the behavior of these systems and design them to meet specific requirements. The solutions can exhibit behaviors like exponential decay, oscillations, or resonance, depending on the parameters of the system.",
+          "video_url": "https://www.youtube.com/watch?v=7xmKVRMqj9Q",
+          "practice_questions": [
+            "A body cools from 80°C to 60°C in 20 minutes. The temperature of the surrounding air is 40°C. What will be the temperature of the body after 40 minutes?",
+            "A mass of 1 kg is attached to a spring with spring constant 16 N/m. The system is damped with a damping coefficient of 10 Ns/m. Find the equation of motion if the mass is initially displaced 0.1 m from equilibrium and released with zero velocity.",
+            "An RLC circuit has R = 10 ohms, L = 0.1 H, and C = 0.001 F. If the voltage source is V(t) = 10 cos(100t) volts, find the steady-state current in the circuit.",
+            "Describe the effect of increasing damping on the oscillations of a spring-mass system.",
+            "Explain how ODEs are used in population modeling."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Laplace Transforms",
+      "topics": [
+        {
+          "topic_title": "Definition and Properties of Laplace Transforms",
+          "notes_md": "The Laplace transform is an integral transform that converts a function of time, f(t), into a function of complex frequency, F(s). It is defined as F(s) = ∫[0, ∞] e^(-st) f(t) dt, where s is a complex number. The Laplace transform is particularly useful for solving linear ODEs with constant coefficients. Key properties include linearity (L{af(t) + bg(t)} = aL{f(t)} + bL{g(t)}), time shifting (L{f(t-a)u(t-a)} = e^(-as)F(s), where u(t) is the unit step function), and differentiation (L{f'(t)} = sF(s) - f(0)).  The Laplace transform of common functions like e^(at), sin(at), cos(at), and t^n are frequently used. For example, L{e^(at)} = 1/(s-a) for s > a.  Understanding these properties allows us to transform differential equations into algebraic equations, solve for F(s), and then use the inverse Laplace transform to find the solution f(t).\n\n```python\n# Example using SymPy to find the Laplace transform of t**2\nimport sympy\nfrom sympy.integrals import laplace_transform\n\nt, s, a = sympy.symbols('t s a', real=True)\nf = t**2\nF = laplace_transform(f, t, s)\nprint(F)\n```",
+          "video_url": "https://www.youtube.com/watch?v=jKdp80V5oQA",
+          "practice_questions": [
+            "Find the Laplace transform of f(t) = t^3.",
+            "Find the Laplace transform of f(t) = sin(2t).",
+            "Find the Laplace transform of f(t) = cos(3t).",
+            "Find the Laplace transform of f(t) = e^(-2t).",
+            "Find the Laplace transform of f(t) = u(t-2) (unit step function)."
+          ]
+        },
+        {
+          "topic_title": "Inverse Laplace Transforms",
+          "notes_md": "The inverse Laplace transform converts a function of complex frequency, F(s), back into a function of time, f(t). It is denoted as L^(-1){F(s)} = f(t). Finding the inverse Laplace transform often involves using partial fraction decomposition to break down F(s) into simpler terms whose inverse Laplace transforms are known.  For example, if F(s) = 1/((s-1)(s-2)), we can decompose it as F(s) = A/(s-1) + B/(s-2). Solving for A and B gives A = -1 and B = 1.  Therefore, F(s) = -1/(s-1) + 1/(s-2), and L^(-1){F(s)} = -e^(t) + e^(2t).  Tables of Laplace transforms and their inverses are commonly used to simplify the process.  The Heaviside expansion theorem can be used to find the inverse Laplace transform when F(s) is a rational function with distinct poles.  Convolution theorem states that L^(-1){F(s)G(s)} = f(t) * g(t), where * denotes convolution.",
+          "video_url": "https://www.youtube.com/watch?v=3s9E6183k5I",
+          "practice_questions": [
+            "Find the inverse Laplace transform of F(s) = 1/(s^2 + 4).",
+            "Find the inverse Laplace transform of F(s) = 1/(s-3)^2.",
+            "Find the inverse Laplace transform of F(s) = s/(s^2 + 9).",
+            "Find the inverse Laplace transform of F(s) = (s+1)/(s^2 + 2s + 5).",
+            "Use partial fraction decomposition to find the inverse Laplace transform of F(s) = 1/(s(s+1))."
+          ]
+        },
+        {
+          "topic_title": "Solving ODEs using Laplace Transforms",
+          "notes_md": "Laplace transforms provide a powerful method for solving linear ODEs with constant coefficients, especially those with initial conditions. The process involves transforming the ODE into an algebraic equation in the s-domain using the Laplace transform. Initial conditions are automatically incorporated during the transformation. Solve the algebraic equation for Y(s), the Laplace transform of the solution y(t). Then, find the inverse Laplace transform of Y(s) to obtain the solution y(t) in the time domain.  For example, consider the ODE y'' + y = sin(t), with initial conditions y(0) = 0 and y'(0) = 1. Taking the Laplace transform gives s^2Y(s) - sy(0) - y'(0) + Y(s) = 1/(s^2 + 1).  Substituting the initial conditions gives (s^2 + 1)Y(s) - 1 = 1/(s^2 + 1).  Solving for Y(s) gives Y(s) = (s^2 + 2)/(s^2 + 1)^2. Taking the inverse Laplace transform (using partial fractions or a table) gives y(t) = (3/2)sin(t) + (1/2)t*cos(t).",
+          "video_url": "https://www.youtube.com/watch?v=BPv8t0g-Xbw",
+          "practice_questions": [
+            "Solve y'' + 4y = 0, y(0) = 1, y'(0) = 0 using Laplace transforms.",
+            "Solve y' + 2y = e^(-t), y(0) = 0 using Laplace transforms.",
+            "Solve y'' - 3y' + 2y = 1, y(0) = 0, y'(0) = 1 using Laplace transforms.",
+            "Solve y'' + y = t, y(0) = 0, y'(0) = 0 using Laplace transforms.",
+            "Solve y' + y = sin(t), y(0) = 1 using Laplace transforms."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Fourier Series",
+      "topics": [
+        {
+          "topic_title": "Periodic Functions and Fourier Series Representation",
+          "notes_md": "A function f(t) is periodic with period T if f(t + T) = f(t) for all t.  Fourier series provide a way to represent periodic functions as an infinite sum of sines and cosines. The Fourier series representation of a function f(t) with period 2L is given by f(t) = a0/2 + Σ[n=1, ∞] (an*cos(nπt/L) + bn*sin(nπt/L)), where the coefficients are calculated as: a0 = (1/L)∫[-L, L] f(t) dt, an = (1/L)∫[-L, L] f(t)*cos(nπt/L) dt, bn = (1/L)∫[-L, L] f(t)*sin(nπt/L) dt. These integrals calculate the average value of f(t), f(t)*cos(nπt/L), and f(t)*sin(nπt/L) over one period, respectively.  The Fourier series converges to the function f(t) at points where f(t) is continuous. At points of discontinuity, it converges to the average of the left and right limits of f(t).\n\n```python\n# Example using SymPy to calculate Fourier coefficients\nimport sympy\n\nt = sympy.symbols('t')\nL = sympy.pi # Period is 2*pi\nf = t  # Example function\n\ndef fourier_coefficient(f, n, L):\n return (1/L) * sympy.integrate(f * sympy.cos(n*sympy.pi*t/L), (t, -L, L))\n\na0 = (1/L) * sympy.integrate(f, (t, -L, L))\nan = fourier_coefficient(f, 1, L)\nprint(f\"a0: {a0}, a1: {an}\")\n```",
+          "video_url": "https://www.youtube.com/watch?v=qMYqR4EiwPE",
+          "practice_questions": [
+            "Find the Fourier series of the square wave function f(t) = 1 for 0 < t < π and f(t) = -1 for -π < t < 0, with period 2π.",
+            "Find the Fourier series of f(t) = t for -1 < t < 1, with period 2.",
+            "Determine the values to which the Fourier series converges at points of discontinuity.",
+            "Calculate the Fourier coefficients a0, a1, and b1 for the function f(t) = |t| for -π < t < π, with period 2π.",
+            "Explain the Dirichlet conditions for the convergence of a Fourier series."
+          ]
+        },
+        {
+          "topic_title": "Even and Odd Functions; Half-Range Expansions",
+          "notes_md": "A function f(t) is even if f(-t) = f(t) and odd if f(-t) = -f(t). The Fourier series of an even function contains only cosine terms (bn = 0), and the Fourier series of an odd function contains only sine terms (an = 0 and a0 = 0). Half-range expansions are used to represent functions defined only on the interval [0, L] as either an even or an odd function over the interval [-L, L]. The half-range cosine expansion represents f(t) as an even function, and the half-range sine expansion represents f(t) as an odd function. The choice between the two depends on the application. For example, if we need the function to be zero at t = 0, we would choose the sine expansion. These expansions allow us to apply Fourier series techniques to functions that are not originally periodic or defined over a symmetric interval.",
+          "video_url": "https://www.youtube.com/watch?v=s2YnS0i-5jY",
+          "practice_questions": [
+            "Find the half-range sine series for f(t) = 1 for 0 < t < π.",
+            "Find the half-range cosine series for f(t) = t for 0 < t < 1.",
+            "Determine whether the function f(t) = t^2*sin(t) is even, odd, or neither.",
+            "Find the Fourier series of the function f(t) = t^2 for -π < t < π.",
+            "Explain the advantages of using half-range expansions."
+          ]
+        },
+        {
+          "topic_title": "Applications of Fourier Series",
+          "notes_md": "Fourier series have numerous applications in engineering and physics. They are used in signal processing to analyze and synthesize signals, in image processing to compress and enhance images, and in solving partial differential equations (PDEs). For example, in heat transfer, the temperature distribution in a rod can be represented as a Fourier series, allowing us to analyze the heat flow. In electrical engineering, Fourier series are used to analyze the frequency content of signals and to design filters. In acoustics, they are used to analyze the harmonics of musical instruments. The Gibbs phenomenon, which occurs at points of discontinuity, is an important consideration in applications. The Fourier series approximation exhibits overshoot and undershoot near discontinuities, which can be problematic in some applications. Understanding the convergence properties of Fourier series is crucial for accurate modeling and analysis.",
+          "video_url": "https://www.youtube.com/watch?v=mbWWj0tfm4Q",
+          "practice_questions": [
+            "Explain how Fourier series are used in signal processing.",
+            "Describe the Gibbs phenomenon and its implications.",
+            "How are Fourier series used in image compression?",
+            "Explain how Fourier series can be used to solve the heat equation.",
+            "Describe the use of Fourier series in analyzing musical sounds."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Partial Differential Equations (PDEs)",
+      "topics": [
+        {
+          "topic_title": "Introduction to PDEs and Basic Concepts",
+          "notes_md": "Partial differential equations (PDEs) involve functions of multiple independent variables and their partial derivatives. Unlike ODEs, which involve only one independent variable, PDEs describe phenomena that vary in space and time. Common examples include the heat equation, the wave equation, and Laplace's equation. The order of a PDE is the highest order of the derivatives appearing in the equation. A PDE is linear if it is linear in the unknown function and its derivatives. Boundary conditions and initial conditions are essential for obtaining unique solutions to PDEs.  Boundary conditions specify the values of the solution or its derivatives on the boundary of the domain, while initial conditions specify the values of the solution and its derivatives at an initial time.  Solving PDEs is generally more challenging than solving ODEs, and various techniques are used, including separation of variables, Fourier series, and numerical methods.",
+          "video_url": "https://www.youtube.com/watch?v=EQWq4bqkI1s",
+          "practice_questions": [
+            "Classify the following PDE: ∂^2u/∂x^2 + ∂^2u/∂y^2 = 0.",
+            "What are the differences between ODEs and PDEs?",
+            "Explain the importance of boundary and initial conditions in solving PDEs.",
+            "Give an example of a linear and a nonlinear PDE.",
+            "Define the order of a PDE."
+          ]
+        },
+        {
+          "topic_title": "Separation of Variables",
+          "notes_md": "Separation of variables is a common technique for solving linear PDEs. The method involves assuming that the solution can be written as a product of functions, each depending on only one independent variable. For example, if we have a PDE in two variables, x and t, we assume a solution of the form u(x, t) = X(x)T(t). Substituting this into the PDE and dividing by X(x)T(t) results in two separate ODEs, one for X(x) and one for T(t). These ODEs can then be solved independently. The solutions are combined to obtain the solution to the original PDE. Boundary conditions are used to determine the constants of integration and to find the eigenvalues and eigenfunctions of the separated equations. The general solution is often expressed as an infinite series of eigenfunctions. This method is particularly effective for solving PDEs with homogeneous boundary conditions on rectangular domains.",
+          "video_url": "https://www.youtube.com/watch?v=fQM9sGx_TX4",
+          "practice_questions": [
+            "Solve the heat equation ∂u/∂t = α^2 ∂^2u/∂x^2, 0 < x < L, t > 0, with boundary conditions u(0, t) = u(L, t) = 0 and initial condition u(x, 0) = f(x) using separation of variables.",
+            "Explain the steps involved in solving a PDE using separation of variables.",
+            "What are the limitations of the separation of variables method?",
+            "How are boundary conditions used in the separation of variables method?",
+            "Solve Laplace's equation ∂^2u/∂x^2 + ∂^2u/∂y^2 = 0 in a rectangle 0 < x < a, 0 < y < b, with boundary conditions u(x, 0) = u(x, b) = 0, u(0, y) = 0, and u(a, y) = g(y) using separation of variables."
+          ]
+        },
+        {
+          "topic_title": "Applications of PDEs",
+          "notes_md": "PDEs are used to model a wide range of physical phenomena, including heat transfer, wave propagation, fluid dynamics, and electromagnetism. The heat equation describes the diffusion of heat in a material. The wave equation describes the propagation of waves, such as sound waves or electromagnetic waves. Laplace's equation describes steady-state phenomena, such as the electric potential in a region with no charge. The Navier-Stokes equations describe the motion of viscous fluids. These equations are fundamental to many areas of science and engineering. Solving these PDEs allows us to understand and predict the behavior of these systems. Numerical methods, such as finite difference and finite element methods, are often used to approximate solutions to PDEs when analytical solutions are not possible. The choice of numerical method depends on the specific PDE and the desired accuracy.\n",
+          "video_url": "https://www.youtube.com/watch?v=btV-zQfXlS0",
+          "practice_questions": [
+            "Describe how the heat equation is used to model heat transfer.",
+            "Explain how the wave equation is used to model wave propagation.",
+            "What are the applications of Laplace's equation in electromagnetism?",
+            "Describe the Navier-Stokes equations and their applications in fluid dynamics.",
+            "Explain the difference between finite difference and finite element methods for solving PDEs."
+          ]
+        }
+      ]
+    }
+  ]
+}

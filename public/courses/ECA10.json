@@ -1,0 +1,158 @@
+{
+  "course_name": "Microprocessors and Microcontrollers",
+  "course_code": "ECA10",
+  "units": [
+    {
+      "unit_title": "Introduction to Microprocessors",
+      "topics": [
+        {
+          "topic_title": "Evolution of Microprocessors",
+          "notes_md": "Microprocessors have evolved significantly since their inception. The first microprocessor, the Intel 4004, was a 4-bit processor designed for calculators. It lacked the power and versatility of modern processors. The Intel 8008 and 8080 followed, leading to the popular Intel 8085, an 8-bit processor widely used in early personal computers.\n\nFurther advancements led to 16-bit processors like the Intel 8086 and 8088, which marked the beginning of the x86 architecture. The introduction of 32-bit processors like the Intel 80386 revolutionized computing, enabling multitasking and larger memory addressing capabilities.\n\nToday, we have multi-core processors with advanced features like pipelining, caching, and virtualization. These processors are used in a wide range of applications, from smartphones and laptops to servers and embedded systems. The evolution continues with advancements in process technology, architecture, and power efficiency.",
+          "video_url": "https://www.youtube.com/watch?v=j6wQf8ls40k",
+          "practice_questions": [
+            "What was the first microprocessor?",
+            "Explain the significance of the Intel 8085.",
+            "What are the key differences between 16-bit and 32-bit processors?",
+            "Describe the role of multi-core processors in modern computing."
+          ]
+        },
+        {
+          "topic_title": "Microprocessor Architecture",
+          "notes_md": "A microprocessor consists of several key components, including the arithmetic logic unit (ALU), control unit, registers, and memory interface. The ALU performs arithmetic and logical operations. The control unit fetches instructions from memory and decodes them, coordinating the activities of other components.\n\nRegisters are small, high-speed storage locations used to hold data and addresses. The memory interface allows the microprocessor to communicate with external memory.\n\nInstruction sets define the operations that a microprocessor can perform. Different architectures, such as RISC (Reduced Instruction Set Computing) and CISC (Complex Instruction Set Computing), offer different approaches to instruction set design. RISC architectures emphasize simplicity and efficiency, while CISC architectures provide a wider range of instructions.",
+          "video_url": "https://www.youtube.com/watch?v=cNN_tTXABFQ",
+          "practice_questions": [
+            "Describe the function of the ALU in a microprocessor.",
+            "What is the role of the control unit?",
+            "Explain the purpose of registers.",
+            "Compare and contrast RISC and CISC architectures."
+          ]
+        },
+        {
+          "topic_title": "Memory Organization",
+          "notes_md": "Memory organization is crucial for efficient microprocessor operation. Microprocessors use various types of memory, including RAM (Random Access Memory) and ROM (Read-Only Memory). RAM is volatile memory used for storing data and instructions that can be read and written to. ROM is non-volatile memory used for storing permanent data and programs.\n\nMemory addressing schemes determine how memory locations are accessed. Common schemes include linear addressing and segmented addressing. Linear addressing provides a continuous address space, while segmented addressing divides memory into segments.\n\nCache memory is a small, fast memory used to store frequently accessed data and instructions. It improves performance by reducing the time it takes to access memory.",
+          "video_url": "https://www.youtube.com/watch?v=4zcXW0Lvb3o",
+          "practice_questions": [
+            "What is the difference between RAM and ROM?",
+            "Explain the concept of memory addressing.",
+            "Describe the purpose of cache memory.",
+            "What are the advantages and disadvantages of linear and segmented addressing?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "8085 Microprocessor",
+      "topics": [
+        {
+          "topic_title": "8085 Architecture and Pin Diagram",
+          "notes_md": "The 8085 is an 8-bit microprocessor with a data bus of 8 bits and an address bus of 16 bits, allowing it to access 64KB of memory. It has a clock frequency of up to 3 MHz. The 8085 architecture includes the ALU, registers (such as the accumulator, B, C, D, E, H, L, and stack pointer), and control unit.\n\nThe pin diagram shows the various pins of the 8085, including address lines (A0-A15), data lines (AD0-AD7), control signals (RD, WR, ALE), and interrupt signals (INTR, RST 7.5, RST 6.5, RST 5.5, TRAP). The ALE (Address Latch Enable) signal is used to demultiplex the address and data lines.\n\nUnderstanding the pin diagram is essential for interfacing external devices with the 8085.",
+          "video_url": "https://www.youtube.com/watch?v=yR02imW8z9w",
+          "practice_questions": [
+            "What is the data bus width of the 8085?",
+            "What is the addressable memory space of the 8085?",
+            "Explain the function of the ALE signal.",
+            "List the key registers in the 8085 architecture."
+          ]
+        },
+        {
+          "topic_title": "8085 Instruction Set",
+          "notes_md": "The 8085 instruction set consists of a variety of instructions for data transfer, arithmetic operations, logical operations, branching, and stack operations. Data transfer instructions include MOV (move data), LDA (load accumulator), and STA (store accumulator).\n\nArithmetic instructions include ADD (addition), SUB (subtraction), INR (increment), and DCR (decrement). Logical instructions include AND, OR, XOR, and CMP (compare). Branching instructions include JMP (jump), JNZ (jump if not zero), and CALL (call subroutine).\n\nStack operations include PUSH (push onto stack) and POP (pop from stack). Understanding the instruction set is crucial for writing 8085 assembly language programs.\n\n```assembly\nMOV A, B ; Move the contents of register B to register A\nADD B ; Add the contents of register B to the accumulator\n```",
+          "video_url": "https://www.youtube.com/watch?v=yY49C7-81uY",
+          "practice_questions": [
+            "Give examples of data transfer instructions in the 8085.",
+            "Explain the purpose of the ADD and SUB instructions.",
+            "What are branching instructions used for?",
+            "Describe the stack operations PUSH and POP."
+          ]
+        },
+        {
+          "topic_title": "Assembly Language Programming",
+          "notes_md": "Assembly language programming involves writing programs using assembly language instructions. Assembly language provides a low-level interface to the microprocessor, allowing programmers to directly control the hardware.\n\nAn assembler is used to translate assembly language code into machine code, which can be executed by the microprocessor. Assembly language programs typically consist of a sequence of instructions, labels, and directives.\n\nWriting efficient assembly language code requires a good understanding of the microprocessor architecture and instruction set. Debugging assembly language programs can be challenging, but it provides valuable insights into how the microprocessor works.\n\n```assembly\nORG 8000H ; Set the origin to address 8000H\nLDA 2000H ; Load the contents of memory location 2000H into the accumulator\nSTA 2001H ; Store the contents of the accumulator into memory location 2001H\nHLT ; Halt the program\n```",
+          "video_url": "https://www.youtube.com/watch?v=Ypi-LQW-hC0",
+          "practice_questions": [
+            "What is assembly language?",
+            "What is the role of an assembler?",
+            "Explain the importance of understanding the microprocessor architecture for assembly language programming.",
+            "Write a simple assembly language program to add two numbers stored in memory locations and store the result in another memory location."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Introduction to Microcontrollers",
+      "topics": [
+        {
+          "topic_title": "Microcontroller vs. Microprocessor",
+          "notes_md": "Microcontrollers and microprocessors are both integrated circuits that perform processing tasks, but they differ in their scope and integration. A microprocessor is a central processing unit (CPU) on a single chip. It requires external components such as memory and I/O devices to form a complete system.\n\nA microcontroller, on the other hand, is a self-contained system on a chip. It includes the CPU, memory (RAM and ROM), and I/O peripherals such as timers, UARTs, and ADCs. Microcontrollers are typically used in embedded systems where size, cost, and power consumption are critical factors.\n\nMicroprocessors are generally more powerful and versatile than microcontrollers, but they also require more external components and consume more power. Microcontrollers are more integrated and energy-efficient, making them suitable for a wide range of embedded applications.",
+          "video_url": "https://www.youtube.com/watch?v=xV2Xj4j63cQ",
+          "practice_questions": [
+            "What is the main difference between a microcontroller and a microprocessor?",
+            "What are the advantages of using a microcontroller in embedded systems?",
+            "What are the key components of a microcontroller?",
+            "Give examples of applications where microcontrollers are commonly used."
+          ]
+        },
+        {
+          "topic_title": "Architecture of a Microcontroller",
+          "notes_md": "A typical microcontroller architecture includes a CPU core, memory (RAM and ROM/Flash), timers, serial communication interfaces (UART, SPI, I2C), analog-to-digital converters (ADCs), digital-to-analog converters (DACs), and general-purpose I/O (GPIO) pins.\n\nThe CPU core executes instructions and controls the operation of the microcontroller. The memory stores program code and data. Timers are used for timing events and generating PWM signals. Serial communication interfaces allow the microcontroller to communicate with other devices.\n\nADCs convert analog signals into digital values, while DACs convert digital values into analog signals. GPIO pins can be configured as inputs or outputs to interface with external devices.",
+          "video_url": "https://www.youtube.com/watch?v=jQYdFOdzc7I",
+          "practice_questions": [
+            "List the key components of a microcontroller architecture.",
+            "What is the purpose of timers in a microcontroller?",
+            "Explain the function of ADCs and DACs.",
+            "What are GPIO pins used for?"
+          ]
+        },
+        {
+          "topic_title": "Embedded Systems Applications",
+          "notes_md": "Microcontrollers are widely used in embedded systems applications across various industries. Examples include automotive electronics (engine control, anti-lock braking systems), consumer electronics (washing machines, microwave ovens), industrial automation (process control, robotics), and medical devices (pacemakers, blood glucose monitors).\n\nEmbedded systems are typically designed for specific tasks and operate in real-time. They often have limited resources (memory, processing power) and must be energy-efficient. Microcontrollers provide a cost-effective and versatile platform for developing embedded systems.",
+          "video_url": "https://www.youtube.com/watch?v=w9b6gD-j2-4",
+          "practice_questions": [
+            "Give examples of embedded systems applications in different industries.",
+            "What are the characteristics of embedded systems?",
+            "Why are microcontrollers suitable for embedded systems?",
+            "Discuss the challenges in designing embedded systems."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "PIC Microcontroller",
+      "topics": [
+        {
+          "topic_title": "PIC Microcontroller Architecture",
+          "notes_md": "The PIC (Peripheral Interface Controller) microcontroller family is popular due to its ease of use and wide range of applications. A typical PIC microcontroller architecture includes a CPU, program memory (Flash), data memory (RAM and EEPROM), I/O ports, timers, and communication peripherals (UART, SPI, I2C).\n\nThe CPU core is based on a RISC architecture, which simplifies instruction execution and improves performance. The Flash memory stores the program code, while the RAM stores data during program execution. EEPROM provides non-volatile storage for configuration data.\n\nThe I/O ports allow the microcontroller to interface with external devices. Timers are used for timing events and generating PWM signals. Communication peripherals enable serial communication with other devices.",
+          "video_url": "https://www.youtube.com/watch?v=c4Sjd2p8n24",
+          "practice_questions": [
+            "What is the architecture of PIC microcontroller?",
+            "What is the advantage of RISC architecture used in PIC?",
+            "What are the different types of memory available in PIC?",
+            "What are the communication peripherals available in PIC?"
+          ]
+        },
+        {
+          "topic_title": "PIC Programming",
+          "notes_md": "PIC microcontrollers can be programmed using assembly language or high-level languages like C. Assembly language provides direct control over the hardware, but it can be more complex to write and debug. C provides a higher level of abstraction, making it easier to develop complex applications.\n\nA compiler is used to translate C code into machine code that can be executed by the PIC microcontroller. Integrated development environments (IDEs) such as MPLAB X provide tools for writing, compiling, and debugging PIC programs.\n\nProgramming PIC microcontrollers involves configuring the hardware, writing the program code, and downloading the code to the microcontroller using a programmer.",
+          "video_url": "https://www.youtube.com/watch?v=bK06jV77jUE",
+          "practice_questions": [
+            "What are the programming languages used in PIC microcontrollers?",
+            "What is the role of compiler and IDE?",
+            "What are the steps involved in PIC programming?",
+            "What is MPLAB X IDE?"
+          ]
+        },
+        {
+          "topic_title": "Interfacing with PIC Microcontrollers",
+          "notes_md": "Interfacing PIC microcontrollers with external devices involves connecting the I/O ports to sensors, actuators, and other peripherals. The I/O ports can be configured as inputs or outputs, and they can be used to read data from sensors or control actuators.\n\nCommon interfacing techniques include using pull-up or pull-down resistors, debouncing switches, and driving LEDs. Serial communication interfaces such as UART, SPI, and I2C can be used to communicate with other devices such as sensors, displays, and memory chips.\n\nProper interfacing techniques are essential for ensuring reliable and efficient communication between the PIC microcontroller and external devices.",
+          "video_url": "https://www.youtube.com/watch?v=8rX8xWkUf1U",
+          "practice_questions": [
+            "What are different ways to connect I/O ports to external devices?",
+            "What are pull-up and pull-down resistors?",
+            "What are the serial communication interfaces used?",
+            "How to interface LEDs with PIC?"
+          ]
+        }
+      ]
+    }
+  ]
+}

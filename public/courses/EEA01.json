@@ -1,0 +1,170 @@
+{
+  "course_name": "Basic Electrical & Electronics Engineering",
+  "course_code": "EEA01",
+  "units": [
+    {
+      "unit_title": "Introduction to Electrical Circuits",
+      "topics": [
+        {
+          "topic_title": "Basic Circuit Elements and Laws",
+          "notes_md": "This topic introduces fundamental circuit elements: resistors, inductors, and capacitors. We'll explore their properties and how they behave in electrical circuits.  Ohm's Law, Kirchhoff's Current Law (KCL), and Kirchhoff's Voltage Law (KVL) are essential tools for circuit analysis. Ohm's Law states that the voltage across a resistor is directly proportional to the current flowing through it: $V = IR$. KCL states that the algebraic sum of currents entering a node is zero. KVL states that the algebraic sum of voltages around a closed loop is zero. Understanding these laws is crucial for analyzing more complex circuits. Example: A resistor with a resistance of 10 ohms has a voltage of 5 volts across it. The current flowing through the resistor is calculated as I = V/R = 5/10 = 0.5 amperes.",
+          "video_url": "https://www.youtube.com/watch?v=b-spW-Pb-3c",
+          "practice_questions": [
+            "What is the relationship between voltage, current, and resistance according to Ohm's Law?",
+            "State Kirchhoff's Current Law.",
+            "State Kirchhoff's Voltage Law.",
+            "Calculate the current flowing through a 100-ohm resistor with a 12V voltage drop.",
+            "A circuit has two branches connected to a node. If one branch has a current of 2A entering the node and the other has 1A leaving, what is the current in the third branch?"
+          ]
+        },
+        {
+          "topic_title": "Series and Parallel Circuits",
+          "notes_md": "Resistors can be connected in series or parallel configurations. In a series circuit, the current is the same through all resistors, and the total resistance is the sum of individual resistances: $R_{total} = R_1 + R_2 + ... + R_n$.  In a parallel circuit, the voltage is the same across all resistors, and the reciprocal of the total resistance is the sum of the reciprocals of individual resistances: $1/R_{total} = 1/R_1 + 1/R_2 + ... + 1/R_n$. Understanding series and parallel combinations allows us to simplify complex circuits for analysis.  Example: Two resistors, 5 ohms and 10 ohms, are connected in series. The total resistance is 5 + 10 = 15 ohms.",
+          "video_url": "https://www.youtube.com/watch?v=Vn8qKkgDBvQ",
+          "practice_questions": [
+            "What are the characteristics of a series circuit?",
+            "What are the characteristics of a parallel circuit?",
+            "Calculate the total resistance of three resistors (2 ohms, 4 ohms, and 6 ohms) connected in series.",
+            "Calculate the total resistance of two resistors (10 ohms and 20 ohms) connected in parallel.",
+            "What happens to the total resistance when more resistors are added in parallel?"
+          ]
+        },
+        {
+          "topic_title": "Voltage and Current Dividers",
+          "notes_md": "Voltage and current dividers are circuits used to obtain a fraction of the input voltage or current. A voltage divider consists of resistors in series, and the voltage across each resistor is proportional to its resistance. The voltage across resistor $R_i$ in a series of n resistors is: $V_i = V_{total} * (R_i / R_{total})$. A current divider consists of resistors in parallel, and the current through each resistor is inversely proportional to its resistance. The current through resistor $R_i$ in a parallel circuit is: $I_i = I_{total} * (R_{total} / R_i)$, where $R_{total}$ is the equivalent resistance of the parallel combination. These dividers are essential for designing circuits with specific voltage and current requirements.",
+          "video_url": "https://www.youtube.com/watch?v=wV7nKczs95Q",
+          "practice_questions": [
+            "Explain the principle of a voltage divider.",
+            "Explain the principle of a current divider.",
+            "Derive the formula for the voltage across a resistor in a voltage divider circuit.",
+            "Derive the formula for the current through a resistor in a current divider circuit.",
+            "Design a voltage divider to produce an output of 3V from a 12V source using two resistors. Specify the resistor values."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Semiconductor Devices",
+      "topics": [
+        {
+          "topic_title": "Diodes: Characteristics and Applications",
+          "notes_md": "A diode is a two-terminal semiconductor device that allows current to flow primarily in one direction. It has a p-n junction with a forward voltage drop and a reverse breakdown voltage. Diodes are used in rectification, switching, and voltage regulation. The ideal diode model assumes zero voltage drop in the forward direction and infinite resistance in the reverse direction.  Real diodes have a forward voltage drop of approximately 0.7V for silicon diodes. Applications include rectifiers (converting AC to DC), clippers, clampers, and voltage multipliers. Diodes are essential components in power supplies and electronic circuits.",
+          "video_url": "https://www.youtube.com/watch?v=CyB-ZkeJEQo",
+          "practice_questions": [
+            "Describe the operating principle of a diode.",
+            "Explain the difference between forward bias and reverse bias.",
+            "What is the ideal diode model?",
+            "List three applications of diodes.",
+            "What is the approximate forward voltage drop of a silicon diode?"
+          ]
+        },
+        {
+          "topic_title": "Bipolar Junction Transistors (BJTs)",
+          "notes_md": "A BJT is a three-terminal semiconductor device used for amplification and switching.  It consists of two p-n junctions. There are two types of BJTs: NPN and PNP. The BJT operates in three regions: cutoff, active, and saturation. In the active region, the collector current is proportional to the base current: $I_C = βI_B$, where β is the current gain. BJTs are used in amplifiers, switches, and oscillators. The common-emitter configuration is widely used due to its high voltage and current gain. Understanding BJT biasing and operating regions is crucial for circuit design.",
+          "video_url": "https://www.youtube.com/watch?v=kmn_4y4Kmdk",
+          "practice_questions": [
+            "Describe the structure of a BJT.",
+            "What are the three operating regions of a BJT?",
+            "Explain the difference between NPN and PNP transistors.",
+            "What is the current gain (β) of a BJT?",
+            "List three applications of BJTs."
+          ]
+        },
+        {
+          "topic_title": "Field-Effect Transistors (FETs)",
+          "notes_md": "A FET is a three-terminal semiconductor device that controls current flow using an electric field. There are two main types of FETs: Junction FETs (JFETs) and Metal-Oxide-Semiconductor FETs (MOSFETs). MOSFETs are further divided into enhancement and depletion modes. FETs offer high input impedance and are voltage-controlled devices.  MOSFETs are widely used in digital circuits due to their low power consumption and high switching speed. The drain current in a MOSFET is controlled by the gate-source voltage. FETs are used in amplifiers, switches, and analog circuits.",
+          "video_url": "https://www.youtube.com/watch?v=jTV6e7-W570",
+          "practice_questions": [
+            "Describe the structure of a FET.",
+            "Explain the difference between JFETs and MOSFETs.",
+            "What are the advantages of FETs over BJTs?",
+            "What is the role of the gate voltage in a MOSFET?",
+            "List three applications of FETs."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Basic Electrical Machines",
+      "topics": [
+        {
+          "topic_title": "DC Machines: Construction and Working Principle",
+          "notes_md": "A DC machine converts electrical energy into mechanical energy (DC motor) or vice versa (DC generator). It consists of a stator with field windings and a rotor with armature windings. The working principle is based on the interaction between the magnetic field produced by the field windings and the current-carrying armature conductors.  The commutator and brushes ensure unidirectional torque in the motor. DC machines are used in applications requiring variable speed control, such as electric vehicles and industrial drives. The back EMF in a DC motor opposes the applied voltage and limits the armature current.",
+          "video_url": "https://www.youtube.com/watch?v=g0m7-Lh9K-0",
+          "practice_questions": [
+            "Describe the construction of a DC machine.",
+            "Explain the working principle of a DC motor.",
+            "What is the role of the commutator and brushes?",
+            "What is back EMF?",
+            "List three applications of DC machines."
+          ]
+        },
+        {
+          "topic_title": "Transformers: Construction and Working Principle",
+          "notes_md": "A transformer is a static device that transfers electrical energy from one circuit to another through electromagnetic induction. It consists of two or more coils electrically isolated but magnetically linked. The primary winding is connected to the AC source, and the secondary winding supplies the load. The voltage transformation ratio is proportional to the turns ratio: $V_1/V_2 = N_1/N_2$. Transformers are used to step up or step down voltage levels in power transmission and distribution systems. Core losses (hysteresis and eddy current losses) and copper losses are the main sources of energy loss in transformers.",
+          "video_url": "https://www.youtube.com/watch?v=iG12-V0snvo",
+          "practice_questions": [
+            "Describe the construction of a transformer.",
+            "Explain the working principle of a transformer.",
+            "What is the turns ratio of a transformer?",
+            "What are the main types of losses in a transformer?",
+            "List three applications of transformers."
+          ]
+        },
+        {
+          "topic_title": "AC Machines: Introduction to Induction Motors",
+          "notes_md": "An induction motor is an AC motor that operates on the principle of electromagnetic induction. It consists of a stator with windings and a rotor (squirrel cage or wound rotor). The rotating magnetic field produced by the stator induces a current in the rotor, which interacts with the stator field to produce torque. The synchronous speed is determined by the frequency of the AC supply and the number of poles: $N_s = (120f)/P$. The slip is the difference between the synchronous speed and the rotor speed. Induction motors are widely used in industrial applications due to their robustness and reliability.",
+          "video_url": "https://www.youtube.com/watch?v=AQjE2WBMIEc",
+          "practice_questions": [
+            "Describe the construction of an induction motor.",
+            "Explain the working principle of an induction motor.",
+            "What is synchronous speed?",
+            "What is slip?",
+            "List three applications of induction motors."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Digital Electronics Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Number Systems and Logic Gates",
+          "notes_md": "Digital electronics deals with binary numbers (0 and 1). Common number systems include binary, decimal, octal, and hexadecimal. Logic gates are the fundamental building blocks of digital circuits. Basic logic gates include AND, OR, NOT, NAND, NOR, XOR, and XNOR. Each gate performs a specific logical operation on one or more inputs to produce a single output. Boolean algebra is used to analyze and simplify logic circuits. Truth tables define the output of a logic gate for all possible input combinations. Logic gates are implemented using transistors.",
+          "video_url": "https://www.youtube.com/watch?v=jcDQTy8Ea_0",
+          "practice_questions": [
+            "Convert the decimal number 25 to binary.",
+            "Convert the binary number 1101 to decimal.",
+            "Draw the truth table for an AND gate.",
+            "Draw the truth table for an OR gate.",
+            "Simplify the Boolean expression: A AND (A OR B)."
+          ]
+        },
+        {
+          "topic_title": "Boolean Algebra and Logic Simplification",
+          "notes_md": "Boolean algebra is a mathematical system used to analyze and simplify digital circuits. It uses logical variables (0 and 1) and logical operators (AND, OR, NOT). Key Boolean algebra laws include commutative, associative, distributive, identity, complement, and DeMorgan's theorems. DeMorgan's theorems state that the complement of a product is the sum of the complements, and the complement of a sum is the product of the complements. Karnaugh maps (K-maps) are a graphical method for simplifying Boolean expressions. Simplification reduces the number of gates and connections in a circuit, leading to lower cost and improved performance.",
+          "video_url": "https://www.youtube.com/watch?v=6m5-zv1K_3A",
+          "practice_questions": [
+            "State DeMorgan's theorems.",
+            "Simplify the Boolean expression: (A AND B) OR (A AND NOT B).",
+            "Use a K-map to simplify the expression: A'B' + A'B + AB.",
+            "What are the advantages of simplifying logic circuits?",
+            "Explain the commutative law in Boolean algebra."
+          ]
+        },
+        {
+          "topic_title": "Combinational Logic Circuits",
+          "notes_md": "Combinational logic circuits produce outputs that depend only on the current inputs. Examples include adders, subtractors, multiplexers, demultiplexers, encoders, and decoders. Adders perform binary addition. A half-adder adds two single-bit binary numbers, while a full-adder adds three bits (two inputs and a carry-in). Multiplexers select one of several input signals to be passed to the output. Demultiplexers perform the reverse operation, directing a single input signal to one of several outputs. Encoders convert a set of mutually exclusive inputs into a binary code. Decoders convert a binary code into a set of mutually exclusive outputs. Combinational circuits are used in data processing, control systems, and digital communication.",
+          "video_url": "https://www.youtube.com/watch?v=a8i7496LMaI",
+          "practice_questions": [
+            "What is a combinational logic circuit?",
+            "Explain the difference between a half-adder and a full-adder.",
+            "What is a multiplexer?",
+            "What is a demultiplexer?",
+            "Give an example of an application of a decoder."
+          ]
+        }
+      ]
+    }
+  ]
+}

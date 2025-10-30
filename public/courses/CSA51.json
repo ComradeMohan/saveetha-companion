@@ -1,0 +1,170 @@
+{
+  "course_name": "Cryptography and Network Security",
+  "course_code": "CSA51",
+  "units": [
+    {
+      "unit_title": "Introduction to Cryptography",
+      "topics": [
+        {
+          "topic_title": "Basic Concepts and Terminology",
+          "notes_md": "Cryptography is the art and science of concealing information. Key terms include plaintext (original message), ciphertext (encrypted message), encryption (converting plaintext to ciphertext), decryption (converting ciphertext to plaintext), key (secret used in encryption/decryption), and cryptanalysis (breaking ciphers). Symmetric-key cryptography uses the same key for encryption and decryption (e.g., AES), while asymmetric-key cryptography uses different keys (public and private) for encryption and decryption (e.g., RSA). Hash functions create a fixed-size digest of a message (e.g., SHA-256). The security of a cryptographic system relies on the secrecy of the key and the strength of the algorithm. Modern cryptography is based on mathematical principles and computational complexity.",
+          "video_url": "https://www.youtube.com/watch?v=IbK7wWz4-i4",
+          "practice_questions": [
+            "Define cryptography and cryptanalysis.",
+            "Differentiate between symmetric-key and asymmetric-key cryptography.",
+            "Explain the role of a key in cryptographic systems.",
+            "What is a hash function and what are its properties?",
+            "Give examples of Symmetric-key and Asymmetric-key algorithms."
+          ]
+        },
+        {
+          "topic_title": "Classical Encryption Techniques",
+          "notes_md": "Classical encryption techniques include substitution ciphers (e.g., Caesar cipher, monoalphabetic cipher) and transposition ciphers (e.g., columnar transposition). The Caesar cipher shifts each letter by a fixed number of positions. Monoalphabetic ciphers use a fixed permutation of the alphabet. Transposition ciphers rearrange the letters of the plaintext. These ciphers are vulnerable to frequency analysis and other cryptanalytic attacks.  For example, in Caesar cipher with a key of 3, 'A' becomes 'D', 'B' becomes 'E', and so on.  These techniques are primarily of historical interest and are not secure for modern applications. Cryptanalysis of these ciphers involves statistical analysis of letter frequencies and patterns.",
+          "video_url": "https://www.youtube.com/watch?v=f9QT705y-jQ",
+          "practice_questions": [
+            "Explain the Caesar cipher and its limitations.",
+            "Describe the monoalphabetic cipher and its vulnerabilities.",
+            "What is a transposition cipher? Give an example.",
+            "How can frequency analysis be used to break classical ciphers?",
+            "Encrypt the message 'HELLO' using Caesar cipher with a key of 4."
+          ]
+        },
+        {
+          "topic_title": "Stream Ciphers and Block Ciphers",
+          "notes_md": "Stream ciphers encrypt data one bit or byte at a time, using a pseudorandom keystream. Examples include RC4. Block ciphers encrypt data in fixed-size blocks, typically 64 or 128 bits. Examples include DES, AES. Block ciphers operate in various modes, such as Electronic Codebook (ECB), Cipher Block Chaining (CBC), Counter (CTR), and Galois/Counter Mode (GCM). ECB is the simplest mode but is vulnerable to pattern repetition. CBC XORs each plaintext block with the previous ciphertext block. CTR encrypts a counter value. GCM provides authenticated encryption. The choice of mode affects the security and performance of the cipher.",
+          "video_url": "https://www.youtube.com/watch?v=Uh2ebFWST7w",
+          "practice_questions": [
+            "Differentiate between stream ciphers and block ciphers.",
+            "Explain the ECB mode of operation and its drawbacks.",
+            "Describe the CBC mode of operation.",
+            "What is the CTR mode of operation?",
+            "Explain the advantages of GCM mode."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Symmetric-Key Cryptography",
+      "topics": [
+        {
+          "topic_title": "Data Encryption Standard (DES)",
+          "notes_md": "DES is a symmetric-key block cipher that encrypts 64-bit blocks using a 56-bit key. It involves initial permutation, 16 rounds of Feistel network, and final permutation. Each round uses a round key derived from the main key using a key schedule.  DES is considered insecure due to its short key length, which makes it vulnerable to brute-force attacks.  Triple DES (3DES) applies DES three times with two or three different keys, increasing the key length and security. However, 3DES is also becoming less common due to its relatively slow performance compared to AES.  DES is now primarily of historical interest.",
+          "video_url": "https://www.youtube.com/watch?v=G9LDRwKRw-w",
+          "practice_questions": [
+            "Describe the DES algorithm.",
+            "Why is DES considered insecure?",
+            "Explain the concept of Triple DES (3DES).",
+            "What is a Feistel network?",
+            "What is the key size used in DES?"
+          ]
+        },
+        {
+          "topic_title": "Advanced Encryption Standard (AES)",
+          "notes_md": "AES is a symmetric-key block cipher that encrypts 128-bit blocks using 128, 192, or 256-bit keys. It consists of multiple rounds of substitution, permutation, and mixing operations. AES is based on the Rijndael algorithm.  The main steps in each round include SubBytes, ShiftRows, MixColumns, and AddRoundKey. AES is widely used due to its high security and performance. It is resistant to known cryptanalytic attacks. AES is the current standard for symmetric-key encryption. Implementations of AES are available in hardware and software.",
+          "video_url": "https://www.youtube.com/watch?v=AE5Lrqx63qY",
+          "practice_questions": [
+            "Describe the AES algorithm.",
+            "What are the key sizes supported by AES?",
+            "Explain the SubBytes, ShiftRows, MixColumns, and AddRoundKey operations.",
+            "Why is AES considered more secure than DES?",
+            "What block size does AES use?"
+          ]
+        },
+        {
+          "topic_title": "Block Cipher Modes of Operation (CBC, CTR, GCM)",
+          "notes_md": "Block cipher modes of operation dictate how a block cipher is used to encrypt larger amounts of data. CBC (Cipher Block Chaining) XORs the current plaintext block with the previous ciphertext block before encryption. CTR (Counter) encrypts a counter value and XORs the result with the plaintext. GCM (Galois/Counter Mode) provides authenticated encryption, combining confidentiality and integrity. GCM is widely used in network protocols like TLS.  Each mode has different security properties and performance characteristics. The choice of mode depends on the specific application requirements. For example, GCM is preferred when authentication is required.",
+          "video_url": "https://www.youtube.com/watch?v=r99-0l5q_vc",
+          "practice_questions": [
+            "Compare and contrast CBC, CTR, and GCM modes.",
+            "Explain how CBC mode provides confidentiality.",
+            "How does CTR mode work?",
+            "What is authenticated encryption?",
+            "Which mode is widely used in TLS?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Asymmetric-Key Cryptography",
+      "topics": [
+        {
+          "topic_title": "RSA Algorithm",
+          "notes_md": "RSA is a widely used asymmetric-key algorithm. It is based on the mathematical properties of prime numbers and modular arithmetic. Key generation involves selecting two large prime numbers, p and q, and computing n = p * q. The public key is (n, e), and the private key is (n, d), where e and d are multiplicative inverses modulo φ(n) = (p-1)(q-1). Encryption involves raising the plaintext to the power of e modulo n. Decryption involves raising the ciphertext to the power of d modulo n. RSA's security relies on the difficulty of factoring large numbers. RSA can be used for encryption, digital signatures, and key exchange.",
+          "video_url": "https://www.youtube.com/watch?v=w9c-2j-36QA",
+          "practice_questions": [
+            "Describe the RSA algorithm.",
+            "Explain the key generation process in RSA.",
+            "How does encryption and decryption work in RSA?",
+            "What is the mathematical basis of RSA's security?",
+            "What is Euler's totient function and how is it used in RSA?"
+          ]
+        },
+        {
+          "topic_title": "Diffie-Hellman Key Exchange",
+          "notes_md": "Diffie-Hellman is a key exchange protocol that allows two parties to establish a shared secret key over an insecure channel. It relies on the mathematical properties of discrete logarithms. The protocol involves selecting a large prime number p and a generator g. Each party chooses a secret number and computes a public value. The parties exchange their public values and compute the shared secret key. Diffie-Hellman is vulnerable to the man-in-the-middle attack. It only provides key exchange, not authentication.  The shared secret can then be used with a symmetric-key algorithm for secure communication.",
+          "video_url": "https://www.youtube.com/watch?v=Yjrfm_o8J08",
+          "practice_questions": [
+            "Describe the Diffie-Hellman key exchange protocol.",
+            "Explain the role of the prime number and generator in Diffie-Hellman.",
+            "How is the shared secret key computed in Diffie-Hellman?",
+            "What is the man-in-the-middle attack?",
+            "What are the limitations of Diffie-Hellman?"
+          ]
+        },
+        {
+          "topic_title": "Elliptic Curve Cryptography (ECC)",
+          "notes_md": "ECC is an asymmetric-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. ECC offers the same level of security as RSA with smaller key sizes. This makes ECC suitable for resource-constrained environments. ECC is used in many applications, including mobile devices, smart cards, and TLS. Key generation involves selecting an elliptic curve and a base point. Public and private keys are derived from the base point. ECC operations include point addition and point multiplication. ECC offers various cryptographic primitives, including key exchange, digital signatures, and encryption.",
+          "video_url": "https://www.youtube.com/watch?v=dQm-GCLg_v8",
+          "practice_questions": [
+            "Describe the basics of Elliptic Curve Cryptography (ECC).",
+            "What are the advantages of ECC over RSA?",
+            "Explain the key generation process in ECC.",
+            "What are the basic operations in ECC?",
+            "Where is ECC commonly used?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Network Security",
+      "topics": [
+        {
+          "topic_title": "Authentication Protocols",
+          "notes_md": "Authentication protocols verify the identity of users or devices. Common protocols include passwords, biometrics, and certificates. Password-based authentication is vulnerable to dictionary attacks and brute-force attacks. Biometric authentication uses unique physical or behavioral characteristics. Certificate-based authentication uses digital certificates to verify identity. Kerberos is a network authentication protocol that uses tickets to grant access to services. Two-factor authentication (2FA) requires two independent factors, such as a password and a one-time code.  Multi-factor authentication (MFA) uses more than two factors.",
+          "video_url": "https://www.youtube.com/watch?v=czmEK5D-Yt4",
+          "practice_questions": [
+            "Describe different authentication protocols.",
+            "What are the vulnerabilities of password-based authentication?",
+            "Explain the concept of two-factor authentication (2FA).",
+            "What is Kerberos?",
+            "What are the different types of authentication factors?"
+          ]
+        },
+        {
+          "topic_title": "Firewalls and Intrusion Detection Systems",
+          "notes_md": "Firewalls are network security devices that control network traffic based on predefined rules. They can be hardware or software-based. Firewalls can filter traffic based on source/destination IP addresses, ports, and protocols. Intrusion detection systems (IDS) monitor network traffic for malicious activity. They can be signature-based or anomaly-based. Signature-based IDS detect known attacks based on predefined signatures. Anomaly-based IDS detect unusual network behavior. Intrusion prevention systems (IPS) take action to block or mitigate detected attacks. Firewalls and IDS/IPS work together to protect networks from threats.",
+          "video_url": "https://www.youtube.com/watch?v=0Ki9Eayv23w",
+          "practice_questions": [
+            "What is a firewall and how does it work?",
+            "Differentiate between signature-based and anomaly-based intrusion detection.",
+            "What is an intrusion prevention system (IPS)?",
+            "How do firewalls and IDS/IPS work together?",
+            "What are the different types of firewalls?"
+          ]
+        },
+        {
+          "topic_title": "Secure Socket Layer (SSL) and Transport Layer Security (TLS)",
+          "notes_md": "SSL and TLS are cryptographic protocols that provide secure communication over a network. TLS is the successor to SSL. They are used to encrypt communication between a client and a server. TLS uses a combination of symmetric and asymmetric cryptography. The TLS handshake involves key exchange, authentication, and encryption. Certificates are used to verify the identity of the server. HTTPS uses TLS to secure HTTP communication. TLS provides confidentiality, integrity, and authentication.  TLS versions 1.2 and 1.3 are widely used. TLS 1.3 offers improved security and performance compared to earlier versions.",
+          "video_url": "https://www.youtube.com/watch?v=ZghQhrYpZ0w",
+          "practice_questions": [
+            "What are SSL and TLS?",
+            "Explain the TLS handshake process.",
+            "How does TLS provide confidentiality, integrity, and authentication?",
+            "What are digital certificates and how are they used in TLS?",
+            "What is HTTPS?"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "course_name": "Python Programming",
+  "course_code": "CSA08",
+  "units": [
+    {
+      "unit_title": "Introduction to Python",
+      "topics": [
+        {
+          "topic_title": "Python Basics and Setup",
+          "notes_md": "Python is a high-level, interpreted, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation. Python is dynamically-typed and garbage-collected. It supports multiple programming paradigms, including structured (particularly procedural), object-oriented, and functional programming. Getting started involves installing Python from the official website (python.org) and setting up a suitable IDE like VS Code, PyCharm, or Jupyter Notebook. The basic syntax includes variable assignments, data types (integers, floats, strings, booleans), and simple operations. \n\n```python\n# Example of a simple Python program\nname = \"Alice\"\nage = 30\nprint(f\"Hello, {name}! You are {age} years old.\")\n```",
+          "video_url": "https://www.youtube.com/watch?v=rfscVS0vtbw",
+          "practice_questions": [
+            "What are the key features of Python?",
+            "Explain the difference between interpreted and compiled languages.",
+            "How do you install Python on your system?",
+            "What are the basic data types in Python?",
+            "Write a simple Python program to print 'Hello, World!'"
+          ]
+        },
+        {
+          "topic_title": "Data Types and Operators",
+          "notes_md": "Python supports several built-in data types including integers (`int`), floating-point numbers (`float`), strings (`str`), booleans (`bool`), lists (`list`), tuples (`tuple`), dictionaries (`dict`), and sets (`set`). Operators are symbols that perform operations on variables and values. Common operators include arithmetic operators (+, -, *, /, %), comparison operators (==, !=, >, <, >=, <=), logical operators (and, or, not), and assignment operators (=, +=, -=, *=, /=). Understanding data types and operators is crucial for writing effective Python code.\n\n```python\nx = 10\ny = 3.14\nz = \"Hello\"\nprint(type(x), type(y), type(z))\nprint(x + y)\n```",
+          "video_url": "https://www.youtube.com/watch?v=nLRL_NcnK-4",
+          "practice_questions": [
+            "What are the different data types available in Python?",
+            "Explain the difference between a list and a tuple.",
+            "What are the different types of operators in Python?",
+            "Write a Python program to calculate the area of a circle.",
+            "Explain the difference between '==' and 'is' operators."
+          ]
+        },
+        {
+          "topic_title": "Control Flow: If-Else and Loops",
+          "notes_md": "Control flow statements determine the order in which statements are executed. `if`, `elif`, and `else` statements are used for conditional execution. Loops are used to repeat a block of code multiple times. Python provides `for` and `while` loops. The `for` loop is used to iterate over a sequence (list, tuple, string), while the `while` loop is used to repeat a block of code as long as a condition is true. `break` and `continue` statements can be used to control the flow of loops.\n\n```python\nage = 20\nif age >= 18:\n    print(\"You are an adult.\")\nelse:\n    print(\"You are a minor.\")\n\nfor i in range(5):\n    print(i)\n```",
+          "video_url": "https://www.youtube.com/watch?v=H_8RAqf7w_I",
+          "practice_questions": [
+            "Explain the purpose of if-else statements.",
+            "What is the difference between a for loop and a while loop?",
+            "How do you use the break and continue statements?",
+            "Write a Python program to check if a number is positive, negative, or zero.",
+            "Write a Python program to print the first 10 Fibonacci numbers."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Functions and Modules",
+      "topics": [
+        {
+          "topic_title": "Defining and Calling Functions",
+          "notes_md": "Functions are blocks of reusable code that perform a specific task. They help in organizing code and making it more readable. Functions are defined using the `def` keyword, followed by the function name, parentheses, and a colon. Parameters can be passed to functions. The `return` statement is used to return a value from the function. Calling a function involves using its name followed by parentheses. Python supports default arguments, keyword arguments, and variable-length arguments.\n\n```python\ndef greet(name=\"Guest\"):\n    return f\"Hello, {name}!\"\n\nprint(greet())\nprint(greet(\"Bob\"))\n```",
+          "video_url": "https://www.youtube.com/watch?v=9Os0o3wzS_I",
+          "practice_questions": [
+            "What is a function and why is it useful?",
+            "How do you define a function in Python?",
+            "What are parameters and arguments?",
+            "Write a Python function to calculate the factorial of a number.",
+            "Explain the concept of default arguments."
+          ]
+        },
+        {
+          "topic_title": "Modules and Packages",
+          "notes_md": "A module is a file containing Python definitions and statements. Modules are used to organize code into logical units. Packages are a way of structuring Python's module namespace by using \"dotted module names\". Importing modules is done using the `import` statement. Python has a large standard library of modules for various tasks. Examples include `math`, `random`, `datetime`, and `os`. Packages are directories containing modules and a special file named `__init__.py`.\n\n```python\nimport math\nprint(math.sqrt(16))\n\nimport datetime\nprint(datetime.datetime.now())\n```",
+          "video_url": "https://www.youtube.com/watch?v=q-66N0aN0-Q",
+          "practice_questions": [
+            "What is a module and why is it useful?",
+            "How do you import a module in Python?",
+            "What is a package?",
+            "List some commonly used Python standard library modules.",
+            "Create a simple package with two modules."
+          ]
+        },
+        {
+          "topic_title": "Scope and Lifetime of Variables",
+          "notes_md": "The scope of a variable refers to the region of the code where the variable is accessible. Python has local, global, and nonlocal scopes. A variable defined inside a function has local scope. A variable defined outside any function has global scope. The `global` keyword is used to modify a global variable from within a function. The `nonlocal` keyword is used to modify a variable in the nearest enclosing scope that is not global. The lifetime of a variable is the period during which the variable exists in memory.\n\n```python\nx = 10 # Global variable\n\ndef my_function():\n    y = 5 # Local variable\n    global x\n    x = 20\n    print(x, y)\n\nmy_function()\nprint(x)\n```",
+          "video_url": "https://www.youtube.com/watch?v=QHoz0YKkink",
+          "practice_questions": [
+            "What is the scope of a variable?",
+            "Explain the difference between local and global variables.",
+            "How do you use the global keyword?",
+            "What is the lifetime of a variable?",
+            "Write a Python program to demonstrate the use of local and global variables."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Object-Oriented Programming",
+      "topics": [
+        {
+          "topic_title": "Classes and Objects",
+          "notes_md": "Object-oriented programming (OOP) is a programming paradigm based on the concept of \"objects\", which can contain data, in the form of fields (often known as attributes or properties), and code, in the form of procedures (often known as methods). A class is a blueprint for creating objects. An object is an instance of a class. Classes define attributes and methods. Attributes are variables that store data. Methods are functions that perform operations on the data. The `__init__` method is a special method called the constructor, which is used to initialize the object's attributes.\n\n```python\nclass Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        return \"Woof!\"\n\ndog1 = Dog(\"Buddy\", \"Golden Retriever\")\nprint(dog1.name, dog1.breed)\nprint(dog1.bark())\n```",
+          "video_url": "https://www.youtube.com/watch?v=apACNzPlZtc",
+          "practice_questions": [
+            "What is object-oriented programming?",
+            "What is a class and an object?",
+            "What are attributes and methods?",
+            "What is the purpose of the __init__ method?",
+            "Create a simple class with attributes and methods."
+          ]
+        },
+        {
+          "topic_title": "Inheritance and Polymorphism",
+          "notes_md": "Inheritance is a mechanism by which a class can inherit attributes and methods from another class. The class that inherits is called the child class or subclass, and the class that is inherited from is called the parent class or superclass. Inheritance promotes code reuse and reduces redundancy. Polymorphism is the ability of an object to take on many forms. It allows objects of different classes to be treated as objects of a common type. Polymorphism can be achieved through method overriding and method overloading.\n\n```python\nclass Animal:\n    def speak(self):\n        return \"\"\n\nclass Dog(Animal):\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat(Animal):\n    def speak(self):\n        return \"Meow!\"\n```",
+          "video_url": "https://www.youtube.com/watch?v=RSl87lqOX2o",
+          "practice_questions": [
+            "What is inheritance?",
+            "What is the difference between a child class and a parent class?",
+            "What is polymorphism?",
+            "Explain method overriding and method overloading.",
+            "Write a Python program to demonstrate inheritance and polymorphism."
+          ]
+        },
+        {
+          "topic_title": "Encapsulation and Abstraction",
+          "notes_md": "Encapsulation is the bundling of data and methods that operate on that data within a class, and restricting direct access to some of the object's components. It helps in hiding the internal implementation details of a class and protecting the data from unauthorized access. Abstraction is the process of simplifying complex reality by modeling classes based on essential properties and behaviors. It focuses on what an object does rather than how it does it. Python supports encapsulation through naming conventions (e.g., using a single underscore for protected members and a double underscore for private members).\n\n```python\nclass BankAccount:\n    def __init__(self, balance):\n        self.__balance = balance # Private attribute\n\n    def deposit(self, amount):\n        self.__balance += amount\n\n    def get_balance(self):\n        return self.__balance\n```",
+          "video_url": "https://www.youtube.com/watch?v=Ej_02ICOIgs",
+          "practice_questions": [
+            "What is encapsulation?",
+            "What is abstraction?",
+            "How does Python support encapsulation?",
+            "Explain the difference between public, protected, and private members.",
+            "Write a Python program to demonstrate encapsulation and abstraction."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "File Handling and Exceptions",
+      "topics": [
+        {
+          "topic_title": "Reading and Writing Files",
+          "notes_md": "Python provides built-in functions for reading and writing files. The `open()` function is used to open a file. The mode argument specifies the mode in which the file is opened (e.g., 'r' for reading, 'w' for writing, 'a' for appending). The `read()` method is used to read the entire file. The `readline()` method is used to read a single line. The `write()` method is used to write to a file. It's important to close the file using the `close()` method after you are done with it, or using the `with` statement.\n\n```python\n# Writing to a file\nwith open(\"my_file.txt\", \"w\") as f:\n    f.write(\"Hello, world!\\n\")\n\n# Reading from a file\nwith open(\"my_file.txt\", \"r\") as f:\n    content = f.read()\n    print(content)\n```",
+          "video_url": "https://www.youtube.com/watch?v=Uh2ebFW8OYM",
+          "practice_questions": [
+            "How do you open a file in Python?",
+            "What are the different modes for opening a file?",
+            "How do you read from a file?",
+            "How do you write to a file?",
+            "Write a Python program to read and write to a file."
+          ]
+        },
+        {
+          "topic_title": "Exception Handling",
+          "notes_md": "Exceptions are errors that occur during the execution of a program. Python provides a mechanism for handling exceptions using `try`, `except`, `finally`, and `else` blocks. The `try` block contains the code that might raise an exception. The `except` block contains the code that is executed if an exception occurs. The `finally` block contains the code that is always executed, regardless of whether an exception occurs. The `else` block contains the code that is executed if no exception occurs.\n\n```python\ntry:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero!\")\nfinally:\n    print(\"This will always be executed.\")\n```",
+          "video_url": "https://www.youtube.com/watch?v=niWwJp9x0wk",
+          "practice_questions": [
+            "What is an exception?",
+            "How do you handle exceptions in Python?",
+            "What is the purpose of the try, except, finally, and else blocks?",
+            "What are some common exceptions in Python?",
+            "Write a Python program to handle a specific exception."
+          ]
+        },
+        {
+          "topic_title": "Working with CSV Files",
+          "notes_md": "CSV (Comma Separated Values) files are a common format for storing tabular data. Python's `csv` module provides functions for reading and writing CSV files. The `csv.reader()` function is used to read a CSV file. The `csv.writer()` function is used to write to a CSV file. You can specify the delimiter and quotechar to handle different CSV formats.\n\n```python\nimport csv\n\n# Writing to a CSV file\nwith open(\"data.csv\", \"w\", newline='') as f:\n    writer = csv.writer(f)\n    writer.writerow([\"Name\", \"Age\", \"City\"])\n    writer.writerow([\"Alice\", \"30\", \"New York\"])\n\n# Reading from a CSV file\nwith open(\"data.csv\", \"r\") as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)\n```",
+          "video_url": "https://www.youtube.com/watch?v=q5uM4VKywbA",
+          "practice_questions": [
+            "What is a CSV file?",
+            "How do you read a CSV file in Python?",
+            "How do you write to a CSV file in Python?",
+            "What are delimiters and quotechars?",
+            "Write a Python program to read and process a CSV file."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced Topics",
+      "topics": [
+        {
+          "topic_title": "List Comprehensions",
+          "notes_md": "List comprehensions provide a concise way to create lists in Python. They allow you to create a new list by applying an expression to each item in an existing iterable. They are often more readable and efficient than traditional for loops. List comprehensions can also include conditional statements to filter elements.\n\n```python\n# Creating a list of squares using a list comprehension\nsquares = [x**2 for x in range(10)]\nprint(squares)\n\n# Creating a list of even numbers using a list comprehension with a condition\neven_numbers = [x for x in range(20) if x % 2 == 0]\nprint(even_numbers)\n```",
+          "video_url": "https://www.youtube.com/watch?v=3dt4OGnU5sM",
+          "practice_questions": [
+            "What is a list comprehension?",
+            "How do you create a list using a list comprehension?",
+            "How do you include a conditional statement in a list comprehension?",
+            "Write a list comprehension to create a list of odd numbers between 1 and 20.",
+            "Write a list comprehension to create a list of the first letter of each word in a sentence."
+          ]
+        },
+        {
+          "topic_title": "Lambda Functions",
+          "notes_md": "Lambda functions are anonymous functions that can be defined inline. They are often used for short, simple functions that are only needed once. Lambda functions are defined using the `lambda` keyword, followed by the parameters, a colon, and the expression to be evaluated. Lambda functions can take any number of arguments but can only have one expression.\n\n```python\n# Defining a lambda function to add two numbers\nadd = lambda x, y: x + y\nprint(add(5, 3))\n\n# Using a lambda function with the map() function\nnumbers = [1, 2, 3, 4, 5]\nsquares = list(map(lambda x: x**2, numbers))\nprint(squares)\n```",
+          "video_url": "https://www.youtube.com/watch?v=25ovCm9jKEg",
+          "practice_questions": [
+            "What is a lambda function?",
+            "How do you define a lambda function?",
+            "What are the limitations of lambda functions?",
+            "Write a lambda function to calculate the cube of a number.",
+            "Use a lambda function with the filter() function to filter out even numbers from a list."
+          ]
+        },
+        {
+          "topic_title": "Generators",
+          "notes_md": "Generators are a special kind of function that generates a sequence of values using the `yield` keyword. Unlike regular functions, generators do not return a value and terminate. Instead, they yield a value and pause execution, resuming from where they left off when the next value is requested. Generators are memory-efficient because they generate values on demand, rather than storing them all in memory at once. \n\n```python\ndef fibonacci_generator(n):\n    a, b = 0, 1\n    for _ in range(n):\n        yield a\n        a, b = b, a + b\n\nfor num in fibonacci_generator(10):\n    print(num)\n```",
+          "video_url": "https://www.youtube.com/watch?v=bD05uGo_sVY",
+          "practice_questions": [
+            "What is a generator?",
+            "How do you create a generator function?",
+            "What is the yield keyword?",
+            "What are the benefits of using generators?",
+            "Write a generator function to generate prime numbers."
+          ]
+        }
+      ]
+    }
+  ]
+}

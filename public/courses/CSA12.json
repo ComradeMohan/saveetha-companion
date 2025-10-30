@@ -1,0 +1,159 @@
+{
+  "course_name": "Computer Architecture",
+  "course_code": "CSA12",
+  "units": [
+    {
+      "unit_title": "Introduction to Computer Architecture",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Computer Architecture",
+          "notes_md": "Computer architecture deals with the functional behavior of computer systems as viewed by the programmer. It includes aspects like instruction set architecture (ISA), organization, and hardware. The ISA defines instructions, data types, addressing modes, and registers. Organization encompasses the physical components and their interconnections, while hardware is the physical implementation of the architecture. Key goals include performance, energy efficiency, cost, and reliability. Different architectures, like Von Neumann and Harvard, offer distinct advantages. Von Neumann architecture uses a single address space for both instructions and data, while Harvard architecture uses separate address spaces. Modern systems often incorporate features from both.",
+          "video_url": "https://www.youtube.com/watch?v=42KTvwiBLmk4",
+          "practice_questions": [
+            "What is the difference between computer architecture and computer organization?",
+            "Explain the Von Neumann architecture and its limitations.",
+            "What are the key design considerations in computer architecture?",
+            "Describe the Harvard architecture and its advantages."
+          ]
+        },
+        {
+          "topic_title": "Instruction Set Architecture (ISA)",
+          "notes_md": "The Instruction Set Architecture (ISA) is the interface between hardware and software. It defines the set of instructions that a processor can execute. Important aspects of ISA include instruction formats, addressing modes, data types, and registers. Common types of ISAs include CISC (Complex Instruction Set Computing) and RISC (Reduced Instruction Set Computing). CISC architectures, like x86, have a large number of complex instructions, while RISC architectures, like ARM, have a smaller set of simpler instructions. The choice of ISA significantly impacts performance, complexity, and power consumption.  Understanding the ISA is crucial for optimizing software and designing efficient hardware.",
+          "video_url": "https://www.youtube.com/watch?v=qPG-rJ6-50E",
+          "practice_questions": [
+            "What is an Instruction Set Architecture (ISA)?",
+            "Compare and contrast CISC and RISC architectures.",
+            "Explain different types of addressing modes.",
+            "What are the key components of an ISA?"
+          ]
+        },
+        {
+          "topic_title": "Performance Metrics",
+          "notes_md": "Evaluating computer performance is critical for designing and optimizing systems. Common performance metrics include execution time, throughput, instruction per cycle (IPC), and clock rate. Execution time measures the time taken to execute a program, while throughput measures the number of tasks completed per unit time. IPC indicates the average number of instructions executed per clock cycle. Amdahl's Law states that the performance improvement from an enhancement is limited by the fraction of time the enhancement is used.  Benchmarking involves running standard programs to compare the performance of different systems.  Performance analysis requires considering various factors, including hardware, software, and workload.",
+          "video_url": "https://www.youtube.com/watch?v=u2c-gmdYj3U",
+          "practice_questions": [
+            "What are the key performance metrics used in computer architecture?",
+            "Explain Amdahl's Law and its implications.",
+            "How is performance measured using benchmarks?",
+            "What factors affect computer performance?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Processor Design",
+      "topics": [
+        {
+          "topic_title": "Single-Cycle Processor",
+          "notes_md": "A single-cycle processor executes each instruction in a single clock cycle. While simple to design, it's inefficient due to the cycle time being determined by the slowest instruction. The datapath consists of components like instruction memory, register file, ALU, and data memory. Control signals determine the operation of each component. The control unit generates these signals based on the instruction's opcode. The advantage is simplicity in design, but the disadvantage is the low clock frequency due to the long cycle time. This architecture is primarily used for educational purposes to illustrate the basic concepts of processor design.",
+          "video_url": "https://www.youtube.com/watch?v=B5tnyh20lVA",
+          "practice_questions": [
+            "Explain the operation of a single-cycle processor.",
+            "What are the advantages and disadvantages of a single-cycle processor?",
+            "Describe the datapath components of a single-cycle processor.",
+            "How are control signals generated in a single-cycle processor?"
+          ]
+        },
+        {
+          "topic_title": "Multi-Cycle Processor",
+          "notes_md": "A multi-cycle processor breaks down instruction execution into multiple clock cycles, allowing for a shorter clock cycle time compared to a single-cycle processor. Each instruction is executed in a sequence of steps, such as instruction fetch, decode, execute, memory access, and write back. This approach improves performance by allowing different instructions to take varying numbers of cycles. The control unit is more complex, as it needs to manage the sequence of operations for each instruction.  While more complex than a single-cycle processor, the multi-cycle design offers a better balance between performance and complexity.",
+          "video_url": "https://www.youtube.com/watch?v=yP-LpW_t2gI",
+          "practice_questions": [
+            "Explain the operation of a multi-cycle processor.",
+            "What are the advantages and disadvantages of a multi-cycle processor?",
+            "Describe the different stages in a multi-cycle instruction execution.",
+            "How does a multi-cycle processor improve performance compared to a single-cycle processor?"
+          ]
+        },
+        {
+          "topic_title": "Pipelining",
+          "notes_md": "Pipelining is a technique that allows multiple instructions to be in different stages of execution simultaneously. This improves throughput by overlapping the execution of instructions. Hazards, such as data hazards, control hazards, and structural hazards, can limit the performance of pipelined processors. Data hazards occur when an instruction depends on the result of a previous instruction. Control hazards occur due to branch instructions. Structural hazards occur when multiple instructions require the same resource at the same time. Techniques like forwarding, stalling, and branch prediction are used to mitigate these hazards.  Pipelining is a fundamental technique for improving processor performance.",
+          "video_url": "https://www.youtube.com/watch?v=fRY9Yvj9pSo",
+          "practice_questions": [
+            "Explain the concept of pipelining.",
+            "What are the different types of hazards in pipelined processors?",
+            "How are data hazards resolved in pipelined processors?",
+            "How are control hazards resolved in pipelined processors?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Memory System",
+      "topics": [
+        {
+          "topic_title": "Cache Memory",
+          "notes_md": "Cache memory is a small, fast memory that stores frequently accessed data to reduce the average memory access time. It operates on the principle of locality, which states that programs tend to access data and instructions that are located near each other in memory. Cache organization includes direct-mapped, fully associative, and set-associative caches. Cache performance is measured by hit rate and miss rate. Cache replacement policies, such as LRU (Least Recently Used) and FIFO (First-In, First-Out), determine which cache line to replace when a miss occurs.  Cache memory is essential for improving system performance.",
+          "video_url": "https://www.youtube.com/watch?v=WnykjaNw_tc",
+          "practice_questions": [
+            "What is cache memory and why is it important?",
+            "Explain the principle of locality.",
+            "Describe different types of cache organizations.",
+            "What are cache hit rate and miss rate?",
+            "Explain different cache replacement policies."
+          ]
+        },
+        {
+          "topic_title": "Virtual Memory",
+          "notes_md": "Virtual memory allows programs to access more memory than is physically available. It uses a combination of RAM and disk space to create a larger address space. Virtual addresses are translated to physical addresses using a page table. Page faults occur when a program tries to access a page that is not in physical memory, requiring the page to be loaded from disk. Page replacement algorithms, such as LRU, determine which page to evict from memory when a page fault occurs.  Virtual memory is essential for modern operating systems.",
+          "video_url": "https://www.youtube.com/watch?v=6C-w9dgJt0E",
+          "practice_questions": [
+            "What is virtual memory and why is it needed?",
+            "Explain how virtual addresses are translated to physical addresses.",
+            "What is a page fault and how is it handled?",
+            "Describe different page replacement algorithms."
+          ]
+        },
+        {
+          "topic_title": "Memory Hierarchy",
+          "notes_md": "A memory hierarchy consists of multiple levels of memory with different speeds and costs. The levels typically include cache, main memory (RAM), and secondary storage (disk). The goal is to provide fast access to frequently used data while providing a large storage capacity. Data moves between levels of the hierarchy based on demand. The memory hierarchy exploits the principle of locality to improve performance. The design of the memory hierarchy is a critical aspect of computer architecture.  Efficient memory hierarchies are crucial for achieving high performance.",
+          "video_url": "https://www.youtube.com/watch?v=t3g5lUfK8hQ",
+          "practice_questions": [
+            "What is a memory hierarchy?",
+            "Explain the different levels of a typical memory hierarchy.",
+            "How does the memory hierarchy improve performance?",
+            "What is the role of locality in the memory hierarchy?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Input/Output (I/O) Systems",
+      "topics": [
+        {
+          "topic_title": "I/O Devices and Interfaces",
+          "notes_md": "Input/Output (I/O) devices allow the computer to interact with the external world. Common I/O devices include keyboards, mice, monitors, and storage devices. I/O interfaces provide a standard way for devices to connect to the system. Common interfaces include USB, SATA, and PCIe. I/O devices have different characteristics in terms of speed, latency, and data transfer rates. The design of I/O systems is crucial for overall system performance. Efficient I/O handling is essential for responsive and reliable systems.",
+          "video_url": "https://www.youtube.com/watch?v=U5T_c-l8N_Y",
+          "practice_questions": [
+            "What are I/O devices?",
+            "Explain different types of I/O interfaces.",
+            "What are the key characteristics of I/O devices?",
+            "Why is efficient I/O handling important?"
+          ]
+        },
+        {
+          "topic_title": "I/O Techniques",
+          "notes_md": "Different I/O techniques are used to manage data transfer between the processor and I/O devices. Polling involves the processor repeatedly checking the status of an I/O device. Interrupts allow I/O devices to signal the processor when they are ready to transfer data. Direct Memory Access (DMA) allows I/O devices to transfer data directly to memory without involving the processor. Each technique has its advantages and disadvantages in terms of overhead and efficiency. The choice of I/O technique depends on the specific application and device characteristics.",
+          "video_url": "https://www.youtube.com/watch?v=eSAQ3f3-r9A",
+          "practice_questions": [
+            "Explain the polling I/O technique.",
+            "Explain the interrupt-driven I/O technique.",
+            "What is Direct Memory Access (DMA)?",
+            "Compare and contrast different I/O techniques."
+          ]
+        },
+        {
+          "topic_title": "RAID",
+          "notes_md": "RAID (Redundant Array of Independent Disks) is a technology that combines multiple physical disks into a single logical unit to improve performance, reliability, or both. Different RAID levels offer different trade-offs between performance, redundancy, and cost. RAID 0 (striping) improves performance by distributing data across multiple disks, but provides no redundancy. RAID 1 (mirroring) provides redundancy by duplicating data on multiple disks. RAID 5 uses striping with parity to provide both performance and redundancy. RAID 6 uses striping with dual parity for even greater redundancy. The choice of RAID level depends on the specific application requirements.",
+          "video_url": "https://www.youtube.com/watch?v=1zK8nZek94Q",
+          "practice_questions": [
+            "What is RAID?",
+            "Explain different RAID levels.",
+            "What are the advantages and disadvantages of each RAID level?",
+            "When would you use each RAID level?"
+          ]
+        }
+      ]
+    }
+  ]
+}

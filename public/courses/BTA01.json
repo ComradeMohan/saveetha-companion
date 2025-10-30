@@ -1,0 +1,169 @@
+{
+  "course_name": "Biology and Environmental Science for Engineers",
+  "course_code": "BTA01",
+  "units": [
+    {
+      "unit_title": "Introduction to Biology and Ecology",
+      "topics": [
+        {
+          "topic_title": "Basic Concepts of Biology",
+          "notes_md": "Biology is the science of life. It encompasses a wide range of disciplines, from molecular biology to ecology. Key concepts include cell theory (all living organisms are composed of cells), genetics (inheritance of traits), evolution (change in heritable characteristics of biological populations over successive generations), and homeostasis (maintenance of a stable internal environment). Understanding these concepts is crucial for engineers designing bio-inspired systems or assessing the environmental impact of their projects.  For example, engineers designing wastewater treatment plants need to understand microbial metabolism to optimize treatment processes. The study of biology is interconnected with other sciences like chemistry and physics.  Consider the role of enzymes as biological catalysts; their activity depends on their structure which is governed by chemical bonding and physical forces.",
+          "video_url": "https://www.youtube.com/watch?v=Hkx4EQPGlWI",
+          "practice_questions": [
+            "What are the key tenets of cell theory?",
+            "Explain the concept of homeostasis.",
+            "How does evolution contribute to biodiversity?",
+            "Describe the relationship between biology and engineering in the context of environmental sustainability."
+          ]
+        },
+        {
+          "topic_title": "Ecosystems and Biodiversity",
+          "notes_md": "An ecosystem is a community of interacting organisms (biotic components) and their physical environment (abiotic components). Ecosystems can be of varying scales, from a small pond to a vast forest. Biodiversity refers to the variety of life at all levels of biological organization, from genes to ecosystems. High biodiversity is essential for ecosystem stability and resilience. Engineers must consider the impact of their projects on ecosystems and biodiversity. For instance, construction projects can lead to habitat loss and fragmentation, impacting species populations. Sustainable engineering practices aim to minimize these impacts and promote biodiversity conservation. Understanding food webs and trophic levels is essential for assessing ecosystem health.  Ecosystem services, such as pollination and water purification, are crucial for human well-being.",
+          "video_url": "https://www.youtube.com/watch?v=qL-X3R-YU5c",
+          "practice_questions": [
+            "Define an ecosystem and its components.",
+            "Explain the importance of biodiversity.",
+            "How can engineering projects impact ecosystems?",
+            "What are ecosystem services and why are they important?",
+            "Describe the relationship between biodiversity and ecosystem stability."
+          ]
+        },
+        {
+          "topic_title": "Environmental Pollution",
+          "notes_md": "Environmental pollution is the contamination of the environment by harmful substances. Major types of pollution include air pollution, water pollution, and soil pollution. Air pollution is caused by emissions from vehicles, industries, and power plants. Water pollution is caused by industrial discharge, agricultural runoff, and sewage. Soil pollution is caused by pesticides, herbicides, and industrial waste. Pollution has significant impacts on human health and the environment. Engineers play a crucial role in developing technologies to prevent and mitigate pollution. This includes designing cleaner energy systems, developing wastewater treatment technologies, and remediating contaminated sites. Pollution control strategies often involve a combination of technological solutions and policy interventions.  For example, catalytic converters in vehicles reduce harmful emissions.",
+          "video_url": "https://www.youtube.com/watch?v=74PmEw6t-jI",
+          "practice_questions": [
+            "List the major types of environmental pollution.",
+            "What are the primary sources of air pollution?",
+            "How does water pollution affect human health?",
+            "Describe the role of engineers in pollution control.",
+            "Explain the difference between point and non-point sources of pollution."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Energy Resources and Environmental Impact",
+      "topics": [
+        {
+          "topic_title": "Renewable and Non-Renewable Energy Resources",
+          "notes_md": "Energy resources are essential for modern society. They can be classified as renewable (e.g., solar, wind, hydro, geothermal, biomass) and non-renewable (e.g., fossil fuels, nuclear). Non-renewable resources are finite and their extraction and use have significant environmental impacts, including greenhouse gas emissions and habitat destruction. Renewable resources are sustainable and have lower environmental impacts, but they also have challenges such as intermittency and land use requirements. Engineers are at the forefront of developing and implementing renewable energy technologies.  For example, solar panel efficiency is continually improving.  The transition to a sustainable energy future requires a combination of technological innovation, policy support, and behavioral changes. Energy storage technologies, such as batteries and pumped hydro storage, are crucial for integrating intermittent renewable energy sources into the grid.",
+          "video_url": "https://www.youtube.com/watch?v=1kUEKiWwN0s",
+          "practice_questions": [
+            "What are the differences between renewable and non-renewable energy resources?",
+            "List the environmental impacts of fossil fuel use.",
+            "Describe the advantages and disadvantages of solar energy.",
+            "How can energy storage technologies support renewable energy integration?",
+            "Explain the concept of energy efficiency and its importance."
+          ]
+        },
+        {
+          "topic_title": "Climate Change and its Impacts",
+          "notes_md": "Climate change refers to long-term shifts in temperatures and weather patterns. It is primarily caused by human activities, particularly the burning of fossil fuels, which release greenhouse gases into the atmosphere. Greenhouse gases trap heat and cause the Earth's temperature to rise. Climate change has numerous impacts, including rising sea levels, more frequent and intense heatwaves, changes in precipitation patterns, and ocean acidification. Engineers play a critical role in mitigating climate change by developing technologies to reduce greenhouse gas emissions and adapting to the impacts of climate change. Carbon capture and storage (CCS) is one example of a technology that can reduce CO2 emissions from power plants. Coastal engineering projects can help protect communities from rising sea levels.",
+          "video_url": "https://www.youtube.com/watch?v=JxiF2I_spvQ",
+          "practice_questions": [
+            "What is climate change and what are its primary causes?",
+            "List the major impacts of climate change.",
+            "How can engineers contribute to climate change mitigation?",
+            "What is carbon capture and storage (CCS)?",
+            "Describe the concept of climate change adaptation."
+          ]
+        },
+        {
+          "topic_title": "Environmental Impact Assessment (EIA)",
+          "notes_md": "Environmental Impact Assessment (EIA) is a systematic process for evaluating the potential environmental impacts of a proposed project or development. The goal of EIA is to ensure that environmental considerations are integrated into decision-making. EIA typically involves screening, scoping, impact analysis, mitigation, and monitoring. Engineers are often involved in conducting EIAs for infrastructure projects, industrial facilities, and other developments. EIA reports provide information to decision-makers and the public about the potential environmental consequences of a project. Effective EIA can help minimize environmental damage and promote sustainable development.  For instance, an EIA for a new highway project would assess impacts on air quality, water resources, and wildlife habitats.  Public consultation is an important part of the EIA process.",
+          "video_url": "https://www.youtube.com/watch?v=6s-W0nVaF-M",
+          "practice_questions": [
+            "What is Environmental Impact Assessment (EIA)?",
+            "List the key steps in the EIA process.",
+            "Why is public consultation important in EIA?",
+            "How can EIA help promote sustainable development?",
+            "What are the roles of engineers in conducting EIAs?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Water Resources and Management",
+      "topics": [
+        {
+          "topic_title": "Water Cycle and Water Resources",
+          "notes_md": "The water cycle (or hydrologic cycle) describes the continuous movement of water on, above, and below the surface of the Earth. Key processes include evaporation, transpiration, condensation, precipitation, and runoff. Water resources include surface water (rivers, lakes, reservoirs) and groundwater (aquifers). Water resources are essential for human consumption, agriculture, industry, and ecosystems. Water scarcity is a growing problem in many parts of the world due to population growth, climate change, and unsustainable water management practices. Engineers play a crucial role in managing water resources sustainably.  For example, designing efficient irrigation systems to reduce water waste in agriculture. Understanding the water balance equation is fundamental for water resource management.",
+          "video_url": "https://www.youtube.com/watch?v=oaeqt5jE40s",
+          "practice_questions": [
+            "Describe the water cycle and its key processes.",
+            "What are the major sources of water resources?",
+            "What are the causes of water scarcity?",
+            "How can engineers contribute to sustainable water management?",
+            "Explain the concept of the water balance equation."
+          ]
+        },
+        {
+          "topic_title": "Water Treatment and Wastewater Treatment",
+          "notes_md": "Water treatment is the process of removing contaminants from water to make it safe for drinking or other uses. Common water treatment processes include filtration, sedimentation, coagulation, disinfection, and fluoridation. Wastewater treatment is the process of removing pollutants from wastewater before it is discharged back into the environment. Wastewater treatment processes typically involve primary, secondary, and tertiary treatment. Primary treatment removes solids and other large debris. Secondary treatment removes organic matter and other pollutants. Tertiary treatment removes specific pollutants such as nutrients or pathogens. Engineers design and operate water and wastewater treatment plants.  For instance, designing efficient aeration systems for secondary treatment.  The goal is to protect public health and the environment.",
+          "video_url": "https://www.youtube.com/watch?v=9oTh8J-vdQk",
+          "practice_questions": [
+            "What are the common processes used in water treatment?",
+            "Describe the different stages of wastewater treatment.",
+            "Why is water treatment important for public health?",
+            "How can engineers improve the efficiency of wastewater treatment plants?",
+            "Explain the difference between primary, secondary, and tertiary wastewater treatment."
+          ]
+        },
+        {
+          "topic_title": "Water Quality and Pollution",
+          "notes_md": "Water quality refers to the chemical, physical, and biological characteristics of water. Water pollution is the contamination of water bodies by pollutants. Common water pollutants include pathogens, nutrients, toxic chemicals, and sediments. Water pollution can have significant impacts on human health and ecosystems. Engineers play a crucial role in monitoring water quality and developing technologies to prevent and remediate water pollution. Water quality standards are established by regulatory agencies to protect water resources.  For example, monitoring dissolved oxygen levels in rivers to assess water quality.  Implementing best management practices (BMPs) in agriculture can reduce nutrient runoff.",
+          "video_url": "https://www.youtube.com/watch?v=L-eB830YyJk",
+          "practice_questions": [
+            "What are the key indicators of water quality?",
+            "List the common types of water pollutants.",
+            "How does water pollution affect human health and ecosystems?",
+            "How can engineers monitor water quality?",
+            "Explain the importance of water quality standards."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Waste Management and Sustainable Practices",
+      "topics": [
+        {
+          "topic_title": "Solid Waste Management",
+          "notes_md": "Solid waste management involves the collection, transportation, processing, recycling, and disposal of solid waste materials. Common methods of solid waste management include landfills, incineration, composting, and recycling. Landfills are the most common method of waste disposal, but they can pose environmental risks such as leachate contamination and greenhouse gas emissions. Incineration reduces the volume of waste, but it can also release air pollutants. Composting is a biological process that decomposes organic waste. Recycling involves processing waste materials into new products. Engineers play a crucial role in designing and managing solid waste management systems.  For instance, designing landfill liners to prevent leachate contamination.  The hierarchy of waste management prioritizes reduction, reuse, and recycling over disposal.",
+          "video_url": "https://www.youtube.com/watch?v=Vw91GbkJg04",
+          "practice_questions": [
+            "List the common methods of solid waste management.",
+            "What are the environmental risks associated with landfills?",
+            "What are the benefits of recycling?",
+            "How can engineers improve solid waste management systems?",
+            "Explain the hierarchy of waste management."
+          ]
+        },
+        {
+          "topic_title": "Hazardous Waste Management",
+          "notes_md": "Hazardous waste is waste that poses a substantial threat to human health or the environment. Hazardous waste can be toxic, corrosive, flammable, or reactive. Proper management of hazardous waste is essential to prevent environmental contamination and protect human health. Hazardous waste management involves identification, storage, treatment, and disposal. Treatment methods include chemical treatment, thermal treatment, and biological treatment. Disposal methods include secure landfills and deep-well injection. Engineers play a critical role in designing and implementing hazardous waste management systems.  For example, designing secure storage facilities for hazardous waste.  Regulations such as the Resource Conservation and Recovery Act (RCRA) govern hazardous waste management in the United States.",
+          "video_url": "https://www.youtube.com/watch?v=i1bV6vVy54A",
+          "practice_questions": [
+            "What is hazardous waste?",
+            "List the characteristics of hazardous waste.",
+            "Describe the methods used to treat hazardous waste.",
+            "How can engineers contribute to hazardous waste management?",
+            "What are the key regulations governing hazardous waste management?"
+          ]
+        },
+        {
+          "topic_title": "Sustainable Development and Engineering Ethics",
+          "notes_md": "Sustainable development is development that meets the needs of the present without compromising the ability of future generations to meet their own needs. It involves balancing economic, social, and environmental considerations. Engineering ethics are the principles and standards that guide engineers in their professional conduct. Engineers have a responsibility to protect the environment and promote sustainable development. This includes designing environmentally friendly products and processes, minimizing pollution, and conserving resources. Ethical considerations are crucial in engineering decision-making, especially when dealing with complex environmental issues. Engineers must consider the long-term consequences of their actions and prioritize the well-being of society and the environment. For instance, choosing sustainable materials for construction projects.  Adhering to codes of ethics is essential for maintaining public trust.",
+          "video_url": "https://www.youtube.com/watch?v=ypBNDxWvQ-8",
+          "practice_questions": [
+            "What is sustainable development?",
+            "Explain the relationship between engineering and sustainable development.",
+            "What are engineering ethics?",
+            "How can engineers promote environmental sustainability?",
+            "Describe the ethical considerations involved in engineering decision-making."
+          ]
+        }
+      ]
+    }
+  ]
+}

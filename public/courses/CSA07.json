@@ -1,0 +1,211 @@
+{
+  "course_name": "Computer Networks",
+  "course_code": "CSA07",
+  "units": [
+    {
+      "unit_title": "Introduction to Computer Networks",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Computer Networks",
+          "notes_md": "A computer network is a set of devices (nodes) connected by communication links. These devices can be computers, servers, routers, switches, or any other equipment capable of sending and receiving data. The primary goal of a computer network is to enable resource sharing, such as files, printers, and internet access. Networks are classified based on their geographical span: LAN (Local Area Network), MAN (Metropolitan Area Network), and WAN (Wide Area Network). \n\nKey components include: nodes, links, protocols (TCP/IP, HTTP), and network architecture (client-server, peer-to-peer). Protocols define the rules for communication between devices. Network architecture defines how devices are organized and interact. Understanding these fundamentals is crucial for designing, implementing, and managing computer networks effectively.\n\nFor example, consider a simple LAN in an office. Computers, printers, and servers are connected via Ethernet cables and a switch, allowing employees to share files and access the internet through a router.",
+          "video_url": "https://www.youtube.com/watch?v=qiQR5rTSshw",
+          "practice_questions": [
+            "What is a computer network?",
+            "Explain the difference between LAN, MAN, and WAN.",
+            "What are the key components of a computer network?",
+            "Describe the client-server and peer-to-peer network architectures.",
+            "What is the role of protocols in computer networks?"
+          ]
+        },
+        {
+          "topic_title": "Network Topologies",
+          "notes_md": "Network topology refers to the arrangement of nodes and connections in a network. Common topologies include: Bus, Star, Ring, Mesh, and Tree. Each topology has its advantages and disadvantages. \n\n*   **Bus Topology:** All devices connect to a central cable (bus). Simple but suffers from single point of failure.\n*   **Star Topology:** All devices connect to a central hub or switch. Easy to manage but relies on the central device.\n*   **Ring Topology:** Each device connects to two neighbors, forming a ring. Data travels in one direction.\n*   **Mesh Topology:** Each device connects to multiple devices, providing redundancy. Expensive but highly reliable.\n*   **Tree Topology:** A hierarchical structure combining aspects of star and bus topologies.\n\nThe choice of topology depends on factors such as cost, reliability, scalability, and ease of management. Understanding the characteristics of each topology is essential for network design. For example, a critical infrastructure might use a mesh topology for high availability.",
+          "video_url": "https://www.youtube.com/watch?v=E2vJ-w-3P5A",
+          "practice_questions": [
+            "What is network topology?",
+            "Describe the characteristics of bus topology.",
+            "What are the advantages and disadvantages of star topology?",
+            "Explain how data travels in a ring topology.",
+            "When would you use a mesh topology?"
+          ]
+        },
+        {
+          "topic_title": "Network Models: OSI and TCP/IP",
+          "notes_md": "Network models provide a conceptual framework for understanding how communication occurs across a network. The two primary models are the OSI (Open Systems Interconnection) model and the TCP/IP model. The OSI model has seven layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application. The TCP/IP model has four layers: Link, Internet, Transport, and Application. \n\n*   **OSI Model:** Provides a detailed breakdown of network functions.\n*   **TCP/IP Model:** The foundation of the internet and most modern networks.\n\nUnderstanding these models helps in troubleshooting network issues and designing network protocols. For example, when debugging a network connection problem, you can systematically check each layer of the OSI or TCP/IP model to identify the source of the issue.",
+          "video_url": "https://www.youtube.com/watch?v=VwN9tc0B-X4",
+          "practice_questions": [
+            "What are network models?",
+            "Describe the layers of the OSI model.",
+            "What are the layers of the TCP/IP model?",
+            "What is the purpose of the OSI model?",
+            "How does the TCP/IP model relate to the internet?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Data Transmission and Physical Layer",
+      "topics": [
+        {
+          "topic_title": "Data Encoding and Modulation Techniques",
+          "notes_md": "Data encoding and modulation techniques are used to convert digital data into analog signals suitable for transmission over physical media. Common encoding techniques include NRZ (Non-Return to Zero), RZ (Return to Zero), Manchester, and Differential Manchester. Modulation techniques include Amplitude Shift Keying (ASK), Frequency Shift Keying (FSK), and Phase Shift Keying (PSK). \n\n*   **Encoding:** Transforms digital data into a digital signal.\n*   **Modulation:** Transforms digital data into an analog signal.\n\nThe choice of encoding and modulation techniques depends on factors such as bandwidth, noise immunity, and power consumption. For example, fiber optic cables often use advanced modulation techniques to transmit data at high speeds with minimal signal degradation.",
+          "video_url": "https://www.youtube.com/watch?v=4cWKyU0QYpY",
+          "practice_questions": [
+            "What are data encoding and modulation?",
+            "Describe NRZ encoding.",
+            "Explain the difference between ASK, FSK, and PSK.",
+            "What factors influence the choice of encoding and modulation techniques?",
+            "What is the purpose of data encoding and modulation?"
+          ]
+        },
+        {
+          "topic_title": "Transmission Media: Guided and Unguided",
+          "notes_md": "Transmission media are the physical pathways through which data travels in a network. They are categorized into guided (wired) and unguided (wireless) media. Guided media include twisted pair cables, coaxial cables, and fiber optic cables. Unguided media include radio waves, microwaves, and infrared. \n\n*   **Guided Media:** Provide a physical path for data transmission.\n*   **Unguided Media:** Use electromagnetic waves to transmit data.\n\nEach type of media has its own characteristics in terms of bandwidth, distance, cost, and susceptibility to interference. For example, fiber optic cables offer high bandwidth and low interference, making them suitable for long-distance communication.",
+          "video_url": "https://www.youtube.com/watch?v=m8k80Ld3i58",
+          "practice_questions": [
+            "What are transmission media?",
+            "Describe the different types of guided media.",
+            "What are the characteristics of unguided media?",
+            "What are the advantages of fiber optic cables?",
+            "Compare and contrast guided and unguided media."
+          ]
+        },
+        {
+          "topic_title": "Multiplexing Techniques: FDM, TDM, CDM",
+          "notes_md": "Multiplexing allows multiple signals or data streams to be transmitted simultaneously over a single communication channel. Common multiplexing techniques include Frequency Division Multiplexing (FDM), Time Division Multiplexing (TDM), and Code Division Multiplexing (CDM). \n\n*   **FDM:** Divides the available bandwidth into frequency channels.\n*   **TDM:** Divides the available time into time slots.\n*   **CDM:** Uses unique codes to allow multiple users to share the same frequency band.\n\nMultiplexing increases the efficiency of data transmission by utilizing the available bandwidth more effectively. For example, cellular networks use CDM to allow multiple users to share the same cell.",
+          "video_url": "https://www.youtube.com/watch?v=fK2dC_jQ3u0",
+          "practice_questions": [
+            "What is multiplexing?",
+            "Describe how FDM works.",
+            "Explain the principles of TDM.",
+            "How does CDM allow multiple users to share the same channel?",
+            "What are the benefits of multiplexing?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Data Link Layer",
+      "topics": [
+        {
+          "topic_title": "Error Detection and Correction",
+          "notes_md": "Error detection and correction techniques are used to ensure the reliability of data transmission. Errors can occur due to noise or interference during transmission. Common error detection methods include parity checks, checksums, and Cyclic Redundancy Check (CRC). Error correction methods include Hamming codes and forward error correction (FEC). \n\n*   **Error Detection:** Identifies the presence of errors.\n*   **Error Correction:** Corrects errors without retransmission.\n\nCRC is widely used due to its high accuracy and efficiency. For example, Ethernet uses CRC-32 for error detection. Hamming codes are used in memory systems to correct single-bit errors.",
+          "video_url": "https://www.youtube.com/watch?v=THw6hWqjF_4",
+          "practice_questions": [
+            "Why is error detection and correction important?",
+            "Describe how parity checks work.",
+            "Explain the principles of CRC.",
+            "What are Hamming codes used for?",
+            "Compare and contrast error detection and error correction."
+          ]
+        },
+        {
+          "topic_title": "Flow Control and Congestion Control",
+          "notes_md": "Flow control and congestion control mechanisms are used to manage the flow of data in a network and prevent network congestion. Flow control ensures that a sender does not overwhelm a receiver with data. Congestion control manages the overall traffic in the network to prevent bottlenecks. Common flow control techniques include stop-and-wait and sliding window protocols. Congestion control techniques include TCP congestion control algorithms (e.g., Tahoe, Reno, NewReno, CUBIC). \n\n*   **Flow Control:** Manages the data flow between two nodes.\n*   **Congestion Control:** Manages the overall network traffic.\n\nEffective flow control and congestion control are essential for maintaining network performance and stability. For example, TCP uses congestion control algorithms to adjust the sending rate based on network conditions.",
+          "video_url": "https://www.youtube.com/watch?v=pCjL-s_Fg5E",
+          "practice_questions": [
+            "What is flow control?",
+            "Describe the stop-and-wait protocol.",
+            "Explain the principles of sliding window protocols.",
+            "What is congestion control?",
+            "How does TCP implement congestion control?"
+          ]
+        },
+        {
+          "topic_title": "Medium Access Control (MAC) Protocols",
+          "notes_md": "Medium Access Control (MAC) protocols govern how multiple devices share a common communication channel. These protocols are essential in shared media networks like Ethernet and Wi-Fi. Common MAC protocols include ALOHA, CSMA/CD (Carrier Sense Multiple Access with Collision Detection), and CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance). \n\n*   **ALOHA:** A simple protocol where nodes transmit whenever they have data.\n*   **CSMA/CD:** Used in Ethernet to detect and resolve collisions.\n*   **CSMA/CA:** Used in Wi-Fi to avoid collisions.\n\nThe choice of MAC protocol depends on the network environment and the desired performance characteristics. For example, Wi-Fi uses CSMA/CA to minimize collisions in wireless networks.",
+          "video_url": "https://www.youtube.com/watch?v=Bq-29-gE3bQ",
+          "practice_questions": [
+            "What is a MAC protocol?",
+            "Describe the ALOHA protocol.",
+            "Explain how CSMA/CD works.",
+            "What is the difference between CSMA/CD and CSMA/CA?",
+            "Why is CSMA/CA used in Wi-Fi?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Network Layer",
+      "topics": [
+        {
+          "topic_title": "IP Addressing and Subnetting",
+          "notes_md": "IP addressing is the process of assigning unique addresses to devices on a network. IPv4 addresses are 32-bit addresses, while IPv6 addresses are 128-bit addresses. Subnetting is the process of dividing a network into smaller subnetworks to improve network efficiency and security. Subnet masks are used to identify the network and host portions of an IP address. \n\n*   **IPv4:** The most widely used IP addressing scheme.\n*   **IPv6:** The next-generation IP addressing scheme.\n*   **Subnetting:** Divides a network into smaller subnetworks.\n\nUnderstanding IP addressing and subnetting is crucial for network administration and design. For example, subnetting can be used to isolate different departments within an organization.",
+          "video_url": "https://www.youtube.com/watch?v=bjNw-W8620U",
+          "practice_questions": [
+            "What is IP addressing?",
+            "Describe the structure of an IPv4 address.",
+            "What is the purpose of subnetting?",
+            "Explain how subnet masks work.",
+            "What are the advantages of IPv6?"
+          ]
+        },
+        {
+          "topic_title": "Routing Algorithms: Distance Vector and Link State",
+          "notes_md": "Routing algorithms determine the best path for data packets to travel from source to destination. Two common types of routing algorithms are distance vector and link state algorithms. Distance vector algorithms (e.g., RIP) exchange routing information with neighboring routers. Link state algorithms (e.g., OSPF) maintain a complete map of the network topology. \n\n*   **Distance Vector:** Relies on information from neighbors.\n*   **Link State:** Maintains a complete network map.\n\nLink state algorithms generally converge faster and are more scalable than distance vector algorithms. For example, OSPF is commonly used in enterprise networks due to its scalability and efficiency.",
+          "video_url": "https://www.youtube.com/watch?v=5Js09lT0k8c",
+          "practice_questions": [
+            "What is a routing algorithm?",
+            "Describe how distance vector algorithms work.",
+            "Explain the principles of link state algorithms.",
+            "What are the advantages of link state algorithms over distance vector algorithms?",
+            "Give an example of a distance vector routing protocol and a link state routing protocol."
+          ]
+        },
+        {
+          "topic_title": "Network Address Translation (NAT)",
+          "notes_md": "Network Address Translation (NAT) is a technique used to map private IP addresses to public IP addresses. NAT allows multiple devices on a private network to share a single public IP address, conserving public IP addresses. NAT also provides a level of security by hiding the internal network structure from the outside world. \n\n*   **NAT:** Translates private IP addresses to public IP addresses.\n\nThere are different types of NAT, including static NAT, dynamic NAT, and Port Address Translation (PAT). PAT allows multiple devices to share the same public IP address using different port numbers. NAT is commonly used in home and small office networks to connect to the internet.",
+          "video_url": "https://www.youtube.com/watch?v=F10eG-Fv7W0",
+          "practice_questions": [
+            "What is NAT?",
+            "Why is NAT used?",
+            "Describe the different types of NAT.",
+            "How does PAT work?",
+            "What are the benefits of using NAT?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Transport Layer and Application Layer",
+      "topics": [
+        {
+          "topic_title": "TCP and UDP Protocols",
+          "notes_md": "TCP (Transmission Control Protocol) and UDP (User Datagram Protocol) are the two primary transport layer protocols. TCP is a connection-oriented, reliable protocol that provides ordered and error-checked delivery of data. UDP is a connectionless, unreliable protocol that provides fast but potentially unreliable delivery of data. \n\n*   **TCP:** Connection-oriented and reliable.\n*   **UDP:** Connectionless and unreliable.\n\nTCP is used for applications that require reliable data transfer, such as web browsing and email. UDP is used for applications that can tolerate some data loss, such as streaming video and online gaming. The choice between TCP and UDP depends on the application's requirements.",
+          "video_url": "https://www.youtube.com/watch?v=W-tlb1735-4",
+          "practice_questions": [
+            "What are TCP and UDP?",
+            "Describe the characteristics of TCP.",
+            "Explain the principles of UDP.",
+            "What are the advantages and disadvantages of TCP and UDP?",
+            "Give examples of applications that use TCP and UDP."
+          ]
+        },
+        {
+          "topic_title": "Socket Programming",
+          "notes_md": "Socket programming is a way of creating network applications using sockets, which are endpoints of a communication flow between two nodes on a network. Sockets allow applications to send and receive data over a network using protocols like TCP and UDP. Socket programming involves creating sockets, binding them to addresses, listening for connections, accepting connections, and sending/receiving data. \n\nHere's a simple example in Python:\n```python\nimport socket\n\n# Create a TCP socket\ns = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n\n# Bind the socket to a port\ns.bind(('localhost', 12345))\n\n# Listen for incoming connections\ns.listen(1)\n\n# Accept a connection\nconn, addr = s.accept()\n\n# Receive data\ndata = conn.recv(1024)\n\n# Send data\nconn.sendall(b'Hello, client!')\n\n# Close the connection\nconn.close()\n```\n\nSocket programming is fundamental to building network applications, such as web servers, chat applications, and file transfer tools.",
+          "video_url": "https://www.youtube.com/watch?v=LtqZkfg6k8s",
+          "practice_questions": [
+            "What is socket programming?",
+            "What is a socket?",
+            "Describe the steps involved in socket programming.",
+            "How do you create a TCP socket in Python?",
+            "What are the common socket functions?"
+          ]
+        },
+        {
+          "topic_title": "Application Layer Protocols: HTTP, SMTP, DNS",
+          "notes_md": "Application layer protocols provide the interface between applications and the network. Common application layer protocols include HTTP (Hypertext Transfer Protocol), SMTP (Simple Mail Transfer Protocol), and DNS (Domain Name System). HTTP is used for web browsing, SMTP is used for sending email, and DNS is used for resolving domain names to IP addresses. \n\n*   **HTTP:** Used for web communication.\n*   **SMTP:** Used for sending email.\n*   **DNS:** Used for domain name resolution.\n\nThese protocols define the rules and formats for exchanging data between applications. For example, HTTP defines how web browsers and web servers communicate, while SMTP defines how email clients and email servers communicate.",
+          "video_url": "https://www.youtube.com/watch?v=gaaDfqcpq_A",
+          "practice_questions": [
+            "What are application layer protocols?",
+            "Describe the purpose of HTTP.",
+            "Explain how SMTP works.",
+            "What is the role of DNS?",
+            "Give examples of other application layer protocols."
+          ]
+        }
+      ]
+    }
+  ]
+}

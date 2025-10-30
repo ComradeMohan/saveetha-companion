@@ -1,0 +1,170 @@
+{
+  "course_name": "Probability and Statistics",
+  "course_code": "UBA09",
+  "units": [
+    {
+      "unit_title": "Introduction to Probability",
+      "topics": [
+        {
+          "topic_title": "Basic Concepts of Probability",
+          "notes_md": "Probability is a measure of the likelihood that an event will occur. It's quantified as a number between 0 and 1, where 0 indicates impossibility and 1 indicates certainty. Key concepts include sample space (the set of all possible outcomes), events (subsets of the sample space), and probability axioms. We often use set theory notation to describe events, such as union (A ∪ B), intersection (A ∩ B), and complement (A').\n\nThe probability of an event A is denoted as P(A). For example, if we toss a fair coin, the sample space is {Heads, Tails}, and the probability of getting Heads is P(Heads) = 0.5.\n\nConditional probability, denoted as P(A|B), is the probability of event A occurring given that event B has already occurred. It is calculated as P(A|B) = P(A ∩ B) / P(B), provided P(B) > 0. Understanding these fundamental concepts is crucial for further exploration of probability and statistics.",
+          "video_url": "https://www.youtube.com/watch?v=AWXjq4o2rkI",
+          "practice_questions": [
+            "What is the probability of rolling an even number on a fair six-sided die?",
+            "If two events are mutually exclusive, what is the probability of their intersection?",
+            "Explain the difference between independent and dependent events.",
+            "A bag contains 3 red balls and 2 blue balls. What is the probability of drawing a red ball?",
+            "Define sample space and event with examples."
+          ]
+        },
+        {
+          "topic_title": "Conditional Probability and Bayes' Theorem",
+          "notes_md": "Conditional probability, P(A|B), represents the probability of event A occurring given that event B has already occurred. It's calculated as P(A|B) = P(A ∩ B) / P(B), assuming P(B) > 0. Bayes' Theorem provides a way to update our beliefs about an event based on new evidence. It states that P(A|B) = [P(B|A) * P(A)] / P(B), where P(A) is the prior probability of A, P(B|A) is the likelihood of B given A, and P(B) is the marginal probability of B.\n\nBayes' Theorem is widely used in various fields, including machine learning, medical diagnosis, and finance. It allows us to incorporate prior knowledge with new data to make more informed decisions. For example, in medical diagnosis, we can update the probability of a disease given the results of a diagnostic test.",
+          "video_url": "https://www.youtube.com/watch?v=YjqzjR9qk3w",
+          "practice_questions": [
+            "State Bayes' Theorem and explain its components.",
+            "A test for a disease has a false positive rate of 5% and a false negative rate of 2%. If 1% of the population has the disease, what is the probability that a person who tests positive actually has the disease?",
+            "Differentiate between prior and posterior probability.",
+            "Explain the application of Bayes' Theorem in spam filtering.",
+            "What is the Law of Total Probability?"
+          ]
+        },
+        {
+          "topic_title": "Independence of Events",
+          "notes_md": "Two events, A and B, are considered independent if the occurrence of one does not affect the probability of the other. Mathematically, events A and B are independent if P(A|B) = P(A) or, equivalently, P(A ∩ B) = P(A) * P(B). This means that knowing whether event B has occurred provides no additional information about the likelihood of event A occurring.\n\nFor example, if you flip a coin twice, the outcome of the first flip is independent of the outcome of the second flip. The probability of getting heads on the second flip is always 0.5, regardless of whether you got heads or tails on the first flip. Understanding independence is crucial for simplifying probability calculations and modeling real-world phenomena.",
+          "video_url": "https://www.youtube.com/watch?v=uzkc-qNmkxg",
+          "practice_questions": [
+            "Define independence of events mathematically.",
+            "Give an example of two independent events and two dependent events.",
+            "If A and B are independent, and P(A) = 0.3 and P(B) = 0.5, what is P(A ∩ B)?",
+            "Explain the concept of pairwise independence.",
+            "Are mutually exclusive events always independent? Explain."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Random Variables and Distributions",
+      "topics": [
+        {
+          "topic_title": "Discrete Random Variables",
+          "notes_md": "A discrete random variable is a variable whose value can only take on a finite number of values or a countably infinite number of values. Examples include the number of heads in three coin flips or the number of cars passing a certain point on a highway in an hour. Each discrete random variable has a probability mass function (PMF), which gives the probability that the random variable is exactly equal to some value.\n\nCommon discrete distributions include the Bernoulli distribution (modeling a single trial with two outcomes), the binomial distribution (modeling the number of successes in a fixed number of independent trials), and the Poisson distribution (modeling the number of events occurring in a fixed interval of time or space).  For example, the probability mass function for a binomial distribution is given by: P(X = k) = (n choose k) * p^k * (1-p)^(n-k), where n is the number of trials, k is the number of successes, and p is the probability of success on each trial.",
+          "video_url": "https://www.youtube.com/watch?v=4vY4F27n-Ew",
+          "practice_questions": [
+            "Define a discrete random variable and provide examples.",
+            "What is a probability mass function (PMF)?",
+            "Explain the difference between Bernoulli and binomial distributions.",
+            "Give a real-world example where the Poisson distribution is applicable.",
+            "What are the key properties of a PMF?"
+          ]
+        },
+        {
+          "topic_title": "Continuous Random Variables",
+          "notes_md": "A continuous random variable is a variable whose value can take on any value within a given range. Examples include height, weight, and temperature. Each continuous random variable has a probability density function (PDF), which describes the relative likelihood of the variable taking on a specific value.  The integral of the PDF over a given interval gives the probability that the variable falls within that interval.\n\nCommon continuous distributions include the uniform distribution (where all values within a range are equally likely), the normal distribution (also known as the Gaussian distribution, which is bell-shaped and symmetric), and the exponential distribution (modeling the time until an event occurs). The PDF of a normal distribution is given by: f(x) = (1 / (σ * sqrt(2π))) * e^(-(x-μ)^2 / (2σ^2)), where μ is the mean and σ is the standard deviation.",
+          "video_url": "https://www.youtube.com/watch?v=zaZc6xW-qAo",
+          "practice_questions": [
+            "Define a continuous random variable and provide examples.",
+            "What is a probability density function (PDF)?",
+            "Explain the difference between PDF and PMF.",
+            "What are the key properties of a PDF?",
+            "Describe the characteristics of a normal distribution."
+          ]
+        },
+        {
+          "topic_title": "Expected Value and Variance",
+          "notes_md": "The expected value, denoted as E[X], is the average value of a random variable X. For a discrete random variable, E[X] = Σ [x * P(X = x)]. For a continuous random variable, E[X] = ∫ [x * f(x) dx], where f(x) is the PDF. The variance, denoted as Var(X), measures the spread or dispersion of a random variable around its expected value. It is calculated as Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2.\n\nThe standard deviation, denoted as σ, is the square root of the variance and provides a measure of the typical deviation of the random variable from its expected value. These measures are fundamental for characterizing and comparing different random variables and distributions.",
+          "video_url": "https://www.youtube.com/watch?v=1jE9n2NnE4w",
+          "practice_questions": [
+            "Define expected value and variance.",
+            "How are expected value and variance calculated for discrete and continuous random variables?",
+            "What is the relationship between variance and standard deviation?",
+            "Calculate the expected value of rolling a fair six-sided die.",
+            "What does a high variance indicate?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Statistical Inference",
+      "topics": [
+        {
+          "topic_title": "Sampling Distributions",
+          "notes_md": "A sampling distribution is the probability distribution of a statistic calculated from multiple samples drawn from a population. For example, the sampling distribution of the sample mean is the distribution of the means calculated from many different samples of the same size drawn from the same population. The Central Limit Theorem (CLT) states that, under certain conditions, the sampling distribution of the sample mean will be approximately normal, regardless of the shape of the population distribution, as the sample size increases.\n\nUnderstanding sampling distributions is crucial for making inferences about population parameters based on sample statistics. Common sampling distributions include the t-distribution (used when the population standard deviation is unknown) and the chi-squared distribution (used for hypothesis testing involving variances).",
+          "video_url": "https://www.youtube.com/watch?v=qZOWK_N5yUU",
+          "practice_questions": [
+            "Define a sampling distribution.",
+            "State the Central Limit Theorem (CLT) and explain its significance.",
+            "What is the sampling distribution of the sample mean?",
+            "Describe the t-distribution and when it is used.",
+            "Explain the concept of standard error."
+          ]
+        },
+        {
+          "topic_title": "Confidence Intervals",
+          "notes_md": "A confidence interval is a range of values that is likely to contain the true value of a population parameter with a certain level of confidence. For example, a 95% confidence interval for the population mean is an interval constructed such that, if we were to repeat the sampling process many times, 95% of the resulting intervals would contain the true population mean. The width of the confidence interval depends on the sample size, the sample standard deviation, and the desired level of confidence.\n\nThe formula for a confidence interval for the population mean (when the population standard deviation is known) is: sample mean ± (critical value * standard error). The critical value is obtained from the standard normal distribution (z-table) for the desired confidence level.",
+          "video_url": "https://www.youtube.com/watch?v=tFWsuDQGeek",
+          "practice_questions": [
+            "Define a confidence interval.",
+            "Explain how to interpret a 95% confidence interval.",
+            "What factors affect the width of a confidence interval?",
+            "How does sample size affect the confidence interval?",
+            "Differentiate between confidence level and significance level."
+          ]
+        },
+        {
+          "topic_title": "Hypothesis Testing",
+          "notes_md": "Hypothesis testing is a statistical method used to determine whether there is enough evidence to reject a null hypothesis. The null hypothesis (H0) is a statement about a population parameter that we assume to be true unless there is sufficient evidence to the contrary. The alternative hypothesis (H1) is a statement that contradicts the null hypothesis.\n\nThe process involves calculating a test statistic, which measures the difference between the sample data and what would be expected under the null hypothesis. The p-value is the probability of observing a test statistic as extreme as, or more extreme than, the one calculated, assuming the null hypothesis is true. If the p-value is less than the significance level (α), we reject the null hypothesis in favor of the alternative hypothesis. Common hypothesis tests include t-tests, z-tests, and chi-squared tests.",
+          "video_url": "https://www.youtube.com/watch?v=0ocIVapcsRs",
+          "practice_questions": [
+            "Define the null and alternative hypotheses.",
+            "Explain the concept of a p-value and its interpretation.",
+            "What is a Type I error and a Type II error?",
+            "What is the significance level (alpha) in hypothesis testing?",
+            "Describe the steps involved in hypothesis testing."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Linear Regression",
+      "topics": [
+        {
+          "topic_title": "Simple Linear Regression",
+          "notes_md": "Simple linear regression is a statistical method used to model the relationship between two variables: an independent variable (x) and a dependent variable (y). The goal is to find the best-fitting straight line that describes how y changes as x changes. The equation of the line is given by y = β0 + β1x, where β0 is the y-intercept and β1 is the slope.\n\nThe method of least squares is commonly used to estimate the values of β0 and β1. This method minimizes the sum of the squared differences between the observed values of y and the predicted values of y. The goodness of fit of the model is often assessed using the coefficient of determination (R-squared), which represents the proportion of variance in y that is explained by x.  For example, an R-squared of 0.8 indicates that 80% of the variability in y is explained by the linear relationship with x.",
+          "video_url": "https://www.youtube.com/watch?v=E5RjzSK0FVw",
+          "practice_questions": [
+            "What is simple linear regression?",
+            "Explain the meaning of the y-intercept and slope in a linear regression model.",
+            "What is the method of least squares?",
+            "Define R-squared and explain how to interpret it.",
+            "What are the assumptions of linear regression?"
+          ]
+        },
+        {
+          "topic_title": "Multiple Linear Regression",
+          "notes_md": "Multiple linear regression extends simple linear regression to model the relationship between a dependent variable (y) and multiple independent variables (x1, x2, ..., xn). The equation of the model is given by y = β0 + β1x1 + β2x2 + ... + βnxn, where β0 is the y-intercept and βi is the coefficient for the ith independent variable. Each coefficient represents the change in y for a one-unit change in the corresponding independent variable, holding all other variables constant.\n\nModel selection techniques, such as stepwise regression and best subsets regression, are often used to identify the most important independent variables to include in the model. Evaluating the model involves checking for multicollinearity (high correlation between independent variables) and assessing the overall fit using measures like adjusted R-squared.",
+          "video_url": "https://www.youtube.com/watch?v=K_EH2abnsLk",
+          "practice_questions": [
+            "What is multiple linear regression?",
+            "How does multiple linear regression differ from simple linear regression?",
+            "Explain the meaning of the coefficients in a multiple linear regression model.",
+            "What is multicollinearity and how can it affect a regression model?",
+            "Describe model selection techniques used in multiple linear regression."
+          ]
+        },
+        {
+          "topic_title": "Regression Diagnostics",
+          "notes_md": "Regression diagnostics are techniques used to assess the validity of the assumptions underlying linear regression models and to identify potential problems that could affect the accuracy and reliability of the results. Common diagnostic plots include residual plots (to check for linearity and homoscedasticity), normal probability plots (to check for normality of residuals), and Cook's distance plots (to identify influential observations).\n\nProblems that can arise in regression analysis include nonlinearity, heteroscedasticity (unequal variance of residuals), non-normality of residuals, outliers, and influential observations. Addressing these problems may involve transforming the data, adding or removing variables, or using robust regression techniques.",
+          "video_url": "https://www.youtube.com/watch?v=lw5z0i1rq7s",
+          "practice_questions": [
+            "What are regression diagnostics?",
+            "Explain how to interpret residual plots.",
+            "What is heteroscedasticity and how can it be detected?",
+            "How can outliers affect a regression model?",
+            "Describe the purpose of Cook's distance."
+          ]
+        }
+      ]
+    }
+  ]
+}
