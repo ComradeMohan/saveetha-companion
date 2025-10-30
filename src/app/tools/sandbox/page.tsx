@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -273,9 +274,10 @@ export default function StudentSandboxPage() {
         const shareProgramId = searchParams.get('programId');
         const isCollaboration = searchParams.get('live') === 'true';
 
-        router.replace('/tools/sandbox', { scroll: false });
-
         if (shareUserId && shareProgramId) {
+             // Clean up URL immediately after reading params
+             router.replace('/tools/sandbox', { scroll: false });
+             
              const programDocRef = doc(db, 'users', shareUserId, 'savedPrograms', shareProgramId);
              const programSnap = await getDoc(programDocRef);
              if (programSnap.exists()) {
@@ -303,7 +305,8 @@ export default function StudentSandboxPage() {
     } else if (!authLoading && !user) {
         setIsLoadingPageData(false);
     }
-  }, [user, authLoading, router, searchParams, toast, handleLoadProgram, handleNewProgram, setupCollaborationListener]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading]);
 
 
   const handleSaveProgram = useCallback(async () => {
