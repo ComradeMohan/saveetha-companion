@@ -10,7 +10,7 @@ import { getAllUsers } from './get-users';
 const notificationSchema = z.object({
     userIds: z.string().optional(),
     sendToAll: z.string().optional(),
-    batchYear: z.string().min(4, "A batch year is required.").optional(), // Make it optional at schema level, but enforce logic below
+    batchYear: z.string().optional(), // Removed .min(4) here, will validate logically
     title: z.string().min(1, { message: 'Title is required.' }),
     message: z.string().min(1, { message: 'Message is required.' }),
     link: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -37,8 +37,8 @@ export async function sendNotification(prevState: any, formData: FormData) {
     const { userIds, sendToAll, batchYear, title, message, link } = validatedFields.data;
     const isSendingToAll = sendToAll === 'on';
 
-    if (!isSendingToAll && !batchYear && (!userIds || userIds.trim() === '')) {
-        return { type: 'error', message: 'Please select at least one recipient, a batch, or choose "Send to All".' };
+    if (!isSendingToAll && (!batchYear || batchYear.length < 4) && (!userIds || userIds.trim() === '')) {
+        return { type: 'error', message: 'Please select at least one recipient, a valid batch, or choose "Send to All".' };
     }
 
     try {
@@ -47,14 +47,14 @@ export async function sendNotification(prevState: any, formData: FormData) {
         if (isSendingToAll) {
             const allUsers = await getAllUsers();
             targetUserIds = allUsers.map(u => u.id);
-        } else if (batchYear) {
+        } else if (batchYear && batchYear.length === 4) {
             const allUsers = await getAllUsers();
             const yearCode = batchYear.slice(-2); // e.g., '22' for '2022'
             targetUserIds = allUsers
                 .filter(u => u.regNo && u.regNo.substring(2, 4) === yearCode)
                 .map(u => u.id);
-        } else {
-            targetUserIds = userIds!.split(',').filter(id => id.trim() !== '');
+        } else if (userIds) {
+            targetUserIds = userIds.split(',').filter(id => id.trim() !== '');
         }
 
         if (targetUserIds.length === 0) {
