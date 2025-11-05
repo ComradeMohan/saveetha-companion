@@ -5,12 +5,12 @@ import { adminDb } from '@/lib/firebase-admin';
 import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
 import { FieldValue } from 'firebase-admin/firestore';
-import { getAllUsers } from './get-users';
+import { getAllUsers, getAllFcmTokens } from './get-users';
 
 const notificationSchema = z.object({
     userIds: z.string().optional(),
     sendToAll: z.string().optional(),
-    batchYear: z.string().optional(), // Removed .min(4) here, will validate logically
+    batchYear: z.string().optional(),
     title: z.string().min(1, { message: 'Title is required.' }),
     message: z.string().min(1, { message: 'Message is required.' }),
     link: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -47,9 +47,9 @@ export async function sendNotification(prevState: any, formData: FormData) {
         if (isSendingToAll) {
             const allUsers = await getAllUsers();
             targetUserIds = allUsers.map(u => u.id);
-        } else if (batchYear && batchYear.length === 4) {
+        } else if (batchYear && batchYear.length >= 4) {
             const allUsers = await getAllUsers();
-            const yearCode = batchYear.slice(-2); // e.g., '22' for '2022'
+            const yearCode = batchYear.slice(-2);
             targetUserIds = allUsers
                 .filter(u => u.regNo && u.regNo.substring(2, 4) === yearCode)
                 .map(u => u.id);
@@ -62,72 +62,57 @@ export async function sendNotification(prevState: any, formData: FormData) {
         }
 
         const timestamp = FieldValue.serverTimestamp();
-        let totalNotificationsSent = 0;
+        const batch = adminDb.batch();
+
+        // 1. Add to in-app notification bell for all users
+        targetUserIds.forEach(userId => {
+            const notificationRef = adminDb.collection('user_notifications').doc(userId).collection('notifications').doc();
+            batch.set(notificationRef, {
+                title: title,
+                message: message,
+                link: link || null,
+                type: 'default',
+                read: false,
+                createdAt: timestamp,
+            });
+        });
+        await batch.commit();
+
+        // 2. Efficiently get all FCM tokens
+        const allFcmTokens = await getAllFcmTokens(targetUserIds);
+
         let totalPushSuccess = 0;
         let totalPushFailure = 0;
 
-        // Process in chunks to avoid overwhelming the system
-        const chunkSize = 500;
-        for (let i = 0; i < targetUserIds.length; i += chunkSize) {
-            const chunk = targetUserIds.slice(i, i + chunkSize);
-            const batch = adminDb.batch();
-            const fcmTokensForChunk: string[] = [];
-
-            const userDocs = await Promise.all(chunk.map(id => adminDb.collection('users').doc(id).get()));
-
-            for (const userDoc of userDocs) {
-                if (userDoc.exists) {
-                    const userId = userDoc.id;
-
-                    // 1. Add to in-app notification bell
-                    const notificationRef = adminDb.collection('user_notifications').doc(userId).collection('notifications').doc();
-                    batch.set(notificationRef, {
-                        title: title,
-                        message: message,
-                        link: link || null,
-                        type: 'default',
-                        read: false,
-                        createdAt: timestamp,
-                    });
-                    totalNotificationsSent++;
-
-                    // 2. Gather FCM tokens for push notification
-                    const tokensSnapshot = await userDoc.ref.collection('fcmTokens').get();
-                    if (!tokensSnapshot.empty) {
-                        fcmTokensForChunk.push(...tokensSnapshot.docs.map(doc => doc.id));
-                    }
-                }
+        // 3. Send push notifications in chunks of 500 (FCM limit)
+        if (allFcmTokens.length > 0) {
+            const tokenChunks: string[][] = [];
+            for (let i = 0; i < allFcmTokens.length; i += 500) {
+                tokenChunks.push(allFcmTokens.slice(i, i + 500));
             }
 
-            // Commit in-app notifications for the chunk
-            await batch.commit();
-
-            // Send push notifications for the chunk
-            if (fcmTokensForChunk.length > 0) {
-                const fcmMessage = {
+            for (const chunk of tokenChunks) {
+                 const fcmMessage = {
                     notification: { 
                         title, 
                         body: message,
                     },
                      webpush: {
                         fcmOptions: {
-                          link: link || 'https://saveetha-companion.web.app/updates'
+                          link: link || 'https://saveethahub.tech/updates'
                         }
                     },
-                    tokens: fcmTokensForChunk,
+                    tokens: chunk,
                 };
                 const response = await getMessaging().sendEachForMulticast(fcmMessage);
                 totalPushSuccess += response.successCount;
                 totalPushFailure += response.failureCount;
             }
         }
-
-        let successMessage = `In-app notification sent to ${totalNotificationsSent} user(s).`;
-        if (totalPushSuccess > 0) {
-            successMessage += ` ${totalPushSuccess} push notification(s) sent.`;
-        }
-        if (totalPushFailure > 0) {
-            successMessage += ` ${totalPushFailure} failed.`;
+        
+        let successMessage = `In-app notification sent to ${targetUserIds.length} user(s).`;
+        if (totalPushSuccess > 0 || totalPushFailure > 0) {
+            successMessage += ` Push: ${totalPushSuccess} sent, ${totalPushFailure} failed.`;
         }
         
         return { 
@@ -137,6 +122,6 @@ export async function sendNotification(prevState: any, formData: FormData) {
         
     } catch (error: any) {
         console.error('Error sending notification:', error);
-        return { type: 'error', message: 'An unexpected error occurred.' };
+        return { type: 'error', message: 'An unexpected error occurred during notification dispatch.' };
     }
 }
