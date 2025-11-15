@@ -3,9 +3,6 @@
 
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const PROMO_STORAGE_KEY = 'promoDialogLastClosed';
@@ -40,14 +37,14 @@ export default function PromotionalDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 border-0 max-w-md bg-transparent shadow-none">
+      <DialogContent className="p-0 border-0 max-w-md bg-transparent shadow-none" onClick={handleDialogInteraction}>
         <DialogHeader className="sr-only">
           <DialogTitle>Promotional Offer</DialogTitle>
           <DialogDescription>
             A promotional image linking to an external website. Click the image to learn more or the close button to dismiss.
           </DialogDescription>
         </DialogHeader>
-        <div className="relative" onClick={handleDialogInteraction}>
+        <div className="relative">
            <Link href="https://devpulseweb.netlify.app/ComradeMohan" target="_blank" rel="noopener noreferrer">
              {/* eslint-disable-next-line @next/next/no-img-element */}
              <img
@@ -55,21 +52,9 @@ export default function PromotionalDialog() {
                 alt="Promotional Image for ComradeMohan"
                 width={500}
                 height={600}
-                className="rounded-lg cursor-pointer object-cover"
+                className="rounded-lg cursor-pointer object-cover w-full h-auto"
              />
            </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-                e.stopPropagation();
-                handleClose();
-            }}
-            className="absolute top-2 right-2 rounded-full bg-black/50 text-white hover:bg-black/70 hover:text-white"
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
