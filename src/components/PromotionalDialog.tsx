@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import Image from 'next/image';
@@ -40,6 +41,12 @@ export default function PromotionalDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="p-0 border-0 max-w-md bg-transparent shadow-none">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Promotional Offer</DialogTitle>
+          <DialogDescription>
+            A promotional image linking to an external website. Click the image to learn more or the close button to dismiss.
+          </DialogDescription>
+        </DialogHeader>
         <div className="relative" onClick={handleDialogInteraction}>
            <Link href="https://devpulseweb.netlify.app/ComradeMohan" target="_blank" rel="noopener noreferrer">
              <Image
