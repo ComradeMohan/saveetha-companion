@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -10,6 +9,7 @@ import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
 import { usePathname } from 'next/navigation';
+import PromotionalDialog from './PromotionalDialog';
 
 
 function MainContent({ children }: { children: React.ReactNode }) {
@@ -22,6 +22,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
             {showHeader && <Header />}
             <VerificationBanner key="verification-banner" />
             <RecruitmentDialog />
+            <PromotionalDialog />
             <main key="main-content">{children}</main>
             {showHeader && <SupportButton />}
             {showHeader && <MobileNav />}
