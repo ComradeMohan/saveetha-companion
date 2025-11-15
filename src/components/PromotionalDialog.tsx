@@ -49,12 +49,13 @@ export default function PromotionalDialog() {
         </DialogHeader>
         <div className="relative" onClick={handleDialogInteraction}>
            <Link href="https://devpulseweb.netlify.app/ComradeMohan" target="_blank" rel="noopener noreferrer">
-             <Image
+             {/* eslint-disable-next-line @next/next/no-img-element */}
+             <img
                 src="https://i.ibb.co/Zp3pwJY9/3e64fe13-1104-482c-bf8d-e83ad4250145.png"
                 alt="Promotional Image for ComradeMohan"
                 width={500}
                 height={600}
-                className="rounded-lg cursor-pointer"
+                className="rounded-lg cursor-pointer object-cover"
              />
            </Link>
           <Button
