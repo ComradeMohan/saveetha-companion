@@ -2,7 +2,6 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 
@@ -60,37 +59,8 @@ export async function createUpdate(prevState: any, formData: FormData) {
             await batch.commit();
         }
 
-        // 3. Send FCM Push Notifications (optional, for real-time alerts)
-        const fcmTokens: string[] = [];
-        for (const userDoc of usersSnapshot.docs) {
-            const tokensCollection = await userDoc.ref.collection('fcmTokens').get();
-            if (!tokensCollection.empty) {
-                tokensCollection.forEach(tokenDoc => fcmTokens.push(tokenDoc.id));
-            }
-        }
-        
         let notificationMessage = `${usersSnapshot.size} users notified in-app.`;
 
-        if (fcmTokens.length > 0) {
-            const message = {
-                notification: {
-                    title: title,
-                    body: description,
-                },
-                webpush: {
-                    fcmOptions: {
-                      link: link || 'https://saveetha-companion.web.app/updates'
-                    }
-                },
-                tokens: fcmTokens,
-            };
-
-            const response = await getMessaging().sendEachForMulticast(message);
-            notificationMessage += ` ${response.successCount} push notifications sent.`;
-        } else {
-             notificationMessage += ` No devices subscribed for push notifications.`
-        }
-        
          return { 
             type: 'success', 
             message: notificationMessage

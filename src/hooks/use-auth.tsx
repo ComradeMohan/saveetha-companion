@@ -368,7 +368,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// This is deprecated, use useAuth instead for profile access.
+// This is deprecated, useAuth instead for profile access.
 export function ProfileProvider({ children }: { children: ReactNode }) {
     return <>{children}</>;
 }

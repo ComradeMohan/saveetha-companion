@@ -2,10 +2,8 @@
 import admin from 'firebase-admin';
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getMessaging } from 'firebase-admin/messaging';
 
 let adminDb: admin.firestore.Firestore;
-let adminMessaging: admin.messaging.Messaging;
 
 // Check if the required environment variables are set
 const hasRequiredEnvVars = 
@@ -33,14 +31,12 @@ if (hasRequiredEnvVars) {
     }
     const app = getApps()[0];
     adminDb = getFirestore(app);
-    adminMessaging = getMessaging(app);
 
 } else {
     console.warn(
       'Firebase Admin environment variables are not set. Skipping Admin SDK initialization. Server-side actions requiring admin privileges will fail.'
     );
     adminDb = {} as admin.firestore.Firestore;
-    adminMessaging = {} as admin.messaging.Messaging;
 }
 
-export { adminDb, adminMessaging };
+export { adminDb };

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { db, messaging } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, serverTimestamp, writeBatch, getDocs, deleteDoc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,6 @@ import { Bell, Gift, Loader2, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { getToken } from 'firebase/messaging';
 import Link from 'next/link';
 
 interface Notification {
@@ -30,17 +29,9 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [isEnabling, setIsEnabling] = useState(false);
   const hasAutoOpened = useRef(false);
   const unsubscribeRef = useRef<() => void | null>(null);
 
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      setPermission(Notification.permission);
-    }
-  }, []);
 
   useEffect(() => {
     if (unsubscribeRef.current) {
@@ -123,58 +114,6 @@ export function NotificationBell() {
         });
     }
   };
-
-  const handleEnableNotifications = async () => {
-    setIsEnabling(true);
-    if (!messaging || !user || !process.env.NEXT_PUBLIC_FCM_VAPID_KEY) {
-        toast({ title: "Error", description: "FCM is not configured correctly.", variant: "destructive"});
-        setIsEnabling(false);
-        return;
-    }
-
-    try {
-        const requestedPermission = await Notification.requestPermission();
-        setPermission(requestedPermission);
-
-        if (requestedPermission === 'granted') {
-            const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-            const fcmToken = await getToken(messaging, {
-                vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
-                serviceWorkerRegistration: swRegistration,
-            });
-
-            if (fcmToken) {
-                const tokenRef = doc(db, 'users', user.uid, 'fcmTokens', fcmToken);
-                await setDoc(tokenRef, { createdAt: serverTimestamp() }, { merge: true });
-                
-                toast({
-                    title: "Notifications Enabled!",
-                    description: "Your device is now registered for push notifications.",
-                });
-
-                 navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification('Saveetha Companion', {
-                        body: 'You have successfully enabled notifications!',
-                        icon: '/favicon.ico',
-                        data: { url: window.location.origin }
-                    });
-                });
-
-            }
-        } else {
-            toast({
-              title: "Notifications Blocked",
-              description: "You can enable notifications from your browser settings.",
-              variant: "destructive",
-            });
-        }
-    } catch (error) {
-        console.error('Error enabling notifications:', error);
-        toast({ title: "Error", description: "Could not enable notifications.", variant: "destructive"});
-    } finally {
-        setIsEnabling(false);
-    }
-  }
   
   const getIcon = (type: Notification['type']) => {
     switch (type) {
@@ -249,19 +188,6 @@ export function NotificationBell() {
             </p>
           )}
         </div>
-        {permission === 'default' && (
-          <div className="p-2 border-t">
-            <Button onClick={handleEnableNotifications} disabled={isEnabling} className="w-full" size="sm">
-              {isEnabling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Enable Push Notifications
-            </Button>
-          </div>
-        )}
-         {permission === 'denied' && (
-            <div className="p-3 border-t text-center text-xs text-muted-foreground">
-               Push notifications are blocked in your browser settings.
-            </div>
-        )}
       </PopoverContent>
     </Popover>
   );

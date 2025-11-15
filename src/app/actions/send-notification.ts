@@ -2,10 +2,9 @@
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
-import { getMessaging } from 'firebase-admin/messaging';
 import { z } from 'zod';
 import { FieldValue } from 'firebase-admin/firestore';
-import { getAllUsers, getAllFcmTokens } from './get-users';
+import { getAllUsers } from './get-users';
 
 const notificationSchema = z.object({
     userIds: z.string().optional(),
@@ -78,42 +77,7 @@ export async function sendNotification(prevState: any, formData: FormData) {
         });
         await batch.commit();
 
-        // 2. Efficiently get all FCM tokens
-        const allFcmTokens = await getAllFcmTokens(targetUserIds);
-
-        let totalPushSuccess = 0;
-        let totalPushFailure = 0;
-
-        // 3. Send push notifications in chunks of 500 (FCM limit)
-        if (allFcmTokens.length > 0) {
-            const tokenChunks: string[][] = [];
-            for (let i = 0; i < allFcmTokens.length; i += 500) {
-                tokenChunks.push(allFcmTokens.slice(i, i + 500));
-            }
-
-            for (const chunk of tokenChunks) {
-                 const fcmMessage = {
-                    notification: { 
-                        title, 
-                        body: message,
-                    },
-                     webpush: {
-                        fcmOptions: {
-                          link: link || 'https://saveethahub.tech/updates'
-                        }
-                    },
-                    tokens: chunk,
-                };
-                const response = await getMessaging().sendEachForMulticast(fcmMessage);
-                totalPushSuccess += response.successCount;
-                totalPushFailure += response.failureCount;
-            }
-        }
-        
         let successMessage = `In-app notification sent to ${targetUserIds.length} user(s).`;
-        if (totalPushSuccess > 0 || totalPushFailure > 0) {
-            successMessage += ` Push: ${totalPushSuccess} sent, ${totalPushFailure} failed.`;
-        }
         
         return { 
             type: 'success', 
