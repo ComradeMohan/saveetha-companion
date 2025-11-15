@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -42,7 +43,7 @@ export default function PromotionalDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        className="p-0 border-0 max-w-md bg-transparent shadow-none dialog-animate"
+        className="p-0 border-0 max-w-md bg-transparent shadow-none"
         onClick={handleDialogInteraction}
         style={{ backgroundColor: 'hsl(220.71deg 100% 5.49% / 47%)' }}
       >
@@ -59,7 +60,7 @@ export default function PromotionalDialog() {
           >
             {isOpen && (
               <img
-                src="https://i.ibb.co/Zp3pwJY9/3e64fe13-1104-482c-bf8d-e83ad4250145.png"
+                src="https://i.ibb.co/5WzMJGkT/7975dff7-4ffa-4bb3-bd91-dafa1985f33f.png"
                 alt="Promotional Image"
                 width={500}
                 height={600}
