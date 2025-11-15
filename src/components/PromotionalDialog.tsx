@@ -50,7 +50,7 @@ export default function PromotionalDialog() {
         <div className="relative" onClick={handleDialogInteraction}>
            <Link href="https://devpulseweb.netlify.app/ComradeMohan" target="_blank" rel="noopener noreferrer">
              <Image
-                src="https://i.ibb.co/bF0tY3D/IMG-20240725-WA0001-fotor-2024072520552.jpg"
+                src="https://i.ibb.co/Zp3pwJY9/3e64fe13-1104-482c-bf8d-e83ad4250145.png"
                 alt="Promotional Image for ComradeMohan"
                 width={500}
                 height={600}
