@@ -37,7 +37,11 @@ export default function PromotionalDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 border-0 max-w-md bg-transparent shadow-none" onClick={handleDialogInteraction}>
+      <DialogContent 
+        className="p-0 border-0 max-w-md bg-transparent shadow-none" 
+        onClick={handleDialogInteraction}
+        style={{ backgroundColor: 'hsl(220.71deg 100% 5.49% / 47%)' }}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>Promotional Offer</DialogTitle>
           <DialogDescription>
