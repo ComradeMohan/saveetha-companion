@@ -98,7 +98,7 @@ export default function FeedbackDialog() {
   return (
     <Dialog open={showDialog} onOpenChange={handleClose}>
       <DialogContent 
-        className="sm:max-w-md"
+        className="sm:max-w-md rounded-2xl"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
@@ -130,7 +130,7 @@ export default function FeedbackDialog() {
                   <FormLabel className="sr-only">Your Feedback</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., I wish there was a feature to..."
+                      placeholder="Kindly give feed back or suggestion fo this website..."
                       className="min-h-[120px] resize-none"
                       {...field}
                     />
