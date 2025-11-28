@@ -41,6 +41,7 @@ export interface UserProfileData {
   college?: 'SSE' | 'SEC';
   credits?: number;
   recruitmentInterestSubmitted?: boolean;
+  feedbackSubmitted?: boolean;
   referredBy?: string;
   referralCount?: number;
 }

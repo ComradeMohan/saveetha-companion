@@ -17,7 +17,6 @@ import { Input } from './ui/input';
 import FeedbackDialog from './feedback-dialog';
 
 const RECRUITMENT_STORAGE_KEY = 'recruitmentFormLastSeen';
-const FEEDBACK_STORAGE_KEY = 'feedbackFormLastSeen';
 const ONE_HOUR = 60 * 60 * 1000;
 
 const recruitmentSchema = z.object({
@@ -82,16 +81,12 @@ export function RecruitmentDialog() {
           return () => clearTimeout(timer);
         }
       }
-      // Condition to show FEEDBACK dialog
-      else if (profile.recruitmentInterestSubmitted === true) {
-        const feedbackLastSeen = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-        if (!feedbackLastSeen || now - parseInt(feedbackLastSeen, 10) > ONE_HOUR) {
-          const timer = setTimeout(() => {
+      // Condition to show FEEDBACK dialog (if recruitment is done and feedback isn't)
+      else if (profile.recruitmentInterestSubmitted === true && profile.feedbackSubmitted !== true) {
+         const timer = setTimeout(() => {
             window.dispatchEvent(new CustomEvent('showFeedbackDialog'));
-            localStorage.setItem(FEEDBACK_STORAGE_KEY, now.toString());
           }, 8000);
           return () => clearTimeout(timer);
-        }
       }
     }
   }, [user, profile, loading]);

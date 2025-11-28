@@ -16,12 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import { Input } from './ui/input';
 
-const FEEDBACK_STORAGE_KEY = 'feedbackFormLastSeen';
-const ONE_HOUR = 60 * 60 * 1000;
-
 const feedbackSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
   feedback: z.string().min(10, { message: 'Feedback must be at least 10 characters.' }),
 });
 
@@ -53,7 +48,7 @@ function SubmitButton() {
 
 export default function FeedbackDialog() {
   const [showDialog, setShowDialog] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [state, formAction] = useActionState(sendFeedback, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -82,10 +77,15 @@ export default function FeedbackDialog() {
 
   // Expose a method to show the dialog
   useEffect(() => {
-    const handleShowFeedback = () => setShowDialog(true);
+    const handleShowFeedback = () => {
+      // Only show if the user profile is loaded and they haven't submitted feedback before
+      if (profile && profile.feedbackSubmitted !== true) {
+        setShowDialog(true);
+      }
+    };
     window.addEventListener('showFeedbackDialog', handleShowFeedback);
     return () => window.removeEventListener('showFeedbackDialog', handleShowFeedback);
-  }, []);
+  }, [profile]);
 
 
   if (!user) {
@@ -112,6 +112,7 @@ export default function FeedbackDialog() {
             {/* Hidden fields to pass user data */}
             <input type="hidden" name="name" value={user.displayName || 'Anonymous'} />
             <input type="hidden" name="email" value={user.email || ''} />
+            <input type="hidden" name="uid" value={user.uid} />
 
             <FormField
               control={form.control}
