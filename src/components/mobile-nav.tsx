@@ -35,7 +35,7 @@ export default function MobileNav() {
         { href: '/', label: 'Home', icon: Home },
         { href: '/certifications', label: 'Certs', icon: Award },
         { href: '/faq', label: 'FAQ', icon: Book },
-        { href: '/login', label: 'Login', icon: User },
+        { href: '/signup', label: 'Register', icon: User },
     ];
   }, [user]);
   

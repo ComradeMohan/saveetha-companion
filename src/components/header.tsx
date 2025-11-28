@@ -96,7 +96,7 @@ function UserNav() {
   if (!user) {
     return (
         <Button asChild size="sm">
-            <Link href="/login">Login</Link>
+            <Link href="/signup">Get Started</Link>
         </Button>
     );
   }
