@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, Eye, Link, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, Eye, Link as LinkIcon } from "lucide-react";
 import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -26,8 +26,6 @@ interface ConceptMapWithViews extends ConceptMap {
     creatorEmail?: string;
 }
 
-type UrlStatus = 'idle' | 'checking' | 'valid' | 'invalid';
-
 export default function AdminConceptMapsPage() {
     const [conceptMaps, setConceptMaps] = useState<ConceptMapWithViews[]>([]);
     const [users, setUsers] = useState<BasicUser[]>([]);
@@ -36,7 +34,6 @@ export default function AdminConceptMapsPage() {
     const [mapToDelete, setMapToDelete] = useState<ConceptMap | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [isFeeding, setIsFeeding] = useState(false);
-    const [urlStatuses, setUrlStatuses] = useState<Record<string, UrlStatus>>({});
     const { toast } = useToast();
 
     const fetchConceptMaps = useCallback(async () => {
@@ -162,21 +159,6 @@ export default function AdminConceptMapsPage() {
     const handleLinkClick = (mapId: string) => {
         trackConceptMapView(mapId);
     };
-    
-    const checkUrlStatus = async (mapId: string, url: string) => {
-        setUrlStatuses(prev => ({ ...prev, [mapId]: 'checking' }));
-        try {
-            // Using a simple fetch with HEAD method to check for existence without downloading content
-            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-            // no-cors will result in an opaque response, but a success indicates the resource is likely reachable
-            setUrlStatuses(prev => ({ ...prev, [mapId]: 'valid' }));
-        } catch (error) {
-             // A network error often means CORS issues or a truly unreachable URL.
-             // We'll mark as invalid for simplicity. A more robust solution might need a server-side proxy.
-            setUrlStatuses(prev => ({ ...prev, [mapId]: 'invalid' }));
-        }
-    }
-
 
     return (
         <>
@@ -220,21 +202,18 @@ export default function AdminConceptMapsPage() {
                                     <TableHead>Name</TableHead>
                                     <TableHead>Added By</TableHead>
                                     <TableHead className="w-[100px] text-center">Views</TableHead>
-                                    <TableHead className="w-[100px] text-center">URL Status</TableHead>
                                     <TableHead className="w-[100px] text-center">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredConceptMaps.length > 0 ? (
-                                    filteredConceptMaps.map((map) => {
-                                        const status = urlStatuses[map.id!] || 'idle';
-                                        return (
+                                    filteredConceptMaps.map((map) => (
                                         <TableRow key={map.id}>
                                             <TableCell className="font-medium">
                                                 {map.title}
@@ -249,16 +228,6 @@ export default function AdminConceptMapsPage() {
                                                         <span className="font-medium">{map.viewCount}</span>
                                                     </div>
                                                 ) : null}
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                {status === 'checking' && <Loader2 className="h-4 w-4 animate-spin mx-auto text-muted-foreground" />}
-                                                {status === 'valid' && <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto" />}
-                                                {status === 'invalid' && <XCircle className="h-5 w-5 text-destructive mx-auto" />}
-                                                {status === 'idle' && (
-                                                     <Button variant="ghost" size="sm" onClick={() => checkUrlStatus(map.id!, map.url)}>
-                                                        Check
-                                                    </Button>
-                                                )}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <DropdownMenu>
@@ -293,10 +262,10 @@ export default function AdminConceptMapsPage() {
                                                 </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
-                                    )})
+                                    ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             {searchTerm ? "No concept maps match your search." : "No concept maps found."}
                                         </TableCell>
                                     </TableRow>
