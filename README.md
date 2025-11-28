@@ -294,8 +294,10 @@ Thanks to these wonderful people who have contributed to this project:
 We welcome contributions from the community! Here's how you can help:
 
 1. **Fork the Repository**
+   
+   Click the "Fork" button at the top right of [this repository](https://github.com/ComradeMohan/saveetha-companion), then clone your fork:
    ```bash
-   git fork https://github.com/ComradeMohan/saveetha-companion.git
+   git clone https://github.com/YOUR_USERNAME/saveetha-companion.git
    ```
 
 2. **Create a Feature Branch**
