@@ -98,7 +98,7 @@ export default function FeedbackDialog() {
   return (
     <Dialog open={showDialog} onOpenChange={handleClose}>
       <DialogContent 
-        className="sm:max-w-md rounded-2xl"
+        className="sm:max-w-md rounded-3xl"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
@@ -127,10 +127,10 @@ export default function FeedbackDialog() {
               name="feedback"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="sr-only">Your Feedback</FormLabel>
+                  <FormLabel>Your Feedback (Mandatory)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Kindly give feed back or suggestion fo this website..."
+                      placeholder="Kindly give feed back or suggestion for this website"
                       className="min-h-[120px] resize-none"
                       {...field}
                     />
@@ -141,9 +141,6 @@ export default function FeedbackDialog() {
             />
              {state.errors?.feedback && <p className="text-sm font-medium text-destructive">{state.errors.feedback[0]}</p>}
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => setShowDialog(false)}>
-                Maybe Later
-              </Button>
               <SubmitButton />
             </DialogFooter>
           </form>
