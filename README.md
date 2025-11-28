@@ -340,7 +340,7 @@ This project is open source and available for educational purposes.
 
 <div align="center">
 
-**Made with ❤️ for Saveetha Engineering College Students**
+**Made with ❤️ for Saveetha School of Engineering College Students**
 
 [⬆ Back to Top](#-saveetha-companion)
 
