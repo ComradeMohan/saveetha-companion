@@ -180,7 +180,6 @@ export default function Stats() {
 
     const stats = [
       { icon: Users, value: 1500, label: 'Students Using', suffix: '+' },
-      { icon: GraduationCap, value: facultyCount, label: 'Faculty Listed', suffix: '' },
       { icon: BrainCircuit, value: conceptMapCount, label: 'Concepts Mapped', suffix: '' },
       { icon: BookOpen, value: 30, label: 'Courses Covered', suffix: '+' },
     ];
@@ -194,7 +193,7 @@ export default function Stats() {
             A real-time look at our community's engagement and website traffic.
           </p>
         </div>
-        <div className={cn("grid gap-8 sm:grid-cols-2 lg:grid-cols-4", isVisible ? 'animate-fade-in' : 'opacity-0')}>
+        <div className={cn("grid gap-8 sm:grid-cols-2 lg:grid-cols-3", isVisible ? 'animate-fade-in' : 'opacity-0')}>
           {stats.map((stat, index) => (
             <div 
                 key={index} 
