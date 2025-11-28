@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, Eye } from "lucide-react";
+import { Loader2, ExternalLink, MoreHorizontal, Pencil, Trash2, Search, BrainCircuit, Eye, Link, CheckCircle2, XCircle } from "lucide-react";
 import { collection, orderBy, query, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -12,36 +12,44 @@ import type { ConceptMap } from "@/lib/concept-map-data";
 import { AddConceptMapDialog } from "@/components/admin/add-concept-map-dialog";
 import { EditConceptMapDialog } from "@/components/admin/edit-concept-map-dialog";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import NextLink from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { feedKnowledge } from "@/ai/flows/knowledge-feeder";
 import { trackConceptMapView } from "@/app/actions/track-concept-map-view";
+import { getAllUsers, type BasicUser } from "@/app/actions/get-users";
+import { Badge } from "@/components/ui/badge";
 
 interface ConceptMapWithViews extends ConceptMap {
     viewCount?: number;
+    creatorEmail?: string;
 }
+
+type UrlStatus = 'idle' | 'checking' | 'valid' | 'invalid';
 
 export default function AdminConceptMapsPage() {
     const [conceptMaps, setConceptMaps] = useState<ConceptMapWithViews[]>([]);
+    const [users, setUsers] = useState<BasicUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
     const [mapToDelete, setMapToDelete] = useState<ConceptMap | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [isFeeding, setIsFeeding] = useState(false);
+    const [urlStatuses, setUrlStatuses] = useState<Record<string, UrlStatus>>({});
     const { toast } = useToast();
 
     const fetchConceptMaps = useCallback(async () => {
         setLoading(true);
         try {
-            const mapsQuery = query(collection(db, 'concept-maps'), orderBy('title'));
-            const viewsQuery = collection(db, 'concept-map-analytics');
-
-            const [mapsSnapshot, viewsSnapshot] = await Promise.all([
-                getDocs(mapsQuery),
-                getDocs(viewsQuery)
+            const [mapsSnapshot, viewsSnapshot, usersData] = await Promise.all([
+                getDocs(query(collection(db, 'concept-maps'), orderBy('title'))),
+                getDocs(collection(db, 'concept-map-analytics')),
+                getAllUsers()
             ]);
+
+            const usersMap = new Map(usersData.map(u => [u.id, u.email]));
+            setUsers(usersData);
 
             const viewsMap = new Map<string, number>();
             viewsSnapshot.forEach(doc => {
@@ -50,10 +58,12 @@ export default function AdminConceptMapsPage() {
             
             const data: ConceptMapWithViews[] = [];
             mapsSnapshot.forEach((doc) => {
+                const mapData = doc.data() as ConceptMap;
                 data.push({ 
                     id: doc.id, 
-                    ...doc.data(),
+                    ...mapData,
                     viewCount: viewsMap.get(doc.id) || 0,
+                    creatorEmail: mapData.createdBy ? usersMap.get(mapData.createdBy) || 'Unknown' : 'Unknown',
                 } as ConceptMapWithViews);
             });
 
@@ -80,7 +90,8 @@ export default function AdminConceptMapsPage() {
         }
         const lowercasedFilter = searchTerm.toLowerCase();
         return conceptMaps.filter(
-            map => map.title.toLowerCase().includes(lowercasedFilter)
+            map => map.title.toLowerCase().includes(lowercasedFilter) ||
+                   (map.creatorEmail && map.creatorEmail.toLowerCase().includes(lowercasedFilter))
         );
     }, [searchTerm, conceptMaps]);
 
@@ -151,6 +162,20 @@ export default function AdminConceptMapsPage() {
     const handleLinkClick = (mapId: string) => {
         trackConceptMapView(mapId);
     };
+    
+    const checkUrlStatus = async (mapId: string, url: string) => {
+        setUrlStatuses(prev => ({ ...prev, [mapId]: 'checking' }));
+        try {
+            // Using a simple fetch with HEAD method to check for existence without downloading content
+            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+            // no-cors will result in an opaque response, but a success indicates the resource is likely reachable
+            setUrlStatuses(prev => ({ ...prev, [mapId]: 'valid' }));
+        } catch (error) {
+             // A network error often means CORS issues or a truly unreachable URL.
+             // We'll mark as invalid for simplicity. A more robust solution might need a server-side proxy.
+            setUrlStatuses(prev => ({ ...prev, [mapId]: 'invalid' }));
+        }
+    }
 
 
     return (
@@ -181,7 +206,7 @@ export default function AdminConceptMapsPage() {
                          <div className="relative pt-2">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                            placeholder="Search by name..."
+                            placeholder="Search by name or creator email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 w-full md:w-1/2 lg:w-1/3"
@@ -193,23 +218,29 @@ export default function AdminConceptMapsPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Name</TableHead>
+                                    <TableHead>Added By</TableHead>
                                     <TableHead className="w-[100px] text-center">Views</TableHead>
-                                    <TableHead className="w-[100px] text-center">Link</TableHead>
+                                    <TableHead className="w-[100px] text-center">URL Status</TableHead>
                                     <TableHead className="w-[100px] text-center">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
+                                        <TableCell colSpan={5} className="h-24 text-center">
                                             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredConceptMaps.length > 0 ? (
-                                    filteredConceptMaps.map((map) => (
+                                    filteredConceptMaps.map((map) => {
+                                        const status = urlStatuses[map.id!] || 'idle';
+                                        return (
                                         <TableRow key={map.id}>
                                             <TableCell className="font-medium">
                                                 {map.title}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline">{map.creatorEmail}</Badge>
                                             </TableCell>
                                             <TableCell className="text-center">
                                                  {map.viewCount && map.viewCount > 0 ? (
@@ -220,12 +251,14 @@ export default function AdminConceptMapsPage() {
                                                 ) : null}
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <Button asChild variant="outline" size="icon" onClick={() => handleLinkClick(map.id!)}>
-                                                    <Link href={map.url} target="_blank" rel="noopener noreferrer">
-                                                        <ExternalLink className="h-4 w-4" />
-                                                        <span className="sr-only">Open Link</span>
-                                                    </Link>
-                                                </Button>
+                                                {status === 'checking' && <Loader2 className="h-4 w-4 animate-spin mx-auto text-muted-foreground" />}
+                                                {status === 'valid' && <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto" />}
+                                                {status === 'invalid' && <XCircle className="h-5 w-5 text-destructive mx-auto" />}
+                                                {status === 'idle' && (
+                                                     <Button variant="ghost" size="sm" onClick={() => checkUrlStatus(map.id!, map.url)}>
+                                                        Check
+                                                    </Button>
+                                                )}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <DropdownMenu>
@@ -237,6 +270,12 @@ export default function AdminConceptMapsPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                          <DropdownMenuItem asChild>
+                                                            <NextLink href={map.url} target="_blank" rel="noopener noreferrer" onClick={() => handleLinkClick(map.id!)}>
+                                                                <ExternalLink className="mr-2 h-4 w-4" />
+                                                                Open Link
+                                                            </NextLink>
+                                                        </DropdownMenuItem>
                                                          <EditConceptMapDialog conceptMap={map} onMapUpdated={fetchConceptMaps}>
                                                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                                                 <Pencil className="mr-2 h-4 w-4" />
@@ -254,10 +293,10 @@ export default function AdminConceptMapsPage() {
                                                 </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
-                                    ))
+                                    )})
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
+                                        <TableCell colSpan={5} className="h-24 text-center">
                                             {searchTerm ? "No concept maps match your search." : "No concept maps found."}
                                         </TableCell>
                                     </TableRow>

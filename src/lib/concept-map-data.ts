@@ -4,4 +4,5 @@ export type ConceptMap = {
     title: string;
     description: string; // Kept for schema compatibility, can be empty
     url: string;
+    createdBy?: string;
 }
