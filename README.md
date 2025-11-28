@@ -2,7 +2,7 @@
 
 # 🎓 Saveetha Companion
 
-**Your All-in-One Academic Hub for Saveetha Engineering College**
+**Your All-in-One Academic Hub for Saveetha School of Engineering College**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
