@@ -48,7 +48,7 @@ function SubmitButton() {
 
 export default function FeedbackDialog() {
   const [showDialog, setShowDialog] = useState(false);
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
   const { toast } = useToast();
   const [state, formAction] = useActionState(sendFeedback, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -59,7 +59,7 @@ export default function FeedbackDialog() {
       feedback: '',
     },
   });
-  
+
   useEffect(() => {
     // This effect is now just for handling the form submission result
     if (state.type) {
@@ -75,26 +75,34 @@ export default function FeedbackDialog() {
     }
   }, [state, toast]);
 
-  // Expose a method to show the dialog
   useEffect(() => {
-    const handleShowFeedback = () => {
-      // Only show if the user profile is loaded and they haven't submitted feedback before
-      if (profile && profile.feedbackSubmitted !== true) {
+    if (!loading && user && profile && profile.feedbackSubmitted !== true) {
+      const timer = setTimeout(() => {
         setShowDialog(true);
-      }
-    };
-    window.addEventListener('showFeedbackDialog', handleShowFeedback);
-    return () => window.removeEventListener('showFeedbackDialog', handleShowFeedback);
-  }, [profile]);
+      }, 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, user, profile]);
 
 
-  if (!user) {
+  if (!user || !profile || profile.feedbackSubmitted === true) {
     return null;
+  }
+  
+  const handleClose = (open: boolean) => {
+      // Don't close the dialog if the user is clicking outside
+      if (!open && formRef.current) return;
+      setShowDialog(open);
   }
 
   return (
-    <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={showDialog} onOpenChange={handleClose}>
+      <DialogContent 
+        className="sm:max-w-md"
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageSquare /> Got a Minute?
