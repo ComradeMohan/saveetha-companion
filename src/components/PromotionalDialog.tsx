@@ -13,7 +13,7 @@ import Link from 'next/link';
 
 const PROMO_STORAGE_KEY = 'promoDialogLastClosed';
 const HIDE_DURATION = 30 * 60 * 1000; // 30 minutes
-const IMAGE_URL = 'https://i.ibb.co/5WzMJGkT/7975dff7-4ffa-4bb3-bd91-dafa1985f33f.png';
+const IMAGE_URL = '/app_promotion.png';
 
 export default function PromotionalDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +60,7 @@ export default function PromotionalDialog() {
 
         <div className="relative">
           <Link
-            href="https://devpulseweb.netlify.app/ComradeMohan"
+            href="https://play.google.com/store/apps/details?id=com.simats.univault"
             target="_blank"
             rel="noopener noreferrer"
           >
