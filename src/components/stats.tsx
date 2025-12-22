@@ -284,10 +284,6 @@ export default function Stats() {
                 </Card>
              </div>
         )}
-        
-        <div className="mt-12">
-            <Testimonials />
-        </div>
       </div>
     </section>
   );
