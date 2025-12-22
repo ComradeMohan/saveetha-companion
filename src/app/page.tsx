@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import SubjectWiseAttendanceCalculator from '@/components/subject-wise-attendance-calculator';
+import { Testimonials } from '@/components/testimonials';
 
 const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
   loading: () => <Skeleton className="w-full h-[400px]" />,
@@ -44,6 +45,8 @@ export default function Home() {
         
         {!user && <Features />}
         <Stats />
+
+        <Testimonials />
 
         <section id="contact" className="pt-20 pb-12 md:py-16 text-center">
             <div className="container mx-auto px-4">
