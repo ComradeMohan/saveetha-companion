@@ -23,7 +23,7 @@ export type SavedProgram = {
   userId?: string; // For shared programs
 };
 
-export const effectTypes = ['snow', 'fireworks', 'confetti'] as const;
+export const effectTypes = ['snow', 'fireworks', 'confetti', 'rain', 'none'] as const;
 export type EffectType = (typeof effectTypes)[number];
 
 export interface SpecialEvent {

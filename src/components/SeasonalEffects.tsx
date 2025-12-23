@@ -8,14 +8,28 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import SnowfallEffect from './SnowfallEffect';
 import { getSpecialEvents } from '@/app/actions/manage-effects';
-import { SpecialEvent } from '@/types';
+import { SpecialEvent, effectTypes } from '@/types';
+import './rain.css';
+
+
+const RainEffect = () => (
+    <div className="rain-container">
+        {Array.from({ length: 100 }).map((_, i) => (
+            <div key={i} className="rain-drop" style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${0.5 + Math.random() * 0.5}s`,
+            }}></div>
+        ))}
+    </div>
+);
 
 
 // Helper component to avoid Suspense boundary issues with useSearchParams
 function EffectsManager() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const [effect, setEffect] = useState<string>('snow');
+  const [effect, setEffect] = useState<typeof effectTypes[number]>('snow');
   const [specialMessage, setSpecialMessage] = useState<string | null>(null);
   const [showSpecialMessage, setShowSpecialMessage] = useState(false);
   const [customEvents, setCustomEvents] = useState<SpecialEvent[]>([]);
@@ -33,11 +47,11 @@ function EffectsManager() {
     let toastId: string | undefined;
 
     const hardcodedEvents = [
-        { month: 12, day: 25, effect: 'fireworks', message: "Happy birthday To U my dear friend" },
-        { month: 1, day: 1, effect: 'confetti', message: "Happy New Year!" },
+        { month: 12, day: 25, effect: 'fireworks' as const, message: "Happy birthday To U my dear friend" },
+        { month: 1, day: 1, effect: 'confetti' as const, message: "Happy New Year!" },
     ];
     
-    let currentEffect = 'snow';
+    let currentEffect: typeof effectTypes[number] = 'snow';
     let message: string | null = null;
     let activeEvent = false;
 
@@ -71,7 +85,12 @@ function EffectsManager() {
         currentEffect = 'confetti';
         message = "Happy New Year!";
         activeEvent = true;
+    } else if (testParam === 'rain') {
+        currentEffect = 'rain';
+        message = "Looks like a rainy day!";
+        activeEvent = true;
     }
+
 
     setEffect(currentEffect);
     setSpecialMessage(message);
@@ -105,6 +124,7 @@ function EffectsManager() {
       {effect === 'snow' && <SnowfallEffect />}
       {effect === 'fireworks' && <FireworksEffect />}
       {effect === 'confetti' && <ConfettiEffect />}
+      {effect === 'rain' && <RainEffect />}
     </>
   );
 }
