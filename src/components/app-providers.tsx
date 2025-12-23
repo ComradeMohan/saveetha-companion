@@ -10,7 +10,7 @@ import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
 import { usePathname } from 'next/navigation';
 import PromotionalDialog from './PromotionalDialog';
-import SnowfallEffect from './SnowfallEffect';
+import SeasonalEffects from './SeasonalEffects'; // Import the new component
 
 
 function MainContent({ children }: { children: React.ReactNode }) {
@@ -24,7 +24,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
             <VerificationBanner key="verification-banner" />
             <RecruitmentDialog />
             <PromotionalDialog />
-            <SnowfallEffect />
+            <SeasonalEffects />
             <main key="main-content">{children}</main>
             {showHeader && <SupportButton />}
             {showHeader && <MobileNav />}
