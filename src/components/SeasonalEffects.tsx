@@ -6,9 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import SnowfallEffect from './SnowfallEffect';
+import Snowfall from 'react-snowfall';
 import { getSpecialEvents } from '@/app/actions/manage-effects';
-import { SpecialEvent, effectTypes, EffectType } from '@/types';
+import { SpecialEvent, EffectType } from '@/types';
 import './rain.css';
 
 
@@ -29,7 +29,7 @@ const RainEffect = () => (
 function EffectsManager() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const [effects, setEffects] = useState<EffectType[]>(['snow']);
+  const [effects, setEffects] = useState<EffectType[]>([]);
   const [specialMessage, setSpecialMessage] = useState<string | null>(null);
   const [showSpecialMessage, setShowSpecialMessage] = useState(false);
   const [customEvents, setCustomEvents] = useState<SpecialEvent[]>([]);
@@ -47,7 +47,7 @@ function EffectsManager() {
     
     const hardcodedEvents = [
         { month: 12, day: 25, effects: ['fireworks', 'confetti'] as EffectType[], message: "Happy birthday To U my dear friend" },
-        { month: 1, day: 1, effects: ['confetti'] as EffectType[], message: "Happy New Year!" },
+        { month: 1, day: 1, effects: ['confetti'] as EffectType[], message: "Happy New Year!<br/>Welcome 2026<br/><p class='text-2xl mt-4'>Let’s make learning smarter, simpler, and stronger.</p>" },
     ];
     
     let currentEffects: EffectType[] = ['snow'];
@@ -77,13 +77,19 @@ function EffectsManager() {
     
     // Override with test parameter if present
     if (testParam === 'dec25') {
-        currentEffects = ['fireworks', 'confetti'];
-        message = "Happy birthday To U my dear friend";
-        activeEvent = true;
+        const event = hardcodedEvents.find(e => e.month === 12 && e.day === 25);
+        if (event) {
+            currentEffects = event.effects;
+            message = event.message;
+            activeEvent = true;
+        }
     } else if (testParam === 'jan1') {
-        currentEffects = ['confetti'];
-        message = "Happy New Year!";
-        activeEvent = true;
+        const event = hardcodedEvents.find(e => e.month === 1 && e.day === 1);
+        if (event) {
+            currentEffects = event.effects;
+            message = event.message;
+            activeEvent = true;
+        }
     } else if (testParam === 'rain') {
         currentEffects = ['rain'];
         message = "Looks like a rainy day!";
@@ -94,9 +100,13 @@ function EffectsManager() {
     setEffects(activeEvent ? currentEffects : ['snow']);
     setSpecialMessage(message);
     if (message && activeEvent) {
-        setShowSpecialMessage(true);
+        const sessionKey = 'specialMessageShown';
+        if (!sessionStorage.getItem(sessionKey)) {
+             setShowSpecialMessage(true);
+             sessionStorage.setItem(sessionKey, 'true');
+        }
     }
-  }, [searchParams, toast, customEvents]);
+  }, [searchParams, customEvents]);
   
   const handleOverlayClick = () => {
     setShowSpecialMessage(false);
@@ -113,9 +123,7 @@ function EffectsManager() {
             onClick={handleOverlayClick}
         >
             <div className="relative text-center text-white p-8 animate-in zoom-in-75 duration-700">
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-                    {specialMessage}
-                </h1>
+                <div className="text-5xl md:text-7xl font-extrabold tracking-tight" dangerouslySetInnerHTML={{ __html: specialMessage }} />
             </div>
         </div>
       )}
@@ -128,9 +136,17 @@ function EffectsManager() {
   );
 }
 
+const SnowfallEffect = () => (
+    <Snowfall
+      color="#BFDFFF" // A light, icy blue
+      style={{ position: 'fixed', width: '100vw', height: '100vh', zIndex: 100, pointerEvents: 'none' }}
+      snowflakeCount={150}
+    />
+);
+
 const FireworksEffect = () => (
     <>
-      <div id="fireworks-container" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000, pointerEvents: 'none' }}></div>
+      <div id="fireworks-container" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 250, pointerEvents: 'none' }}></div>
       <Script src="https://cdn.jsdelivr.net/npm/fireworks-js@2/dist/index.umd.js" strategy="lazyOnload" />
       <Script id="fireworks-init" strategy="lazyOnload">
         {`
