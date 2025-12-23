@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import SnowfallEffect from './SnowfallEffect';
 import { getSpecialEvents } from '@/app/actions/manage-effects';
-import { SpecialEvent, effectTypes } from '@/types';
+import { SpecialEvent, effectTypes, EffectType } from '@/types';
 import './rain.css';
 
 
@@ -29,7 +29,7 @@ const RainEffect = () => (
 function EffectsManager() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const [effect, setEffect] = useState<typeof effectTypes[number]>('snow');
+  const [effects, setEffects] = useState<EffectType[]>(['snow']);
   const [specialMessage, setSpecialMessage] = useState<string | null>(null);
   const [showSpecialMessage, setShowSpecialMessage] = useState(false);
   const [customEvents, setCustomEvents] = useState<SpecialEvent[]>([]);
@@ -44,14 +44,13 @@ function EffectsManager() {
 
   useEffect(() => {
     const testParam = searchParams.get('test_date');
-    let toastId: string | undefined;
-
+    
     const hardcodedEvents = [
-        { month: 12, day: 25, effect: 'fireworks' as const, message: "Happy birthday To U my dear friend" },
-        { month: 1, day: 1, effect: 'confetti' as const, message: "Happy New Year!" },
+        { month: 12, day: 25, effects: ['fireworks', 'confetti'] as EffectType[], message: "Happy birthday To U my dear friend" },
+        { month: 1, day: 1, effects: ['confetti'] as EffectType[], message: "Happy New Year!" },
     ];
     
-    let currentEffect: typeof effectTypes[number] = 'snow';
+    let currentEffects: EffectType[] = ['snow'];
     let message: string | null = null;
     let activeEvent = false;
 
@@ -63,14 +62,14 @@ function EffectsManager() {
     // Check for custom event first
     const customEvent = customEvents.find(e => e.date === dateString);
     if (customEvent) {
-        currentEffect = customEvent.effect;
+        currentEffects = customEvent.effect === 'none' ? [] : [customEvent.effect];
         message = customEvent.message;
         activeEvent = true;
     } else {
         // Check hardcoded events
         const hardcodedEvent = hardcodedEvents.find(e => e.month === month && e.day === day);
         if (hardcodedEvent) {
-            currentEffect = hardcodedEvent.effect;
+            currentEffects = hardcodedEvent.effects;
             message = hardcodedEvent.message;
             activeEvent = true;
         }
@@ -78,23 +77,23 @@ function EffectsManager() {
     
     // Override with test parameter if present
     if (testParam === 'dec25') {
-        currentEffect = 'fireworks';
+        currentEffects = ['fireworks', 'confetti'];
         message = "Happy birthday To U my dear friend";
         activeEvent = true;
     } else if (testParam === 'jan1') {
-        currentEffect = 'confetti';
+        currentEffects = ['confetti'];
         message = "Happy New Year!";
         activeEvent = true;
     } else if (testParam === 'rain') {
-        currentEffect = 'rain';
+        currentEffects = ['rain'];
         message = "Looks like a rainy day!";
         activeEvent = true;
     }
 
 
-    setEffect(currentEffect);
+    setEffects(activeEvent ? currentEffects : ['snow']);
     setSpecialMessage(message);
-    if (message) {
+    if (message && activeEvent) {
         setShowSpecialMessage(true);
     }
   }, [searchParams, toast, customEvents]);
@@ -120,11 +119,11 @@ function EffectsManager() {
             </div>
         </div>
       )}
-
-      {effect === 'snow' && <SnowfallEffect />}
-      {effect === 'fireworks' && <FireworksEffect />}
-      {effect === 'confetti' && <ConfettiEffect />}
-      {effect === 'rain' && <RainEffect />}
+      
+      {effects.includes('snow') && <SnowfallEffect />}
+      {effects.includes('fireworks') && <FireworksEffect />}
+      {effects.includes('confetti') && <ConfettiEffect />}
+      {effects.includes('rain') && <RainEffect />}
     </>
   );
 }
