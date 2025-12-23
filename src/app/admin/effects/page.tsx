@@ -166,7 +166,6 @@ export default function EffectsAdminPage() {
                     <>
                         <TableRow className="bg-muted/30"><TableCell colSpan={4} className="py-1 px-2 text-xs font-semibold text-muted-foreground">Default Events</TableCell></TableRow>
                         <TableRow><TableCell>Dec 25</TableCell><TableCell>"Happy birthday To U my dear friend"</TableCell><TableCell>fireworks</TableCell><TableCell></TableCell></TableRow>
-                        <TableRow><TableCell>Dec 31</TableCell><TableCell>Countdown</TableCell><TableCell>fireworks</TableCell><TableCell></TableCell></TableRow>
                         <TableRow><TableCell>Jan 1</TableCell><TableCell>"Happy New Year!"</TableCell><TableCell>confetti</TableCell><TableCell></TableCell></TableRow>
                         <TableRow><TableCell>Other</TableCell><TableCell>N/A</TableCell><TableCell>snow</TableCell><TableCell></TableCell></TableRow>
                         

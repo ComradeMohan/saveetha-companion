@@ -34,7 +34,6 @@ function EffectsManager() {
 
     const hardcodedEvents = [
         { month: 12, day: 25, effect: 'fireworks', message: "Happy birthday To U my dear friend" },
-        { month: 12, day: 31, effect: 'fireworks_countdown', message: null },
         { month: 1, day: 1, effect: 'confetti', message: "Happy New Year!" },
     ];
     
@@ -79,44 +78,6 @@ function EffectsManager() {
     if (message) {
         setShowSpecialMessage(true);
     }
-
-    // Handle countdown toast for NYE
-    if (currentEffect === 'fireworks_countdown') {
-        const newYear = new Date(today.getFullYear() + 1, 0, 1);
-        const updateCountdown = () => {
-            const now = new Date();
-            const diff = newYear.getTime() - now.getTime();
-
-            if (diff <= 0) {
-                if (toastId) toast.dismiss(toastId);
-                setEffect('confetti');
-                setSpecialMessage("Happy New Year!");
-                setShowSpecialMessage(true);
-                return;
-            }
-
-            const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-            const minutes = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
-            const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-            
-            const description = `${hours}:${minutes}:${seconds} until New Year!`;
-            
-            if (toastId) {
-                toast.update(toastId, { description });
-            } else {
-                const { id } = toast({
-                    title: 'New Year Countdown ⏳',
-                    description,
-                    duration: Infinity,
-                });
-                toastId = id;
-            }
-        };
-        
-        updateCountdown();
-        const interval = setInterval(updateCountdown, 1000);
-        return () => clearInterval(interval);
-    }
   }, [searchParams, toast, customEvents]);
   
   const handleOverlayClick = () => {
@@ -143,7 +104,6 @@ function EffectsManager() {
 
       {effect === 'snow' && <SnowfallEffect />}
       {effect === 'fireworks' && <FireworksEffect />}
-      {effect === 'fireworks_countdown' && <FireworksEffect />}
       {effect === 'confetti' && <ConfettiEffect />}
     </>
   );
@@ -185,7 +145,7 @@ const ConfettiEffect = () => (
                     particleCount: 250,
                     spread: 100,
                     origin: { y: 0.6 },
-                    zIndex: 1000 // Ensure confetti is above the overlay
+                    zIndex: 2500
                 });
             }
         }}
