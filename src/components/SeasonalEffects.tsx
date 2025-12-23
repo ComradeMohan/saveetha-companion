@@ -7,35 +7,69 @@ import Script from 'next/script';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import SnowfallEffect from './SnowfallEffect';
+import { getSpecialEvents } from '@/app/actions/manage-effects';
+import type { SpecialEvent } from '@/app/actions/manage-effects';
 
 // Helper component to avoid Suspense boundary issues with useSearchParams
 function EffectsManager() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const [effect, setEffect] = useState<string>('snow'); // Default to snow
+  const [effect, setEffect] = useState<string>('snow');
   const [specialMessage, setSpecialMessage] = useState<string | null>(null);
+  const [customEvents, setCustomEvents] = useState<SpecialEvent[]>([]);
 
   useEffect(() => {
-    const testDate = searchParams.get('test_date');
-    const today = new Date();
-    const month = today.getMonth() + 1; // getMonth() is 0-indexed
-    const day = today.getDate();
+    const fetchCustomEvents = async () => {
+        const events = await getSpecialEvents();
+        setCustomEvents(events);
+    };
+    fetchCustomEvents();
+  }, []);
 
-    let currentEffect = 'snow';
-    let message: string | null = null;
+  useEffect(() => {
+    const testParam = searchParams.get('test_date');
     let toastId: string | undefined;
 
-    const checkDate = (m: number, d: number) => month === m && day === d;
+    const hardcodedEvents = [
+        { month: 12, day: 25, effect: 'fireworks', message: "Happy birthday To U my dear friend" },
+        { month: 12, day: 31, effect: 'fireworks_countdown', message: null },
+        { month: 1, day: 1, effect: 'confetti', message: "Happy New Year!" },
+    ];
     
-    // Logic for live dates or test dates
-    if (testDate === 'dec25' || checkDate(12, 25)) {
-      currentEffect = 'fireworks';
-      message = "Happy birthday To U my dear friend";
-    } else if (testDate === 'dec31' || checkDate(12, 31)) {
-      currentEffect = 'fireworks_countdown';
-    } else if (testDate === 'jan1' || checkDate(1, 1)) {
-      currentEffect = 'confetti';
-      message = "Happy New Year!";
+    let currentEffect = 'snow';
+    let message: string | null = null;
+    let activeEvent = false;
+
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const dateString = `${today.getFullYear()}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    // Check for custom event first
+    const customEvent = customEvents.find(e => e.date === dateString);
+    if (customEvent) {
+        currentEffect = customEvent.effect;
+        message = customEvent.message;
+        activeEvent = true;
+    } else {
+        // Check hardcoded events
+        const hardcodedEvent = hardcodedEvents.find(e => e.month === month && e.day === day);
+        if (hardcodedEvent) {
+            currentEffect = hardcodedEvent.effect;
+            message = hardcodedEvent.message;
+            activeEvent = true;
+        }
+    }
+    
+    // Override with test parameter if present
+    if (testParam === 'dec25') {
+        currentEffect = 'fireworks';
+        message = "Happy birthday To U my dear friend";
+        activeEvent = true;
+    } else if (testParam === 'jan1') {
+        currentEffect = 'confetti';
+        message = "Happy New Year!";
+        activeEvent = true;
     }
 
     setEffect(currentEffect);
@@ -50,7 +84,7 @@ function EffectsManager() {
 
             if (diff <= 0) {
                 if (toastId) toast.dismiss(toastId);
-                setEffect('confetti'); // Switch to confetti on New Year
+                setEffect('confetti');
                 setSpecialMessage("Happy New Year!");
                 return;
             }
@@ -67,7 +101,7 @@ function EffectsManager() {
                 const { id } = toast({
                     title: 'New Year Countdown ⏳',
                     description,
-                    duration: Infinity, // Keep it open until dismissed
+                    duration: Infinity,
                 });
                 toastId = id;
             }
@@ -77,7 +111,7 @@ function EffectsManager() {
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
     }
-  }, [searchParams, toast]);
+  }, [searchParams, toast, customEvents]);
 
   if (specialMessage) {
      return (
@@ -150,7 +184,6 @@ const ConfettiEffect = () => (
     />
 );
 
-// Main component wrapped in Suspense for useSearchParams
 export default function SeasonalEffects() {
     return (
         <Suspense fallback={null}>
@@ -159,7 +192,6 @@ export default function SeasonalEffects() {
     );
 }
 
-// Add this to your global types or a declarations file if needed
 declare global {
   interface Window {
     Fireworks: any;

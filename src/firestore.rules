@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -21,13 +22,19 @@ service cloud.firestore {
         // Main admin can manage all documents.
         // A user can read their own batch admin document to verify their status.
         allow read: if isAdmin() || (request.auth != null && request.auth.uid == userId);
-        allow write, update, delete: if isAdmin();
+        allow write, delete: if isAdmin();
 
         // Batch admins can add to their own activity subcollection
         match /activity/{activityId} {
             allow create: if request.auth != null && request.auth.uid == userId;
             allow read, delete: if isAdmin(); // Only main admin can read/delete logs
         }
+    }
+    
+    // Allow pre-login check for batch admins
+    match /batchAdminsEmail/{email} {
+        allow read: if true;
+        allow write: if isAdmin();
     }
     
     // PUBLIC COLLECTIONS (READABLE BY ANYONE)
@@ -41,6 +48,7 @@ service cloud.firestore {
     match /mcqs/{docId} { allow read: if true; }
     match /coding-questions/{docId} { allow read: if true; }
     match /concept-map-analytics/{mapId} { allow read: if true; }
+    match /specialEvents/{eventId} { allow read: if true; } // New rule for special events
 
     // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
@@ -69,6 +77,10 @@ service cloud.firestore {
     }
     match /faculty/{docId} {
       allow create: if isBatchAdmin() || isAdmin();
+    }
+    match /specialEvents/{eventId} { // New rule for special events
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
     }
 
     // FORM SUBMISSIONS (PUBLIC OR AUTHENTICATED)

@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, Code, Hand, UserCog, FileJson } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, Code, Hand, UserCog, FileJson, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -15,6 +16,7 @@ const adminNavLinks = [
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
+  { href: '/admin/effects', label: 'Seasonal Effects', icon: Sparkles },
   { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
   { href: '/admin/recruitment', label: 'Recruitment', icon: Hand },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },

@@ -36,6 +36,7 @@ import {
   Hand,
   UserCog,
   FileJson,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -49,6 +50,7 @@ const adminNavLinks = [
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
+  { href: '/admin/effects', label: 'Seasonal Effects', icon: Sparkles },
   { href: '/admin/enrollments', label: 'Enrollment Alerts', icon: ClipboardList },
   { href: '/admin/recruitment', label: 'Recruitment', icon: Hand },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
