@@ -130,7 +130,7 @@ export default function FeedbackDialog() {
                   <FormLabel>Your Feedback (Mandatory)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Kindly give feed back or suggestion for this website"
+                      placeholder="Request a feature..."
                       className="min-h-[120px] resize-none"
                       {...field}
                     />
