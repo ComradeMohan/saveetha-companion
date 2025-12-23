@@ -8,7 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import SnowfallEffect from './SnowfallEffect';
 import { getSpecialEvents } from '@/app/actions/manage-effects';
-import type { SpecialEvent } from '@/app/actions/manage-effects';
+import { SpecialEvent } from '@/types';
+
 
 // Helper component to avoid Suspense boundary issues with useSearchParams
 function EffectsManager() {

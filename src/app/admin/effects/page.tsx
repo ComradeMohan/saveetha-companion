@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Sparkles, Trash2, Wand2 } from 'lucide-react';
-import { addSpecialEvent, getSpecialEvents, deleteSpecialEvent, effectTypes } from '@/app/actions/manage-effects';
-import type { SpecialEvent } from '@/app/actions/manage-effects';
+import { addSpecialEvent, getSpecialEvents, deleteSpecialEvent } from '@/app/actions/manage-effects';
+import { effectTypes, type SpecialEvent } from '@/types';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 

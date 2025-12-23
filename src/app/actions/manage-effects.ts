@@ -4,16 +4,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-
-export const effectTypes = ['snow', 'fireworks', 'confetti'] as const;
-export type EffectType = (typeof effectTypes)[number];
-
-export interface SpecialEvent {
-  id: string;
-  date: string; // YYYY-MM-DD format
-  message: string;
-  effect: EffectType;
-}
+import { effectTypes, type SpecialEvent } from '@/types';
 
 const eventSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format.'),

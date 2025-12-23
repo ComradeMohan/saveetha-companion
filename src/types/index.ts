@@ -22,3 +22,13 @@ export type SavedProgram = {
   lastInput?: string;
   userId?: string; // For shared programs
 };
+
+export const effectTypes = ['snow', 'fireworks', 'confetti'] as const;
+export type EffectType = (typeof effectTypes)[number];
+
+export interface SpecialEvent {
+  id: string;
+  date: string; // YYYY-MM-DD format
+  message: string;
+  effect: EffectType;
+}
