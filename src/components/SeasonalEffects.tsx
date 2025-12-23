@@ -17,6 +17,7 @@ function EffectsManager() {
   const { toast } = useToast();
   const [effect, setEffect] = useState<string>('snow');
   const [specialMessage, setSpecialMessage] = useState<string | null>(null);
+  const [showSpecialMessage, setShowSpecialMessage] = useState(false);
   const [customEvents, setCustomEvents] = useState<SpecialEvent[]>([]);
 
   useEffect(() => {
@@ -75,6 +76,9 @@ function EffectsManager() {
 
     setEffect(currentEffect);
     setSpecialMessage(message);
+    if (message) {
+        setShowSpecialMessage(true);
+    }
 
     // Handle countdown toast for NYE
     if (currentEffect === 'fireworks_countdown') {
@@ -87,6 +91,7 @@ function EffectsManager() {
                 if (toastId) toast.dismiss(toastId);
                 setEffect('confetti');
                 setSpecialMessage("Happy New Year!");
+                setShowSpecialMessage(true);
                 return;
             }
 
@@ -113,28 +118,29 @@ function EffectsManager() {
         return () => clearInterval(interval);
     }
   }, [searchParams, toast, customEvents]);
-
-  if (specialMessage) {
-     return (
-        <>
-            <div className={cn(
-                "fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm",
-                "animate-in fade-in-0 duration-500"
-            )}>
-                <div className="relative text-center text-white p-8 animate-in zoom-in-75 duration-700">
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-                        {specialMessage}
-                    </h1>
-                </div>
-            </div>
-            {effect === 'fireworks' && <FireworksEffect />}
-            {effect === 'confetti' && <ConfettiEffect />}
-        </>
-    );
-  }
+  
+  const handleOverlayClick = () => {
+    setShowSpecialMessage(false);
+  };
 
   return (
     <>
+      {showSpecialMessage && specialMessage && (
+        <div 
+            className={cn(
+                "fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm cursor-pointer",
+                "animate-in fade-in-0 duration-500"
+            )}
+            onClick={handleOverlayClick}
+        >
+            <div className="relative text-center text-white p-8 animate-in zoom-in-75 duration-700">
+                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+                    {specialMessage}
+                </h1>
+            </div>
+        </div>
+      )}
+
       {effect === 'snow' && <SnowfallEffect />}
       {effect === 'fireworks' && <FireworksEffect />}
       {effect === 'fireworks_countdown' && <FireworksEffect />}
@@ -178,7 +184,8 @@ const ConfettiEffect = () => (
                  window.confetti({
                     particleCount: 250,
                     spread: 100,
-                    origin: { y: 0.6 }
+                    origin: { y: 0.6 },
+                    zIndex: 1000 // Ensure confetti is above the overlay
                 });
             }
         }}
