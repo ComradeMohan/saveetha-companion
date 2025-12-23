@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
@@ -5,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import SnowfallEffect from './SnowfallEffect';
 
 // Helper component to avoid Suspense boundary issues with useSearchParams
 function EffectsManager() {
@@ -28,7 +30,7 @@ function EffectsManager() {
     // Logic for live dates or test dates
     if (testDate === 'dec25' || checkDate(12, 25)) {
       currentEffect = 'fireworks';
-      message = "Many more happy returns of the day!";
+      message = "Happy birthday To U my dear friend";
     } else if (testDate === 'dec31' || checkDate(12, 31)) {
       currentEffect = 'fireworks_countdown';
     } else if (testDate === 'jan1' || checkDate(1, 1)) {
@@ -106,26 +108,6 @@ function EffectsManager() {
   );
 }
 
-const SnowfallEffect = () => (
-    <>
-        <Script id="magic-snowflakes" src="https://unpkg.com/magic-snowflakes/dist/snowflakes.min.js" strategy="lazyOnload" />
-        <Script id="magic-snowflakes-init" strategy="lazyOnload">
-            {`
-                if (window.Snowflakes) {
-                    new window.Snowflakes({
-                        color: "#BFDFFF",
-                        count: 60,
-                        minSize: 8,
-                        maxSize: 18,
-                        speed: 1.2,
-                        zIndex: 500
-                    });
-                }
-            `}
-        </Script>
-    </>
-);
-
 const FireworksEffect = () => (
     <>
       <div id="fireworks-container" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000, pointerEvents: 'none' }}></div>
@@ -180,7 +162,6 @@ export default function SeasonalEffects() {
 // Add this to your global types or a declarations file if needed
 declare global {
   interface Window {
-    Snowflakes: any;
     Fireworks: any;
     confetti: any;
   }
