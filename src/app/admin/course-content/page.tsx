@@ -14,9 +14,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Combobox } from '@/components/ui/combobox';
-import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2, UploadCloud } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2, UploadCloud, Save, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getUnifiedCourses, addUnit, getUnits, deleteUnit, getTopics, deleteTopic, addTopic } from '@/app/actions/manage-course-content';
+import { getUnifiedCourses, addUnit, deleteUnit, addTopic, getAllCourseContent, saveMindMap, getMindMapForCourse } from '@/app/actions/manage-course-content';
 import { importCourseFromJson } from '@/app/actions/manage-course-content-json';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
@@ -25,9 +25,11 @@ import { generateCourseContent } from '@/ai/flows/course-creator-flow';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { EditTopicDialog } from '@/components/admin/course-content/edit-topic-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
 type Course = { id: string; name: string };
+type CourseContent = { units: Unit[]; topics: Record<string, Topic[]> };
 
 const jsonInitialState = { type: '', message: '' };
 
@@ -60,6 +62,11 @@ export default function CourseContentPage() {
 
   const jsonFormRef = useRef<HTMLFormElement>(null);
   const [jsonState, jsonFormAction] = useActionState(importCourseFromJson, jsonInitialState);
+  
+  const [mindMapJson, setMindMapJson] = useState('');
+  const [isSavingMindMap, setIsSavingMindMap] = useState(false);
+  const [courseHasMindMap, setCourseHasMindMap] = useState(false);
+
 
   // Initial data loading for dropdowns
   useEffect(() => {
@@ -68,7 +75,7 @@ export default function CourseContentPage() {
       setCourses(coursesData);
       
       const contentCheckPromises = coursesData.map(async course => {
-        const units = await getUnits(course.id);
+        const { units } = await getAllCourseContent(course.id);
         return { course, hasContent: units.length > 0 };
       });
       const results = await Promise.all(contentCheckPromises);
@@ -77,36 +84,35 @@ export default function CourseContentPage() {
     });
   }, []);
 
-  // Fetch units when a course is selected
+  // Fetch all content when a course is selected
   useEffect(() => {
     if (selectedCourse) {
       startTransition(async () => {
-        const unitsData = await getUnits(selectedCourse);
-        setUnits(unitsData as Unit[]);
+        const { units, topics } = await getAllCourseContent(selectedCourse);
+        setUnits(units);
+        setTopics(topics);
         setSelectedCourseName(courses.find(c => c.id === selectedCourse)?.name || '');
+        
+        // Fetch mind map data
+        setMindMapJson(''); // Reset first
+        const mindMapData = await getMindMapForCourse(selectedCourse);
+        if (mindMapData) {
+          setMindMapJson(JSON.stringify(mindMapData, null, 2));
+          setCourseHasMindMap(true);
+        } else {
+          setCourseHasMindMap(false);
+        }
+
       });
     } else {
         setUnits([]);
+        setTopics({});
         setSelectedCourseName('');
+        setMindMapJson('');
+        setCourseHasMindMap(false);
     }
   }, [selectedCourse, courses]);
   
-  // Fetch topics for each unit
-  useEffect(() => {
-    if (units.length > 0) {
-        startTransition(async () => {
-            const allTopics: Record<string, Topic[]> = {};
-            for (const unit of units) {
-                const topicsData = await getTopics(selectedCourse, unit.id);
-                allTopics[unit.id] = topicsData;
-            }
-            setTopics(allTopics);
-        });
-    } else {
-        setTopics({});
-    }
-  }, [units, selectedCourse]);
-
   // Effect for JSON upload form
     useEffect(() => {
         if (jsonState.type) {
@@ -124,12 +130,13 @@ export default function CourseContentPage() {
 
   const refreshCourseData = async () => {
     if (selectedCourse) {
-        const unitsData = await getUnits(selectedCourse);
-        setUnits(unitsData as Unit[]);
+        const { units, topics } = await getAllCourseContent(selectedCourse);
+        setUnits(units);
+        setTopics(topics);
     }
      // Refresh pending courses list
     const contentCheckPromises = courses.map(async course => {
-        const units = await getUnits(course.id);
+        const { units } = await getAllCourseContent(course.id);
         return { course, hasContent: units.length > 0 };
     });
     const results = await Promise.all(contentCheckPromises);
@@ -152,37 +159,9 @@ export default function CourseContentPage() {
     });
   };
 
-  const handleDeleteUnit = (unitId: string) => {
-    startTransition(async () => {
-        const result = await deleteUnit(selectedCourse, unitId);
-        toast({
-            title: result.type === 'success' ? 'Success' : 'Error',
-            description: result.message,
-            variant: result.type === 'error' ? 'destructive' : 'default',
-        });
-        if (result.type === 'success') {
-            refreshCourseData();
-        }
-    });
-  };
-
   const handleTopicAction = () => {
       refreshCourseData();
   }
-
-   const handleDeleteTopic = (unitId: string, topicId: string) => {
-    startTransition(async () => {
-        const result = await deleteTopic(selectedCourse, unitId, topicId);
-        toast({
-            title: result.type === 'success' ? 'Success' : 'Error',
-            description: result.message,
-            variant: result.type === 'error' ? 'destructive' : 'default',
-        });
-        if (result.type === 'success') {
-            refreshCourseData();
-        }
-    });
-  };
 
   const handleAiGenerate = async (courseId: string, courseName: string, syllabus?: string) => {
       setGeneratingCourses(prev => new Set(prev).add(courseId));
@@ -193,7 +172,7 @@ export default function CourseContentPage() {
             syllabus: syllabus || undefined
           });
           
-          const existingUnits = await getUnits(courseId);
+          const { units: existingUnits } = await getAllCourseContent(courseId);
           for (const unit of existingUnits) {
             await deleteUnit(courseId, unit.id);
           }
@@ -212,7 +191,9 @@ export default function CourseContentPage() {
               }
           }
           toast({ title: "Success!", description: `AI has finished generating content for ${courseName}.` });
-          refreshCourseData();
+          if(courseId === selectedCourse) {
+            refreshCourseData();
+          }
 
       } catch (error) {
           console.error("Error generating course content:", error);
@@ -225,6 +206,26 @@ export default function CourseContentPage() {
           });
       }
   };
+
+  const handleSaveMindMap = async () => {
+    if (!selectedCourse || !mindMapJson.trim()) {
+      toast({ title: 'Error', description: 'Please select a course and provide JSON content.', variant: 'destructive' });
+      return;
+    }
+
+    setIsSavingMindMap(true);
+    const result = await saveMindMap(selectedCourse, mindMapJson);
+    toast({
+        title: result.type === 'success' ? 'Success' : 'Error',
+        description: result.message,
+        variant: result.type === 'error' ? 'destructive' : 'default'
+    });
+     if (result.type === 'success') {
+        setCourseHasMindMap(true);
+    }
+    setIsSavingMindMap(false);
+  };
+
 
   const courseOptions = useMemo(() => 
     courses.map(c => ({
@@ -274,17 +275,12 @@ export default function CourseContentPage() {
                         <Accordion type="multiple" className="w-full">
                             {units.map(unit => (
                                 <AccordionItem key={unit.id} value={unit.id}>
-                                    <div className="flex items-center w-full group">
-                                        <AccordionTrigger className="flex-1 hover:no-underline">
-                                            <div className='flex items-center gap-3'>
-                                                <BookOpen className="h-5 w-5 text-primary" />
-                                                <span className="font-semibold">{unit.title}</span>
-                                            </div>
-                                        </AccordionTrigger>
-                                        <Button variant="ghost" size="icon" className="text-destructive h-7 w-7 mr-2" onClick={() => handleDeleteUnit(unit.id)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
+                                    <AccordionTrigger className="text-base font-semibold hover:no-underline">
+                                        <div className='flex items-center gap-3'>
+                                            <BookOpen className="h-5 w-5 text-primary" />
+                                            {unit.title}
+                                        </div>
+                                    </AccordionTrigger>
                                     <AccordionContent className="pl-8 pr-4">
                                        <div className="space-y-3">
                                             {(topics[unit.id] || []).length > 0 ? (
@@ -302,9 +298,6 @@ export default function CourseContentPage() {
                                                                     <Edit className="h-4 w-4"/>
                                                                 </Button>
                                                             </EditTopicDialog>
-                                                             <Button variant="ghost" size="icon" className="text-destructive h-7 w-7" onClick={() => handleDeleteTopic(unit.id, topic.id)}>
-                                                                <Trash2 className="h-4 w-4"/>
-                                                            </Button>
                                                         </div>
                                                     </div>
                                                 ))
@@ -330,9 +323,54 @@ export default function CourseContentPage() {
                         <p className="text-center text-muted-foreground py-8">No units found for this course. Add one manually or use the AI generator.</p>
                      )}
                 </CardContent>
+                 <CardFooter className="border-t pt-6">
+                    <div className="space-y-2 w-full">
+                        <Label htmlFor="new-unit">Add New Unit Manually</Label>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                id="new-unit"
+                                placeholder="e.g., Unit 1: Introduction"
+                                value={newUnitTitle}
+                                onChange={(e) => setNewUnitTitle(e.target.value)}
+                            />
+                            <Button onClick={handleAddUnit} disabled={isPending || !newUnitTitle.trim()}>
+                                {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Unit
+                            </Button>
+                        </div>
+                    </div>
+                 </CardFooter>
             </Card>
 
             <div className="space-y-6">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Mind Map</CardTitle>
+                        <CardDescription>Paste the JSON for this course's mind map. This will enable the visual mind map viewer for students.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {courseHasMindMap && (
+                            <Alert className="mb-4">
+                                <AlertTriangle className="h-4 w-4"/>
+                                <AlertTitle>Mind Map Exists</AlertTitle>
+                                <AlertDescription>
+                                    A mind map already exists for this course. Saving will overwrite the current data.
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                        <Textarea
+                            placeholder='{ "course_code": "...", "mind_map": { ... } }'
+                            className="min-h-48 font-mono text-xs"
+                            value={mindMapJson}
+                            onChange={(e) => setMindMapJson(e.target.value)}
+                            />
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={handleSaveMindMap} disabled={isSavingMindMap || !mindMapJson.trim()}>
+                            {isSavingMindMap ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                            Save Mind Map
+                        </Button>
+                    </CardFooter>
+                </Card>
                 <Card>
                     <CardHeader>
                         <CardTitle>Bulk JSON Upload</CardTitle>
@@ -376,26 +414,6 @@ export default function CourseContentPage() {
                          <Button onClick={() => handleAiGenerate(selectedCourse, selectedCourseName, syllabusText)} disabled={generatingCourses.has(selectedCourse)}>
                             {generatingCourses.has(selectedCourse) ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4" />}
                              {syllabusText ? 'Generate from Syllabus' : 'Generate from Title'}
-                        </Button>
-                    </CardFooter>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Add New Unit Manually</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <Input
-                                placeholder="e.g., Unit 1: Introduction"
-                                value={newUnitTitle}
-                                onChange={(e) => setNewUnitTitle(e.target.value)}
-                            />
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button onClick={handleAddUnit} disabled={isPending || !newUnitTitle.trim()}>
-                            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4"/>} Add Unit
                         </Button>
                     </CardFooter>
                 </Card>

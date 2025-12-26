@@ -12,19 +12,21 @@ function AdminLayoutSkeleton() {
     return (
         <div className="flex min-h-screen w-full bg-muted/40">
             {/* Sidebar Skeleton */}
-            <div className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex lg:w-56">
-                <div className="flex flex-col items-center gap-4 px-2 sm:py-5 lg:items-start lg:px-4">
-                     <Skeleton className="h-9 w-9 shrink-0 rounded-full md:h-8 md:w-8 lg:h-9 lg:w-auto lg:px-3 lg:py-2 lg:self-stretch" />
-                     {Array.from({ length: 10 }).map((_, i) => (
-                        <Skeleton key={i} className="h-9 w-9 rounded-lg md:h-8 md:w-8 lg:h-9 lg:w-full" />
-                     ))}
+            <div className="hidden w-64 flex-col border-r bg-background md:flex">
+                <div className="flex flex-col gap-2 p-4">
+                     <Skeleton className="h-9 w-32 mb-4" />
+                     <div className="flex-1 space-y-2">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <Skeleton key={i} className="h-9 w-full" />
+                        ))}
+                     </div>
                 </div>
-                 <div className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5 lg:items-start lg:px-4">
-                    <Skeleton className="h-9 w-9 rounded-lg md:h-8 md:w-8 lg:h-9 lg:w-full" />
+                 <div className="mt-auto p-4">
+                    <Skeleton className="h-9 w-full" />
                 </div>
             </div>
             {/* Main Content Skeleton */}
-            <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 lg:pl-56 flex-1">
+            <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 flex-1">
                  <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
                     <Skeleton className="h-8 w-32" />
                  </header>

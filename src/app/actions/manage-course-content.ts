@@ -5,6 +5,7 @@ import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getCourses as getAllCoursesFromDept } from './manage-courses'; // Import the function to get all courses
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Define types for stricter control
 export type Unit = { id: string; title: string; order: number; };
@@ -55,7 +56,7 @@ export async function addUnit(courseId: string, title: string, order: number) {
 
 export async function deleteUnit(courseId: string, unitId: string) {
     try {
-        await getUnitsCollection(courseId).doc(unitId).delete();
+        await adminDb.recursiveDelete(getUnitsCollection(courseId).doc(unitId));
         revalidatePath(`/admin/course-content`);
         revalidatePath(`/learn/course/${courseId}`);
         return { type: 'success', message: 'Unit deleted.' };
@@ -64,17 +65,6 @@ export async function deleteUnit(courseId: string, unitId: string) {
         return { type: 'error', message: 'Failed to delete unit.' };
     }
 }
-
-export async function getUnits(courseId: string) {
-  try {
-    const snapshot = await getUnitsCollection(courseId).orderBy('order').get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Unit[];
-  } catch (error) {
-    console.error('Error fetching units:', error);
-    return [];
-  }
-}
-
 
 // Topics Management
 export async function addTopic(courseId: string, unitId: string, formData: FormData) {
@@ -140,15 +130,39 @@ export async function deleteTopic(courseId: string, unitId: string, topicId: str
     }
 }
 
-export async function getTopics(courseId: string, unitId: string): Promise<Topic[]> {
+// New efficient function to get all content for a course
+export async function getAllCourseContent(courseId: string): Promise<{ units: Unit[], topics: Record<string, Topic[]> }> {
+  if (!courseId) {
+    return { units: [], topics: {} };
+  }
   try {
-    const snapshot = await getTopicsCollection(courseId, unitId).orderBy('createdAt').get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Topic[];
+    const unitsSnapshot = await getUnitsCollection(courseId).orderBy('order').get();
+    const units = unitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Unit[];
+    
+    const allTopics: Record<string, Topic[]> = {};
+    if (units.length > 0) {
+      const topicsSnapshot = await adminDb.collectionGroup('topics').where(FieldPath.documentId(), '>', `course-content/${courseId}`).where(FieldPath.documentId(), '<', `course-content/${courseId}~`).orderBy('createdAt').get();
+      
+      topicsSnapshot.forEach(doc => {
+        const pathParts = doc.ref.path.split('/');
+        // path is course-content/{courseId}/units/{unitId}/topics/{topicId}
+        if (pathParts.length === 5) {
+            const unitId = pathParts[2];
+            if (!allTopics[unitId]) {
+                allTopics[unitId] = [];
+            }
+            allTopics[unitId].push({ id: doc.id, ...doc.data() } as Topic);
+        }
+      });
+    }
+
+    return { units, topics: allTopics };
   } catch (error) {
-    console.error('Error fetching topics:', error);
-    return [];
+    console.error('Error fetching all course content:', error);
+    return { units: [], topics: {} };
   }
 }
+
 
 // Function to get a unified list of all courses from all colleges and departments
 export async function getUnifiedCourses() {
@@ -184,4 +198,37 @@ export async function getCourseNameById(courseId: string): Promise<string | null
         }
     }
     return null;
+}
+
+// Mind Map Management
+export async function saveMindMap(courseId: string, mindMapJson: string) {
+    'use server';
+    try {
+        const mindMapData = JSON.parse(mindMapJson);
+        const docRef = adminDb.collection('mind-maps').doc(courseId);
+        await docRef.set(mindMapData);
+        revalidatePath(`/learn/course/${courseId}`); 
+        return { type: 'success', message: 'Mind map saved successfully!' };
+    } catch(e: any) {
+        if (e instanceof SyntaxError) {
+            return { type: 'error', message: 'Invalid JSON format. Please check your syntax.' };
+        }
+        return { type: 'error', message: e.message || 'An unexpected error occurred.' };
+    }
+}
+
+export async function getMindMapForCourse(courseId: string) {
+    'use server';
+    if (!courseId) return null;
+    try {
+        const docRef = adminDb.collection('mind-maps').doc(courseId);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+            return docSnap.data();
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching mind map for ${courseId}:`, error);
+        return null;
+    }
 }
