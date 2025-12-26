@@ -47,6 +47,7 @@ function JsonSubmitButton() {
 export default function CourseContentPage() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [isContentLoading, startContentLoadingTransition] = useTransition();
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -87,20 +88,21 @@ export default function CourseContentPage() {
   // Fetch all content when a course is selected
   useEffect(() => {
     if (selectedCourse) {
-      startTransition(async () => {
-        const { units, topics } = await getAllCourseContent(selectedCourse);
-        setUnits(units);
-        setTopics(topics);
-        setSelectedCourseName(courses.find(c => c.id === selectedCourse)?.name || '');
+      startContentLoadingTransition(async () => {
+        const courseName = courses.find(c => c.id === selectedCourse)?.name || '';
+        setSelectedCourseName(courseName);
+
+        const { units: newUnits, topics: newTopics } = await getAllCourseContent(selectedCourse);
+        setUnits(newUnits);
+        setTopics(newTopics);
         
         // Fetch mind map data
         setMindMapJson(''); // Reset first
+        setCourseHasMindMap(false); // Reset
         const mindMapData = await getMindMapForCourse(selectedCourse);
         if (mindMapData) {
           setMindMapJson(JSON.stringify(mindMapData, null, 2));
           setCourseHasMindMap(true);
-        } else {
-          setCourseHasMindMap(false);
         }
 
       });
@@ -130,9 +132,11 @@ export default function CourseContentPage() {
 
   const refreshCourseData = async () => {
     if (selectedCourse) {
-        const { units, topics } = await getAllCourseContent(selectedCourse);
-        setUnits(units);
-        setTopics(topics);
+        startContentLoadingTransition(async () => {
+          const { units, topics } = await getAllCourseContent(selectedCourse);
+          setUnits(units);
+          setTopics(topics);
+        });
     }
      // Refresh pending courses list
     const contentCheckPromises = courses.map(async course => {
@@ -270,7 +274,7 @@ export default function CourseContentPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {isPending && !units.length ? <Loader2 className="mx-auto h-8 w-8 animate-spin" /> :
+                    {isContentLoading ? <Loader2 className="mx-auto h-8 w-8 animate-spin" /> :
                      units.length > 0 ? (
                         <Accordion type="multiple" className="w-full">
                             {units.map(unit => (

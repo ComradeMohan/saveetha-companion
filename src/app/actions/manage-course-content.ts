@@ -56,10 +56,16 @@ export async function addUnit(courseId: string, title: string, order: number) {
 
 export async function deleteUnit(courseId: string, unitId: string) {
     try {
-        await adminDb.recursiveDelete(getUnitsCollection(courseId).doc(unitId));
+        const unitRef = getUnitsCollection(courseId).doc(unitId);
+        const topicsSnapshot = await getTopicsCollection(courseId, unitId).get();
+        const batch = adminDb.batch();
+        topicsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+        batch.delete(unitRef);
+        await batch.commit();
+
         revalidatePath(`/admin/course-content`);
         revalidatePath(`/learn/course/${courseId}`);
-        return { type: 'success', message: 'Unit deleted.' };
+        return { type: 'success', message: 'Unit and its topics deleted.' };
     } catch (error) {
         console.error('Error deleting unit:', error);
         return { type: 'error', message: 'Failed to delete unit.' };
@@ -152,17 +158,17 @@ export async function getAllCourseContent(courseId: string): Promise<{ units: Un
     
     const allTopics: Record<string, Topic[]> = {};
     if (units.length > 0) {
-      // Efficiently fetch all topics for all units in one go.
+      // Use collectionGroup query for efficiency
       const topicsSnapshot = await adminDb.collectionGroup('topics')
           .where(FieldPath.documentId(), '>=', `course-content/${courseId}/units/`)
-          .where(FieldPath.documentId(), '<', `course-content/${courseId}/units/~`)
+          .where(FieldPath.documentId(), '<', `course-content/${courseId}/units/\uf8ff`)
           .orderBy('createdAt')
           .get();
 
       topicsSnapshot.docs.forEach(doc => {
+        // Path is course-content/{courseId}/units/{unitId}/topics/{topicId}
         const pathParts = doc.ref.path.split('/');
-        // path is course-content/{courseId}/units/{unitId}/topics/{topicId}
-        if (pathParts.length === 5) {
+        if (pathParts.length === 5 && pathParts[0] === 'course-content' && pathParts[1] === courseId) {
             const unitId = pathParts[2];
             if (!allTopics[unitId]) {
                 allTopics[unitId] = [];
