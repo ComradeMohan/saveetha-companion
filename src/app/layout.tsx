@@ -5,39 +5,46 @@ import { Toaster } from '@/components/ui/toaster';
 import MouseSpotlight from '@/components/mouse-spotlight';
 import Script from 'next/script';
 import ScrollProgress from '@/components/scroll-progress';
-import { Poppins } from 'next/font/google';
+import { Quantico, Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppProviders } from '@/components/app-providers';
 
-const poppins = Poppins({ 
+const quantico = Quantico({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-poppins',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+  variable: '--font-quantico',
+  weight: ['400', '700']
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Saveetha Calculator',
-    default: 'Saveetha Calculator: CGPA & Attendance',
+    template: '%s | Saveetha Companion',
+    default: 'Saveetha Companion: Your Academic System Interface',
   },
   description: 'The ultimate tool for Saveetha Engineering College students. Instantly calculate your Saveetha CGPA and attendance percentage. Find faculty info, concept maps, and important university updates all in one place.',
   keywords: ['Saveetha CGPA', 'Saveetha attendance calculator', 'Saveetha Calculator', 'Saveetha attendance', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
   authors: [{ name: 'comrademohan', url: 'https://github.com' }],
   creator: 'comrademohan',
+  manifest: '/manifest.json',
   openGraph: {
-    title: 'Saveetha Calculator: CGPA & Attendance',
+    title: 'Saveetha Companion: Your Academic System Interface',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     url: 'https://saveethahub.tech', // Replace with your actual domain
-    siteName: 'Saveetha Calculator',
+    siteName: 'Saveetha Companion',
     images: [
       {
         url: 'https://saveethahub.tech/favicon.ico', // Replace with a specific OG image URL
         width: 1200,
         height: 630,
-        alt: 'Saveetha Calculator App Interface',
+        alt: 'Saveetha Companion App Interface',
       },
     ],
     locale: 'en_US',
@@ -45,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Saveetha Calculator: CGPA & Attendance',
+    title: 'Saveetha Companion: Your Academic System Interface',
     description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life.',
     // creator: '@yourtwitterhandle', // Optional: Replace with your Twitter handle
     images: ['https://saveethahub.tech/favicon.ico'], // Replace with your Twitter card image URL
@@ -65,8 +72,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fed8aa" },
-    { media: "(prefers-color-scheme: dark)", color: "#431407" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f7fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f14" },
   ],
 };
 
@@ -98,7 +105,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("scroll-smooth", poppins.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("scroll-smooth", quantico.variable, inter.variable)} suppressHydrationWarning>
       <head>
       </head>
       <body>
