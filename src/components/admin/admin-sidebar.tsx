@@ -1,9 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, Code, Hand, UserCog, FileJson, Sparkles } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, GitBranch, Code, Hand, UserCog, FileJson, Sparkles, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -25,6 +24,7 @@ const adminNavLinks = [
   { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
   { href: '/admin/course-content', label: 'Course Content (DB)', icon: PenSquare },
   { href: '/admin/course-files', label: 'Course Content (Files)', icon: FileJson },
+  { href: '/admin/mind-maps', label: 'Mind Maps', icon: Share2 },
   { href: '/admin/mcqs', label: 'MCQs', icon: FileQuestion },
   { href: '/admin/coding-questions', label: 'Coding Questions', icon: Code },
   { href: '/admin/concept-maps', label: 'Concept Maps', icon: BookOpen },
