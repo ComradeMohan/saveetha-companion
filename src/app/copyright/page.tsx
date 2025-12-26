@@ -2,15 +2,14 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail } from "lucide-react";
-import Link from "next/link";
+import { Copyright as CopyrightIcon } from "lucide-react";
 
 export const metadata = {
-  title: "Contact Us | Saveetha Companion",
-  description: "Contact information for questions, feedback, or legal inquiries.",
+  title: "Copyright Notice | Saveetha Companion",
+  description: "Copyright and content notice for the Saveetha Companion platform.",
 };
 
-export default function ContactPage() {
+export default function CopyrightPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -20,19 +19,24 @@ export default function ContactPage() {
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-lg">
-                       <Mail className="h-6 w-6 text-primary"/>
+                       <CopyrightIcon className="h-6 w-6 text-primary"/>
                     </div>
                     <div>
-                        <CardTitle>Contact Us</CardTitle>
+                        <CardTitle>Copyright Notice</CardTitle>
                     </div>
                 </div>
             </CardHeader>
             <CardContent className="prose dark:prose-invert max-w-none">
+                <p>All content available on this website is either:</p>
+                <ul>
+                    <li>Publicly accessible educational material,</li>
+                    <li>User-uploaded content for personal academic use, or</li>
+                    <li>Original content created by the website owner.</li>
+                </ul>
                 <p>
-                    For questions, feedback, or legal inquiries, please contact:
-                </p>
-                <p>
-                    <strong>Email:</strong> <Link href="mailto:support@saveethahub.tech">support@saveethahub.tech</Link>
+                    If you are a copyright holder and believe that any content hosted on
+                    this website violates your rights, please contact us with details for
+                    prompt review and removal.
                 </p>
             </CardContent>
           </Card>

@@ -2,15 +2,15 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail } from "lucide-react";
+import { Gavel } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Contact Us | Saveetha Companion",
-  description: "Contact information for questions, feedback, or legal inquiries.",
+  title: "Takedown Policy | Saveetha Companion",
+  description: "Takedown and DMCA policy for the Saveetha Companion platform.",
 };
 
-export default function ContactPage() {
+export default function TakedownPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -20,19 +20,29 @@ export default function ContactPage() {
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-lg">
-                       <Mail className="h-6 w-6 text-primary"/>
+                       <Gavel className="h-6 w-6 text-primary"/>
                     </div>
                     <div>
-                        <CardTitle>Contact Us</CardTitle>
+                        <CardTitle>Takedown Policy</CardTitle>
                     </div>
                 </div>
             </CardHeader>
             <CardContent className="prose dark:prose-invert max-w-none">
                 <p>
-                    For questions, feedback, or legal inquiries, please contact:
+                    We respect intellectual property rights.
                 </p>
                 <p>
-                    <strong>Email:</strong> <Link href="mailto:support@saveethahub.tech">support@saveethahub.tech</Link>
+                    If you believe any content on this website infringes copyright or
+                    institutional policies, please send a takedown request including:
+                </p>
+                <ul>
+                    <li>Your name and role,</li>
+                    <li>The specific content URL,</li>
+                    <li>Proof of ownership or authorization.</li>
+                </ul>
+                <p>
+                    Valid requests sent to our <Link href="/contact">contact email</Link> will be reviewed and appropriate action will be taken
+                    within 48 hours.
                 </p>
             </CardContent>
           </Card>

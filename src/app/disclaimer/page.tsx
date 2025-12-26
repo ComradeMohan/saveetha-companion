@@ -2,15 +2,14 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail } from "lucide-react";
-import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "Contact Us | Saveetha Companion",
-  description: "Contact information for questions, feedback, or legal inquiries.",
+  title: "Disclaimer | Saveetha Companion",
+  description: "Disclaimer for the Saveetha Companion platform.",
 };
 
-export default function ContactPage() {
+export default function DisclaimerPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -20,19 +19,24 @@ export default function ContactPage() {
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-lg">
-                       <Mail className="h-6 w-6 text-primary"/>
+                       <AlertTriangle className="h-6 w-6 text-primary"/>
                     </div>
                     <div>
-                        <CardTitle>Contact Us</CardTitle>
+                        <CardTitle>Disclaimer</CardTitle>
                     </div>
                 </div>
             </CardHeader>
             <CardContent className="prose dark:prose-invert max-w-none">
                 <p>
-                    For questions, feedback, or legal inquiries, please contact:
+                    This website is an <strong>independent student-support platform</strong> created for
+                    educational and organizational purposes only.
                 </p>
                 <p>
-                    <strong>Email:</strong> <Link href="mailto:support@saveethahub.tech">support@saveethahub.tech</Link>
+                    It is <strong className="text-destructive">NOT</strong> affiliated with, endorsed by, or officially connected to any
+                    college, university, or educational institution.
+                </p>
+                <p>
+                    All institution names, logos, and trademarks belong to their respective owners.
                 </p>
             </CardContent>
           </Card>

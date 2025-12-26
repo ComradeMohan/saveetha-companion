@@ -1,48 +1,40 @@
-
 import { GraduationCap } from 'lucide-react';
 import Link from 'next/link';
-import VisitorCounter from './visitor-counter';
+
+const footerLinks = [
+  { href: '/disclaimer', label: 'Disclaimer' },
+  { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/copyright', label: 'Copyright' },
+  { href: '/takedown', label: 'Takedown' },
+  { href: '/contact', label: 'Contact' },
+];
 
 export default function Footer() {
   return (
     <footer className="bg-secondary text-secondary-foreground">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Column 1: Branding */}
-          <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-2">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
                 <GraduationCap className="h-7 w-7 text-primary" />
-                <span className="text-lg font-bold text-foreground">Saveetha Calculator</span>
+                <span className="text-lg font-bold text-foreground">Saveetha Companion</span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-sm">
-                The ultimate tool for students at Saveetha Engineering College. Simplify your academic life with our suite of calculators and resources.
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Independent student-support platform • Not affiliated with any institution.
             </p>
-          </div>
-
-          {/* Column 2: Legal Links */}
-          <div>
-            <h4 className="font-semibold mb-3 text-foreground">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 3: Resources */}
-          <div>
-            <h4 className="font-semibold mb-3 text-foreground">Resources</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-            </ul>
-          </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} comrademohan. All rights reserved.
+        <div className="mt-8 pt-8 border-t border-border">
+             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                {footerLinks.map(link => (
+                    <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">
+                        {link.label}
+                    </Link>
+                ))}
+            </div>
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+                © {new Date().getFullYear()} Saveetha Companion. All Rights Reserved.
             </p>
-            <VisitorCounter />
         </div>
       </div>
     </footer>
