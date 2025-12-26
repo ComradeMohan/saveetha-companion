@@ -1,3 +1,4 @@
+
 import { GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,7 +13,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary text-secondary-foreground">
+    <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
             <Link href="/" className="flex items-center justify-center gap-2 mb-4">
