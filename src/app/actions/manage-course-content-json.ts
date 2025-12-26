@@ -5,6 +5,8 @@ import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getUnits, deleteUnit, addUnit, addTopic } from './manage-course-content';
+import { FieldValue } from 'firebase-admin/firestore';
+
 
 // Schemas for validating the uploaded JSON, matching your provided structure
 const TopicJsonSchema = z.object({
@@ -66,21 +68,28 @@ export async function importCourseFromJson(prevState: any, formData: FormData) {
         await deleteUnit(courseId, unit.id);
     }
     
+    const batch = adminDb.batch();
+    const courseContentRef = adminDb.collection('course-content').doc(courseId);
+    
     // Add new content from JSON
     let unitOrder = 1;
     for (const unit of parsedData.units) {
-      const unitResult = await addUnit(courseId, unit.unit_title, unitOrder++);
-      if (unitResult.id) {
-        for (const topic of unit.topics) {
-          const topicFormData = new FormData();
-          topicFormData.append('title', topic.topic_title);
-          topicFormData.append('notes', topic.notes_md || '');
-          topicFormData.append('videoUrl', topic.video_url || '');
-          topicFormData.append('questions', formatPracticeQuestions(topic.practice_questions));
-          await addTopic(courseId, unitResult.id, topicFormData);
-        }
+      const unitRef = courseContentRef.collection('units').doc();
+      batch.set(unitRef, { title: unit.unit_title, order: unitOrder++, createdAt: FieldValue.serverTimestamp() });
+
+      for (const topic of unit.topics) {
+        const topicRef = unitRef.collection('topics').doc();
+        batch.set(topicRef, {
+            title: topic.topic_title,
+            notes: topic.notes_md || '',
+            videoUrl: topic.video_url || '',
+            questions: formatPracticeQuestions(topic.practice_questions),
+            createdAt: FieldValue.serverTimestamp()
+        });
       }
     }
+    
+    await batch.commit();
 
     revalidatePath(`/admin/course-content`);
     revalidatePath(`/learn/course/${courseId}`);

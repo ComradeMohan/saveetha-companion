@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Combobox } from '@/components/ui/combobox';
 import { Loader2, PlusCircle, Trash2, BookOpen, ChevronRight, Edit, Wand2, UploadCloud, Save, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getUnifiedCourses, addUnit, deleteUnit, addTopic, getAllCourseContent, saveMindMap, getMindMapForCourse } from '@/app/actions/manage-course-content';
+import { getUnifiedCourses, addUnit, deleteUnit, addTopic, getAllCourseContent, saveMindMap, getMindMapForCourse, deleteTopic } from '@/app/actions/manage-course-content';
 import { importCourseFromJson } from '@/app/actions/manage-course-content-json';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AddTopicDialog } from '@/components/admin/course-content/add-topic-dialog';
@@ -26,6 +26,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { EditTopicDialog } from '@/components/admin/course-content/edit-topic-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 
 type Course = { id: string; name: string };
@@ -67,6 +78,8 @@ export default function CourseContentPage() {
   const [mindMapJson, setMindMapJson] = useState('');
   const [isSavingMindMap, setIsSavingMindMap] = useState(false);
   const [courseHasMindMap, setCourseHasMindMap] = useState(false);
+  const [topicToDelete, setTopicToDelete] = useState<{ courseId: string; unitId: string; topic: Topic } | null>(null);
+  const [isDeletingTopic, startDeleteTopicTransition] = useTransition();
 
 
   // Initial data loading for dropdowns
@@ -160,6 +173,22 @@ export default function CourseContentPage() {
         setNewUnitTitle('');
         refreshCourseData();
       }
+    });
+  };
+  
+   const handleConfirmDeleteTopic = () => {
+    if (!topicToDelete) return;
+    startDeleteTopicTransition(async () => {
+        const result = await deleteTopic(topicToDelete.courseId, topicToDelete.unitId, topicToDelete.topic.id);
+        toast({
+            title: result.type === 'success' ? 'Success' : 'Error',
+            description: result.message,
+            variant: result.type === 'error' ? 'destructive' : 'default',
+        });
+        if (result.type === 'success') {
+            refreshCourseData();
+        }
+        setTopicToDelete(null);
     });
   };
 
@@ -274,7 +303,7 @@ export default function CourseContentPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {isContentLoading ? <Loader2 className="mx-auto h-8 w-8 animate-spin" /> :
+                    {isContentLoading ? <div className="flex justify-center items-center h-48"><Loader2 className="mx-auto h-8 w-8 animate-spin" /></div> :
                      units.length > 0 ? (
                         <Accordion type="multiple" className="w-full">
                             {units.map(unit => (
@@ -302,6 +331,9 @@ export default function CourseContentPage() {
                                                                     <Edit className="h-4 w-4"/>
                                                                 </Button>
                                                             </EditTopicDialog>
+                                                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setTopicToDelete({ courseId: selectedCourse, unitId: unit.id, topic })}>
+                                                                <Trash2 className="h-4 w-4 text-destructive"/>
+                                                            </Button>
                                                         </div>
                                                     </div>
                                                 ))
@@ -448,6 +480,23 @@ export default function CourseContentPage() {
                 </CardContent>
             </Card>
         )}
+        
+        <AlertDialog open={!!topicToDelete} onOpenChange={() => setTopicToDelete(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the topic: <span className="font-semibold">{topicToDelete?.topic.title}</span>.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleConfirmDeleteTopic} disabled={isDeletingTopic}>
+                        {isDeletingTopic ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Delete'}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }

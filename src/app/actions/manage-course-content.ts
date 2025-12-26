@@ -9,7 +9,7 @@ import { FieldValue, FieldPath } from 'firebase-admin/firestore';
 
 // Define types for stricter control
 export type Unit = { id: string; title: string; order: number; };
-export type Topic = { id: string; title: string; notes?: string; videoUrl?: string; questions?: string; };
+export type Topic = { id: string; title: string; notes?: string; videoUrl?: string; questions?: string; createdAt: any; };
 
 const unitSchema = z.object({
   title: z.string().min(3, { message: 'Unit title must be at least 3 characters.' }),
@@ -101,7 +101,7 @@ export async function addTopic(courseId: string, unitId: string, formData: FormD
 
   try {
     const topicRef = getTopicsCollection(courseId, unitId).doc();
-    await topicRef.set({ title, notes, videoUrl, questions, createdAt: new Date().toISOString() });
+    await topicRef.set({ title, notes, videoUrl, questions, createdAt: FieldValue.serverTimestamp() });
     revalidatePath(`/admin/course-content`);
     revalidatePath(`/learn/course/${courseId}`);
     return { type: 'success', message: 'Topic added successfully.' };
@@ -125,7 +125,7 @@ export async function updateTopic(courseId: string, unitId: string, topicId: str
 
     try {
         const topicRef = getTopicsCollection(courseId, unitId).doc(topicId);
-        await topicRef.update({ ...validatedFields.data });
+        await topicRef.update({ ...validatedFields.data, updatedAt: FieldValue.serverTimestamp() });
         revalidatePath(`/admin/course-content`);
         revalidatePath(`/learn/course/${courseId}`);
         return { type: 'success', message: 'Topic updated successfully.' };
@@ -157,23 +157,24 @@ export async function getAllCourseContent(courseId: string): Promise<{ units: Un
     const units = await getUnits(courseId);
     
     const allTopics: Record<string, Topic[]> = {};
+    units.forEach(unit => allTopics[unit.id] = []);
+    
     if (units.length > 0) {
-      // Use collectionGroup query for efficiency
       const topicsSnapshot = await adminDb.collectionGroup('topics')
-          .where(FieldPath.documentId(), '>=', `course-content/${courseId}/units/`)
-          .where(FieldPath.documentId(), '<', `course-content/${courseId}/units/\uf8ff`)
-          .orderBy('createdAt')
+          .where(FieldPath.documentId(), '>=', `course-content/${courseId}/`)
+          .where(FieldPath.documentId(), '<', `course-content/${courseId}/\uf8ff`)
+          .orderBy('createdAt', 'asc') // This should be fast now
           .get();
 
       topicsSnapshot.docs.forEach(doc => {
-        // Path is course-content/{courseId}/units/{unitId}/topics/{topicId}
         const pathParts = doc.ref.path.split('/');
-        if (pathParts.length === 5 && pathParts[0] === 'course-content' && pathParts[1] === courseId) {
-            const unitId = pathParts[2];
-            if (!allTopics[unitId]) {
-                allTopics[unitId] = [];
+        // path is course-content/{courseId}/units/{unitId}/topics/{topicId}
+        // So pathParts.length should be 6, and unitId is at index 3
+        if (pathParts.length === 6 && pathParts[1] === courseId) {
+            const unitId = pathParts[3];
+            if (allTopics[unitId]) {
+                allTopics[unitId].push({ id: doc.id, ...doc.data() } as Topic);
             }
-            allTopics[unitId].push({ id: doc.id, ...doc.data() } as Topic);
         }
       });
     }
