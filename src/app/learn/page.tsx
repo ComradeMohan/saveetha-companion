@@ -6,7 +6,6 @@ import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GitBranch, CheckCircle, Loader2, Trophy } from "lucide-react";
-import { arrangeRoadmap } from '@/ai/flows/roadmap-arranger-flow';
 import type { Course, Stage } from '@/lib/roadmap-arranger-types';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
@@ -17,6 +16,21 @@ import { getCourses } from '@/app/actions/manage-courses';
 type StudentGrades = {
   [courseCode: string]: string;
 };
+
+// Non-AI function to group courses into stages
+const createSimpleRoadmap = (courses: Course[]): Stage[] => {
+    const stages: Stage[] = [];
+    const chunkSize = 4;
+    for (let i = 0; i < courses.length; i += chunkSize) {
+        const chunk = courses.slice(i, i + chunkSize);
+        stages.push({
+            name: `Stage ${stages.length + 1}`,
+            courses: chunk,
+        });
+    }
+    return stages;
+};
+
 
 function RoadmapSkeleton() {
     return (
@@ -59,7 +73,7 @@ export default function LearnHomePage() {
     const fetchRoadmap = async () => {
         if (!authLoading && profile?.college && profile?.department) {
             setRoadmapLoading(true);
-            const cacheKey = `roadmapData-${profile.college}-${profile.department}`;
+            const cacheKey = `simpleRoadmapData-${profile.college}-${profile.department}`;
             try {
                  const cachedRoadmap = localStorage.getItem(cacheKey);
                  if (cachedRoadmap) {
@@ -67,13 +81,13 @@ export default function LearnHomePage() {
                  } else {
                     const courses = await getCourses(profile.college, profile.department) as Course[];
                     if(courses.length > 0) {
-                        const result = await arrangeRoadmap({ courses });
-                        setRoadmapData(result.stages);
-                        localStorage.setItem(cacheKey, JSON.stringify(result.stages));
+                        const simpleStages = createSimpleRoadmap(courses);
+                        setRoadmapData(simpleStages);
+                        localStorage.setItem(cacheKey, JSON.stringify(simpleStages));
                     }
                 }
             } catch (error) {
-                console.error("Error fetching or arranging roadmap:", error);
+                console.error("Error fetching or creating roadmap:", error);
             } finally {
                 setRoadmapLoading(false);
             }
@@ -182,11 +196,11 @@ export default function LearnHomePage() {
       {roadmapLoading ? <RoadmapSkeleton /> : (
         <Card>
             <CardHeader>
-                <CardTitle>{showSimpleView ? "Your Remaining Courses" : "Your AI-Generated Academic Journey"}</CardTitle>
+                <CardTitle>{showSimpleView ? "Your Remaining Courses" : "Your Academic Journey"}</CardTitle>
                 <CardDescription>
                     {showSimpleView
                         ? "Here are the last few courses in your curriculum. Keep going!"
-                        : `A recommended roadmap for ${profile.department} at ${profile.college}. Courses disappear once you log a grade.`}
+                        : `A structured roadmap for ${profile.department} at ${profile.college}. Courses disappear once you log a grade.`}
                 </CardDescription>
             </CardHeader>
             <CardContent>

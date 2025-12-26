@@ -4,7 +4,9 @@
 /**
  * @fileOverview An AI flow to arrange a student's curriculum into a logical roadmap.
  *
- * - arrangeRoadmap - Takes a list of courses and returns a structured, grouped roadmap.
+ * THIS FLOW IS DEPRECATED AND NOT CURRENTLY IN USE.
+ * The application has been updated to use a simpler, non-AI based roadmap generation
+ * to avoid API rate-limiting issues.
  */
 
 import { ai } from '@/ai/genkit';
@@ -17,13 +19,24 @@ import {
 
 
 export async function arrangeRoadmap(input: RoadmapArrangerInput): Promise<RoadmapArrangerOutput> {
-  return roadmapArrangerFlow(input);
+  // This is a dummy implementation to avoid breaking the build.
+  // The actual logic has been moved to a simple function in the frontend.
+  const stages = [];
+  const chunkSize = 4;
+   for (let i = 0; i < input.courses.length; i += chunkSize) {
+        const chunk = input.courses.slice(i, i + chunkSize);
+        stages.push({
+            name: `Stage ${stages.length + 1}`,
+            courses: chunk,
+        });
+    }
+  return Promise.resolve({ stages });
 }
 
 
 const roadmapArrangerFlow = ai.defineFlow(
   {
-    name: 'roadmapArrangerFlow',
+    name: 'roadmapArrangerFlow_DEPRECATED',
     inputSchema: RoadmapArrangerInputSchema,
     outputSchema: RoadmapArrangerOutputSchema,
   },
