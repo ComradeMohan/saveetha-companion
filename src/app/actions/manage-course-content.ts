@@ -5,7 +5,7 @@ import { adminDb } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getCourses as getAllCoursesFromDept } from './manage-courses'; // Import the function to get all courses
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, FieldPath } from 'firebase-admin/firestore';
 
 // Define types for stricter control
 export type Unit = { id: string; title: string; order: number; };
@@ -64,6 +64,18 @@ export async function deleteUnit(courseId: string, unitId: string) {
         console.error('Error deleting unit:', error);
         return { type: 'error', message: 'Failed to delete unit.' };
     }
+}
+
+// Get all units for a course
+export async function getUnits(courseId: string): Promise<Unit[]> {
+  if (!courseId) return [];
+  try {
+    const unitsSnapshot = await getUnitsCollection(courseId).orderBy('order').get();
+    return unitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Unit));
+  } catch (error) {
+    console.error(`Error fetching units for ${courseId}:`, error);
+    return [];
+  }
 }
 
 // Topics Management
@@ -136,14 +148,18 @@ export async function getAllCourseContent(courseId: string): Promise<{ units: Un
     return { units: [], topics: {} };
   }
   try {
-    const unitsSnapshot = await getUnitsCollection(courseId).orderBy('order').get();
-    const units = unitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Unit[];
+    const units = await getUnits(courseId);
     
     const allTopics: Record<string, Topic[]> = {};
     if (units.length > 0) {
-      const topicsSnapshot = await adminDb.collectionGroup('topics').where(FieldPath.documentId(), '>', `course-content/${courseId}`).where(FieldPath.documentId(), '<', `course-content/${courseId}~`).orderBy('createdAt').get();
-      
-      topicsSnapshot.forEach(doc => {
+      // Efficiently fetch all topics for all units in one go.
+      const topicsSnapshot = await adminDb.collectionGroup('topics')
+          .where(FieldPath.documentId(), '>=', `course-content/${courseId}/units/`)
+          .where(FieldPath.documentId(), '<', `course-content/${courseId}/units/~`)
+          .orderBy('createdAt')
+          .get();
+
+      topicsSnapshot.docs.forEach(doc => {
         const pathParts = doc.ref.path.split('/');
         // path is course-content/{courseId}/units/{unitId}/topics/{topicId}
         if (pathParts.length === 5) {
