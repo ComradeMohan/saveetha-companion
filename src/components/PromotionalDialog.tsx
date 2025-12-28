@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
+import NextImage from 'next/image';
 
 const PROMO_STORAGE_KEY = 'promoDialogLastClosed';
 const HIDE_DURATION = 30 * 60 * 1000; // 30 minutes
@@ -78,7 +78,7 @@ export default function PromotionalDialog() {
           onClick={handleClose}
           className="block overflow-hidden rounded-2xl"
         >
-          <Image
+          <NextImage
             src={IMAGE_URL}
             alt="Promotional Image for Univault App"
             width={320}
