@@ -25,7 +25,7 @@ export default function Footer() {
             </p>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border">
+        <div className="mt-8">
              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
                 {footerLinks.map(link => (
                     <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">
