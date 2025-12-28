@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calculator, CheckCircle, Loader2 } from 'lucide-react';
@@ -10,6 +11,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 const gradePoints: { [key: string]: number } = {
   S: 10,
@@ -113,11 +115,14 @@ export default function CgpaCalculator() {
           <Calculator className="h-6 w-6 text-primary" />
           CGPA Calculator
         </CardTitle>
+         <CardDescription>
+          Real-time CSE CGPA is computed from subject-wise grades in{" "}
+          <Link href="/learn/courses" className="text-primary underline hover:opacity-80">
+            Learn → Courses
+          </Link>.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-         <p className="text-sm text-muted-foreground -mt-2">
-          Enter the number of subjects for each grade. Your result will be saved automatically if you're logged in.
-        </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {grades.map(grade => (
             <div key={grade} className="relative">

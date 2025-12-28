@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Save, Check, BookOpen, PlusCircle, Search, ArrowUpDown } from 'lucide-react';
+import { Loader2, Save, Check, BookOpen, Search, ArrowUpDown } from 'lucide-react';
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from '@/hooks/use-auth';
@@ -40,7 +40,7 @@ const gradeColorClasses: Record<string, string> = {
 
 
 type StudentGrades = {
-  [courseCode: string]: string; // e.g., { "CSA02": "A", "UBA01": "S" }
+  [courseCode: string]: string | { name: string; grade: string }; 
 };
 
 type SortKey = 'id' | 'name' | 'grade';
@@ -57,15 +57,22 @@ export default function CoursesPage() {
     
     const [selectedCourse, setSelectedCourse] = useState<string>("");
     const [selectedGrade, setSelectedGrade] = useState<string>("");
+    const [electiveName, setElectiveName] = useState("");
     
     const { toast } = useToast();
+    
+    const isElectiveSelected = selectedCourse.startsWith("ELECTIVE");
 
     useEffect(() => {
         const fetchCourseList = async () => {
              if (!authLoading && profile?.college && profile?.department) {
                  try {
                      const courses = await getCourses(profile.college, profile.department) as Course[];
-                     setAllCourses(courses);
+                     const electives = Array.from({ length: 8 }, (_, i) => ({
+                         id: `ELECTIVE_${i + 1}`,
+                         name: `Elective ${i + 1}`
+                     }));
+                     setAllCourses([...courses, ...electives]);
                  } catch (error) {
                      console.error("Error fetching courses for dropdown:", error);
                  }
@@ -98,9 +105,17 @@ export default function CoursesPage() {
 
     useEffect(() => {
         if (selectedCourse && studentGrades[selectedCourse]) {
-            setSelectedGrade(studentGrades[selectedCourse]);
+            const gradeData = studentGrades[selectedCourse];
+            if (typeof gradeData === 'object') {
+                setSelectedGrade(gradeData.grade);
+                setElectiveName(gradeData.name);
+            } else {
+                setSelectedGrade(gradeData);
+                setElectiveName("");
+            }
         } else {
             setSelectedGrade("");
+            setElectiveName("");
         }
     }, [selectedCourse, studentGrades]);
 
@@ -113,6 +128,10 @@ export default function CoursesPage() {
             toast({ title: "Error", description: "Please select a course and a grade.", variant: "destructive"});
             return;
         }
+        if (isElectiveSelected && !electiveName.trim()) {
+            toast({ title: "Error", description: "Please enter a name for your elective.", variant: "destructive"});
+            return;
+        }
 
         setIsSaving(true);
         try {
@@ -121,7 +140,11 @@ export default function CoursesPage() {
             const newGrades = { ...studentGrades };
 
             if (selectedGrade !== 'none') {
-                newGrades[selectedCourse] = selectedGrade;
+                 if(isElectiveSelected) {
+                    newGrades[selectedCourse] = { name: electiveName, grade: selectedGrade };
+                 } else {
+                    newGrades[selectedCourse] = selectedGrade;
+                 }
             } else {
                 delete newGrades[selectedCourse];
             }
@@ -131,6 +154,7 @@ export default function CoursesPage() {
             toast({ title: "Success", description: "Your grade has been saved." });
             setSelectedCourse("");
             setSelectedGrade("");
+            setElectiveName("");
         } catch (error) {
             console.error("Error saving grade:", error);
             toast({ title: "Error", description: "Could not save your grade.", variant: "destructive"});
@@ -166,13 +190,13 @@ export default function CoursesPage() {
     }, [allCourses, studentGrades]);
 
     const filteredAndSortedCourses = useMemo(() => {
-        let completedCourses = Object.entries(studentGrades).map(([courseCode, grade]) => {
-            const course = allCourses.find(c => c.id === courseCode);
-            return {
-                id: courseCode,
-                name: course?.name || 'Unknown Course',
-                grade
-            };
+        let completedCourses = Object.entries(studentGrades).map(([courseCode, gradeData]) => {
+            const isElective = typeof gradeData === 'object';
+            const grade = isElective ? gradeData.grade : gradeData;
+            const defaultCourse = allCourses.find(c => c.id === courseCode);
+            const name = isElective ? gradeData.name : defaultCourse?.name || 'Unknown Course';
+            
+            return { id: courseCode, name, grade };
         });
 
         if (searchTerm) {
@@ -246,35 +270,49 @@ export default function CoursesPage() {
                            Use this form to add or update a single grade.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 items-end">
-                        <div className="md:col-span-2 space-y-2">
-                           <Label>Course</Label>
-                           <Combobox
-                                options={comboboxOptions}
-                                value={selectedCourse}
-                                onChange={setSelectedCourse}
-                                placeholder="Search for a course..."
-                                searchPlaceholder="Search course code or name..."
-                                notFoundMessage="No course found."
-                           />
+                    <CardContent className="space-y-4">
+                         <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4 items-end space-y-4 md:space-y-0">
+                            <div className="md:col-span-2 space-y-2">
+                               <Label>Course</Label>
+                               <Combobox
+                                    options={comboboxOptions}
+                                    value={selectedCourse}
+                                    onChange={setSelectedCourse}
+                                    placeholder="Search for a course..."
+                                    searchPlaceholder="Search course code or name..."
+                                    notFoundMessage="No course found."
+                               />
+                            </div>
+                            <div className="space-y-2">
+                                 <Label>Grade</Label>
+                                 <Select 
+                                    value={selectedGrade} 
+                                    onValueChange={setSelectedGrade}
+                                    disabled={!selectedCourse}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Grade" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {grades.map(grade => (
+                                            <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                             <Label>Grade</Label>
-                             <Select 
-                                value={selectedGrade} 
-                                onValueChange={setSelectedGrade}
-                                disabled={!selectedCourse}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Grade" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {grades.map(grade => (
-                                        <SelectItem key={grade} value={grade}>{grade}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+
+                         {isElectiveSelected && (
+                            <div className="space-y-2 animate-in fade-in-50 duration-300">
+                                <Label htmlFor="elective-name">Elective Course Name</Label>
+                                <Input 
+                                    id="elective-name"
+                                    placeholder="e.g., Artificial Intelligence"
+                                    value={electiveName}
+                                    onChange={e => setElectiveName(e.target.value)}
+                                />
+                            </div>
+                        )}
                     </CardContent>
                     <CardFooter>
                          <Button onClick={handleSaveGrade} disabled={isSaving || !selectedCourse || !selectedGrade}>
