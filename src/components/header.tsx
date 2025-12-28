@@ -43,14 +43,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
@@ -58,7 +50,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
 import { NotificationBell } from './notification-bell';
-import { ScrollArea } from './ui/scroll-area';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -242,6 +234,16 @@ export default function Header() {
     router.push(href);
     setMobileMenuOpen(false);
   }
+  
+  const allMobileLinks = user ? [
+      ...academicsLinks,
+      ...resourcesLinks,
+      ...toolsDropdownLinks,
+      { href: '/learn', label: 'Learn', icon: Book }
+  ] : [
+      ...loggedOutFeaturesLinks,
+      { href: '/contact', label: 'Contact', icon: User}
+  ];
 
   if (pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/dev-login')) {
     return null; // Don't render this header in the admin or learning zones
@@ -347,54 +349,73 @@ export default function Header() {
                 {user && <NotificationBell />}
                 <ThemeToggle />
                 <UserNav />
-                <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                        <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="md:hidden">
-                                <Menu className="h-5 w-5"/>
-                                <span className="sr-only">Toggle Menu</span>
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" className="flex flex-col p-0">
-                            <SheetHeader className="p-4 border-b">
-                                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                                <SheetDescription className="sr-only">Main site navigation links.</SheetDescription>
-                            </SheetHeader>
-                            <ScrollArea className="flex-1">
-                                <nav className="grid gap-6 text-lg font-medium mt-4 px-6">
-                                    <Link href="/" onClick={() => handleMobileLinkClick('/')} className="flex items-center gap-2 text-lg font-semibold mb-4">
-                                        <GraduationCap className="h-6 w-6 text-primary" />
-                                        <span>Saveetha Calculator</span>
-                                    </Link>
-                                    {user ? (
-                                        <>
-                                            {academicsLinks.map(link => (
-                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                            ))}
-                                            {resourcesLinks.map(link => (
-                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                            ))}
-                                            {toolsDropdownLinks.map(link => (
-                                                <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">{link.label}</Link>
-                                            ))}
-                                            <button onClick={() => { handleLearnClick(); setMobileMenuOpen(false); }} className="text-muted-foreground hover:text-foreground text-left flex items-center gap-1.5">
-                                                Learn <Badge variant="destructive" className="animate-bounce">New</Badge>
-                                            </button>
-                                        </>
-                                    ) : (
-                                        loggedOutFeaturesLinks.map(link => (
-                                            <Link key={link.href} href={link.href} onClick={() => handleMobileLinkClick(link.href)} className="text-muted-foreground hover:text-foreground">
-                                                {link.label}
-                                            </Link>
-                                        ))
-                                    )}
-                                    <Link href="/contact" onClick={() => handleMobileLinkClick('/contact')} className="text-muted-foreground hover:text-foreground">Contact Us</Link>
-                                </nav>
-                            </ScrollArea>
-                        </SheetContent>
-                    </Sheet>
+                 <div className="md:hidden">
+                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
+                        <AnimatePresence initial={false} mode="wait">
+                            <motion.div
+                                key={isMobileMenuOpen ? 'x' : 'menu'}
+                                initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                                exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                            </motion.div>
+                        </AnimatePresence>
+                        <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                </div>
                 </div>
             </div>
         </header>
+        
+        <AnimatePresence>
+        {isMobileMenuOpen && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-40 bg-background/80 backdrop-blur-lg md:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+            >
+                <motion.nav 
+                    className="mt-24 p-8 space-y-1"
+                    initial="closed"
+                    animate="open"
+                    exit="closed"
+                    variants={{
+                        open: {
+                            transition: { staggerChildren: 0.07, delayChildren: 0.2 }
+                        },
+                        closed: {
+                            transition: { staggerChildren: 0.05, staggerDirection: -1 }
+                        }
+                    }}
+                >
+                    {allMobileLinks.map(link => (
+                        <motion.div
+                            key={link.href}
+                            variants={{
+                                open: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
+                                closed: { y: 20, opacity: 0, transition: { duration: 0.2 } }
+                            }}
+                        >
+                            <Link 
+                                href={link.href} 
+                                onClick={() => handleMobileLinkClick(link.href)} 
+                                className="flex items-center gap-4 py-3 text-2xl font-semibold text-muted-foreground transition-colors hover:text-primary"
+                            >
+                                <link.icon className="h-6 w-6"/>
+                                {link.label}
+                            </Link>
+                        </motion.div>
+                    ))}
+                </motion.nav>
+            </motion.div>
+        )}
+        </AnimatePresence>
+
     <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
     </>
   );
