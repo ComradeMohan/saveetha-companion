@@ -5,10 +5,12 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please check your .env.local file.');
+  console.warn("Supabase environment variables not found. Supabase client not initialized.");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = (supabaseUrl && supabaseAnonKey) 
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : {} as any;
 
 export type FileUpload = {
   id: string;
