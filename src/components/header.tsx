@@ -351,7 +351,7 @@ export default function Header() {
                 <ThemeToggle />
                 <UserNav />
                  <div className="md:hidden">
-                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
+                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}>
                         <AnimatePresence initial={false} mode="wait">
                             <motion.div
                                 key={isMobileMenuOpen ? 'x' : 'menu'}
@@ -406,7 +406,7 @@ export default function Header() {
                               <Link 
                                   href={link.href} 
                                   onClick={() => handleMobileLinkClick(link.href)} 
-                                  className="flex items-center gap-4 py-3 text-2xl font-semibold text-muted-foreground transition-colors hover:text-primary"
+                                  className="flex items-center gap-4 py-3 text-xl font-semibold text-muted-foreground transition-colors hover:text-primary"
                               >
                                   <link.icon className="h-6 w-6"/>
                                   {link.label}
