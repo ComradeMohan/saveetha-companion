@@ -13,7 +13,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
+    <footer className="bg-card border-t border-border pb-24 md:pb-0">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
             <Link href="/" className="flex items-center justify-center gap-2 mb-4">
