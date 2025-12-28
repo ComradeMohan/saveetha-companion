@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -10,7 +11,8 @@ import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
 import { usePathname } from 'next/navigation';
 import PromotionalDialog from './PromotionalDialog';
-import SeasonalEffects from './SeasonalEffects'; // Import the new component
+import SeasonalEffects from './SeasonalEffects';
+import GlobalToastManager from './GlobalToastManager'; // Import the new component
 
 
 function MainContent({ children }: { children: React.ReactNode }) {
@@ -25,6 +27,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
             <RecruitmentDialog />
             <PromotionalDialog />
             <SeasonalEffects />
+            <GlobalToastManager /> 
             <main key="main-content">{children}</main>
             {showHeader && <SupportButton />}
             {showHeader && <MobileNav />}
@@ -37,7 +40,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="dark"
       disableTransitionOnChange
     >
       <AuthProvider>

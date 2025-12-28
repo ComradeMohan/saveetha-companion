@@ -11,11 +11,12 @@ import { Label } from "@/components/ui/label";
 import { createUpdate } from '@/app/actions/create-update';
 import { deleteUpdate } from '@/app/actions/delete-update';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, Link as LinkIcon, Trash2 } from 'lucide-react';
-import { collection, orderBy, query, getDocs } from 'firebase/firestore';
+import { Loader2, Send, Link as LinkIcon, Trash2, Save, Power } from 'lucide-react';
+import { collection, orderBy, query, getDocs, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { formatDistanceToNow } from 'date-fns';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Switch } from '@/components/ui/switch';
 
 
 const initialState = {
@@ -30,6 +31,12 @@ interface Update {
     description: string;
     link?: string;
     createdAt: any;
+}
+
+interface GlobalMessage {
+    message: string;
+    isEnabled: boolean;
+    updatedAt?: any;
 }
 
 function SubmitButton() {
@@ -50,6 +57,79 @@ function SubmitButton() {
             )}
         </Button>
     );
+}
+
+function GlobalMessageManager() {
+    const { toast } = useToast();
+    const [globalMessage, setGlobalMessage] = useState('');
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const docRef = doc(db, 'site_config', 'global_message');
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data() as GlobalMessage;
+                setGlobalMessage(data.message);
+                setIsEnabled(data.isEnabled);
+            }
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+    
+    const handleSaveGlobalMessage = async () => {
+        setIsSaving(true);
+        try {
+            const docRef = doc(db, 'site_config', 'global_message');
+            await setDoc(docRef, { 
+                message: globalMessage,
+                isEnabled: isEnabled,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+            toast({ title: "Success", description: "Global toast message has been updated." });
+        } catch (error) {
+            console.error("Error saving global message:", error);
+            toast({ title: "Error", description: "Could not save the global message.", variant: "destructive" });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+    
+    if (loading) {
+        return <div className="flex justify-center items-center h-24"><Loader2 className="h-6 w-6 animate-spin" /></div>
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Global Toast Message</CardTitle>
+                <CardDescription>Set a short message that will appear as a toast for all users.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 <div className="space-y-2">
+                    <Label htmlFor="global-message">Message</Label>
+                    <Input 
+                        id="global-message" 
+                        value={globalMessage}
+                        onChange={(e) => setGlobalMessage(e.target.value)}
+                        placeholder="e.g., Scheduled maintenance tonight at 10 PM."
+                    />
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Switch id="enable-global-message" checked={isEnabled} onCheckedChange={setIsEnabled} />
+                    <Label htmlFor="enable-global-message">Enable this message</Label>
+                </div>
+            </CardContent>
+            <CardFooter>
+                 <Button onClick={handleSaveGlobalMessage} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+                    Save Global Message
+                </Button>
+            </CardFooter>
+        </Card>
+    )
 }
 
 export default function AdminUpdatesPage() {
@@ -135,7 +215,7 @@ export default function AdminUpdatesPage() {
             </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mt-6">
-            <div className="w-full">
+            <div className="w-full space-y-8">
                 <Card>
                     <form action={formAction} ref={formRef}>
                         <CardHeader>
@@ -166,6 +246,7 @@ export default function AdminUpdatesPage() {
                         </CardFooter>
                     </form>
                 </Card>
+                <GlobalMessageManager />
             </div>
              <div className="w-full">
                 <Card>

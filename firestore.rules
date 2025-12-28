@@ -48,6 +48,8 @@ service cloud.firestore {
     match /mcqs/{docId} { allow read: if true; }
     match /coding-questions/{docId} { allow read: if true; }
     match /concept-map-analytics/{mapId} { allow read: if true; }
+    match /specialEvents/{eventId} { allow read: if true; }
+    match /site_config/{docId} { allow read: if true; } // New rule for global message
 
     // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
@@ -76,6 +78,14 @@ service cloud.firestore {
     }
     match /faculty/{docId} {
       allow create: if isBatchAdmin() || isAdmin();
+    }
+    match /specialEvents/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+     match /site_config/{docId} { // New rule for global message
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // FORM SUBMISSIONS (PUBLIC OR AUTHENTICATED)
