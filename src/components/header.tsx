@@ -51,6 +51,7 @@ import { Badge } from './ui/badge';
 import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new dialog
 import { NotificationBell } from './notification-bell';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ScrollArea } from './ui/scroll-area';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -257,7 +258,7 @@ export default function Header() {
                 <Link href="/" onClick={() => setIsNavigating(true)} className="flex items-center space-x-2">
                     <GraduationCap className="h-6 w-6 text-primary" />
                     <span className="hidden font-bold sm:inline-block">
-                    Saveetha Calculator
+                    Saveetha Companion
                     </span>
                 </Link>
                 </div>
@@ -379,39 +380,41 @@ export default function Header() {
                 className="fixed inset-0 z-40 bg-background/80 backdrop-blur-lg md:hidden"
                 onClick={() => setMobileMenuOpen(false)}
             >
-                <motion.nav 
-                    className="mt-24 p-8 space-y-1"
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                    variants={{
-                        open: {
-                            transition: { staggerChildren: 0.07, delayChildren: 0.2 }
-                        },
-                        closed: {
-                            transition: { staggerChildren: 0.05, staggerDirection: -1 }
-                        }
-                    }}
-                >
-                    {allMobileLinks.map(link => (
-                        <motion.div
-                            key={link.href}
-                            variants={{
-                                open: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
-                                closed: { y: 20, opacity: 0, transition: { duration: 0.2 } }
-                            }}
-                        >
-                            <Link 
-                                href={link.href} 
-                                onClick={() => handleMobileLinkClick(link.href)} 
-                                className="flex items-center gap-4 py-3 text-2xl font-semibold text-muted-foreground transition-colors hover:text-primary"
-                            >
-                                <link.icon className="h-6 w-6"/>
-                                {link.label}
-                            </Link>
-                        </motion.div>
-                    ))}
-                </motion.nav>
+                <ScrollArea className="h-full pt-24 pb-8">
+                  <motion.nav 
+                      className="p-8 space-y-1"
+                      initial="closed"
+                      animate="open"
+                      exit="closed"
+                      variants={{
+                          open: {
+                              transition: { staggerChildren: 0.07, delayChildren: 0.2 }
+                          },
+                          closed: {
+                              transition: { staggerChildren: 0.05, staggerDirection: -1 }
+                          }
+                      }}
+                  >
+                      {allMobileLinks.map(link => (
+                          <motion.div
+                              key={link.href}
+                              variants={{
+                                  open: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
+                                  closed: { y: 20, opacity: 0, transition: { duration: 0.2 } }
+                              }}
+                          >
+                              <Link 
+                                  href={link.href} 
+                                  onClick={() => handleMobileLinkClick(link.href)} 
+                                  className="flex items-center gap-4 py-3 text-2xl font-semibold text-muted-foreground transition-colors hover:text-primary"
+                              >
+                                  <link.icon className="h-6 w-6"/>
+                                  {link.label}
+                              </Link>
+                          </motion.div>
+                      ))}
+                  </motion.nav>
+                </ScrollArea>
             </motion.div>
         )}
         </AnimatePresence>
