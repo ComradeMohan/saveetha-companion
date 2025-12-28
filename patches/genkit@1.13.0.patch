@@ -1,0 +1,21 @@
+diff --git a/node_modules/genkit/lib/index.mjs b/node_modules/genkit/lib/index.mjs
+index 920f06a..a6104e7 100644
+--- a/node_modules/genkit/lib/index.mjs
++++ b/node_modules/genkit/lib/index.mjs
+@@ -19,4 +19,4 @@
+ export { GenkitError, ERROR_MAP, getError, };
+ export * from './telemetry.js';
+ export * from './config.js';
+-export * from './node.js';
++if (typeof window === 'undefined') { export * from './node.js'; }
+diff --git a/node_modules/genkit/lib/index.d.ts b/node_modules/genkit/lib/index.d.ts
+index e5a3c10..4731b81 100644
+--- a/node_modules/genkit/lib/index.d.ts
++++ b/node_modules/genkit/lib/index.d.ts
+@@ -19,4 +19,4 @@
+ export { GenkitError, ERROR_MAP, getError } from './error.js';
+ export * from './telemetry.js';
+ export * from './config.js';
+-export * from './node.js';
++declare global { }
+\ No newline at end of file
