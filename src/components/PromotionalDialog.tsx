@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import Link from 'next/link';
 
 const PROMO_STORAGE_KEY = 'promoDialogLastClosed';
@@ -31,7 +31,7 @@ export default function PromotionalDialog() {
           // Only show the dialog once the image is loaded
           setIsOpen(true);
         };
-      }, 1500);
+      }, 2500); // Increased delay slightly
 
       return () => clearTimeout(timer);
     }
@@ -42,41 +42,38 @@ export default function PromotionalDialog() {
     localStorage.setItem(PROMO_STORAGE_KEY, Date.now().toString());
   };
 
-  const handleDialogInteraction = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className="p-0 border-0 max-w-md bg-transparent shadow-none dialog-animate"
-        onClick={handleDialogInteraction}
-        style={{ backgroundColor: 'hsl(220.71deg 100% 5.49% / 47%)' }}
+    <Sheet open={isOpen} onOpenChange={handleClose}>
+      <SheetContent
+        side="left"
+        className="p-0 border-0 w-[350px] sm:w-[400px] bg-background/80 backdrop-blur-lg"
       >
-        <DialogHeader className="sr-only">
-          <DialogTitle>Promotional</DialogTitle>
-          <DialogDescription>Promo modal</DialogDescription>
-        </DialogHeader>
+        <SheetHeader className="sr-only">
+          <SheetTitle>App Promotion</SheetTitle>
+          <SheetDescription>Check out our mobile app.</SheetDescription>
+        </SheetHeader>
 
-        <div className="relative">
-          <Link
+        <div className="relative h-full w-full">
+           <Link
             href="https://play.google.com/store/apps/details?id=com.simats.univault"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleClose}
+            className="block h-full w-full"
           >
             {isOpen && (
               <img
                 src={IMAGE_URL}
-                alt="Promotional Image"
-                width={500}
-                height={600}
-                loading="eager" // Load eagerly since we're waiting for it
-                className="rounded-lg cursor-pointer object-cover w-full h-auto fade-in loaded"
+                alt="Promotional Image for Univault App"
+                width={400}
+                height={800}
+                loading="eager"
+                className="object-cover w-full h-full fade-in loaded"
               />
             )}
           </Link>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
