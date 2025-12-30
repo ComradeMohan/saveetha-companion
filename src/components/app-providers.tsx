@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -13,12 +12,27 @@ import { usePathname } from 'next/navigation';
 import PromotionalDialog from './PromotionalDialog';
 import SeasonalEffects from './SeasonalEffects';
 import GlobalToastManager from './GlobalToastManager'; // Import the new component
-
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 function MainContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const noHeaderPaths = ['/admin', '/learn', '/batch-admin', '/dev-login'];
-    const showHeader = !noHeaderPaths.some(path => pathname.startsWith(path));
+    const router = useRouter();
+    const { user, loading } = useAuth();
+    
+    const publicPaths = ['/landing', '/login', '/signup', '/contact', '/privacy', '/terms', '/copyright', '/takedown', '/datasafety', '/faq'];
+    const isPublicPath = publicPaths.includes(pathname);
+    const isAdminOrLearnPath = pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/dev-login');
+
+    useEffect(() => {
+        if (!loading && !user && !isPublicPath && !isAdminOrLearnPath) {
+            router.push('/landing');
+        }
+    }, [user, loading, isPublicPath, isAdminOrLearnPath, router]);
+
+    const showHeader = !isAdminOrLearnPath && (isPublicPath || user);
+
 
     return (
         <>
