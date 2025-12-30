@@ -1,10 +1,8 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ListTree } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
 
 interface TreeNode {
@@ -12,189 +10,113 @@ interface TreeNode {
   seats?: number;
   accredited?: boolean;
   notes?: string;
+  color: 'blue' | 'teal' | 'purple' | 'green' | 'orange';
   children?: TreeNode[];
-  highlight?: boolean;
 }
 
 const simatsData: TreeNode = {
   name: 'SIMATS Deemed University',
+  color: 'blue',
   children: [
     {
       name: 'Poonamallee Campus',
+      color: 'teal',
       children: [
         {
           name: 'Saveetha Dental College',
+          color: 'purple',
           children: [
-            { name: 'BDS (Bachelor of Dental Surgery)', seats: 100 },
-            { name: 'MDS (Master of Dental Surgery)', seats: 51, children: [
-                { name: 'Conservative Dentistry & Endodontics' },
-                { name: 'Orthodontics & Dentofacial Orthopedics' },
-                { name: 'Prosthodontics & Crown & Bridge' },
-                { name: 'Oral & Maxillofacial Surgery' },
-                { name: 'Periodontology' },
-                { name: 'Oral Medicine & Radiology' },
-                { name: 'Pediatric Dentistry' },
-                { name: 'Oral Pathology & Microbiology' },
-                { name: 'Public Health Dentistry' },
-              ]},
-            { name: 'PhD (Dental Sciences)' },
-          ],
-        },
-        {
-          name: 'Saveetha School of Management',
-          children: [
-            { name: 'BBA' },
-            { name: 'MBA', children: [
-                { name: 'Finance' },
-                { name: 'HR' },
-                { name: 'Marketing' },
-                { name: 'Operations' },
-                { name: 'Business Analytics' },
-                { name: 'Healthcare Management' },
-                { name: 'International Business' },
-                { name: 'Digital Marketing' },
-              ]},
-            { name: 'PhD (Management)' },
-          ],
-        },
-        {
-          name: 'Saveetha School of Law',
-          children: [
-            { name: 'BA LLB (Hons)' },
-            { name: 'BCom LLB (Hons)' },
-            { name: 'BBA LLB (Hons)' },
-            { name: 'LLM', children: [
-                { name: 'Intellectual Property Rights (IPR)' },
-                { name: 'Commercial Law' },
-                { name: 'Labour Law' },
-                { name: 'International Law' },
-                { name: 'Criminal Law' },
-              ]},
-            { name: 'PhD (Law)' },
+            { 
+              name: 'Programs', 
+              color: 'green',
+              children: [
+                { name: 'BDS', seats: 100, color: 'orange' },
+                { 
+                  name: 'MDS', 
+                  seats: 51,
+                  color: 'orange',
+                  children: [
+                    { name: 'Conservative Dentistry & Endodontics', color: 'orange' },
+                    { name: 'Orthodontics & Dentofacial Orthopedics', color: 'orange' },
+                    { name: 'Prosthodontics & Crown & Bridge', color: 'orange' },
+                    { name: 'Oral & Maxillofacial Surgery', color: 'orange' },
+                    { name: 'Periodontology', color: 'orange' },
+                    { name: 'Oral Medicine & Radiology', color: 'orange' },
+                  ]
+                },
+              ]
+            },
           ],
         },
       ],
     },
     {
       name: 'Thandalam Campus',
+      color: 'teal',
       children: [
         {
+          name: 'Saveetha School of Engineering',
+          color: 'purple',
+          accredited: true,
+          notes: 'NBA accredited: CSE/ECE/IT/Biomed',
+          children: [
+             { 
+              name: 'B.E./B.Tech', 
+              color: 'green',
+              seats: 240,
+              children: [
+                { name: 'Computer Science & Engineering (CSE)', color: 'orange' },
+                { name: 'AI & Data Science', color: 'orange' },
+                { name: 'Electronics & Communication (ECE)', color: 'orange' },
+                { name: 'Mechanical Engineering', color: 'orange' },
+              ]
+            },
+          ]
+        },
+        {
           name: 'Saveetha Medical College',
-          children: [
-            { name: 'MBBS', seats: 250 },
-            { name: 'MD/MS', seats: 132, children: [
-                { name: 'MD: Anatomy, Physiology, General Medicine, etc.' },
-                { name: 'MS: General Surgery, Orthopedics, OBG, etc.' },
-              ]},
-            { name: 'DM/MCh', seats: 12, notes: 'e.g., Cardiology, Neurology' },
-            { name: 'PhD (Medical Sciences)' },
-          ],
-        },
-        {
-          name: 'Saveetha School of Engineering (SSE)',
-          highlight: true,
-          children: [
-            { name: 'B.E./B.Tech', seats: 240, notes: 'NBA accredited: CSE/ECE/IT/Biomed', children: [
-                { name: 'Computer Science & Engineering (CSE)' },
-                { name: 'AI & ML' },
-                { name: 'AI & Data Science' },
-                { name: 'Information Technology (IT)' },
-                { name: 'Electronics & Communication (ECE)' },
-                { name: 'Electrical & Electronics (EEE)' },
-                { name: 'Biomedical Engineering' },
-                { name: 'Mechanical Engineering' },
-                { name: 'Automobile Engineering' },
-                { name: 'Biotechnology' },
-              ]},
-            { name: 'M.E./M.Tech', children: [
-                { name: 'CSE' },
-                { name: 'Structural Engg' },
-                { name: 'VLSI Design' },
-                { name: 'Mechatronics' },
-                { name: '...and 13 more specializations' }
-            ]},
-            { name: 'PhD (Engineering)' },
-          ],
-        },
-        {
-          name: 'Saveetha College of Physiotherapy',
-          children: [
-            { name: 'BPT' },
-            { name: 'MPT', children: [
-                { name: 'Neurology' },
-                { name: 'Sports Physiotherapy' },
-                { name: 'Orthopedics' },
-              ]},
-            { name: 'PhD (Physiotherapy)' },
-          ],
-        },
-        { name: 'Saveetha College of Nursing', children: [{name: 'B.Sc / M.Sc / PhD'}] },
-        { name: 'Saveetha College of Allied Health Sciences', children: [{name: '38+ B.Sc / 40+ M.Sc Specs'}] },
-        { name: 'Saveetha College of Liberal Arts & Sciences', children: [{name: 'B.Sc / BA / B.Com'}] },
-        { name: 'Saveetha College of Pharmacy', children: [{name: 'B.Pharm / M.Pharm'}] },
-        { name: 'Saveetha College of Occupational Therapy' },
-        { name: 'Saveetha College of Architecture & Design' },
-        { name: 'Saveetha School of Physical Education' },
-        { name: 'Saveetha School of Hospitality' },
+          color: 'purple',
+           children: [
+             { 
+              name: 'MBBS', 
+              color: 'green',
+              seats: 250,
+            },
+           ]
+        }
       ],
     },
   ],
 };
 
-const ListNode = ({ node, level }: { node: TreeNode; level: number }) => (
-  <div className={cn('relative', level > 0 && 'pl-6')}>
-    {level > 0 && (
-      <div className="absolute left-2.5 top-0 h-full border-l-2 border-muted-foreground/20"></div>
-    )}
-    <div className={cn(
-        "relative rounded-lg border p-4 transition-all duration-300",
-        node.highlight ? "bg-primary/10 border-primary shadow-lg" : "bg-card"
-    )}>
-       {level > 0 && ( <div className="absolute left-[-2px] top-5 h-px w-3 border-t-2 border-muted-foreground/20"></div>)}
-      <div className="flex flex-wrap items-baseline gap-x-2">
-        <h3 className={cn('font-semibold', 
-            level === 0 && 'text-xl', 
-            level === 1 && 'text-lg',
-            level === 2 && 'text-base',
-            node.highlight && 'text-primary'
-        )}>
-          {node.name}
-        </h3>
-        {node.seats && <span className="text-xs text-muted-foreground">({node.seats} seats)</span>}
-        {node.accredited && <span className="text-xs text-green-600">(NBA Accredited)</span>}
-      </div>
-      {node.notes && <p className="text-xs text-muted-foreground mt-1">{node.notes}</p>}
-    </div>
-    {node.children && (
-      <div className="mt-4 space-y-4">
-        {node.children.map((child, index) => (
-          <ListNode key={index} node={child} level={level + 1} />
-        ))}
-      </div>
-    )}
-  </div>
-);
 
-const DiagramNode = ({ node }: { node: TreeNode }) => {
+const nodeColorClasses = {
+    blue: 'bg-blue-600/10 border-blue-500 text-blue-800 dark:text-blue-300',
+    teal: 'bg-teal-600/10 border-teal-500 text-teal-800 dark:text-teal-300',
+    purple: 'bg-purple-600/10 border-purple-500 text-purple-800 dark:text-purple-300',
+    green: 'bg-green-600/10 border-green-500 text-green-800 dark:text-green-300',
+    orange: 'bg-orange-600/10 border-orange-500 text-orange-800 dark:text-orange-300',
+};
+
+
+const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
     return (
-        <div className="diagram-node">
-            <Card className={cn("diagram-node-content", node.highlight && "border-primary bg-primary/10")}>
-                <CardContent className="p-3">
-                    <p className={cn("font-semibold", node.highlight && "text-primary")}>{node.name}</p>
-                    {(node.seats || node.accredited) && (
-                        <p className="text-xs text-muted-foreground">
-                            {node.seats && `Seats: ${node.seats}`}
-                            {node.seats && node.accredited && ' | '}
-                            {node.accredited && <span className="text-green-600">NBA</span>}
-                        </p>
-                    )}
-                    {node.notes && <p className="text-xs text-muted-foreground">{node.notes}</p>}
-                </CardContent>
-            </Card>
-            {node.children && (
-                <div className="diagram-node-children">
+        <div className="tree-node">
+            <div className={cn("tree-node-content", nodeColorClasses[node.color])}>
+                <p className="font-semibold text-sm">{node.name}</p>
+                {(node.seats || node.accredited) && (
+                    <p className="text-xs text-muted-foreground">
+                        {node.seats && `Seats: ${node.seats}`}
+                        {node.seats && node.accredited && ' | '}
+                        {node.accredited && <span className="text-green-600">NBA</span>}
+                    </p>
+                )}
+                 {node.notes && <p className="text-xs text-muted-foreground italic">{node.notes}</p>}
+            </div>
+            {node.children && node.children.length > 0 && (
+                <div className="tree-children">
                     {node.children.map((child, index) => (
-                        <DiagramNode key={index} node={child} />
+                        <TreeNodeComponent key={index} node={child} />
                     ))}
                 </div>
             )}
@@ -204,15 +126,8 @@ const DiagramNode = ({ node }: { node: TreeNode }) => {
 
 
 export default function SimatsTreePage() {
-    const isMobile = useIsMobile();
-    
-    // Fallback for SSR where useIsMobile is undefined
-    if (isMobile === undefined) {
-        return null; 
-    }
-
     return (
-        <div className="container mx-auto max-w-7xl px-4 py-16">
+        <div className="container mx-auto max-w-full px-4 py-16">
              <Card className="shadow-lg">
                 <CardHeader>
                     <div className="flex items-center gap-3">
@@ -220,19 +135,15 @@ export default function SimatsTreePage() {
                            <ListTree className="h-6 w-6 text-primary"/>
                         </div>
                         <div>
-                            <CardTitle>SIMATS University Structure</CardTitle>
-                            <CardDescription>A hierarchical overview of campuses, colleges, and departments.</CardDescription>
+                            <CardTitle>SIMATS Academic Structure – Hierarchical Tree</CardTitle>
+                            <CardDescription>A top-down organizational chart of the university.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    {isMobile ? (
-                        <ListNode node={simatsData} level={0} />
-                    ) : (
-                        <div className="overflow-x-auto p-4">
-                           <DiagramNode node={simatsData} />
-                        </div>
-                    )}
+                <CardContent className="overflow-x-auto p-10">
+                    <div className="min-w-max">
+                        <TreeNodeComponent node={simatsData} />
+                    </div>
                 </CardContent>
             </Card>
         </div>

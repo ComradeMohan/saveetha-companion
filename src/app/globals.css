@@ -375,36 +375,55 @@
   }
 }
 
-.diagram-node {
-    @apply relative flex items-center;
+/* Hierarchical Tree Diagram Styles */
+.tree-node {
+    @apply relative flex flex-col items-center;
 }
-.diagram-node > .diagram-node-content {
-    @apply shrink-0;
+.tree-node-content {
+    @apply relative z-10 w-64 cursor-pointer rounded-lg border-2 p-3 text-center shadow-md transition-all hover:shadow-xl hover:scale-105;
 }
-.diagram-node-children {
-    @apply flex flex-col justify-center ml-12 pl-12 relative;
+.tree-children {
+    @apply mt-12 flex items-start justify-center gap-8;
+    position: relative;
 }
-/* Vertical line connecting children */
-.diagram-node-children::before {
-    @apply content-[''] absolute left-0 top-0 h-full w-px bg-border;
+/* Vertical line from parent to the horizontal connector */
+.tree-node::after {
+    @apply content-[''] absolute left-1/2 top-full h-6 w-px -translate-x-1/2 bg-gray-400;
 }
-/* Horizontal line from parent to vertical line */
-.diagram-node::after {
-    @apply content-[''] absolute left-full top-1/2 h-px w-12 bg-border;
+.tree-node:has(.tree-children)::after {
+  content: '';
 }
-/* Don't draw line from the very last child node */
-.diagram-node-children > .diagram-node:last-child::before {
-    @apply h-1/2;
+.tree-children > .tree-node:only-child {
+  /* No horizontal line needed for a single child */
 }
-.diagram-node-children > .diagram-node:first-child::before {
-    @apply h-1/2 top-1/2;
+/* Horizontal line connecting all children */
+.tree-children::before {
+    @apply content-[''] absolute left-0 right-0 top-[-24px] h-px bg-gray-400;
 }
-/* Horizontal line from vertical line to child */
-.diagram-node-children > .diagram-node::before {
-    @apply content-[''] absolute left-0 top-1/2 h-px w-12 bg-border;
+/* Vertical lines from horizontal connector to each child */
+.tree-children > .tree-node::before {
+    @apply content-[''] absolute bottom-full left-1/2 h-6 w-px -translate-x-1/2 bg-gray-400;
 }
-/* Hide connector from parent if no children */
-.diagram-node:not(:has(.diagram-node-children))::after {
+/* Hide lines for nodes with no children */
+.tree-node:not(:has(.tree-children))::after {
     @apply hidden;
 }
+/* Hide horizontal line for single child */
+.tree-children > .tree-node:first-child:last-child::before {
+    @apply content-[''] absolute bottom-full left-1/2 h-6 w-px -translate-x-1/2 bg-gray-400;
+}
+.tree-children:has(> .tree-node:only-child)::before {
+    @apply hidden;
+}
+/* Extend horizontal line to first and last child */
+.tree-children > .tree-node:first-child::after {
+    @apply content-[''] absolute bottom-full left-0 right-1/2 h-px bg-gray-400;
+}
+.tree-children > .tree-node:last-child::after {
+    @apply content-[''] absolute bottom-full left-1/2 right-0 h-px bg-gray-400;
+}
+.tree-children > .tree-node:first-child:last-child::after {
+  @apply hidden;
+}
+
 
