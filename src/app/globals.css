@@ -374,3 +374,24 @@
     transform: translateY(0) scale(1);
   }
 }
+
+/* Diagram View Styles */
+.diagram-node-container {
+    @apply relative flex items-center;
+}
+
+.diagram-node {
+    @apply shrink-0;
+}
+
+.diagram-children-container {
+    @apply flex flex-col justify-center relative ml-6 pl-6;
+}
+
+.diagram-children-container::before {
+    @apply content-[''] absolute left-0 top-1/2 -translate-y-1/2 h-full w-px bg-border;
+}
+
+.diagram-node-container:not(:first-child)::before {
+    @apply content-[''] absolute left-0 top-1/2 h-px w-6 bg-border;
+}

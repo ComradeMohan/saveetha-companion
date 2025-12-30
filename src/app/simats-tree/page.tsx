@@ -1,6 +1,10 @@
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ListTree } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+import React from 'react';
 
 interface TreeNode {
   name: string;
@@ -136,7 +140,7 @@ const simatsData: TreeNode = {
   ],
 };
 
-const NodeComponent = ({ node, level }: { node: TreeNode; level: number }) => (
+const ListNode = ({ node, level }: { node: TreeNode; level: number }) => (
   <div className={cn('relative', level > 0 && 'pl-6')}>
     {level > 0 && (
       <div className="absolute left-2.5 top-0 h-full border-l-2 border-muted-foreground/20"></div>
@@ -163,17 +167,51 @@ const NodeComponent = ({ node, level }: { node: TreeNode; level: number }) => (
     {node.children && (
       <div className="mt-4 space-y-4">
         {node.children.map((child, index) => (
-          <NodeComponent key={index} node={child} level={level + 1} />
+          <ListNode key={index} node={child} level={level + 1} />
         ))}
       </div>
     )}
   </div>
 );
 
+const DiagramNode = ({ node, level }: { node: TreeNode, level: number }) => {
+    return (
+        <div className="diagram-node-container">
+            <Card className={cn("diagram-node", node.highlight && "border-primary bg-primary/10")}>
+                <CardContent className="p-3">
+                    <p className={cn("font-semibold", node.highlight && "text-primary")}>{node.name}</p>
+                    {(node.seats || node.accredited) && (
+                        <p className="text-xs text-muted-foreground">
+                            {node.seats && `Seats: ${node.seats}`}
+                            {node.seats && node.accredited && ' | '}
+                            {node.accredited && <span className="text-green-600">NBA</span>}
+                        </p>
+                    )}
+                    {node.notes && <p className="text-xs text-muted-foreground">{node.notes}</p>}
+                </CardContent>
+            </Card>
+            {node.children && (
+                <div className="diagram-children-container">
+                    {node.children.map((child, index) => (
+                        <DiagramNode key={index} node={child} level={level + 1} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 export default function SimatsTreePage() {
+    const isMobile = useIsMobile();
+    
+    // Fallback for SSR where useIsMobile is undefined
+    if (isMobile === undefined) {
+        return null; 
+    }
+
     return (
-        <div className="container mx-auto max-w-4xl px-4 py-16">
+        <div className="container mx-auto max-w-7xl px-4 py-16">
              <Card className="shadow-lg">
                 <CardHeader>
                     <div className="flex items-center gap-3">
@@ -187,7 +225,13 @@ export default function SimatsTreePage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <NodeComponent node={simatsData} level={0} />
+                    {isMobile ? (
+                        <ListNode node={simatsData} level={0} />
+                    ) : (
+                        <div className="overflow-x-auto p-4">
+                           <DiagramNode node={simatsData} level={0} />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>
