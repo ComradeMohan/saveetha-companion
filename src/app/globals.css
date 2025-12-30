@@ -135,7 +135,7 @@
     background: radial-gradient(
       circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
       var(--spotlight-color) 0%,
-      transparent 25%
+      transparent: 25%
     );
     pointer-events: none;
     z-index: -1;
@@ -375,23 +375,36 @@
   }
 }
 
-/* Diagram View Styles */
-.diagram-node-container {
+.diagram-node {
     @apply relative flex items-center;
 }
-
-.diagram-node {
+.diagram-node > .diagram-node-content {
     @apply shrink-0;
 }
-
-.diagram-children-container {
-    @apply flex flex-col justify-center relative ml-6 pl-6;
+.diagram-node-children {
+    @apply flex flex-col justify-center ml-12 pl-12 relative;
+}
+/* Vertical line connecting children */
+.diagram-node-children::before {
+    @apply content-[''] absolute left-0 top-0 h-full w-px bg-border;
+}
+/* Horizontal line from parent to vertical line */
+.diagram-node::after {
+    @apply content-[''] absolute left-full top-1/2 h-px w-12 bg-border;
+}
+/* Don't draw line from the very last child node */
+.diagram-node-children > .diagram-node:last-child::before {
+    @apply h-1/2;
+}
+.diagram-node-children > .diagram-node:first-child::before {
+    @apply h-1/2 top-1/2;
+}
+/* Horizontal line from vertical line to child */
+.diagram-node-children > .diagram-node::before {
+    @apply content-[''] absolute left-0 top-1/2 h-px w-12 bg-border;
+}
+/* Hide connector from parent if no children */
+.diagram-node:not(:has(.diagram-node-children))::after {
+    @apply hidden;
 }
 
-.diagram-children-container::before {
-    @apply content-[''] absolute left-0 top-1/2 -translate-y-1/2 h-full w-px bg-border;
-}
-
-.diagram-node-container:not(:first-child)::before {
-    @apply content-[''] absolute left-0 top-1/2 h-px w-6 bg-border;
-}

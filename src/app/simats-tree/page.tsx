@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -174,10 +175,10 @@ const ListNode = ({ node, level }: { node: TreeNode; level: number }) => (
   </div>
 );
 
-const DiagramNode = ({ node, level }: { node: TreeNode, level: number }) => {
+const DiagramNode = ({ node }: { node: TreeNode }) => {
     return (
-        <div className="diagram-node-container">
-            <Card className={cn("diagram-node", node.highlight && "border-primary bg-primary/10")}>
+        <div className="diagram-node">
+            <Card className={cn("diagram-node-content", node.highlight && "border-primary bg-primary/10")}>
                 <CardContent className="p-3">
                     <p className={cn("font-semibold", node.highlight && "text-primary")}>{node.name}</p>
                     {(node.seats || node.accredited) && (
@@ -191,9 +192,9 @@ const DiagramNode = ({ node, level }: { node: TreeNode, level: number }) => {
                 </CardContent>
             </Card>
             {node.children && (
-                <div className="diagram-children-container">
+                <div className="diagram-node-children">
                     {node.children.map((child, index) => (
-                        <DiagramNode key={index} node={child} level={level + 1} />
+                        <DiagramNode key={index} node={child} />
                     ))}
                 </div>
             )}
@@ -229,7 +230,7 @@ export default function SimatsTreePage() {
                         <ListNode node={simatsData} level={0} />
                     ) : (
                         <div className="overflow-x-auto p-4">
-                           <DiagramNode node={simatsData} level={0} />
+                           <DiagramNode node={simatsData} />
                         </div>
                     )}
                 </CardContent>
