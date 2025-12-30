@@ -9,6 +9,18 @@ import Image from 'next/image';
 
 const projects = [
   {
+    name: 'saveethahub',
+    description: 'Access the SaveethaHub application.',
+    url: 'https://app.saveethahub.tech',
+    icon: AppWindow,
+  },
+  {
+    name: 'arms',
+    description: 'Streamline your academic record management.',
+    url: 'https://arms.saveethahub.tech',
+    icon: AppWindow,
+  },
+  {
     name: 'Univault',
     description: 'Your personal cloud storage solution.',
     url: 'https://univault.live',
@@ -18,12 +30,6 @@ const projects = [
     name: 'Univault Web',
     description: 'Access your files from any web browser.',
     url: 'https://web.univault.live',
-    icon: AppWindow,
-  },
-  {
-    name: 'ARMS Automation',
-    description: 'Streamline your academic record management.',
-    url: 'https://arms.saveethahub.tech',
     icon: AppWindow,
   },
   {
@@ -44,7 +50,7 @@ export function PromotionCard() {
                         Discover a suite of tools designed to enhance your digital and academic life.
                     </p>
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
                     {projects.map((project, index) => (
                          <Card key={index} className="flex flex-col text-center overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                             <CardHeader className="flex-grow">
