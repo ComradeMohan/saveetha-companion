@@ -1,4 +1,3 @@
-
 'use client';
 
 import Footer from '@/components/footer';
@@ -10,12 +9,16 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
-import SubjectWiseAttendanceCalculator from '@/components/subject-wise-attendance-calculator';
 import { Testimonials } from '@/components/testimonials';
 import Header from '@/components/header';
 import Hero from '@/components/hero';
+import { PromotionCard } from '@/components/promotion-card';
 
 const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
+  loading: () => <Skeleton className="w-full h-[400px]" />,
+  ssr: false,
+});
+const SubjectWiseAttendanceCalculator = dynamic(() => import('@/components/subject-wise-attendance-calculator'), {
   loading: () => <Skeleton className="w-full h-[400px]" />,
   ssr: false,
 });
@@ -31,6 +34,8 @@ export default function LandingPage() {
       <Header />
       <main className="flex-1 flex flex-col pt-16">
         <Hero />
+        
+        {/* Logged-out specific calculator section */}
         <section id="calculators" className="pb-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>
@@ -38,6 +43,15 @@ export default function LandingPage() {
               <CgpaCalculator />
               <SubjectWiseAttendanceCalculator />
             </div>
+            {!user && (
+                <div className="text-center mt-8">
+                     <Button asChild size="lg">
+                        <Link href="/login">
+                            Login to Save & Track <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                    </Button>
+                </div>
+            )}
           </div>
         </section>
 
@@ -49,7 +63,7 @@ export default function LandingPage() {
         
         <Features />
         <Stats />
-
+        <PromotionCard />
         <Testimonials />
 
         <section id="contact" className="pt-20 pb-12 md:py-16 text-center">

@@ -4,6 +4,8 @@ import Dashboard from '@/components/dashboard';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+
 
 export default function HomePage() {
   const { user, loading } = useAuth();
@@ -17,8 +19,8 @@ export default function HomePage() {
 
   if (loading || !user) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        {/* You can add a spinner here */}
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
