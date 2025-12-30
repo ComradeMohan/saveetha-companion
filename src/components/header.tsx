@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -31,7 +32,7 @@ import {
   Link as LinkIcon,
   Code,
   Users2,
-  GitTree,
+  ListTree,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -216,7 +217,7 @@ export default function Header() {
       { href: '/hackathons', label: 'Hackathons', icon: Trophy },
       { href: '/internships', label: 'Internships', icon: Briefcase },
       { href: '/jobs', label: 'Remote Jobs', icon: BriefcaseBusiness },
-      { href: '/simats-tree', label: 'SIMATS Tree', icon: GitTree },
+      { href: '/simats-tree', label: 'SIMATS Tree', icon: ListTree },
       { href: '/updates', label: 'Updates', icon: Bell },
   ];
 

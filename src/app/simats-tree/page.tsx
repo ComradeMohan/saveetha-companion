@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { GitTree } from 'lucide-react';
+import { ListTree } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TreeNode {
@@ -178,7 +178,7 @@ export default function SimatsTreePage() {
                 <CardHeader>
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-primary/10 rounded-lg">
-                           <GitTree className="h-6 w-6 text-primary"/>
+                           <ListTree className="h-6 w-6 text-primary"/>
                         </div>
                         <div>
                             <CardTitle>SIMATS University Structure</CardTitle>
