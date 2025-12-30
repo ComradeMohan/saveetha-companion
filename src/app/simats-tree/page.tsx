@@ -2,9 +2,10 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ListTree, Star, Award, ShieldCheck, TrendingUp, Users, Microscope, Briefcase } from 'lucide-react';
+import { ListTree, Star, Award, ShieldCheck, TrendingUp, Users, Microscope, Briefcase, Building, Trophy, FileText, Megaphone, University, LandPlot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
 interface TreeNode {
   name: string;
@@ -15,7 +16,7 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
-// New comprehensive data structure based on user input
+// Data structure for the tree diagram
 const simatsData: TreeNode = {
   name: 'SIMATS Deemed University',
   color: 'blue',
@@ -215,36 +216,106 @@ const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
     );
 };
 
-const KeyInfoCard = () => (
-    <Card className="mb-8">
-        <CardHeader>
-            <CardTitle>Key Information & Rankings (2025)</CardTitle>
-            <CardDescription>A summary of SIMATS's current standing and accreditations.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-             <div className="flex items-start gap-3">
-                <Star className="h-4 w-4 mt-1 text-amber-500 flex-shrink-0"/>
-                <div><span className="font-semibold">NIRF Rank:</span> University: 13th, Research: 13th, Medical: 11th, Law: 19th</div>
-             </div>
-             <div className="flex items-start gap-3">
-                <ShieldCheck className="h-4 w-4 mt-1 text-green-500 flex-shrink-0"/>
-                <div><span className="font-semibold">Accreditation:</span> NAAC A++, UGC, AICTE, NBA (Engg), QS I-GAUGE Diamond</div>
-             </div>
-             <div className="flex items-start gap-3">
-                <TrendingUp className="h-4 w-4 mt-1 text-blue-500 flex-shrink-0"/>
-                <div><span className="font-semibold">QS World Rank:</span> 901-950</div>
-             </div>
-             <div className="flex items-start gap-3">
-                <Users className="h-4 w-4 mt-1 text-indigo-500 flex-shrink-0"/>
-                <div><span className="font-semibold">Placements (2024-25):</span> 98%+ Rate, Highest: ₹44 LPA, Avg: ₹7.5 LPA</div>
-             </div>
-             <div className="flex items-start gap-3 col-span-2 md:col-span-4">
-                <Microscope className="h-4 w-4 mt-1 text-red-500 flex-shrink-0"/>
-                <div className="text-xs text-muted-foreground"><span className="font-semibold text-destructive">Note on Research:</span> While highly ranked, SIMATS has faced accusations of citation inflation and has had 25 papers retracted in 2025 for image manipulation.</div>
-             </div>
-        </CardContent>
-    </Card>
-)
+const KeyInfoCards = () => (
+    <div className="mb-8 space-y-8">
+        {/* Rankings & Accreditations */}
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Trophy className="text-amber-500"/>Rankings & Accreditations (2025)</CardTitle>
+                <CardDescription>A summary of SIMATS's current national and global standings.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="p-4 bg-secondary/50 rounded-lg">
+                        <p className="text-sm font-semibold text-primary">NIRF University</p>
+                        <p className="text-3xl font-bold">#13</p>
+                    </div>
+                     <div className="p-4 bg-secondary/50 rounded-lg">
+                        <p className="text-sm font-semibold text-primary">NIRF Medical</p>
+                        <p className="text-3xl font-bold">#11</p>
+                    </div>
+                     <div className="p-4 bg-secondary/50 rounded-lg">
+                        <p className="text-sm font-semibold text-primary">NIRF Dental</p>
+                        <p className="text-3xl font-bold">#1</p>
+                    </div>
+                     <div className="p-4 bg-secondary/50 rounded-lg">
+                        <p className="text-sm font-semibold text-primary">NIRF Law</p>
+                        <p className="text-3xl font-bold">#19</p>
+                    </div>
+                </div>
+                 <div className="flex flex-wrap gap-2">
+                    <Badge variant="secondary">QS World: 901-950</Badge>
+                    <Badge variant="secondary">THE World: 351-400</Badge>
+                    <Badge variant="outline" className="text-green-600 border-green-500">NAAC A++</Badge>
+                    <Badge variant="outline" className="text-blue-600 border-blue-500">NBA Tier-1</Badge>
+                    <Badge variant="outline" className="text-purple-600 border-purple-500">QS I-GAUGE Diamond</Badge>
+                </div>
+            </CardContent>
+        </Card>
+        
+        {/* Placements */}
+        <Card>
+             <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Briefcase className="text-blue-500"/>Placements (2024-2025)</CardTitle>
+                 <CardDescription>98%+ placement rate with over 1,200 students placed.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <div className="p-4 bg-secondary/50 rounded-lg">
+                    <p className="text-sm font-semibold text-primary">Highest Package</p>
+                    <p className="text-3xl font-bold">₹44 LPA</p>
+                </div>
+                <div className="p-4 bg-secondary/50 rounded-lg">
+                    <p className="text-sm font-semibold text-primary">Average Package</p>
+                    <p className="text-3xl font-bold">₹7.5 LPA</p>
+                </div>
+                 <div className="md:col-span-2 p-4 bg-secondary/50 rounded-lg">
+                    <p className="text-sm font-semibold text-primary mb-2">Top Recruiters</p>
+                    <div className="flex flex-wrap gap-2">
+                        {["TCS", "Infosys", "Wipro", "HCL", "Accenture", "IBM", "Cognizant", "Bosch", "Apollo"].map(c => <Badge key={c} variant="outline">{c}</Badge>)}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Research */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Microscope className="text-purple-500"/>Research & Innovation</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                    <p><strong>17,500+</strong> Scopus Publications</p>
+                    <p><strong>330+</strong> Patents Filed</p>
+                    <p><strong>#1 India</strong> in Interdisciplinary Science (THE 2026)</p>
+                </CardContent>
+            </Card>
+
+            {/* Infrastructure */}
+             <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Building className="text-orange-500"/>Infrastructure</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                    <p><strong>1,250+</strong> Bed Super-Specialty Hospitals</p>
+                    <p><strong>5,000+</strong> Hostel Accommodations</p>
+                    <p><strong>#206 Global</strong> in UI GreenMetric World Rankings</p>
+                </CardContent>
+            </Card>
+            
+            {/* Admissions */}
+             <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Megaphone className="text-green-500"/>Admissions 2025-26</CardTitle>
+                </CardHeader>
+                 <CardContent className="space-y-2 text-sm">
+                    <p><strong>NEET/TNEA/JEE/CLAT</strong> scores accepted</p>
+                    <p><strong>2,160+</strong> B.Tech Seats Available</p>
+                     <p>Counseling period: <strong>Aug-Sep 2025</strong></p>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+);
 
 
 export default function SimatsTreePage() {
@@ -254,21 +325,27 @@ export default function SimatsTreePage() {
                 <CardHeader>
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-primary/10 rounded-lg">
-                           <ListTree className="h-6 w-6 text-primary"/>
+                           <University className="h-6 w-6 text-primary"/>
                         </div>
                         <div>
-                            <CardTitle>SIMATS Academic Structure – Hierarchical Tree</CardTitle>
-                            <CardDescription>A top-down organizational chart of the university, its campuses, and colleges.</CardDescription>
+                            <CardTitle>SIMATS: An Overview</CardTitle>
+                            <CardDescription>Key highlights and the academic structure of the university.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
             </Card>
 
-            <KeyInfoCard />
-            
-            <div className="overflow-x-auto p-4 bg-background rounded-lg border">
-                <div className="min-w-max py-10">
-                    <TreeNodeComponent node={simatsData} />
+            <KeyInfoCards />
+
+            <div className="mt-12">
+                <h2 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+                    <ListTree className="h-6 w-6"/>
+                    Academic Structure Diagram
+                </h2>
+                <div className="overflow-x-auto p-4 bg-background rounded-lg border">
+                    <div className="min-w-max py-10">
+                        <TreeNodeComponent node={simatsData} />
+                    </div>
                 </div>
             </div>
         </div>
