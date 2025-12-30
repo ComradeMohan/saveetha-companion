@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
@@ -26,10 +27,10 @@ const projects = [
     icon: AppWindow,
   },
   {
-    name: 'Saveetha Companion App',
-    description: 'Download the official app from the Play Store.',
+    name: 'Univault',
+    description: 'Download the official Univault app from the Play Store.',
     url: 'https://play.google.com/store/apps/details?id=com.simats.univault',
-    icon: '/play-store.png',
+    icon: 'https://univault.live/assets/favicon.png',
   },
 ];
 
