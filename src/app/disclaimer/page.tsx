@@ -11,10 +11,8 @@ export const metadata = {
 
 export default function DisclaimerPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
-        <div className="container mx-auto max-w-3xl px-4">
+    <>
+        <div className="container mx-auto max-w-3xl px-4 pt-20 pb-12 md:py-16">
           <Card className="shadow-lg">
             <CardHeader>
                 <div className="flex items-center gap-3">
@@ -41,8 +39,6 @@ export default function DisclaimerPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }

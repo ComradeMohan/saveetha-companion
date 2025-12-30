@@ -152,21 +152,17 @@ export default function CertificationsPage() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 pt-20 pb-12 md:py-16">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold tracking-tight">Free Certifications Hub</h2>
-                        <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                            Boost your resume and skills with these free certification courses from top companies and platforms.
-                        </p>
-                    </div>
-                    
-                    {renderContent()}
+        <div className="pt-20 pb-12 md:py-16">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold tracking-tight">Free Certifications Hub</h2>
+                    <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                        Boost your resume and skills with these free certification courses from top companies and platforms.
+                    </p>
                 </div>
-            </main>
-            <Footer />
+                
+                {renderContent()}
+            </div>
         </div>
     );
 }

@@ -120,145 +120,141 @@ export default function ProfilePage() {
 
   return (
     <>
-    <div className="flex min-h-screen flex-col bg-muted/30">
-        <Header />
-        <main className="flex-1 pt-20 pb-12 md:py-16">
-            <div className="container mx-auto px-4">
-                {isLoading ? <ProfilePageSkeleton /> : profile ? (
-                    <Card className="max-w-2xl mx-auto shadow-xl">
-                        <CardHeader className="text-center bg-secondary/30 p-8 rounded-t-xl">
-                            <Avatar className="h-24 w-24 mx-auto mb-4 border-4 border-primary/50 shadow-lg">
-                                <AvatarImage src={profile.photoURL} alt={profile.name} />
-                                <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
-                            </Avatar>
-                            <h1 className="text-3xl font-bold">{profile.name}</h1>
-                            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                                <p>{profile.email}</p>
-                                {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500" />}
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                             <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <User className="h-5 w-5 text-primary mt-1" />
-                                    <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">Registration No.</p>
-                                        <p>{profile.regNo || 'Not Set'}</p>
-                                    </div>
+    <div className="pt-20 pb-12 md:py-16">
+        <div className="container mx-auto px-4">
+            {isLoading ? <ProfilePageSkeleton /> : profile ? (
+                <Card className="max-w-2xl mx-auto shadow-xl">
+                    <CardHeader className="text-center bg-secondary/30 p-8 rounded-t-xl">
+                        <Avatar className="h-24 w-24 mx-auto mb-4 border-4 border-primary/50 shadow-lg">
+                            <AvatarImage src={profile.photoURL} alt={profile.name} />
+                            <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
+                        </Avatar>
+                        <h1 className="text-3xl font-bold">{profile.name}</h1>
+                        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                            <p>{profile.email}</p>
+                            {profile.isVerified && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                         <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                <User className="h-5 w-5 text-primary mt-1" />
+                                <div>
+                                    <p className="font-semibold text-sm text-muted-foreground">Registration No.</p>
+                                    <p>{profile.regNo || 'Not Set'}</p>
                                 </div>
-                                <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                    <Phone className="h-5 w-5 text-primary mt-1" />
-                                    <div>
-                                        <p className="font-semibold text-sm text-muted-foreground">Phone Number</p>
-                                        <p>{profile.phone || 'Not Set'}</p>
-                                    </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                <Phone className="h-5 w-5 text-primary mt-1" />
+                                <div>
+                                    <p className="font-semibold text-sm text-muted-foreground">Phone Number</p>
+                                    <p>{profile.phone || 'Not Set'}</p>
                                 </div>
-                                {hasIncompleteAcademicProfile ? (
-                                    <Card className="sm:col-span-2 flex flex-col items-center justify-center text-center p-4">
-                                        <p className="font-semibold text-sm mb-2">Academic Info Missing</p>
-                                        <p className="text-xs text-muted-foreground mb-3">Please update your college and department to access the learning roadmap.</p>
-                                        <Button onClick={() => setProfileDialogOpen(true)}>Update Profile</Button>
-                                    </Card>
-                                ) : (
-                                    <>
-                                        <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                            <School className="h-5 w-5 text-primary mt-1" />
-                                            <div>
-                                                <p className="font-semibold text-sm text-muted-foreground">Department</p>
-                                                <p>{profile.department}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
-                                            <Building className="h-5 w-5 text-primary mt-1" />
-                                            <div>
-                                                <p className="font-semibold text-sm text-muted-foreground">College</p>
-                                                <p>{profile.college}</p>
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
                             </div>
-                            <div className="md:col-span-2">
-                                {loadingCgpa ? <Skeleton className="h-48 w-full" /> : cgpaData ? (
-                                    <Card className="bg-secondary/30 text-center flex flex-col justify-center">
-                                        <CardHeader className="pb-0">
-                                            <CardTitle>Your CGPA</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="flex items-center justify-center p-0">
-                                            <ChartContainer
-                                                config={chartConfig}
-                                                className="mx-auto aspect-square h-48 w-48"
-                                            >
-                                                <RadialBarChart data={chartData} startAngle={-270} endAngle={90} innerRadius="70%" outerRadius="100%" barSize={20}>
-                                                    <PolarAngleAxis type="number" domain={[0, 100]} dataKey="value" tick={false}/>
-                                                    <RadialBar dataKey="value" background cornerRadius={10} className="fill-primary">
-                                                        <LabelList position="center" content={({ viewBox }) => {
-                                                            if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                                                            return (
-                                                                <>
-                                                                <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                                                                    <tspan className="fill-foreground text-4xl font-bold tabular-nums">{cgpaData.cgpa.toFixed(2)}</tspan>
-                                                                </text>
-                                                                <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
-                                                                    <tspan className="fill-muted-foreground text-sm">out of 10</tspan>
-                                                                </text>
-                                                                </>
-                                                            )}
-                                                            return null;
-                                                        }}/>
-                                                    </RadialBar>
-                                                </RadialBarChart>
-                                            </ChartContainer>
-                                        </CardContent>
-                                        <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-2 pb-4">
-                                            <p>Based on {cgpaData.totalCredits} total credits.</p>
-                                        </CardFooter>
-                                    </Card>
-                                ) : (
-                                    <div className="text-center py-10 px-4 border-2 border-dashed rounded-lg h-full flex flex-col items-center justify-center">
-                                        <Calculator className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                                        <p className="font-semibold">No CGPA data found.</p>
-                                        <p className="text-sm text-muted-foreground mb-4">Calculate and save your CGPA to see it here.</p>
-                                        <Button asChild>
-                                            <Link href="/#calculators">Go to Calculator</Link>
-                                        </Button>
+                            {hasIncompleteAcademicProfile ? (
+                                <Card className="sm:col-span-2 flex flex-col items-center justify-center text-center p-4">
+                                    <p className="font-semibold text-sm mb-2">Academic Info Missing</p>
+                                    <p className="text-xs text-muted-foreground mb-3">Please update your college and department to access the learning roadmap.</p>
+                                    <Button onClick={() => setProfileDialogOpen(true)}>Update Profile</Button>
+                                </Card>
+                            ) : (
+                                <>
+                                    <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                        <School className="h-5 w-5 text-primary mt-1" />
+                                        <div>
+                                            <p className="font-semibold text-sm text-muted-foreground">Department</p>
+                                            <p>{profile.department}</p>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </CardContent>
-                         <CardFooter className="p-6 pt-0 border-t mt-6">
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="destructive" className="mt-6">
-                                        <Trash2 className="mr-2 h-4 w-4" /> Delete My Account
+                                    <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-lg">
+                                        <Building className="h-5 w-5 text-primary mt-1" />
+                                        <div>
+                                            <p className="font-semibold text-sm text-muted-foreground">College</p>
+                                            <p>{profile.college}</p>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <div className="md:col-span-2">
+                            {loadingCgpa ? <Skeleton className="h-48 w-full" /> : cgpaData ? (
+                                <Card className="bg-secondary/30 text-center flex flex-col justify-center">
+                                    <CardHeader className="pb-0">
+                                        <CardTitle>Your CGPA</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="flex items-center justify-center p-0">
+                                        <ChartContainer
+                                            config={chartConfig}
+                                            className="mx-auto aspect-square h-48 w-48"
+                                        >
+                                            <RadialBarChart data={chartData} startAngle={-270} endAngle={90} innerRadius="70%" outerRadius="100%" barSize={20}>
+                                                <PolarAngleAxis type="number" domain={[0, 100]} dataKey="value" tick={false}/>
+                                                <RadialBar dataKey="value" background cornerRadius={10} className="fill-primary">
+                                                    <LabelList position="center" content={({ viewBox }) => {
+                                                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                                        return (
+                                                            <>
+                                                            <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                                                                <tspan className="fill-foreground text-4xl font-bold tabular-nums">{cgpaData.cgpa.toFixed(2)}</tspan>
+                                                            </text>
+                                                            <text x={viewBox.cx} y={(viewBox.cy || 0) + 20} textAnchor="middle" dominantBaseline="middle">
+                                                                <tspan className="fill-muted-foreground text-sm">out of 10</tspan>
+                                                            </text>
+                                                            </>
+                                                        )}
+                                                        return null;
+                                                    }}/>
+                                                </RadialBar>
+                                            </RadialBarChart>
+                                        </ChartContainer>
+                                    </CardContent>
+                                    <CardFooter className="text-center text-sm text-muted-foreground justify-center pt-2 pb-4">
+                                        <p>Based on {cgpaData.totalCredits} total credits.</p>
+                                    </CardFooter>
+                                </Card>
+                            ) : (
+                                <div className="text-center py-10 px-4 border-2 border-dashed rounded-lg h-full flex flex-col items-center justify-center">
+                                    <Calculator className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                                    <p className="font-semibold">No CGPA data found.</p>
+                                    <p className="text-sm text-muted-foreground mb-4">Calculate and save your CGPA to see it here.</p>
+                                    <Button asChild>
+                                        <Link href="/#calculators">Go to Calculator</Link>
                                     </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete your account, your profile, saved grades, and all other associated data.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
-                                            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                                            Yes, delete my account
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </CardFooter>
-                    </Card>
-                ) : (
-                    <div className="text-center py-10">
-                        <p className="text-muted-foreground">Could not load profile information. Please try logging in again.</p>
-                    </div>
-                )}
-            </div>
-        </main>
-        <Footer />
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                     <CardFooter className="p-6 pt-0 border-t mt-6">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="mt-6">
+                                    <Trash2 className="mr-2 h-4 w-4" /> Delete My Account
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete your account, your profile, saved grades, and all other associated data.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+                                        {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                        Yes, delete my account
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </CardFooter>
+                </Card>
+            ) : (
+                <div className="text-center py-10">
+                    <p className="text-muted-foreground">Could not load profile information. Please try logging in again.</p>
+                </div>
+            )}
+        </div>
     </div>
     <UpdateProfileDialog open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
     </>

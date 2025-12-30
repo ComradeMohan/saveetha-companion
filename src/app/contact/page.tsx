@@ -13,10 +13,8 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
-        <div className="container mx-auto max-w-2xl px-4 space-y-8">
+    <>
+        <div className="container mx-auto max-w-2xl px-4 space-y-8 pt-20 pb-12 md:py-16">
           <ContactForm />
 
           <Card className="shadow-lg">
@@ -40,8 +38,6 @@ export default function ContactPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }

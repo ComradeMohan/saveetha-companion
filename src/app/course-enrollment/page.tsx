@@ -11,9 +11,7 @@ import Link from 'next/link';
 
 export default function CourseEnrollmentPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
+    <div className="pt-20 pb-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
@@ -54,8 +52,6 @@ export default function CourseEnrollmentPage() {
             </Card>
           </div>
          </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
   );
 }

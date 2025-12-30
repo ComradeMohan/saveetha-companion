@@ -16,9 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export default function LandingPage() {
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 flex flex-col pt-16">
+    <>
         <Hero />
         
         <section id="calculators" className="pb-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
@@ -59,8 +57,6 @@ export default function LandingPage() {
                 </Button>
             </div>
         </section>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }

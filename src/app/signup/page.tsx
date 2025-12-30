@@ -41,9 +41,7 @@ export default function SignUpPage() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 p-4 pt-24">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 p-4 pt-24 min-h-screen">
           <div className="hidden md:flex flex-col items-center justify-center gap-4 p-8 text-center auth-panel-bg">
               <div className="shape shape1"></div>
               <div className="shape shape2"></div>
@@ -84,9 +82,7 @@ export default function SignUpPage() {
                 </CardContent>
             </Card>
           </div>
-        </main>
-        <Footer />
-      </div>
+        </div>
       <div className="fixed bottom-6 right-6 z-50">
         <LoginIssueDialog />
       </div>

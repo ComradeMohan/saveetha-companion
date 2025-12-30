@@ -49,8 +49,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1 flex flex-col pt-16">
+    <>
         <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>
@@ -85,7 +84,6 @@ export default function HomePage() {
                 </Button>
             </div>
         </section>
-      </main>
-    </div>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -5,6 +6,7 @@ import { AuthProvider, ProfileProvider } from '@/hooks/use-auth';
 import VerificationBanner from '@/components/verification-banner';
 import SupportButton from '@/components/support-button';
 import Header from '@/components/header';
+import Footer from '@/components/footer';
 import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { RecruitmentDialog } from './recruitment-dialog';
@@ -31,22 +33,25 @@ function MainContent({ children }: { children: React.ReactNode }) {
         }
     }, [user, loading, isPublicPath, isAdminOrLearnPath, router]);
 
-    const showHeader = !isAdminOrLearnPath && (isPublicPath || user);
+    const showHeaderAndFooter = !isAdminOrLearnPath && (isPublicPath || user);
 
 
     return (
-        <>
-            {showHeader && <Header />}
+        <div className="flex min-h-screen flex-col">
+            {showHeaderAndFooter && <Header />}
             <VerificationBanner key="verification-banner" />
             <RecruitmentDialog />
             <PromotionalDialog />
             <SeasonalEffects />
             <GlobalToastManager /> 
-            <main key="main-content">{children}</main>
-            {showHeader && <SupportButton />}
-            {showHeader && <MobileNav />}
+            <main key="main-content" className="flex-1">
+              {children}
+            </main>
+            {showHeaderAndFooter && <SupportButton />}
+            {showHeaderAndFooter && <MobileNav />}
+            {showHeaderAndFooter && <Footer />}
             <NotificationHandler />
-        </>
+        </div>
     );
 }
 
