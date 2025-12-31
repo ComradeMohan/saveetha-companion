@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import { Input } from './ui/input';
+import { differenceInHours } from 'date-fns';
 
 const feedbackSchema = z.object({
   feedback: z.string().min(10, { message: 'Feedback must be at least 10 characters.' }),
@@ -59,7 +60,7 @@ export default function FeedbackDialog() {
       feedback: '',
     },
   });
-
+  
   useEffect(() => {
     // This effect is now just for handling the form submission result
     if (state.type) {
@@ -77,10 +78,16 @@ export default function FeedbackDialog() {
 
   useEffect(() => {
     if (!loading && user && profile && profile.feedbackSubmitted !== true) {
-      const timer = setTimeout(() => {
-        setShowDialog(true);
-      }, 8000);
-      return () => clearTimeout(timer);
+      const accountCreationTime = user.metadata.creationTime ? new Date(user.metadata.creationTime) : new Date();
+      const hoursSinceCreation = differenceInHours(new Date(), accountCreationTime);
+      
+      // Only show the dialog if the user account is older than 24 hours
+      if (hoursSinceCreation > 24) {
+        const timer = setTimeout(() => {
+          setShowDialog(true);
+        }, 8000);
+        return () => clearTimeout(timer);
+      }
     }
   }, [loading, user, profile]);
 
