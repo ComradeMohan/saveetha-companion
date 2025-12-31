@@ -23,17 +23,17 @@ function MainContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const { user, loading } = useAuth();
     
-    const publicPaths = ['/landing', '/login', '/signup', '/contact', '/privacy', '/terms', '/copyright', '/takedown', '/datasafety', '/faq'];
+    const publicPaths = ['/', '/login', '/signup', '/contact', '/privacy', '/terms', '/copyright', '/takedown', '/datasafety', '/faq'];
     const isPublicPath = publicPaths.includes(pathname);
     const isAdminOrLearnPath = pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/dev-login');
 
     useEffect(() => {
         if (!loading && !user && !isPublicPath && !isAdminOrLearnPath) {
-            router.push('/landing');
+            router.push('/');
         }
-    }, [user, loading, isPublicPath, isAdminOrLearnPath, router]);
+    }, [user, loading, isPublicPath, isAdminOrLearnPath, router, pathname]);
 
-    const showHeaderAndFooter = !isAdminOrLearnPath && (isPublicPath || user);
+    const showHeaderAndFooter = !isAdminOrLearnPath;
 
 
     return (
