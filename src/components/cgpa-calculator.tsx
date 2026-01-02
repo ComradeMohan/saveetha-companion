@@ -199,7 +199,15 @@ export default function CgpaCalculator() {
             <p className="text-4xl font-bold text-primary">{cgpa.toFixed(2)}</p>
         </div>
          <p className="text-sm text-muted-foreground text-center h-5">
-            {usePreviousCgpa ? `Based on ${parseInt(previousSubjects) || 0} previous + ${newSubjects} new subjects.` : `Based on ${totalSubjects} subjects.`}
+            {usePreviousCgpa ? (
+                <>
+                Based on <span className="font-bold text-primary">{parseInt(previousSubjects) || 0}</span> previous + <span className="font-bold text-primary">{newSubjects}</span> new subjects.
+                </>
+            ) : (
+                <>
+                Based on <span className="font-bold text-primary">{totalSubjects}</span> subjects.
+                </>
+            )}
         </p>
         <div className="pt-2 h-6">
           <StatusIndicator />
