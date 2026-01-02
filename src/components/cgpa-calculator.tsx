@@ -37,7 +37,7 @@ export default function CgpaCalculator() {
   );
   const [usePreviousCgpa, setUsePreviousCgpa] = useState(false);
   const [previousCgpa, setPreviousCgpa] = useState('');
-  const [previousCredits, setPreviousCredits] = useState('');
+  const [previousSubjects, setPreviousSubjects] = useState('');
 
   const [isOnline, setIsOnline] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
@@ -51,7 +51,7 @@ export default function CgpaCalculator() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.removeEventListener('offline', handleOffline);
     return () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
@@ -66,39 +66,35 @@ export default function CgpaCalculator() {
   };
 
   const { cgpa, totalSubjects, totalCredits } = useMemo(() => {
-    let newWeightedSum = 0;
+    let newSumOfGradePoints = 0;
     let newSubjects = 0;
 
     for (const grade of grades) {
       const count = parseInt(gradeCounts[grade] || '0');
       if (count > 0) {
-        newWeightedSum += gradePoints[grade] * count * 4;
+        newSumOfGradePoints += gradePoints[grade] * count;
         newSubjects += count;
       }
     }
     
-    const newCredits = newSubjects * 4;
-    
     if (usePreviousCgpa) {
         const prevCgpaNum = parseFloat(previousCgpa);
-        const prevCreditsNum = parseInt(previousCredits);
+        const prevSubjectsNum = parseInt(previousSubjects);
 
-        if (!isNaN(prevCgpaNum) && !isNaN(prevCreditsNum) && prevCreditsNum > 0) {
-            const prevTotalPoints = prevCgpaNum * prevCreditsNum;
-            const newTotalPoints = newWeightedSum;
-
-            const overallTotalCredits = prevCreditsNum + newCredits;
-            const overallTotalPoints = prevTotalPoints + newTotalPoints;
+        if (!isNaN(prevCgpaNum) && !isNaN(prevSubjectsNum) && prevSubjectsNum > 0) {
+            const prevTotalPoints = prevCgpaNum * prevSubjectsNum;
+            const overallTotalSubjects = prevSubjectsNum + newSubjects;
+            const overallTotalPoints = prevTotalPoints + newSumOfGradePoints;
             
-            const overallCgpa = overallTotalCredits > 0 ? overallTotalPoints / overallTotalCredits : 0;
-            return { cgpa: overallCgpa, totalSubjects: newSubjects, totalCredits: overallTotalCredits };
+            const overallCgpa = overallTotalSubjects > 0 ? overallTotalPoints / overallTotalSubjects : 0;
+            return { cgpa: overallCgpa, totalSubjects: overallTotalSubjects, totalCredits: overallTotalSubjects * 4 }; // totalCredits is for backend sync
         }
     }
 
-    const cgpaValue = newCredits > 0 ? (newWeightedSum / newCredits) : 0;
-    return { cgpa: cgpaValue, totalSubjects: newSubjects, totalCredits: newCredits };
+    const cgpaValue = newSubjects > 0 ? (newSumOfGradePoints / newSubjects) : 0;
+    return { cgpa: cgpaValue, totalSubjects: newSubjects, totalCredits: newSubjects * 4 };
 
-  }, [gradeCounts, usePreviousCgpa, previousCgpa, previousCredits]);
+  }, [gradeCounts, usePreviousCgpa, previousCgpa, previousSubjects]);
   
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(debounce(async (cgpaToSave, creditsToSave, currentUser) => {
@@ -124,10 +120,11 @@ export default function CgpaCalculator() {
   }, 2000), [isOnline, toast]);
 
   useEffect(() => {
-    if (user && totalCredits > 0) {
+    if (user && totalSubjects > 0) {
+        // totalCredits is used here for backend consistency, though calculation is subject-based
         debouncedSave(cgpa, totalCredits, user);
     }
-  }, [cgpa, totalCredits, user, debouncedSave]);
+  }, [cgpa, totalCredits, totalSubjects, user, debouncedSave]);
 
   const StatusIndicator = () => {
     if (!user) return null;
@@ -148,7 +145,7 @@ export default function CgpaCalculator() {
           CGPA Calculator
         </CardTitle>
          <CardDescription>
-          Real-time CSE CGPA is computed from subject-wise grades in <Link href="/learn/courses" className="text-primary underline">Learn → Courses</Link>.
+          Real-time CGPA is computed from subject-wise grades in <Link href="/learn/courses" className="text-primary underline">Learn → Courses</Link>.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -165,8 +162,8 @@ export default function CgpaCalculator() {
                         <Input id="prev-cgpa" type="number" placeholder="e.g., 8.5" value={previousCgpa} onChange={e => setPreviousCgpa(e.target.value)} />
                     </div>
                     <div>
-                        <Label htmlFor="prev-credits">Credits Completed</Label>
-                        <Input id="prev-credits" type="number" placeholder="e.g., 120" value={previousCredits} onChange={e => setPreviousCredits(e.target.value)} />
+                        <Label htmlFor="prev-subjects">Subjects Completed</Label>
+                        <Input id="prev-subjects" type="number" placeholder="e.g., 30" value={previousSubjects} onChange={e => setPreviousSubjects(e.target.value)} />
                     </div>
                 </div>
                  <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Info className="h-4 w-4"/>Enter the new grades below. They will be added to your previous CGPA.</p>
@@ -203,7 +200,7 @@ export default function CgpaCalculator() {
             <p className="text-4xl font-bold text-primary">{cgpa.toFixed(2)}</p>
         </div>
          <p className="text-sm text-muted-foreground text-center h-5">
-            {usePreviousCgpa ? `Based on ${parseInt(previousCredits) || 0} + ${totalSubjects * 4} credits.` : `Based on ${totalSubjects} subjects and ${totalCredits} credits.`}
+            {usePreviousCgpa ? `Based on ${parseInt(previousSubjects) || 0} previous + ${newSubjects} new subjects.` : `Based on ${totalSubjects} subjects.`}
         </p>
         <div className="pt-2 h-6">
           <StatusIndicator />
@@ -212,4 +209,3 @@ export default function CgpaCalculator() {
     </Card>
   );
 }
-
