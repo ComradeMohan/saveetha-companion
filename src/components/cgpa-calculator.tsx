@@ -5,13 +5,15 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator, CheckCircle, CloudOff } from 'lucide-react';
+import { Calculator, CheckCircle, CloudOff, Info } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { debounce } from 'lodash';
+import { Switch } from './ui/switch';
+import { Separator } from './ui/separator';
 
 const gradePoints: { [key: string]: number } = {
   S: 10,
@@ -32,23 +34,23 @@ export default function CgpaCalculator() {
   const [gradeCounts, setGradeCounts] = useState<GradeCounts>(
     grades.reduce((acc, grade) => ({ ...acc, [grade]: '' }), {})
   );
+  const [usePreviousCgpa, setUsePreviousCgpa] = useState(false);
+  const [previousCgpa, setPreviousCgpa] = useState('');
+  const [previousCredits, setPreviousCredits] = useState('');
+
   const [isOnline, setIsOnline] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check network status on component mount
     if (typeof navigator !== 'undefined') {
         setIsOnline(navigator.onLine);
     }
-    
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
+    window.removeEventListener('offline', handleOffline);
     return () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
@@ -58,30 +60,45 @@ export default function CgpaCalculator() {
   const handleCountChange = (grade: string, value: string) => {
     if (/^\d{0,2}$/.test(value)) {
       setGradeCounts(prev => ({ ...prev, [grade]: value }));
-      setIsSaved(false); // Reset saved state on change
+      setIsSaved(false);
     }
   };
 
   const { cgpa, totalSubjects, totalCredits } = useMemo(() => {
-    let weightedSum = 0;
-    let totalSubjects = 0;
+    let newWeightedSum = 0;
+    let newSubjects = 0;
 
     for (const grade of grades) {
       const count = parseInt(gradeCounts[grade] || '0');
       if (count > 0) {
-        const point = gradePoints[grade];
-        weightedSum += point * count * 4; // Each subject is 4 credits
-        totalSubjects += count;
+        newWeightedSum += gradePoints[grade] * count * 4;
+        newSubjects += count;
       }
     }
     
-    const totalCredits = totalSubjects * 4;
-    const cgpaValue = totalCredits > 0 ? (weightedSum / totalCredits) : 0;
+    const newCredits = newSubjects * 4;
+    
+    if (usePreviousCgpa) {
+        const prevCgpaNum = parseFloat(previousCgpa);
+        const prevCreditsNum = parseInt(previousCredits);
 
-    return { cgpa: cgpaValue, totalSubjects, totalCredits };
-  }, [gradeCounts]);
+        if (!isNaN(prevCgpaNum) && !isNaN(prevCreditsNum) && prevCreditsNum > 0) {
+            const prevTotalPoints = prevCgpaNum * prevCreditsNum;
+            const newTotalPoints = newWeightedSum;
+
+            const overallTotalCredits = prevCreditsNum + newCredits;
+            const overallTotalPoints = prevTotalPoints + newTotalPoints;
+            
+            const overallCgpa = overallTotalCredits > 0 ? overallTotalPoints / overallTotalCredits : 0;
+            return { cgpa: overallCgpa, totalSubjects: newSubjects, totalCredits: overallTotalCredits };
+        }
+    }
+
+    const cgpaValue = newCredits > 0 ? (newWeightedSum / newCredits) : 0;
+    return { cgpa: cgpaValue, totalSubjects: newSubjects, totalCredits: newCredits };
+
+  }, [gradeCounts, usePreviousCgpa, previousCgpa, previousCredits]);
   
-  // Debounced auto-save function
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(debounce(async (cgpaToSave, creditsToSave, currentUser) => {
     if (!currentUser || creditsToSave === 0 || !isOnline) {
@@ -103,7 +120,7 @@ export default function CgpaCalculator() {
         variant: "destructive"
       });
     }
-  }, 2000), [isOnline, toast]); // Recreate debounce if isOnline or toast changes
+  }, 2000), [isOnline, toast]);
 
   useEffect(() => {
     if (user && totalCredits > 0) {
@@ -130,13 +147,33 @@ export default function CgpaCalculator() {
           CGPA Calculator
         </CardTitle>
          <CardDescription>
-          Real-time CSE CGPA is computed from subject-wise grades in{" "}
-          <Link href="/learn/courses" className="text-primary underline hover:opacity-80">
-            Learn → Courses
-          </Link>.
+          Calculate from scratch, or include your previous CGPA for an updated score.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Switch id="use-previous-cgpa" checked={usePreviousCgpa} onCheckedChange={setUsePreviousCgpa} />
+          <Label htmlFor="use-previous-cgpa">Include Previous CGPA</Label>
+        </div>
+
+        {usePreviousCgpa && (
+            <div className="p-4 bg-secondary/50 rounded-lg space-y-4 animate-in fade-in-50 duration-300">
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <Label htmlFor="prev-cgpa">Previous CGPA</Label>
+                        <Input id="prev-cgpa" type="number" placeholder="e.g., 8.5" value={previousCgpa} onChange={e => setPreviousCgpa(e.target.value)} />
+                    </div>
+                    <div>
+                        <Label htmlFor="prev-credits">Credits Completed</Label>
+                        <Input id="prev-credits" type="number" placeholder="e.g., 120" value={previousCredits} onChange={e => setPreviousCredits(e.target.value)} />
+                    </div>
+                </div>
+                 <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Info className="h-4 w-4"/>Enter the new grades below. They will be added to your previous CGPA.</p>
+            </div>
+        )}
+
+        <Separator />
+
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {grades.map(grade => (
             <div key={grade} className="relative">
@@ -161,11 +198,11 @@ export default function CgpaCalculator() {
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center bg-secondary/50 p-4 rounded-b-lg space-y-2">
         <div className="text-center">
-            <span className="text-sm font-semibold">Your CGPA</span>
+            <span className="text-sm font-semibold">{usePreviousCgpa ? 'New Overall CGPA' : 'Your CGPA'}</span>
             <p className="text-4xl font-bold text-primary">{cgpa.toFixed(2)}</p>
         </div>
          <p className="text-sm text-muted-foreground text-center h-5">
-            Based on {totalSubjects} subjects and {totalCredits} credits.
+            {usePreviousCgpa ? `Based on ${parseInt(previousCredits) || 0} + ${totalSubjects * 4} credits.` : `Based on ${totalSubjects} subjects and ${totalCredits} credits.`}
         </p>
         <div className="pt-2 h-6">
           <StatusIndicator />
@@ -174,3 +211,4 @@ export default function CgpaCalculator() {
     </Card>
   );
 }
+
