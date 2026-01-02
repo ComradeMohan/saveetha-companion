@@ -4,6 +4,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Calculator, CheckCircle, CloudOff, Info } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
@@ -50,7 +51,7 @@ export default function CgpaCalculator() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
-    window.removeEventListener('offline', handleOffline);
+    window.addEventListener('offline', handleOffline);
     return () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
@@ -147,7 +148,7 @@ export default function CgpaCalculator() {
           CGPA Calculator
         </CardTitle>
          <CardDescription>
-          Calculate from scratch, or include your previous CGPA for an updated score.
+          Real-time CSE CGPA is computed from subject-wise grades in <Link href="/learn/courses" className="text-primary underline">Learn → Courses</Link>.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
