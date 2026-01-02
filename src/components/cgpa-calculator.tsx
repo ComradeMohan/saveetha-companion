@@ -65,15 +65,15 @@ export default function CgpaCalculator() {
     }
   };
 
-  const { cgpa, totalSubjects, totalCredits } = useMemo(() => {
-    let newSumOfGradePoints = 0;
-    let newSubjects = 0;
+  const { cgpa, totalSubjects, newSubjects } = useMemo(() => {
+    let currentSumOfGradePoints = 0;
+    let currentNewSubjects = 0;
 
     for (const grade of grades) {
       const count = parseInt(gradeCounts[grade] || '0');
       if (count > 0) {
-        newSumOfGradePoints += gradePoints[grade] * count;
-        newSubjects += count;
+        currentSumOfGradePoints += gradePoints[grade] * count;
+        currentNewSubjects += count;
       }
     }
     
@@ -83,29 +83,29 @@ export default function CgpaCalculator() {
 
         if (!isNaN(prevCgpaNum) && !isNaN(prevSubjectsNum) && prevSubjectsNum > 0) {
             const prevTotalPoints = prevCgpaNum * prevSubjectsNum;
-            const overallTotalSubjects = prevSubjectsNum + newSubjects;
-            const overallTotalPoints = prevTotalPoints + newSumOfGradePoints;
+            const overallTotalSubjects = prevSubjectsNum + currentNewSubjects;
+            const overallTotalPoints = prevTotalPoints + currentSumOfGradePoints;
             
             const overallCgpa = overallTotalSubjects > 0 ? overallTotalPoints / overallTotalSubjects : 0;
-            return { cgpa: overallCgpa, totalSubjects: overallTotalSubjects, totalCredits: overallTotalSubjects * 4 }; // totalCredits is for backend sync
+            return { cgpa: overallCgpa, totalSubjects: overallTotalSubjects, newSubjects: currentNewSubjects };
         }
     }
 
-    const cgpaValue = newSubjects > 0 ? (newSumOfGradePoints / newSubjects) : 0;
-    return { cgpa: cgpaValue, totalSubjects: newSubjects, totalCredits: newSubjects * 4 };
+    const cgpaValue = currentNewSubjects > 0 ? (currentSumOfGradePoints / currentNewSubjects) : 0;
+    return { cgpa: cgpaValue, totalSubjects: currentNewSubjects, newSubjects: currentNewSubjects };
 
   }, [gradeCounts, usePreviousCgpa, previousCgpa, previousSubjects]);
   
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(debounce(async (cgpaToSave, creditsToSave, currentUser) => {
-    if (!currentUser || creditsToSave === 0 || !isOnline) {
+  const debouncedSave = useCallback(debounce(async (cgpaToSave, subjectsToSave, currentUser) => {
+    if (!currentUser || subjectsToSave === 0 || !isOnline) {
       return;
     }
     try {
       const cgpaDocRef = doc(db, 'students_cgpa', currentUser.uid);
       await setDoc(cgpaDocRef, {
         cgpa: cgpaToSave,
-        totalCredits: creditsToSave,
+        totalCredits: subjectsToSave * 4, // Keep totalCredits for backend consistency
         updatedAt: new Date().toISOString()
       }, { merge: true });
       setIsSaved(true);
@@ -121,10 +121,9 @@ export default function CgpaCalculator() {
 
   useEffect(() => {
     if (user && totalSubjects > 0) {
-        // totalCredits is used here for backend consistency, though calculation is subject-based
-        debouncedSave(cgpa, totalCredits, user);
+        debouncedSave(cgpa, totalSubjects, user);
     }
-  }, [cgpa, totalCredits, totalSubjects, user, debouncedSave]);
+  }, [cgpa, totalSubjects, user, debouncedSave]);
 
   const StatusIndicator = () => {
     if (!user) return null;
