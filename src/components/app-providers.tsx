@@ -4,7 +4,6 @@
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider, ProfileProvider } from '@/hooks/use-auth';
 import VerificationBanner from '@/components/verification-banner';
-import SupportButton from '@/components/support-button';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import MobileNav from '@/components/mobile-nav';
@@ -17,6 +16,7 @@ import GlobalToastManager from './GlobalToastManager'; // Import the new compone
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { AiChatPopover } from './ai-chat-popover';
 
 function MainContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -47,7 +47,11 @@ function MainContent({ children }: { children: React.ReactNode }) {
             <main key="main-content" className="flex-1">
               {children}
             </main>
-            {showHeaderAndFooter && <SupportButton />}
+            {showHeaderAndFooter && (
+              <div className="hidden md:block fixed bottom-6 right-6 z-50">
+                  <AiChatPopover />
+              </div>
+            )}
             {showHeaderAndFooter && <MobileNav />}
             {showHeaderAndFooter && <Footer />}
             <NotificationHandler />

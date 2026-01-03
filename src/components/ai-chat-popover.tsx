@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bot, FileText, Loader2, Send, User, X } from 'lucide-react';
+import { Bot, FileText, Loader2, Send, User, X, Sun, Cloud, CloudRain, CloudSnow, Zap, Wind, Droplets, Thermometer } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -12,6 +12,7 @@ import { askTutor, TutorOutput } from '@/ai/flows/tutor-flow';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'bot';
@@ -19,14 +20,77 @@ interface Message {
   sources?: TutorOutput['sources'];
 }
 
+interface LocationData {
+  city: string;
+  country_name: string;
+}
+
+interface WeatherData {
+  temperature: number;
+  weathercode: number;
+  windspeed: number;
+  relativehumidity: number;
+}
+
+const weatherIcons: { [key: number]: React.ElementType } = {
+  0: Sun, 1: Sun, 2: Cloud, 3: Cloud, 45: Cloud, 48: Cloud,
+  51: CloudRain, 53: CloudRain, 55: CloudRain, 61: CloudRain, 63: CloudRain, 65: CloudRain,
+  80: CloudRain, 81: CloudRain, 82: CloudRain, 71: CloudSnow, 73: CloudSnow, 75: CloudSnow,
+  95: Zap, 96: Zap, 99: Zap,
+};
+
+const getWeatherDescription = (code: number): string => {
+    switch (code) {
+        case 0: return "Clear sky"; case 1: return "Mainly clear"; case 2: return "Partly cloudy";
+        case 3: return "Overcast"; case 45: case 48: return "Fog"; case 51: case 53: case 55: return "Drizzle";
+        case 61: return "Slight rain"; case 63: return "Moderate rain"; case 65: return "Heavy rain";
+        case 80: case 81: case 82: return "Rain showers"; case 71: case 73: case 75: return "Snow fall";
+        case 95: case 96: case 99: return "Thunderstorm"; default: return "Unknown";
+    }
+};
+
 export function AiChatPopover() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  const [location, setLocation] = useState<LocationData | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+
   const viewportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      setWeatherLoading(true);
+      try {
+        const geoResponse = await fetch('https://ipapi.co/json/');
+        if (!geoResponse.ok) throw new Error('Could not fetch geolocation.');
+        const geoData: LocationData = await geoResponse.json();
+        setLocation(geoData);
+
+        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${(geoData as any).latitude}&longitude=${(geoData as any).longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`);
+        if (!weatherResponse.ok) throw new Error('Could not fetch weather data.');
+        const weatherData = await weatherResponse.json();
+        
+        setWeather({
+            temperature: weatherData.current.temperature_2m,
+            weathercode: weatherData.current.weather_code,
+            windspeed: weatherData.current.wind_speed_10m,
+            relativehumidity: weatherData.current.relative_humidity_2m,
+        });
+
+      } catch (error) {
+        console.error("Weather fetch error:", error);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+    fetchWeather();
+  }, []);
 
 
   useEffect(() => {
@@ -63,11 +127,17 @@ export function AiChatPopover() {
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen && messages.length === 0) {
-      // Add initial greeting message when chat is opened for the first time
       setTimeout(() => {
-        setMessages([
-          { role: 'bot', content: `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today? Ask me anything about your concept maps.` }
-        ]);
+        let welcomeMessage = `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you?`;
+        if (location && weather) {
+          const WeatherIcon = weatherIcons[weather.weathercode] || Sun;
+          welcomeMessage = `
+It's currently ${Math.round(weather.temperature)}°C and ${getWeatherDescription(weather.weathercode).toLowerCase()} in ${location.city}.
+Wind: ${weather.windspeed.toFixed(1)} m/s, Humidity: ${weather.relativehumidity}%.
+How can I help you today?
+          `.trim();
+        }
+        setMessages([{ role: 'bot', content: welcomeMessage }]);
       }, 200);
     }
   }
@@ -75,9 +145,15 @@ export function AiChatPopover() {
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button size="icon" className="rounded-full h-14 w-14 shadow-lg">
+        <Button size="icon" className="rounded-full h-14 w-14 shadow-lg text-lg font-bold">
+          {weatherLoading ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : weather ? (
+            `${Math.round(weather.temperature)}°`
+          ) : (
             <Bot className="h-7 w-7" />
-            <span className="sr-only">Open AI Tutor</span>
+          )}
+          <span className="sr-only">Open AI Tutor</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -93,8 +169,8 @@ export function AiChatPopover() {
                     <AvatarFallback><Bot className="h-4 w-4"/></AvatarFallback>
                 </Avatar>
                 <div>
-                    <p className="text-sm font-semibold">AI Tutor</p>
-                    <p className="text-xs text-muted-foreground">Online</p>
+                    <p className="text-sm font-semibold">AI Assistant</p>
+                    <p className="text-xs text-muted-foreground">{location ? `${location.city}, ${location.country_name}` : "Online"}</p>
                 </div>
             </div>
              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setOpen(false)}>
