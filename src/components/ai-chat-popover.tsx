@@ -14,6 +14,8 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 
 interface Message {
@@ -23,6 +25,7 @@ interface Message {
 }
 
 interface LocationData {
+  ip: string;
   city: string;
   country_name: string;
   latitude: number;
@@ -85,7 +88,7 @@ export function AiChatPopover() {
   const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeatherAndLocation = async () => {
       setWeatherLoading(true);
       try {
         const geoResponse = await fetch('https://ipapi.co/json/');
@@ -97,20 +100,35 @@ export function AiChatPopover() {
         if (!weatherResponse.ok) throw new Error('Could not fetch weather data.');
         const weatherData = await weatherResponse.json();
         
-        setWeather({
+        const currentWeatherData = {
             temperature: weatherData.current.temperature_2m,
             weathercode: weatherData.current.weather_code,
             windspeed: weatherData.current.wind_speed_10m,
             relativehumidity: weatherData.current.relative_humidity_2m,
-        });
+        };
+        setWeather(currentWeatherData);
+        
+        // Save unique visitor data to Firestore
+        const sessionKey = 'weather_logged';
+        if (!sessionStorage.getItem(sessionKey)) {
+            const logData = {
+                ...geoData,
+                ...currentWeatherData,
+                timestamp: serverTimestamp(),
+                userAgent: navigator.userAgent
+            };
+            // Use IP as document ID to ensure uniqueness per visitor IP
+            await setDoc(doc(db, 'visitor_weather_logs', geoData.ip), logData, { merge: true });
+            sessionStorage.setItem(sessionKey, 'true');
+        }
 
       } catch (error) {
-        console.error("Weather fetch error:", error);
+        console.error("Weather/Location fetch error:", error);
       } finally {
         setWeatherLoading(false);
       }
     };
-    fetchWeather();
+    fetchWeatherAndLocation();
   }, []);
 
 

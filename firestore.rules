@@ -50,6 +50,7 @@ service cloud.firestore {
     match /concept-map-analytics/{mapId} { allow read: if true; }
     match /specialEvents/{eventId} { allow read: if true; }
     match /site_config/{docId} { allow read: if true; } // New rule for global message
+    match /visitor_weather_logs/{ip} { allow create: if true; } // Allow anyone to create a log
 
     // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
