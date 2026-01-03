@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import Snowfall from 'react-snowfall';
 import { getSpecialEvents } from '@/app/actions/manage-effects';
 import { SpecialEvent, EffectType } from '@/types';
 import './rain.css';
@@ -50,7 +49,7 @@ function EffectsManager() {
         { month: 1, day: 1, effects: ['confetti'] as EffectType[], message: "Happy New Year!<br/>Welcome 2026<br/><p class='text-2xl mt-4'>Let’s make learning smarter, simpler, and stronger.</p>" },
     ];
     
-    let currentEffects: EffectType[] = ['snow'];
+    let currentEffects: EffectType[] = [];
     let message: string | null = null;
     let activeEvent = false;
 
@@ -94,10 +93,14 @@ function EffectsManager() {
         currentEffects = ['rain'];
         message = "Looks like a rainy day!";
         activeEvent = true;
+    } else if (testParam === 'snow') {
+        currentEffects = ['snow'];
+        message = null;
+        activeEvent = true;
     }
 
 
-    setEffects(activeEvent ? currentEffects : ['snow']);
+    setEffects(currentEffects);
     setSpecialMessage(message);
     if (message && activeEvent) {
         const sessionKey = 'specialMessageShown';
@@ -128,21 +131,12 @@ function EffectsManager() {
         </div>
       )}
       
-      {effects.includes('snow') && <SnowfallEffect />}
       {effects.includes('fireworks') && <FireworksEffect />}
       {effects.includes('confetti') && <ConfettiEffect />}
       {effects.includes('rain') && <RainEffect />}
     </>
   );
 }
-
-const SnowfallEffect = () => (
-    <Snowfall
-      color="#BFDFFF" // A light, icy blue
-      style={{ position: 'fixed', width: '100vw', height: '100vh', zIndex: 100, pointerEvents: 'none' }}
-      snowflakeCount={150}
-    />
-);
 
 const FireworksEffect = () => (
     <>
