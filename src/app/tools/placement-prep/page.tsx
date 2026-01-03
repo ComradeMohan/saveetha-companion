@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -30,42 +28,33 @@ export default function PlacementPrepPage() {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                </main>
-                <Footer />
+            <div className="flex min-h-screen flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
             </div>
         )
     }
 
     if (!user) {
         return (
-            <div className="flex min-h-screen flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                     <Card className="max-w-md mx-auto text-center">
-                        <CardHeader>
-                            <CardTitle>Access Denied</CardTitle>
-                            <CardDescription>You must be logged in to access placement preparation resources.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button asChild>
-                                <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </main>
-                <Footer />
+            <div className="flex min-h-screen flex-col items-center justify-center">
+                 <Card className="max-w-md mx-auto text-center">
+                    <CardHeader>
+                        <CardTitle>Access Denied</CardTitle>
+                        <CardDescription>You must be logged in to access placement preparation resources.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild>
+                            <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
 
     return (
-        <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 pt-20 pb-12 md:py-16">
+        <div className="flex min-h-screen flex-col pt-20 pb-12 md:py-16">
+            <main className="flex-1">
                 <div className="container mx-auto px-4">
                     <header className="text-center mb-10">
                         <h1 className="text-4xl md:text-5xl font-bold">Comprehensive Programming Study Guide</h1>
@@ -159,9 +148,6 @@ export default function PlacementPrepPage() {
                     </footer>
                 </div>
             </main>
-            <Footer />
         </div>
     );
 }
-
-    

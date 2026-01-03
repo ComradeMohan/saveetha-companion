@@ -2,8 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -251,16 +249,12 @@ export default function SteganographyPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pt-20 pb-12 md:py-16">
+    <div className="flex min-h-screen flex-col pt-20 pb-12 md:py-16">
         <div className="container mx-auto px-4">
           <Card className="max-w-2xl mx-auto shadow-lg">
             {renderContent()}
           </Card>
         </div>
-      </main>
-      <Footer />
     </div>
   );
 }
