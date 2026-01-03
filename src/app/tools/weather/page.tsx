@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,10 +11,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface LocationData {
   city: string;
   region: string;
-  country: string;
-  lat: number;
-  lon: number;
-  query: string; // This is the IP
+  country_name: string;
+  latitude: number;
+  longitude: number;
+  ip: string;
 }
 
 interface WeatherData {
@@ -109,28 +110,22 @@ export default function WeatherToolPage() {
       setLoading(true);
       setError(null);
       try {
-        // 1. Get IP Address
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        if (!ipResponse.ok) throw new Error('Could not fetch IP address.');
-        const ipData = await ipResponse.json();
-        const ip = ipData.ip;
-        console.log('Detected IP:', ip);
-
-        // 2. Get Geolocation from IP
-        const geoResponse = await fetch(`http://ip-api.com/json/${ip}`);
+        // 1. Get Geolocation and IP from ipapi.co
+        const geoResponse = await fetch('https://ipapi.co/json/');
         if (!geoResponse.ok) throw new Error('Could not fetch geolocation data.');
         const geoData: LocationData = await geoResponse.json();
-        if (geoData.status === 'fail') throw new Error(geoData.message || 'Geolocation lookup failed.');
+        
+        console.log("IP:", geoData.ip);
+        console.log("City:", geoData.city);
         
         setLocation(geoData);
-        console.log('Detected City:', geoData.city);
         toast({
           title: "Location Detected",
-          description: `Weather is being fetched for ${geoData.city}, ${geoData.country}.`,
+          description: `Weather is being fetched for ${geoData.city}, ${geoData.country_name}.`,
         });
 
-        // 3. Get Weather from Geolocation
-        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoData.lat}&longitude=${geoData.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=ms`);
+        // 2. Get Weather from Geolocation
+        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoData.latitude}&longitude=${geoData.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=ms`);
         if (!weatherResponse.ok) throw new Error('Could not fetch weather data.');
         const weatherData = await weatherResponse.json();
         setWeather({
@@ -183,8 +178,8 @@ export default function WeatherToolPage() {
       {!loading && location && weather && (
         <Card className="max-w-md mx-auto shadow-lg animate-in fade-in-50 duration-500">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl flex items-center justify-center gap-2"><MapPin className="h-6 w-6 text-primary" /> {location.city}, {location.country}</CardTitle>
-                <CardDescription>IP Address: {location.query}</CardDescription>
+                <CardTitle className="text-2xl flex items-center justify-center gap-2"><MapPin className="h-6 w-6 text-primary" /> {location.city}, {location.country_name}</CardTitle>
+                <CardDescription>IP Address: {location.ip}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center space-y-4">
                 <WeatherIcon className="h-24 w-24 text-primary" />
