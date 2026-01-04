@@ -1,6 +1,10 @@
 'use client';
 
-import Spline from '@splinetool/react-spline/next';
+import dynamic from 'next/dynamic';
+
+const Spline = dynamic(() => import('@splinetool/react-spline/next'), {
+  ssr: false,
+});
 
 export default function RobotPage() {
   return (
