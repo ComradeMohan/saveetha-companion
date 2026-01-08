@@ -101,59 +101,50 @@ function AddProjectForm({ onProjectAdded, onCancel }: { onProjectAdded: () => vo
     };
   
     return (
-      <Card className="mb-8">
+      <Card className="mb-8 animate-in fade-in-50 duration-300">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Add Your PDD Project</CardTitle>
-              <CardDescription>Showcase your work by providing a title and any relevant links.</CardDescription>
-            </div>
-            <Button variant="ghost" size="icon" onClick={onCancel}>
-                <X className="h-4 w-4" />
-            </Button>
-          </div>
+            <CardTitle>Add Your PDD Project</CardTitle>
+            <CardDescription>Showcase your work by providing a title and any relevant links.</CardDescription>
         </CardHeader>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <CardContent>
-                    <ScrollArea className="max-h-[50vh] pr-6 -mr-6">
-                        <div className="space-y-4 pr-6">
+                <CardContent className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Project Title</FormLabel>
+                            <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {formFields.map(f => (
                             <FormField
+                                key={f.name}
                                 control={form.control}
-                                name="title"
+                                name={f.name}
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Project Title</FormLabel>
-                                    <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
-                                    <FormMessage />
+                                        <FormLabel className="flex items-center gap-2">
+                                            {<f.icon className="h-4 w-4" />}
+                                            {f.label}
+                                        </FormLabel>
+                                        <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            {formFields.map(f => (
-                                <FormField
-                                    key={f.name}
-                                    control={form.control}
-                                    name={f.name}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="flex items-center gap-2">
-                                                {<f.icon className="h-4 w-4" />}
-                                                {f.label}
-                                            </FormLabel>
-                                            <FormControl><Input placeholder={f.placeholder} {...field} value={field.value ?? ''} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            ))}
-                        </div>
-                    </ScrollArea>
+                        ))}
+                    </div>
                 </CardContent>
-                <CardFooter className="gap-2">
-                    <Button type="submit" disabled={loading} className="w-full">
+                <CardFooter className="gap-2 justify-end">
+                    <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
+                    <Button type="submit" disabled={loading}>
                         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
                     </Button>
-                    <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
                 </CardFooter>
             </form>
         </Form>
