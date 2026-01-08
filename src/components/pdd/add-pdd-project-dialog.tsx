@@ -41,7 +41,7 @@ const formFields = [
     { name: 'gpcuDocUrl', label: 'GPCU Doc', icon: FileText, placeholder: 'https://docs.google.com/...' },
     { name: 'patentDocUrl', label: 'Patent Doc', icon: FileText, placeholder: 'https://patents.google.com/...' },
     { name: 'canvaUrl', label: 'Canva', icon: Presentation, placeholder: 'https://canva.com/design/...' },
-    { name: 'figmaUrl', label: 'Figma', icon: 'Figma', placeholder: 'https://figma.com/...' },
+    { name: 'figmaUrl', label: 'Figma', icon: LinkIcon, placeholder: 'https://figma.com/...' },
     { name: 'gslidesUrl', label: 'Google Slides', icon: Presentation, placeholder: 'https://docs.google.com/presentation/...' },
 ] as const;
 
@@ -54,7 +54,18 @@ export function AddPddProjectDialog({ onProjectAdded }: { onProjectAdded: () => 
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues: { title: '' },
+    defaultValues: {
+      title: '',
+      instagramUrl: '',
+      linkedinUrl: '',
+      githubUrl: '',
+      websiteUrl: '',
+      gpcuDocUrl: '',
+      patentDocUrl: '',
+      canvaUrl: '',
+      figmaUrl: '',
+      gslidesUrl: '',
+    },
   });
 
   const onSubmit = async (values: ProjectFormValues) => {
@@ -96,49 +107,47 @@ export function AddPddProjectDialog({ onProjectAdded }: { onProjectAdded: () => 
           <DialogTitle>Add Your PDD Project</DialogTitle>
           <DialogDescription>Showcase your work by providing a title and any relevant links.</DialogDescription>
         </DialogHeader>
-        <div className="flex-grow overflow-hidden">
-          <ScrollArea className="h-full pr-6">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="space-y-4">
+        <Form {...form} className="flex-grow overflow-hidden">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="h-full flex flex-col">
+            <ScrollArea className="flex-grow pr-6 -mr-6">
+              <div className="space-y-4">
+                  <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormLabel>Project Title</FormLabel>
+                          <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
+                          <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+                  {formFields.map(f => (
                       <FormField
+                          key={f.name}
                           control={form.control}
-                          name="title"
+                          name={f.name}
                           render={({ field }) => (
                               <FormItem>
-                              <FormLabel>Project Title</FormLabel>
-                              <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
-                              <FormMessage />
+                                  <FormLabel className="flex items-center gap-2">
+                                      {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
+                                      {f.label}
+                                  </FormLabel>
+                                  <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                  <FormMessage />
                               </FormItem>
                           )}
                       />
-                      {formFields.map(f => (
-                          <FormField
-                              key={f.name}
-                              control={form.control}
-                              name={f.name}
-                              render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel className="flex items-center gap-2">
-                                          {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
-                                          {f.label}
-                                      </FormLabel>
-                                      <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
-                                      <FormMessage />
-                                  </FormItem>
-                              )}
-                          />
-                      ))}
-                  </div>
-                <DialogFooter className="pt-4 sticky bottom-0 bg-background">
-                  <Button type="submit" disabled={loading} className="w-full">
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </ScrollArea>
-        </div>
+                  ))}
+              </div>
+            </ScrollArea>
+            <DialogFooter className="pt-4 flex-shrink-0">
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
