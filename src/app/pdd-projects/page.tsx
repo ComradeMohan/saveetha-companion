@@ -7,8 +7,6 @@ import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search, LogIn, PlusCircle, FolderKanban, Link as LinkIcon, Instagram, Github, Linkedin, Globe, FileText, Presentation, X } from 'lucide-react';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -132,7 +130,7 @@ function AddProjectForm({ onProjectAdded, onCancel }: { onProjectAdded: () => vo
                                             {<f.icon className="h-4 w-4" />}
                                             {f.label}
                                         </FormLabel>
-                                        <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                        <FormControl><Input placeholder={f.placeholder} {...field} value={field.value ?? ''} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -280,20 +278,16 @@ export default function PddProjectsPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 pt-20 pb-12 md:py-16">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold tracking-tight">PDD Projects Showcase</h2>
-                        <p className="text-muted-foreground mt-2">
-                            Explore a collection of projects and resources from your peers.
-                        </p>
-                    </div>
-                    {renderContent()}
+        <div className="pt-20 pb-12 md:py-16">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold tracking-tight">PDD Projects Showcase</h2>
+                    <p className="text-muted-foreground mt-2">
+                        Explore a collection of projects and resources from your peers.
+                    </p>
                 </div>
-            </main>
-            <Footer />
+                {renderContent()}
+            </div>
         </div>
     );
 }
