@@ -4,7 +4,6 @@
 import { Instagram, Github, Linkedin, Globe, FileText, Presentation, Link as LinkIcon } from 'lucide-react';
 import type { PDDProject } from '@/types/pdd-project';
 import Link from 'next/link';
-import { Button } from '../ui/button';
 
 const linkConfig = {
     instagramUrl: { icon: Instagram, label: 'Instagram' },
@@ -14,7 +13,7 @@ const linkConfig = {
     gpcuDocUrl: { icon: FileText, label: 'GPCU Doc' },
     patentDocUrl: { icon: FileText, label: 'Patent' },
     canvaUrl: { icon: Presentation, label: 'Canva' },
-    figmaUrl: { icon: LinkIcon, label: 'Figma' }, // Using a generic icon for Figma
+    figmaUrl: { icon: LinkIcon, label: 'Figma' },
     gslidesUrl: { icon: Presentation, label: 'Slides' },
 } as const;
 
@@ -26,17 +25,21 @@ export function PddProjectLinks({ project }: { project: PDDProject }) {
     }
 
     return (
-        <div className="space-y-2">
+        <div className="grid grid-cols-3 gap-4 text-center">
             {availableLinks.map(([key, config]) => {
                 const Icon = config.icon;
                 const url = project[key as keyof PDDProject] as string;
                 return (
-                    <Button key={key} asChild variant="outline" className="w-full justify-start">
-                        <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Icon className="mr-2 h-4 w-4 text-primary" />
-                            <span>{config.label}</span>
-                        </Link>
-                    </Button>
+                    <Link
+                        key={key}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex flex-col items-center justify-center p-2 rounded-lg hover:bg-secondary transition-colors"
+                    >
+                        <Icon className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <span className="text-xs mt-1 text-muted-foreground group-hover:text-primary transition-colors">{config.label}</span>
+                    </Link>
                 );
             })}
         </div>
