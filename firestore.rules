@@ -42,6 +42,7 @@ service cloud.firestore {
     match /updates/{docId} { allow read: if true; }
     match /events/{docId} { allow read: if true; }
     match /projects/{projectId} { allow read: if true; }
+    match /pdd-projects/{projectId} { allow read: if true; }
     match /colleges/{collegeId} { allow read: if true; }
     match /colleges/{collegeId}/departments/{departmentId} { allow read: if true; }
     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} { allow read: if true; }
@@ -66,6 +67,14 @@ service cloud.firestore {
     match /students_cgpa/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
     match /student_grades/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
     match /user_notifications/{userId}/{document=**} { allow read, write, delete: if request.auth != null && request.auth.uid == userId; }
+
+    // PDD Projects Rules
+    match /pdd-projects/{projectId} {
+        allow read: if true;
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow update: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+        allow delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+    }
 
     // ADMIN & BATCH ADMIN WRITE PERMISSIONS
     match /certifications/{docId} {
