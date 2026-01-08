@@ -133,7 +133,7 @@ export function AddPddProjectDialog({ onProjectAdded }: { onProjectAdded: () => 
                                       {<f.icon className="h-4 w-4" />}
                                       {f.label}
                                   </FormLabel>
-                                  <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                  <FormControl><Input placeholder={f.placeholder} {...field} value={field.value ?? ''} /></FormControl>
                                   <FormMessage />
                               </FormItem>
                           )}
@@ -141,7 +141,7 @@ export function AddPddProjectDialog({ onProjectAdded }: { onProjectAdded: () => 
                   ))}
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-4 mt-4 border-t flex-shrink-0">
+            <DialogFooter className="pt-4 mt-auto border-t flex-shrink-0">
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
               </Button>
