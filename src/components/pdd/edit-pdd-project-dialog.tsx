@@ -90,15 +90,15 @@ export function EditPddProjectDialog({ project, onProjectUpdated }: { project: P
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-       <DialogContent className="sm:max-w-lg flex flex-col h-auto max-h-[90vh]">
+       <DialogContent className="sm:max-w-lg flex flex-col max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>Edit Project: {project.title}</DialogTitle>
           <DialogDescription>Update the project links below.</DialogDescription>
         </DialogHeader>
-        <Form {...form} className="flex-grow overflow-hidden">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="h-full flex flex-col">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex-grow overflow-hidden flex flex-col">
             <ScrollArea className="flex-grow pr-6 -mr-6">
-                <div className="space-y-4">
+                <div className="space-y-4 pr-6">
                     <FormField
                         control={form.control}
                         name="title"
@@ -118,7 +118,7 @@ export function EditPddProjectDialog({ project, onProjectUpdated }: { project: P
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="flex items-center gap-2">
-                                        {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
+                                        {<f.icon className="h-4 w-4" />}
                                         {f.label}
                                     </FormLabel>
                                     <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
@@ -129,7 +129,7 @@ export function EditPddProjectDialog({ project, onProjectUpdated }: { project: P
                     ))}
                 </div>
             </ScrollArea>
-            <DialogFooter className="pt-4 flex-shrink-0">
+            <DialogFooter className="pt-4 mt-4 border-t flex-shrink-0">
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
               </Button>
