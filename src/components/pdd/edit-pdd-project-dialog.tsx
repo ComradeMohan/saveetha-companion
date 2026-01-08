@@ -90,52 +90,54 @@ export function EditPddProjectDialog({ project, onProjectUpdated }: { project: P
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+       <DialogContent className="sm:max-w-lg flex flex-col h-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>Edit Project: {project.title}</DialogTitle>
           <DialogDescription>Update the project links below.</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <ScrollArea className="max-h-[60vh] -mr-4 pr-4">
-                <div className="space-y-4 pr-2">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Project Title</FormLabel>
-                            <FormControl><Input {...field} /></FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {formFields.map(f => (
+        <div className="flex-grow overflow-hidden">
+            <ScrollArea className="h-full pr-6">
+                <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="space-y-4">
                         <FormField
-                            key={f.name}
                             control={form.control}
-                            name={f.name}
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="flex items-center gap-2">
-                                        {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
-                                        {f.label}
-                                    </FormLabel>
-                                    <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
-                                    <FormMessage />
+                                <FormLabel>Project Title</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
                                 </FormItem>
                             )}
                         />
-                    ))}
-                </div>
+                        {formFields.map(f => (
+                            <FormField
+                                key={f.name}
+                                control={form.control}
+                                name={f.name}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="flex items-center gap-2">
+                                            {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
+                                            {f.label}
+                                        </FormLabel>
+                                        <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        ))}
+                    </div>
+                    <DialogFooter className="pt-4 sticky bottom-0 bg-background">
+                    <Button type="submit" disabled={loading} className="w-full">
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
+                    </Button>
+                    </DialogFooter>
+                </form>
+                </Form>
             </ScrollArea>
-            <DialogFooter className="pt-4">
-              <Button type="submit" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

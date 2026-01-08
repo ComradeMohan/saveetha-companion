@@ -91,52 +91,54 @@ export function AddPddProjectDialog({ onProjectAdded }: { onProjectAdded: () => 
           <PlusCircle className="mr-2 h-4 w-4" /> Add Your Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg flex flex-col h-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>Add Your PDD Project</DialogTitle>
           <DialogDescription>Showcase your work by providing a title and any relevant links.</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <ScrollArea className="max-h-[60vh] -mr-4 pr-4">
-                <div className="space-y-4 pr-2">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Project Title</FormLabel>
-                            <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {formFields.map(f => (
-                        <FormField
-                            key={f.name}
-                            control={form.control}
-                            name={f.name}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="flex items-center gap-2">
-                                        {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
-                                        {f.label}
-                                    </FormLabel>
-                                    <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    ))}
-                </div>
-            </ScrollArea>
-            <DialogFooter className="pt-4">
-              <Button type="submit" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+        <div className="flex-grow overflow-hidden">
+          <ScrollArea className="h-full pr-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="space-y-4">
+                      <FormField
+                          control={form.control}
+                          name="title"
+                          render={({ field }) => (
+                              <FormItem>
+                              <FormLabel>Project Title</FormLabel>
+                              <FormControl><Input placeholder="My Awesome Project" {...field} /></FormControl>
+                              <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      {formFields.map(f => (
+                          <FormField
+                              key={f.name}
+                              control={form.control}
+                              name={f.name}
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel className="flex items-center gap-2">
+                                          {typeof f.icon === 'string' ? <LinkIcon className="h-4 w-4" /> : <f.icon className="h-4 w-4" />}
+                                          {f.label}
+                                      </FormLabel>
+                                      <FormControl><Input placeholder={f.placeholder} {...field} /></FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                      ))}
+                  </div>
+                <DialogFooter className="pt-4 sticky bottom-0 bg-background">
+                  <Button type="submit" disabled={loading} className="w-full">
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Add Project'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
