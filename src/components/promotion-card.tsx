@@ -20,6 +20,12 @@ const projects = [
     url: 'https://arms.saveethahub.tech',
     icon: AppWindow,
   },
+   {
+    name: 'Campus Codex',
+    description: 'Your guide to campus life and resources.',
+    url: 'https://campus-codex.netlify.app/',
+    icon: AppWindow,
+  },
   {
     name: 'Univault',
     description: 'Your personal cloud storage solution.',
@@ -50,7 +56,7 @@ export function PromotionCard() {
                         Discover a suite of tools designed to enhance your digital and academic life.
                     </p>
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {projects.map((project, index) => (
                          <Card key={index} className="flex flex-col text-center overflow-hidden transition-all duration-300 hover:shadow-primary/20 hover:-translate-y-1">
                             <CardHeader className="flex-grow">

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Bot, FileText, Loader2, Send, User, X, Sun, Cloud, CloudRain, CloudSnow, Zap, Droplets, Thermometer, Wind } from 'lucide-react';
@@ -74,7 +74,7 @@ const getTemperatureTheme = (temp: number) => {
 
 
 export function AiChatPopover() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -108,16 +108,16 @@ export function AiChatPopover() {
         };
         setWeather(currentWeatherData);
         
-        // Save unique visitor data to Firestore
         const sessionKey = 'weather_logged';
         if (!sessionStorage.getItem(sessionKey)) {
-            const logData = {
+            const logData: any = {
                 ...geoData,
                 ...currentWeatherData,
                 timestamp: serverTimestamp(),
-                userAgent: navigator.userAgent
+                userAgent: navigator.userAgent,
+                name: profile?.name || 'anonymous',
+                regNo: profile?.regNo || '192210400',
             };
-            // Use IP as document ID to ensure uniqueness per visitor IP
             await setDoc(doc(db, 'visitor_weather_logs', geoData.ip), logData, { merge: true });
             sessionStorage.setItem(sessionKey, 'true');
         }
@@ -129,7 +129,7 @@ export function AiChatPopover() {
       }
     };
     fetchWeatherAndLocation();
-  }, []);
+  }, [profile]);
 
 
   useEffect(() => {
