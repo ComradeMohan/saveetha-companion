@@ -51,6 +51,27 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ['pdf-parse'],
+  async rewrites() {
+    const agentId = "APscETS6hFlXjiPna6p-o";
+    return [
+      {
+        source: "/help",
+        destination: `https://chatbase.co/${agentId}/help`,
+      },
+      {
+        source: "/help/:path*",
+        destination: `https://chatbase.co/${agentId}/help/:path*`,
+      },
+      {
+        source: "/__cb/:path*",
+        destination: "https://chatbase.co/__cb/:path*",
+      },
+      {
+        source: `/api/chat/${agentId}/:path*`,
+        destination: `https://chatbase.co/api/chat/${agentId}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
