@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, GitBranch, Code, Hand, UserCog, FileJson, Sparkles, Share2 } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, BookOpen, MessageSquare, LogOut, Calendar, UserCircle, Inbox, Megaphone, BarChartHorizontal, BrainCircuit, Package, Award, ClipboardList, School, PenSquare, FileQuestion, Gift, GitBranch, Code, Hand, UserCog, FileJson, Sparkles, Share2, FolderKanban } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -14,6 +14,7 @@ const adminNavLinks = [
   { href: '/admin/users', label: 'Users', icon: UserCircle },
   { href: '/admin/batch-admin', label: 'Batch Admins', icon: UserCog },
   { href: '/admin/faculty', label: 'Faculty', icon: Users },
+  { href: '/admin/pdd-projects', label: 'PDD Projects', icon: FolderKanban },
   { href: '/admin/updates', label: 'Updates', icon: Megaphone },
   { href: '/admin/notifications', label: 'Notifications', icon: Megaphone },
   { href: '/admin/effects', label: 'Seasonal Effects', icon: Sparkles },

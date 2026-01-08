@@ -33,6 +33,7 @@ import {
   Code,
   Users2,
   ListTree,
+  FolderKanban,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -214,6 +215,7 @@ export default function Header() {
   const resourcesLinks = [
       { href: '/certifications', label: 'Certifications', icon: Award },
       { href: '/projects', label: 'Project Marketplace', icon: Package },
+      { href: '/pdd-projects', label: 'PDD Projects', icon: FolderKanban },
       { href: '/hackathons', label: 'Hackathons', icon: Trophy },
       { href: '/internships', label: 'Internships', icon: Briefcase },
       { href: '/jobs', label: 'Remote Jobs', icon: BriefcaseBusiness },
