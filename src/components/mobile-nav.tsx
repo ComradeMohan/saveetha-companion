@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -8,7 +7,8 @@ import {
   User,
   Book,
   Bot,
-  Award
+  Award,
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ export default function MobileNav() {
   const navLinks = React.useMemo(() => {
     if (user) {
        return [
-            { href: '/', label: 'Home', icon: Home },
+            { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
             { href: '/ai-chat', label: 'AI Chat', icon: Bot },
             { href: '/learn', label: 'Learn', icon: Book },
             { href: '/profile', label: 'Profile', icon: User },
