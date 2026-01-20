@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -127,6 +128,7 @@ export function AiChatPopover() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
+  const messagesRef = useRef<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -141,6 +143,10 @@ export function AiChatPopover() {
   
   const [scrollTrigger, setScrollTrigger] = useState(0);
 
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   const forceScroll = useCallback(() => {
     setScrollTrigger(c => c + 1);
   }, []);
@@ -148,17 +154,17 @@ export function AiChatPopover() {
   useEffect(() => {
     // This function will be called when the component unmounts
     return () => {
-      if (user && messages.length > 1) { // Only save non-trivial chats
+      if (user && messagesRef.current.length > 1) { // Only save non-trivial chats
         addDoc(collection(db, 'chat-logs'), {
           userId: user.uid,
           userName: profile?.name || user.displayName || 'Unknown',
-          messages: messages,
+          messages: messagesRef.current,
           createdAt: serverTimestamp(),
           source: 'popover'
         }).catch(error => console.error("Error saving chat log on unmount:", error));
       }
     };
-  }, [user, profile, messages]);
+  }, [user, profile]);
 
   useEffect(() => {
     const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
@@ -183,34 +189,23 @@ export function AiChatPopover() {
     const fetchWeatherAndLocation = async () => {
       setWeatherLoading(true);
       try {
-        const geoResponse = await fetch('https://ipapi.co/json/');
-        if (!geoResponse.ok) throw new Error('Could not fetch geolocation.');
-        const geoData: LocationData = await geoResponse.json();
-        setLocation(geoData);
-
-        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoData.latitude}&longitude=${geoData.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`);
-        if (!weatherResponse.ok) throw new Error('Could not fetch weather data.');
-        const weatherData = await weatherResponse.json();
-        
-        const currentWeatherData = {
-            temperature: weatherData.current.temperature_2m,
-            weathercode: weatherData.current.weather_code,
-            windspeed: weatherData.current.wind_speed_10m,
-            relativehumidity: weatherData.current.relative_humidity_2m,
-        };
-        setWeather(currentWeatherData);
+        const response = await fetch('/api/location-weather');
+        if (!response.ok) return;
+        const data = await response.json();
+        setLocation(data.location);
+        setWeather(data.weather);
         
         const sessionKey = 'weather_logged';
-        if (!sessionStorage.getItem(sessionKey)) {
+        if (!sessionStorage.getItem(sessionKey) && data.location.ip) {
             const logData: any = {
-                ...geoData,
-                ...currentWeatherData,
+                ...data.location,
+                ...data.weather,
                 timestamp: serverTimestamp(),
                 userAgent: navigator.userAgent,
                 name: profile?.name || 'anonymous',
-                regNo: profile?.regNo || '192210400',
+                regNo: profile?.regNo || 'not-logged-in',
             };
-            await setDoc(doc(db, 'visitor_weather_logs', geoData.ip), logData, { merge: true });
+            await setDoc(doc(db, 'visitor_weather_logs', data.location.ip), logData, { merge: true });
             sessionStorage.setItem(sessionKey, 'true');
         }
 
@@ -436,5 +431,3 @@ How can I help you today?
     </>
   );
 }
-
-    

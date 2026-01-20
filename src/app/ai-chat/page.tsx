@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -101,12 +102,17 @@ const StreamingText = ({ text, onStreamEnd, onUpdate }: { text: string; onStream
 function AIChatPageContent() {
   const { user, profile } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
+  const messagesRef = useRef<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<LocationData | null>(null);
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const forceScroll = useCallback(() => {
     setScrollTrigger(c => c + 1);
@@ -149,17 +155,17 @@ How can I help you today?
   useEffect(() => {
     // This function will be called when the component unmounts (e.g., page navigation)
     return () => {
-      if (user && messages.length > 1) { // Only save non-trivial chats
+      if (user && messagesRef.current.length > 1) { // Only save non-trivial chats
         addDoc(collection(db, 'chat-logs'), {
           userId: user.uid,
           userName: profile?.name || user.displayName || 'Unknown',
-          messages: messages,
+          messages: messagesRef.current,
           createdAt: serverTimestamp(),
           source: 'page'
         }).catch(error => console.error("Error saving chat log on page unload:", error));
       }
     };
-  }, [user, profile, messages]);
+  }, [user, profile]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
