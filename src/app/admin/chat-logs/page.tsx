@@ -72,7 +72,7 @@ export default function AdminChatLogsPage() {
                         <div className="flex flex-col text-left">
                             <span className="font-semibold">{log.userName}</span>
                             <span className="text-xs text-muted-foreground">
-                                {log.createdAt ? formatDistanceToNow(log.createdAt.toDate(), { addSuffix: true }) : 'N/A'}
+                                {log.createdAt ? formatDistanceToNow(new Date(log.createdAt), { addSuffix: true }) : 'N/A'}
                             </span>
                         </div>
                         <Badge variant="outline">{log.messages.length} messages</Badge>

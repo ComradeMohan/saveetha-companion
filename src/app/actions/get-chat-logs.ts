@@ -1,4 +1,3 @@
-
 'use server';
 
 import { adminDb } from '@/lib/firebase-admin';
@@ -12,7 +11,7 @@ export interface ChatLog {
   id: string;
   userName: string;
   userId: string;
-  createdAt: any;
+  createdAt: string;
   messages: ChatMessage[];
   source: 'popover' | 'page';
 }
@@ -29,7 +28,7 @@ export async function getChatLogs(): Promise<ChatLog[]> {
             id: doc.id,
             userName: data.userName,
             userId: data.userId,
-            createdAt: data.createdAt,
+            createdAt: data.createdAt.toDate().toISOString(),
             messages: data.messages,
             source: data.source,
         }
