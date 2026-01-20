@@ -37,7 +37,8 @@ import {
   UserCog,
   FileJson,
   Sparkles,
-  Share2
+  Share2,
+  MessagesSquare
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
@@ -56,6 +57,7 @@ const adminNavLinks = [
   { href: '/admin/recruitment', label: 'Recruitment', icon: Hand },
   { href: '/admin/student-cgpa', label: 'Student CGPA', icon: BarChartHorizontal },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
+  { href: '/admin/chat-logs', label: 'Chat Logs', icon: MessagesSquare },
   { href: '/admin/requests', label: 'Requests', icon: Inbox },
   { href: '/admin/college-learnings', label: 'College Learnings', icon: School },
   { href: '/admin/course-content', label: 'Course Content', icon: PenSquare },
