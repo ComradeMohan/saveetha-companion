@@ -23,15 +23,26 @@ function MainContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const { user, loading } = useAuth();
     
-    const publicPaths = ['/', '/login', '/signup', '/contact', '/privacy', '/terms', '/copyright', '/takedown', '/datasafety', '/faq'];
-    const isPublicPath = publicPaths.includes(pathname);
+    const publicPaths = ['/login', '/signup', '/contact', '/privacy', '/terms', '/copyright', '/takedown', '/datasafety', '/faq'];
     const isAdminOrLearnPath = pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/dev-login');
 
     useEffect(() => {
-        if (!loading && !user && !isPublicPath && !isAdminOrLearnPath) {
-            router.push('/');
+        if (loading) return; // Don't do anything until auth state is resolved
+
+        const isPublicPath = publicPaths.includes(pathname) || pathname === '/' || pathname.startsWith('/projects') || pathname.startsWith('/pdd-projects');
+
+        if (user) {
+            // User is logged in
+            if (pathname === '/') {
+                router.push('/dashboard');
+            }
+        } else {
+            // User is not logged in
+            if (!isPublicPath && !isAdminOrLearnPath) {
+                router.push('/');
+            }
         }
-    }, [user, loading, isPublicPath, isAdminOrLearnPath, router, pathname]);
+    }, [user, loading, pathname, router]);
 
     const showHeaderAndFooter = !isAdminOrLearnPath;
 
