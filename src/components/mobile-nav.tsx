@@ -5,14 +5,10 @@ import * as React from 'react';
 import Link from 'next/link';
 import {
   Home,
-  Calendar as CalendarIcon,
-  Bell,
   User,
-  Calculator,
-  Package,
-  Award,
-  ClipboardList,
   Book,
+  Bot,
+  Award
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -26,7 +22,7 @@ export default function MobileNav() {
     if (user) {
        return [
             { href: '/', label: 'Home', icon: Home },
-            { href: '/course-enrollment', label: 'Alerts', icon: ClipboardList },
+            { href: '/ai-chat', label: 'AI Chat', icon: Bot },
             { href: '/learn', label: 'Learn', icon: Book },
             { href: '/profile', label: 'Profile', icon: User },
         ];
@@ -34,21 +30,18 @@ export default function MobileNav() {
     return [
         { href: '/', label: 'Home', icon: Home },
         { href: '/certifications', label: 'Certs', icon: Award },
-        { href: '/faq', label: 'FAQ', icon: Book },
+        { href: '/ai-chat', label: 'AI Chat', icon: Bot },
         { href: '/signup', label: 'Register', icon: User },
     ];
   }, [user]);
   
   const activeIndex = React.useMemo(() => {
-    // Find the best match for the current path
     const exactMatchIndex = navLinks.findIndex(link => pathname === link.href);
     if (exactMatchIndex !== -1) return exactMatchIndex;
 
-    // Handle nested routes, e.g., /projects/some-id should still highlight a main nav item if applicable
-    if (pathname.startsWith('/admin')) return -1; // Don't highlight anything for admin
+    if (pathname.startsWith('/admin')) return -1;
     if (pathname === '/') return 0;
     
-    // Find the first link whose href is a prefix of the current path
     const sortedLinks = [...navLinks].sort((a,b) => b.href.length - a.href.length);
     const prefixMatch = sortedLinks.find(link => link.href !== '/' && pathname.startsWith(link.href));
     
@@ -56,12 +49,15 @@ export default function MobileNav() {
       return navLinks.findIndex(link => link.href === prefixMatch.href);
     }
     
-    // Special case for learn, as its link text is different from href
+    // Special cases for sections not in the nav but should highlight a parent
     if (pathname.startsWith('/learn')) {
         const learnIndex = navLinks.findIndex(link => link.href === '/learn');
         if (learnIndex !== -1) return learnIndex;
     }
-
+     if (pathname.startsWith('/ai-chat')) {
+        const chatIndex = navLinks.findIndex(link => link.href === '/ai-chat');
+        if (chatIndex !== -1) return chatIndex;
+    }
 
     return -1; 
   }, [pathname, navLinks]);
@@ -71,7 +67,7 @@ export default function MobileNav() {
     setIsNavigating(true);
   };
 
-  if (pathname.startsWith('/admin') || pathname.startsWith('/learn')) return null;
+  if (pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/ai-chat')) return null;
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 h-16 animate-slide-in-from-bottom">
