@@ -42,13 +42,16 @@ service cloud.firestore {
     match /updates/{docId} { allow read: if true; }
     match /events/{docId} { allow read: if true; }
     match /projects/{projectId} { allow read: if true; }
+    match /pdd-projects/{projectId} { allow read: if true; }
     match /colleges/{collegeId} { allow read: if true; }
     match /colleges/{collegeId}/departments/{departmentId} { allow read: if true; }
     match /colleges/{collegeId}/departments/{departmentId}/courses/{courseId} { allow read: if true; }
     match /mcqs/{docId} { allow read: if true; }
     match /coding-questions/{docId} { allow read: if true; }
     match /concept-map-analytics/{mapId} { allow read: if true; }
-    match /specialEvents/{eventId} { allow read: if true; } // New rule for special events
+    match /specialEvents/{eventId} { allow read: if true; }
+    match /site_config/{docId} { allow read: if true; }
+    match /visitor_weather_logs/{ip} { allow create: if true; }
 
     // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
@@ -65,6 +68,20 @@ service cloud.firestore {
     match /student_grades/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
     match /user_notifications/{userId}/{document=**} { allow read, write, delete: if request.auth != null && request.auth.uid == userId; }
 
+    // Chat logs for training
+    match /chat-logs/{logId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // PDD Projects Rules
+    match /pdd-projects/{projectId} {
+        allow read: if true;
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow update: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+        allow delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
     // ADMIN & BATCH ADMIN WRITE PERMISSIONS
     match /certifications/{docId} {
         allow create: if (isBatchAdmin() || isAdmin()) && request.resource.data.createdBy == request.auth.uid;
@@ -78,9 +95,13 @@ service cloud.firestore {
     match /faculty/{docId} {
       allow create: if isBatchAdmin() || isAdmin();
     }
-    match /specialEvents/{eventId} { // New rule for special events
+    match /specialEvents/{eventId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
+    }
+     match /site_config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // FORM SUBMISSIONS (PUBLIC OR AUTHENTICATED)

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -14,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card } from './ui/card';
 
@@ -145,6 +144,21 @@ export function AiChatPopover() {
   const forceScroll = useCallback(() => {
     setScrollTrigger(c => c + 1);
   }, []);
+
+  useEffect(() => {
+    // This function will be called when the component unmounts
+    return () => {
+      if (user && messages.length > 1) { // Only save non-trivial chats
+        addDoc(collection(db, 'chat-logs'), {
+          userId: user.uid,
+          userName: profile?.name || user.displayName || 'Unknown',
+          messages: messages,
+          createdAt: serverTimestamp(),
+          source: 'popover'
+        }).catch(error => console.error("Error saving chat log on unmount:", error));
+      }
+    };
+  }, [user, profile, messages]);
 
   useEffect(() => {
     const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {

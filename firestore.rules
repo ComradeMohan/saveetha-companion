@@ -50,8 +50,8 @@ service cloud.firestore {
     match /coding-questions/{docId} { allow read: if true; }
     match /concept-map-analytics/{mapId} { allow read: if true; }
     match /specialEvents/{eventId} { allow read: if true; }
-    match /site_config/{docId} { allow read: if true; } // New rule for global message
-    match /visitor_weather_logs/{ip} { allow create: if true; } // Allow anyone to create a log
+    match /site_config/{docId} { allow read: if true; }
+    match /visitor_weather_logs/{ip} { allow create: if true; }
 
     // AUTHENTICATED READ (MUST BE LOGGED IN)
     match /certifications/{docId} { allow read: if request.auth != null; }
@@ -67,6 +67,12 @@ service cloud.firestore {
     match /students_cgpa/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
     match /student_grades/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
     match /user_notifications/{userId}/{document=**} { allow read, write, delete: if request.auth != null && request.auth.uid == userId; }
+
+    // Chat logs for training
+    match /chat-logs/{logId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
 
     // PDD Projects Rules
     match /pdd-projects/{projectId} {
@@ -93,7 +99,7 @@ service cloud.firestore {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
-     match /site_config/{docId} { // New rule for global message
+     match /site_config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
