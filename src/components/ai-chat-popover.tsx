@@ -72,6 +72,26 @@ const getTemperatureTheme = (temp: number) => {
     return 'bg-primary hover:bg-primary/90'; // Default fallback
 }
 
+const linkify = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.split(urlRegex).map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline hover:text-primary/80"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
 
 export function AiChatPopover() {
   const { user, profile } = useAuth();
@@ -167,7 +187,7 @@ export function AiChatPopover() {
     setOpen(isOpen);
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
-        let welcomeMessage = `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you?`;
+        let welcomeMessage = `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`;
         if (location && weather) {
           welcomeMessage = `
 It's currently ${Math.round(weather.temperature)}°C and ${getWeatherDescription(weather.weathercode).toLowerCase()} in ${location.city}.
@@ -233,7 +253,7 @@ How can I help you today?
                         </Avatar>
                       )}
                       <div className={cn("rounded-lg p-2.5 max-w-xs text-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary')}>
-                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
                         {message.role === 'bot' && message.sources && message.sources.length > 0 && (
                             <div className="mt-2.5 border-t pt-2">
                                 <h4 className="text-xs font-semibold mb-1.5">Sources:</h4>
