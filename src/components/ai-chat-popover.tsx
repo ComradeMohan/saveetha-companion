@@ -138,19 +138,25 @@ export function AiChatPopover() {
   const [weatherLoading, setWeatherLoading] = useState(true);
 
   const viewportRef = useRef<HTMLDivElement>(null);
-  
-  const scrollToBottom = useCallback(() => {
+  const [scrollTrigger, setScrollTrigger] = useState(0);
+
+  const forceScroll = useCallback(() => {
+    setScrollTrigger(c => c + 1);
+  }, []);
+
+  useEffect(() => {
     if (viewportRef.current) {
         viewportRef.current.scrollTo({
             top: viewportRef.current.scrollHeight,
             behavior: 'smooth'
         });
     }
-  }, []);
-
+  }, [scrollTrigger]);
+  
   const handleStreamEnd = useCallback(() => {
     setLoading(false);
-  }, []);
+    forceScroll();
+  }, [forceScroll]);
 
   useEffect(() => {
     const fetchWeatherAndLocation = async () => {
@@ -198,8 +204,8 @@ export function AiChatPopover() {
 
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, loading, scrollToBottom]);
+    forceScroll();
+  }, [messages, forceScroll]);
   
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,7 +287,7 @@ How can I help you today?
                             )}
                             <div className={cn("rounded-lg p-2.5 max-w-xs text-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary')}>
                                 {isStreaming ? (
-                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} onUpdate={scrollToBottom} />
+                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} onUpdate={forceScroll} />
                                 ) : (
                                     <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
                                 )}

@@ -799,6 +799,13 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     },
     {
+        "tag": "navigation",
+        "patterns": ["where is", "open", "go to", "page", "link"],
+        "responses": [
+          "I can help you navigate. Try asking: CGPA calculator, Attendance, Login, Notes, Contact"
+        ]
+    },
+    {
       "tag": "cgpa_calculator",
       "patterns": ["cgpa", "calculate cgpa", "cgpa calculator"],
       "responses": [
@@ -835,7 +842,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
     },
     {
         "tag": "study_materials",
-        "patterns": ["notes", "study materials", "files", "pdf", "concept maps", "question paper"],
+        "patterns": ["notes", "study materials", "files", "pdf", "question paper"],
         "responses": ["You can find notes, PDFs and question papers here 👉 https://app.saveethahub.tech/file-manager"]
     },
     {
@@ -899,6 +906,32 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
         ],
         "responses": [
           "We’d love your feedback! Please use the Contact page to report bugs or suggest features."
+        ]
+    },
+    {
+        "tag": "small_talk",
+        "patterns": [
+          "who made you",
+          "who are you",
+          "are you human",
+          "your name"
+        ],
+        "responses": [
+          "I’m the SaveethaHub Assistant 🤖, built to help students!",
+          "I’m a chatbot, but I try my best to help like a human 😊"
+        ]
+    },
+    {
+        "tag": "creator_info",
+        "patterns": [
+          "who made this site",
+          "website owner",
+          "who built this",
+          "about the developer",
+          "creator of this website"
+        ],
+        "responses": [
+          "This website was built by Mohan Reddy (ComradeMohan), a full-stack web developer. Check his portfolio: https://mohanreddy.is-a-good.dev/"
         ]
     },
     {
