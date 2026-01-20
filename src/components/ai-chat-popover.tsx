@@ -93,7 +93,7 @@ const linkify = (text: string) => {
   });
 };
 
-const StreamingText = ({ text, onStreamEnd }: { text: string; onStreamEnd: () => void }) => {
+const StreamingText = ({ text, onStreamEnd, viewportRef }: { text: string; onStreamEnd: () => void; viewportRef: React.RefObject<HTMLDivElement> }) => {
     const [displayedText, setDisplayedText] = useState('');
   
     useEffect(() => {
@@ -116,6 +116,15 @@ const StreamingText = ({ text, onStreamEnd }: { text: string; onStreamEnd: () =>
         onStreamEnd();
       }
     }, [text, onStreamEnd]);
+
+    useEffect(() => {
+        if (viewportRef.current) {
+            viewportRef.current.scrollTo({
+                top: viewportRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, [displayedText, viewportRef]);
   
     return <p className="whitespace-pre-wrap">{linkify(displayedText)}</p>;
 };
@@ -262,6 +271,7 @@ How can I help you today?
                 {messages.map((message, index) => {
                     const isLastMessage = index === messages.length - 1;
                     const isBot = message.role === 'bot';
+                    const isStreaming = isBot && isLastMessage && loading;
 
                     return (
                         <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
@@ -271,8 +281,8 @@ How can I help you today?
                                 </Avatar>
                             )}
                             <div className={cn("rounded-lg p-2.5 max-w-xs text-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary')}>
-                                {isBot && isLastMessage && loading ? (
-                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} />
+                                {isStreaming ? (
+                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} viewportRef={viewportRef} />
                                 ) : (
                                     <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
                                 )}
@@ -298,7 +308,7 @@ How can I help you today?
                         </div>
                     );
                 })}
-                 {loading && messages[messages.length-1]?.role === 'user' && (
+                 {loading && messages.length > 0 && messages[messages.length-1]?.role === 'user' && (
                     <div className="flex items-start gap-3">
                         <Avatar className="h-7 w-7">
                             <AvatarFallback><Bot className="h-4 w-4"/></AvatarFallback>
@@ -400,3 +410,5 @@ How can I help you today?
     </>
   );
 }
+
+    
