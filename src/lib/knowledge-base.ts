@@ -806,6 +806,17 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     },
     {
+        "tag": "cgpa_help",
+        "patterns": [
+          "how to calculate cgpa",
+          "cgpa formula",
+          "how cgpa works"
+        ],
+        "responses": [
+          "Enter your subjects and grades. The system automatically calculates CGPA based on university grading rules."
+        ]
+    },
+    {
       "tag": "attendance",
       "patterns": ["attendance", "attendance calculator", "track attendance"],
       "responses": [
@@ -813,11 +824,19 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     },
     {
-      "tag": "study_materials",
-      "patterns": ["notes", "study materials", "files", "pdf", "concept maps"],
-      "responses": [
-        "You can access study materials like concept maps in our Concept Map Library on the home page."
-      ]
+        "tag": "attendance_help",
+        "patterns": [
+          "how to calculate attendance",
+          "attendance percentage"
+        ],
+        "responses": [
+          "Enter total classes and attended classes. The system calculates your attendance percentage instantly."
+        ]
+    },
+    {
+        "tag": "study_materials",
+        "patterns": ["notes", "study materials", "files", "pdf", "concept maps", "question paper"],
+        "responses": ["You can find notes, PDFs and question papers here 👉 https://app.saveethahub.tech/file-manager"]
     },
     {
       "tag": "login",
@@ -827,11 +846,60 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     },
     {
-      "tag": "events",
-      "patterns": ["events", "upcoming events", "workshops", "hackathons"],
-      "responses": [
-        "Check out the Hackathons page for upcoming competitions, or the Calendar page for university events."
-      ]
+        "tag": "login_help",
+        "patterns": [
+          "cannot login",
+          "login problem",
+          "forgot password",
+          "account issue"
+        ],
+        "responses": [
+          "If you're facing login issues, please double-check your credentials or contact support via the Contact page."
+        ]
+    },
+    {
+        "tag": "events",
+        "patterns": ["events", "upcoming events", "workshops", "hackathon"],
+        "responses": ["Check upcoming events here 👉 https://app.saveethahub.tech/events"]
+    },
+    {
+        "tag": "faq_general",
+        "patterns": [
+          "is this free",
+          "is saveethahub free",
+          "do i need to pay",
+          "is this official",
+          "is my data safe"
+        ],
+        "responses": [
+          "Yes ✅ SaveethaHub is completely free for students.",
+          "No payment is required to use the tools.",
+          "This is a student-support platform, not an official college website.",
+          "Your data is handled securely and never shared."
+        ]
+    },
+    {
+        "tag": "college_rules",
+        "patterns": [
+          "minimum attendance",
+          "attendance rule",
+          "exam eligibility"
+        ],
+        "responses": [
+          "Students usually require 75% attendance to be eligible for exams. Please confirm with your department."
+        ]
+    },
+    {
+        "tag": "feedback",
+        "patterns": [
+          "feedback",
+          "suggestion",
+          "bug",
+          "report issue"
+        ],
+        "responses": [
+          "We’d love your feedback! Please use the Contact page to report bugs or suggest features."
+        ]
     },
     {
       "tag": "thanks",
@@ -848,5 +916,3 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     }
   ];
-
-    
