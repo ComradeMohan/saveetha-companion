@@ -85,7 +85,7 @@ const linkify = (text: string) => {
           rel="noopener noreferrer"
           className="text-primary underline hover:text-primary/80"
         >
-          {part}
+          View Link
         </a>
       );
     }
@@ -137,7 +137,9 @@ export function AiChatPopover() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
 
-  const viewportRef = useRef<HTMLDivElement>(null);
+  const popoverViewportRef = useRef<HTMLDivElement>(null);
+  const expandedViewportRef = useRef<HTMLDivElement>(null);
+  
   const [scrollTrigger, setScrollTrigger] = useState(0);
 
   const forceScroll = useCallback(() => {
@@ -145,13 +147,18 @@ export function AiChatPopover() {
   }, []);
 
   useEffect(() => {
-    if (viewportRef.current) {
-        viewportRef.current.scrollTo({
-            top: viewportRef.current.scrollHeight,
-            behavior: 'smooth'
-        });
-    }
+    const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
+        if (ref.current) {
+            ref.current.scrollTo({
+                top: ref.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    };
+    scrollToBottom(popoverViewportRef);
+    scrollToBottom(expandedViewportRef);
   }, [scrollTrigger]);
+
   
   const handleStreamEnd = useCallback(() => {
     setLoading(false);
@@ -271,7 +278,7 @@ How can I help you today?
                 </Button>
             </div>
         </div>
-        <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
+        <ScrollArea className="flex-1 p-4" viewportRef={expanded ? expandedViewportRef : popoverViewportRef}>
             <div className="space-y-6">
                 {messages.map((message, index) => {
                     const isLastMessage = index === messages.length - 1;
@@ -415,7 +422,5 @@ How can I help you today?
     </>
   );
 }
-
-    
 
     
