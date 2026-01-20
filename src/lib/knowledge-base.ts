@@ -795,7 +795,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       "tag": "contact",
       "patterns": ["contact", "contact us", "how to contact", "phone", "email"],
       "responses": [
-        "📞 You can contact SaveethaHub via the Contact page: https://saveethahub.tech/contact. Please fill the form there, and the team will reach you soon."
+        "📞 You can contact SaveethaHub via the Contact page: https://saveethahub.tech/contact . Please fill the form there, and the team will reach you soon."
       ]
     },
     {
