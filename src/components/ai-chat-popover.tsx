@@ -93,7 +93,7 @@ const linkify = (text: string) => {
   });
 };
 
-const StreamingText = ({ text, onStreamEnd, viewportRef }: { text: string; onStreamEnd: () => void; viewportRef: React.RefObject<HTMLDivElement> }) => {
+const StreamingText = ({ text, onStreamEnd, onUpdate }: { text: string; onStreamEnd: () => void; onUpdate: () => void; }) => {
     const [displayedText, setDisplayedText] = useState('');
   
     useEffect(() => {
@@ -118,13 +118,8 @@ const StreamingText = ({ text, onStreamEnd, viewportRef }: { text: string; onStr
     }, [text, onStreamEnd]);
 
     useEffect(() => {
-        if (viewportRef.current) {
-            viewportRef.current.scrollTo({
-                top: viewportRef.current.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
-    }, [displayedText, viewportRef]);
+      onUpdate();
+    }, [displayedText, onUpdate]);
   
     return <p className="whitespace-pre-wrap">{linkify(displayedText)}</p>;
 };
@@ -144,6 +139,15 @@ export function AiChatPopover() {
 
   const viewportRef = useRef<HTMLDivElement>(null);
   
+  const scrollToBottom = useCallback(() => {
+    if (viewportRef.current) {
+        viewportRef.current.scrollTo({
+            top: viewportRef.current.scrollHeight,
+            behavior: 'smooth'
+        });
+    }
+  }, []);
+
   const handleStreamEnd = useCallback(() => {
     setLoading(false);
   }, []);
@@ -194,13 +198,8 @@ export function AiChatPopover() {
 
 
   useEffect(() => {
-    if (viewportRef.current) {
-        viewportRef.current.scrollTo({
-            top: viewportRef.current.scrollHeight,
-            behavior: 'smooth',
-        });
-    }
-  }, [messages, loading]);
+    scrollToBottom();
+  }, [messages, loading, scrollToBottom]);
   
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,7 +281,7 @@ How can I help you today?
                             )}
                             <div className={cn("rounded-lg p-2.5 max-w-xs text-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary')}>
                                 {isStreaming ? (
-                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} viewportRef={viewportRef} />
+                                    <StreamingText text={message.content} onStreamEnd={handleStreamEnd} onUpdate={scrollToBottom} />
                                 ) : (
                                     <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
                                 )}
@@ -410,5 +409,7 @@ How can I help you today?
     </>
   );
 }
+
+    
 
     

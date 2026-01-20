@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An intent-based chatbot that answers questions based on a predefined knowledge base.
@@ -9,7 +10,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { intents } from '@/lib/knowledge-base';
+import { intents, courses } from '@/lib/knowledge-base';
 
 // Define Zod schemas for input and output
 const TutorInputSchema = z.object({
@@ -41,30 +42,63 @@ const tutorFlow = ai.defineFlow(
   async (input) => {
     const userQuestion = input.question.toLowerCase().trim();
     
-    let matchedIntent = intents.find(intent => intent.tag === 'fallback'); // Default to fallback
+    // 1. Specific Course Lookup
+    for (const course of courses) {
+        const courseKeywords = [
+            course.course_code.toLowerCase(),
+            course.course_name.toLowerCase(),
+            ...(course.keywords || [])
+        ];
+        
+        for (const keyword of courseKeywords) {
+            // Use word boundary to avoid partial matches like 'c' in 'c++'
+            const regex = new RegExp(`\\b${keyword}\\b`);
+            if (regex.test(userQuestion)) {
+                let answer = `Found it! Here's what I know about **${course.course_name} (${course.course_code})**:\n\n${course.description}`;
+                const resources = Object.entries(course.resources).filter(([, url]) => url);
 
+                if (resources.length > 0) {
+                    answer += "\n\n**Available Resources:**\n";
+                    resources.forEach(([name, url]) => {
+                         const resourceName = name.replace(/_url/g, '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                         answer += `• ${resourceName}: ${url}\n`;
+                    });
+                } else {
+                    answer += "\n\nNo specific resource links are available for this course yet."
+                }
+                return { answer, sources: [] };
+            }
+        }
+    }
+
+    // 2. General Intent Matching
+    let matchedIntentResponse: string | null = null;
     for (const intent of intents) {
-        if (intent.tag === 'fallback') continue;
         for (const pattern of intent.patterns) {
             if (userQuestion.includes(pattern.toLowerCase())) {
-                matchedIntent = intent;
+                if (Array.isArray(intent.responses)) {
+                   matchedIntentResponse = intent.responses[Math.floor(Math.random() * intent.responses.length)];
+                }
                 break;
             }
         }
-        if (matchedIntent?.tag !== 'fallback') {
-            break;
-        }
+        if (matchedIntentResponse) break;
+    }
+
+    if (matchedIntentResponse) {
+        const cleanAnswer = matchedIntentResponse.replace(/:contentReference\[.*?\]\{.*?\}/g, '').trim();
+        return { answer: cleanAnswer, sources: [] };
     }
     
-    const responses = matchedIntent!.responses;
-    const answer = responses[Math.floor(Math.random() * responses.length)];
+    // 3. Fallback
+    const fallbackIntent = intents.find(i => i.tag === 'fallback');
+    if (fallbackIntent) {
+        const response = fallbackIntent.responses[Math.floor(Math.random() * fallbackIntent.responses.length)];
+        return { answer: response, sources: [] };
+    }
 
-    // Clean up any citation markers that might be in the responses
-    const cleanAnswer = answer.replace(/:contentReference\[.*?\]\{.*?\}/g, '').trim();
-
-    return {
-        answer: cleanAnswer,
-        sources: [], // Sources are not used in this intent-based system
-    };
+    return { answer: "I'm not sure how to help with that. Could you try rephrasing?", sources: [] };
   }
 );
+
+    
