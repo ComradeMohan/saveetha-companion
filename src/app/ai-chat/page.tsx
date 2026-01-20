@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 // Interfaces and helper components from ai-chat-popover
 interface Message {
@@ -109,6 +110,7 @@ function AIChatPageContent() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -155,10 +157,25 @@ How can I help you today?
   useEffect(() => {
     // This function will be called when the component unmounts (e.g., page navigation)
     return () => {
-      if (user && messagesRef.current.length > 1) { // Only save non-trivial chats
+      if (messagesRef.current.length > 1) { // Only save non-trivial chats
+        let userIdToSave: string | undefined;
+        let userNameToSave: string;
+
+        if (user) {
+          userIdToSave = user.uid;
+          userNameToSave = profile?.name || user.displayName || 'Unknown';
+        } else {
+          // For anonymous users, create a session ID
+          if (!sessionIdRef.current) {
+            sessionIdRef.current = `anon_${uuidv4()}`;
+          }
+          userIdToSave = sessionIdRef.current;
+          userNameToSave = 'Anonymous';
+        }
+
         addDoc(collection(db, 'chat-logs'), {
-          userId: user.uid,
-          userName: profile?.name || user.displayName || 'Unknown',
+          userId: userIdToSave,
+          userName: userNameToSave,
           messages: messagesRef.current,
           createdAt: serverTimestamp(),
           source: 'page'

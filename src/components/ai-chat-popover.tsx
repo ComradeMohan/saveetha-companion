@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { doc, setDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card } from './ui/card';
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface Message {
@@ -142,6 +143,7 @@ export function AiChatPopover() {
   const expandedViewportRef = useRef<HTMLDivElement>(null);
   
   const [scrollTrigger, setScrollTrigger] = useState(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -151,20 +153,51 @@ export function AiChatPopover() {
     setScrollTrigger(c => c + 1);
   }, []);
 
-  useEffect(() => {
-    // This function will be called when the component unmounts
-    return () => {
-      if (user && messagesRef.current.length > 1) { // Only save non-trivial chats
-        addDoc(collection(db, 'chat-logs'), {
-          userId: user.uid,
-          userName: profile?.name || user.displayName || 'Unknown',
-          messages: messagesRef.current,
-          createdAt: serverTimestamp(),
-          source: 'popover'
-        }).catch(error => console.error("Error saving chat log on unmount:", error));
+  const saveChatLog = useCallback(() => {
+      if (messagesRef.current.length <= 1) {
+        return;
       }
-    };
+      
+      let userIdToSave: string | undefined;
+      let userNameToSave: string;
+
+      if (user) {
+        userIdToSave = user.uid;
+        userNameToSave = profile?.name || user.displayName || 'Unknown';
+      } else {
+        if (!sessionIdRef.current) {
+          sessionIdRef.current = `anon_${uuidv4()}`;
+        }
+        userIdToSave = sessionIdRef.current;
+        userNameToSave = 'Anonymous';
+      }
+      
+      addDoc(collection(db, 'chat-logs'), {
+        userId: userIdToSave,
+        userName: userNameToSave,
+        messages: messagesRef.current,
+        createdAt: serverTimestamp(),
+        source: 'popover'
+      }).catch(error => {
+        console.error("Error saving chat log:", error);
+      });
+
+      // Reset for next session
+      messagesRef.current = [];
+      setMessages([]);
+      if (!user) { // only reset session for anon users
+        sessionIdRef.current = null;
+      }
   }, [user, profile]);
+
+  useEffect(() => {
+    return () => {
+      // This will run when the entire app is being unmounted/closed,
+      // acting as a final failsafe to save the chat.
+      saveChatLog();
+    };
+  }, [saveChatLog]);
+
 
   useEffect(() => {
     const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
@@ -246,6 +279,9 @@ export function AiChatPopover() {
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
+    if (!isOpen) {
+        saveChatLog(); // Save when the popover is closed.
+    }
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
         let welcomeMessage = `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`;
@@ -280,8 +316,11 @@ How can I help you today?
                     </Button>
                 )}
                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => {
-                    if (expanded) setIsExpanded(false);
-                    else setOpen(false);
+                    if (expanded) {
+                       saveChatLog();
+                       setIsExpanded(false);
+                    }
+                    else setOpen(false); // This will trigger save via onOpenChange
                 }}>
                     <X className="h-4 w-4"/>
                 </Button>
@@ -416,7 +455,7 @@ How can I help you today?
     {isExpanded && (
         <div 
             className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm animate-in fade-in-0 duration-300"
-            onClick={() => setIsExpanded(false)}
+            onClick={() => { saveChatLog(); setIsExpanded(false); }}
         >
             <div 
                 className="fixed inset-4 sm:inset-8 z-[101]"

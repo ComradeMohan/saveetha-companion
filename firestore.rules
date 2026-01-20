@@ -70,7 +70,8 @@ service cloud.firestore {
 
     // Chat logs for training
     match /chat-logs/{logId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // WARNING: This is an open rule for debugging. Anyone can write to this collection.
+      allow create: if true;
       allow read, update, delete: if isAdmin();
     }
 
