@@ -758,6 +758,32 @@ export const courses = [
       ]
     },
     {
+      "course_id": "RL01",
+      "course_code": "RL01",
+      "course_name": "Reinforcement Learning",
+      "category": "Artificial Intelligence",
+      "keywords": ["reinforcement learning", "rl", "machine learning"],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "An advanced field of machine learning concerned with how intelligent agents ought to take actions in an environment in order to maximize the notion of cumulative reward.",
+      "topics": [
+        "Introduction to RL",
+        "Markov Decision Processes",
+        "Q-Learning",
+        "Deep Q-Networks (DQN)",
+        "Policy Gradients",
+        "Actor-Critic Methods"
+      ]
+    },
+    {
       "course_id": "CURRICULUM",
       "course_code": "CURRICULUM",
       "course_name": "Program Curriculum",
@@ -949,3 +975,4 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     }
   ];
+

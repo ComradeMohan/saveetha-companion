@@ -64,7 +64,7 @@ const tutorFlow = ai.defineFlow(
                          answer += `• ${resourceName}: ${url}\n`;
                     });
                 } else {
-                    answer += "\n\nNo specific resource links are available for this course yet."
+                    answer += "\n\nThis topic is under preparation. We’ll notify once available."
                 }
                 return { answer, sources: [] };
             }
