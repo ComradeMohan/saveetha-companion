@@ -27,6 +27,11 @@ const TutorOutputSchema = z.object({
 });
 export type TutorOutput = z.infer<typeof TutorOutputSchema>;
 
+// Helper function to escape special characters in a string for use in a RegExp.
+function escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 
 // Exported wrapper function to be called from the UI
 export async function askTutor(input: TutorInput): Promise<TutorOutput> {
@@ -51,8 +56,10 @@ const tutorFlow = ai.defineFlow(
         ];
         
         for (const keyword of courseKeywords) {
-            // Use word boundary to avoid partial matches like 'c' in 'c++'
-            const regex = new RegExp(`\\b${keyword}\\b`);
+            // Escape special regex characters (like '+') to prevent errors.
+            const escapedKeyword = escapeRegExp(keyword);
+            const regex = new RegExp(`\\b${escapedKeyword}\\b`, 'i');
+
             if (regex.test(userQuestion)) {
                 let answer = `Found it! Here's what I know about **${course.course_name} (${course.course_code})**:\n\n${course.description}`;
                 const resources = Object.entries(course.resources).filter(([, url]) => url);
@@ -100,5 +107,3 @@ const tutorFlow = ai.defineFlow(
     return { answer: "I'm not sure how to help with that. Could you try rephrasing?", sources: [] };
   }
 );
-
-    
