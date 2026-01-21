@@ -33,7 +33,7 @@ export const courses = [
       "course_code": "BTA01",
       "course_name": "Biology and Environmental Science for Engineers",
       "category": "Basic Sciences",
-      "keywords": ["biology", "environmental science", "bta01", "ecology", "biotechnology"],
+      "keywords": ["biology", "environmental science", "bta01", "ecology", "biotechnology", "biology and environmental science"],
       "resources": {
         "syllabus_url": "https://drive.google.com/file/d/14JWSBeC7UfAaLR3wBQQ6WoW50eNV9P7R/view?usp=sharing",
         "concept_map_url": "",
@@ -801,6 +801,2514 @@ export const courses = [
       "views": 3,
       "description": "Complete program curriculum with list of core courses and electives.",
       "topics": []
+    },
+    {
+      "course_id": "BDT1B",
+      "course_code": "BDT1B",
+      "course_name": "Dental Mechanics",
+      "category": "General",
+      "keywords": [
+        "dental mechanics",
+        "bdt1b"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "SPIC7",
+      "course_code": "SPIC7",
+      "course_name": "Product Design and Development",
+      "category": "General",
+      "keywords": [
+        "product design and development",
+        "spic7"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "SPIC3",
+      "course_code": "SPIC3",
+      "course_name": "Mini Project",
+      "category": "General",
+      "keywords": [
+        "mini project",
+        "spic3"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MTC10",
+      "course_code": "MTC10",
+      "course_name": "Bio-Instrumentation / Biomechanics / Biomaterials",
+      "category": "General",
+      "keywords": [
+        "bio-instrumentation / biomechanics / biomaterials",
+        "mtc10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA10",
+      "course_code": "CEA10",
+      "course_name": "Hydraulics Engineering",
+      "category": "General",
+      "keywords": [
+        "hydraulics engineering",
+        "cea10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA02",
+      "course_code": "CEA02",
+      "course_name": "Engineering Mechanics",
+      "category": "General",
+      "keywords": [
+        "engineering mechanics",
+        "cea02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA13",
+      "course_code": "MEA13",
+      "course_name": "Design of Transmission System",
+      "category": "General",
+      "keywords": [
+        "design of transmission system",
+        "mea13"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA06",
+      "course_code": "CEA06",
+      "course_name": "Fluid Mechanics and Machinery",
+      "category": "General",
+      "keywords": [
+        "fluid mechanics and machinery",
+        "cea06"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA11",
+      "course_code": "ECA11",
+      "course_name": "VLSI Design",
+      "category": "General",
+      "keywords": [
+        "vlsi design",
+        "eca11"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA14",
+      "course_code": "ECA14",
+      "course_name": "Embedded Systems",
+      "category": "General",
+      "keywords": [
+        "embedded systems",
+        "eca14"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA02",
+      "course_code": "ECA02",
+      "course_name": "Digital Circuits",
+      "category": "General",
+      "keywords": [
+        "digital circuits",
+        "eca02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA31",
+      "course_code": "ECA31",
+      "course_name": "Nano Electronics",
+      "category": "General",
+      "keywords": [
+        "nano electronics",
+        "eca31"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA07",
+      "course_code": "ECA07",
+      "course_name": "Transducers and Sensors",
+      "category": "General",
+      "keywords": [
+        "transducers and sensors",
+        "eca07"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "DSA04",
+      "course_code": "DSA04",
+      "course_name": "Fundamentals of Data Science",
+      "category": "General",
+      "keywords": [
+        "fundamentals of data science",
+        "dsa04"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA13",
+      "course_code": "ECA13",
+      "course_name": "Microwave Engineering",
+      "category": "General",
+      "keywords": [
+        "microwave engineering",
+        "eca13"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA56",
+      "course_code": "ECA56",
+      "course_name": "5G/6G Communication",
+      "category": "General",
+      "keywords": [
+        "5g/6g communication",
+        "eca56"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA08",
+      "course_code": "ECA08",
+      "course_name": "Analog and Digital Communications",
+      "category": "General",
+      "keywords": [
+        "analog and digital communications",
+        "eca08"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "DSA06",
+      "course_code": "DSA06",
+      "course_name": "Data Handling and Visualization",
+      "category": "General",
+      "keywords": [
+        "data handling and visualization",
+        "dsa06"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA04",
+      "course_code": "ECA04",
+      "course_name": "Analog Circuits",
+      "category": "General",
+      "keywords": [
+        "analog circuits",
+        "eca04"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA06",
+      "course_code": "ECA06",
+      "course_name": "Integrated Circuits",
+      "category": "General",
+      "keywords": [
+        "integrated circuits",
+        "eca06"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA05",
+      "course_code": "ECA05",
+      "course_name": "Engineering Electromagnetics",
+      "category": "General",
+      "keywords": [
+        "engineering electromagnetics",
+        "eca05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA47",
+      "course_code": "ECA47",
+      "course_name": "Principles of Digital System Design",
+      "category": "General",
+      "keywords": [
+        "principles of digital system design",
+        "eca47"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA15",
+      "course_code": "ECA15",
+      "course_name": "Transmission Lines and Waveguides",
+      "category": "General",
+      "keywords": [
+        "transmission lines and waveguides",
+        "eca15"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA01",
+      "course_code": "ECA01",
+      "course_name": "Semiconductor Devices",
+      "category": "General",
+      "keywords": [
+        "semiconductor devices",
+        "eca01"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA18",
+      "course_code": "ECA18",
+      "course_name": "Optoelectronics and Optical Communication",
+      "category": "General",
+      "keywords": [
+        "optoelectronics and optical communication",
+        "eca18"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ENA09",
+      "course_code": "ENA09",
+      "course_name": "Waste to Energy Conversion",
+      "category": "General",
+      "keywords": [
+        "waste to energy conversion",
+        "ena09"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA15",
+      "course_code": "CSA15",
+      "course_name": "Cloud Computing and Big Data Analytics",
+      "category": "General",
+      "keywords": [
+        "cloud computing and big data analytics",
+        "csa15"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "EEA09",
+      "course_code": "EEA09",
+      "course_name": "Power Systems",
+      "category": "General",
+      "keywords": [
+        "power systems",
+        "eea09"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA22",
+      "course_code": "BTA22",
+      "course_name": "Characterization and Fabrication of Nanomaterials",
+      "category": "General",
+      "keywords": [
+        "characterization and fabrication of nanomaterials",
+        "bta22"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA37",
+      "course_code": "BTA37",
+      "course_name": "Environmental Microbiology and Bioremediation",
+      "category": "General",
+      "keywords": [
+        "environmental microbiology and bioremediation",
+        "bta37"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA24",
+      "course_code": "BTA24",
+      "course_name": "Medical Biotechnology",
+      "category": "General",
+      "keywords": [
+        "medical biotechnology",
+        "bta24"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "DSA01",
+      "course_code": "DSA01",
+      "course_name": "Object Oriented Programming with C++",
+      "category": "General",
+      "keywords": [
+        "object oriented programming with c++",
+        "dsa01"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA11",
+      "course_code": "CSA11",
+      "course_name": "Object Oriented Analysis and Design",
+      "category": "General",
+      "keywords": [
+        "object oriented analysis and design",
+        "csa11"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA10",
+      "course_code": "UBA10",
+      "course_name": "Numerical Methods",
+      "category": "General",
+      "keywords": [
+        "numerical methods",
+        "uba10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA33",
+      "course_code": "BMA33",
+      "course_name": "Biotelemetry and Telemedicine",
+      "category": "General",
+      "keywords": [
+        "biotelemetry and telemedicine",
+        "bma33"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA32",
+      "course_code": "BMA32",
+      "course_name": "Medical Photonics",
+      "category": "General",
+      "keywords": [
+        "medical photonics",
+        "bma32"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA11",
+      "course_code": "UBA11",
+      "course_name": "Probability and Random Processes",
+      "category": "General",
+      "keywords": [
+        "probability and random processes",
+        "uba11"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA05",
+      "course_code": "UBA05",
+      "course_name": "Engineering Mathematics II",
+      "category": "General",
+      "keywords": [
+        "engineering mathematics ii",
+        "uba05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA31",
+      "course_code": "BMA31",
+      "course_name": "Analog Circuits",
+      "category": "General",
+      "keywords": [
+        "analog circuits",
+        "bma31"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA12",
+      "course_code": "BMA12",
+      "course_name": "Introduction to Rehabilitation Engineering",
+      "category": "General",
+      "keywords": [
+        "introduction to rehabilitation engineering",
+        "bma12"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA10",
+      "course_code": "ECA10",
+      "course_name": "Microprocessors and Microcontrollers",
+      "category": "General",
+      "keywords": [
+        "microprocessors and microcontrollers",
+        "eca10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA12",
+      "course_code": "ECA12",
+      "course_name": "Antennas and Wave Propagation",
+      "category": "General",
+      "keywords": [
+        "antennas and wave propagation",
+        "eca12"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MLA04",
+      "course_code": "MLA04",
+      "course_name": "Deep Learning",
+      "category": "General",
+      "keywords": [
+        "deep learning",
+        "mla04"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MLA03",
+      "course_code": "MLA03",
+      "course_name": "Reinforcement Learning",
+      "category": "General",
+      "keywords": [
+        "reinforcement learning",
+        "mla03"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MLA01",
+      "course_code": "MLA01",
+      "course_name": "Artificial Intelligence and Expert Systems",
+      "category": "General",
+      "keywords": [
+        "artificial intelligence and expert systems",
+        "mla01"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MLA02",
+      "course_code": "MLA02",
+      "course_name": "Fundamentals of Machine Learning",
+      "category": "General",
+      "keywords": [
+        "fundamentals of machine learning",
+        "mla02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ITA03",
+      "course_code": "ITA03",
+      "course_name": "Mobile Computing",
+      "category": "General",
+      "keywords": [
+        "mobile computing",
+        "ita03"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA37",
+      "course_code": "CSA37",
+      "course_name": "Software Testing",
+      "category": "General",
+      "keywords": [
+        "software testing",
+        "csa37"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ITA05",
+      "course_code": "ITA05",
+      "course_name": "Computer Vision",
+      "category": "General",
+      "keywords": [
+        "computer vision",
+        "ita05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ITA02",
+      "course_code": "ITA02",
+      "course_name": "Web Technology",
+      "category": "General",
+      "keywords": [
+        "web technology",
+        "ita02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ITA04",
+      "course_code": "ITA04",
+      "course_name": "Statistics with R Programming",
+      "category": "General",
+      "keywords": [
+        "statistics with r programming",
+        "ita04"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA03",
+      "course_code": "CSA03",
+      "course_name": "Data Structures",
+      "category": "General",
+      "keywords": [
+        "data structures",
+        "csa03"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA30",
+      "course_code": "BTA30",
+      "course_name": "Instrumental Methods of Analysis",
+      "category": "General",
+      "keywords": [
+        "instrumental methods of analysis",
+        "bta30"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA15",
+      "course_code": "BIA15",
+      "course_name": "Systems Biology",
+      "category": "General",
+      "keywords": [
+        "systems biology",
+        "bia15"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA09",
+      "course_code": "BIA09",
+      "course_name": "Molecular Modeling and Drug Designing",
+      "category": "General",
+      "keywords": [
+        "molecular modeling and drug designing",
+        "bia09"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ACA05",
+      "course_code": "ACA05",
+      "course_name": "Engineering Properties of Agricultural Produce",
+      "category": "General",
+      "keywords": [
+        "engineering properties of agricultural produce",
+        "aca05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ACA18",
+      "course_code": "ACA18",
+      "course_name": "Plastic Applications in Agriculture",
+      "category": "General",
+      "keywords": [
+        "plastic applications in agriculture",
+        "aca18"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA49",
+      "course_code": "UBA49",
+      "course_name": "Engineering Chemistry",
+      "category": "General",
+      "keywords": [
+        "engineering chemistry",
+        "uba49"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA03",
+      "course_code": "BIA03",
+      "course_name": "Basic Bioinformatics",
+      "category": "General",
+      "keywords": [
+        "basic bioinformatics",
+        "bia03"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "AEA25",
+      "course_code": "AEA25",
+      "course_name": "Automotive Pollution and Control",
+      "category": "General",
+      "keywords": [
+        "automotive pollution and control",
+        "aea25"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA11",
+      "course_code": "BTA11",
+      "course_name": "Downstream Processing",
+      "category": "General",
+      "keywords": [
+        "downstream processing",
+        "bta11"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA41",
+      "course_code": "CSA41",
+      "course_name": "Internet of Things",
+      "category": "General",
+      "keywords": [
+        "internet of things",
+        "csa41"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA09",
+      "course_code": "ECA09",
+      "course_name": "Digital Signal Processing",
+      "category": "General",
+      "keywords": [
+        "digital signal processing",
+        "eca09"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA29",
+      "course_code": "UBA29",
+      "course_name": "Technical English",
+      "category": "General",
+      "keywords": [
+        "technical english",
+        "uba29"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA35",
+      "course_code": "BIA35",
+      "course_name": "Immunoinformatics",
+      "category": "General",
+      "keywords": [
+        "immunoinformatics",
+        "bia35"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA15",
+      "course_code": "MEA15",
+      "course_name": "Automation in Manufacturing",
+      "category": "General",
+      "keywords": [
+        "automation in manufacturing",
+        "mea15"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA03",
+      "course_code": "ECA03",
+      "course_name": "Signals and Systems",
+      "category": "General",
+      "keywords": [
+        "signals and systems",
+        "eca03"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA66",
+      "course_code": "CEA66",
+      "course_name": "Building Planning and Modeling",
+      "category": "General",
+      "keywords": [
+        "building planning and modeling",
+        "cea66"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "PDM17",
+      "course_code": "PDM17",
+      "course_name": "Design of Hydraulic and Pneumatic Systems",
+      "category": "General",
+      "keywords": [
+        "design of hydraulic and pneumatic systems",
+        "pdm17"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA02",
+      "course_code": "BMA02",
+      "course_name": "Anatomy and Human Physiology",
+      "category": "General",
+      "keywords": [
+        "anatomy and human physiology",
+        "bma02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA05",
+      "course_code": "BIA05",
+      "course_name": "Genetics",
+      "category": "General",
+      "keywords": [
+        "genetics",
+        "bia05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA01",
+      "course_code": "BIA01",
+      "course_name": "Biochemistry",
+      "category": "General",
+      "keywords": [
+        "biochemistry",
+        "bia01"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA02",
+      "course_code": "BIA02",
+      "course_name": "Cell Biology",
+      "category": "General",
+      "keywords": [
+        "cell biology",
+        "bia02"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA48",
+      "course_code": "UBA48",
+      "course_name": "Engineering Physics",
+      "category": "General",
+      "keywords": [
+        "engineering physics",
+        "uba48"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA28",
+      "course_code": "UBA28",
+      "course_name": "Professional Ethics and Legal Practices",
+      "category": "General",
+      "keywords": [
+        "professional ethics and legal practices",
+        "uba28"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA07",
+      "course_code": "CEA07",
+      "course_name": "Strength of Materials",
+      "category": "General",
+      "keywords": [
+        "strength of materials",
+        "cea07"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA53",
+      "course_code": "UBA53",
+      "course_name": "Probabilistic Methods and Linear Algebra",
+      "category": "General",
+      "keywords": [
+        "probabilistic methods and linear algebra",
+        "uba53"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "UBA54",
+      "course_code": "UBA54",
+      "course_name": "Design Thinking",
+      "category": "General",
+      "keywords": [
+        "design thinking",
+        "uba54"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "COM06",
+      "course_code": "COM06",
+      "course_name": "Internet of Things",
+      "category": "General",
+      "keywords": [
+        "internet of things",
+        "com06"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA04",
+      "course_code": "CEA04",
+      "course_name": "Geology and Disaster Mitigation",
+      "category": "General",
+      "keywords": [
+        "geology and disaster mitigation",
+        "cea04"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MTL10",
+      "course_code": "MTL10",
+      "course_name": "Scaffold Fabrication / Lab Instrumentation",
+      "category": "General",
+      "keywords": [
+        "scaffold fabrication / lab instrumentation",
+        "mtl10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA44",
+      "course_code": "CSA44",
+      "course_name": "Distributed Systems",
+      "category": "General",
+      "keywords": [
+        "distributed systems",
+        "csa44"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA46",
+      "course_code": "CSA46",
+      "course_name": "Soft Computing",
+      "category": "General",
+      "keywords": [
+        "soft computing",
+        "csa46"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA47",
+      "course_code": "CSA47",
+      "course_name": "Deep Learning",
+      "category": "General",
+      "keywords": [
+        "deep learning",
+        "csa47"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA48",
+      "course_code": "CSA48",
+      "course_name": "Exploratory Data Analysis",
+      "category": "General",
+      "keywords": [
+        "exploratory data analysis",
+        "csa48"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA27",
+      "course_code": "ECA27",
+      "course_name": "Automotive Electronics",
+      "category": "General",
+      "keywords": [
+        "automotive electronics",
+        "eca27"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA29",
+      "course_code": "CSA29",
+      "course_name": "Programming Usable Interface",
+      "category": "General",
+      "keywords": [
+        "programming usable interface",
+        "csa29"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA21",
+      "course_code": "BMA21",
+      "course_name": "Biometric System",
+      "category": "General",
+      "keywords": [
+        "biometric system",
+        "bma21"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA14",
+      "course_code": "BIA14",
+      "course_name": "Computational Biology",
+      "category": "General",
+      "keywords": [
+        "computational biology",
+        "bia14"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "EEA20",
+      "course_code": "EEA20",
+      "course_name": "Power Quality and Facts",
+      "category": "General",
+      "keywords": [
+        "power quality and facts",
+        "eea20"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ACA25",
+      "course_code": "ACA25",
+      "course_name": "Food Quality and Control",
+      "category": "General",
+      "keywords": [
+        "food quality and control",
+        "aca25"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA23",
+      "course_code": "MEA23",
+      "course_name": "Design of Material Handling Equipment",
+      "category": "General",
+      "keywords": [
+        "design of material handling equipment",
+        "mea23"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA34",
+      "course_code": "ECA34",
+      "course_name": "Introduction to Robotics",
+      "category": "General",
+      "keywords": [
+        "introduction to robotics",
+        "eca34"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA58",
+      "course_code": "CSA58",
+      "course_name": "DevOps Principles and Practices",
+      "category": "General",
+      "keywords": [
+        "devops principles and practices",
+        "csa58"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA22",
+      "course_code": "BMA22",
+      "course_name": "Telehealth Technology",
+      "category": "General",
+      "keywords": [
+        "telehealth technology",
+        "bma22"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA17",
+      "course_code": "BIA17",
+      "course_name": "Chromatographic Techniques",
+      "category": "General",
+      "keywords": [
+        "chromatographic techniques",
+        "bia17"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "EEA21",
+      "course_code": "EEA21",
+      "course_name": "Power System Dynamics and Control",
+      "category": "General",
+      "keywords": [
+        "power system dynamics and control",
+        "eea21"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ACA28",
+      "course_code": "ACA28",
+      "course_name": "Development of Processed Products",
+      "category": "General",
+      "keywords": [
+        "development of processed products",
+        "aca28"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA24",
+      "course_code": "MEA24",
+      "course_name": "Design of Pressure Vessels and Piping",
+      "category": "General",
+      "keywords": [
+        "design of pressure vessels and piping",
+        "mea24"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA48",
+      "course_code": "ECA48",
+      "course_name": "Processor System Design",
+      "category": "General",
+      "keywords": [
+        "processor system design",
+        "eca48"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BMA30",
+      "course_code": "BMA30",
+      "course_name": "Medical Informatics",
+      "category": "General",
+      "keywords": [
+        "medical informatics",
+        "bma30"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA20",
+      "course_code": "ECA20",
+      "course_name": "Mobile Application Development",
+      "category": "General",
+      "keywords": [
+        "mobile application development",
+        "eca20"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ECA44",
+      "course_code": "ECA44",
+      "course_name": "Design of Embedded Systems",
+      "category": "General",
+      "keywords": [
+        "design of embedded systems",
+        "eca44"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BIA19",
+      "course_code": "BIA19",
+      "course_name": "Cancer Biology",
+      "category": "General",
+      "keywords": [
+        "cancer biology",
+        "bia19"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "EEA22",
+      "course_code": "EEA22",
+      "course_name": "Electrical and Hybrid Vehicles",
+      "category": "General",
+      "keywords": [
+        "electrical and hybrid vehicles",
+        "eea22"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ACA26",
+      "course_code": "ACA26",
+      "course_name": "Food Plant Design and Management",
+      "category": "General",
+      "keywords": [
+        "food plant design and management",
+        "aca26"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA40",
+      "course_code": "MEA40",
+      "course_name": "Supply Chain Management",
+      "category": "General",
+      "keywords": [
+        "supply chain management",
+        "mea40"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CSA64",
+      "course_code": "CSA64",
+      "course_name": "Google Cloud Certification",
+      "category": "General",
+      "keywords": [
+        "google cloud certification",
+        "csa64"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "EEA05",
+      "course_code": "EEA05",
+      "course_name": "Control Systems",
+      "category": "General",
+      "keywords": [
+        "control systems",
+        "eea05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA10",
+      "course_code": "MEA10",
+      "course_name": "Heat and Mass Transfers",
+      "category": "General",
+      "keywords": [
+        "heat and mass transfers",
+        "mea10"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "MEA11",
+      "course_code": "MEA11",
+      "course_name": "Design of Machine Elements",
+      "category": "General",
+      "keywords": [
+        "design of machine elements",
+        "mea11"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "CEA05",
+      "course_code": "CEA05",
+      "course_name": "Surveying",
+      "category": "General",
+      "keywords": [
+        "surveying",
+        "cea05"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "BTA09",
+      "course_code": "BTA09",
+      "course_name": "Genetic Engineering",
+      "category": "General",
+      "keywords": [
+        "genetic engineering",
+        "bta09"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
+      "course_id": "ENGSW",
+      "course_code": "ENGSW",
+      "course_name": "Swayam / Specialized Engineering Courses",
+      "category": "General",
+      "keywords": [
+        "swayam / specialized engineering courses",
+        "engsw"
+      ],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
     }
   ];
 
@@ -846,7 +3354,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
           "how cgpa works"
         ],
         "responses": [
-          "Enter your subjects and grades. The system automatically calculates CGPA based on university grading rules."
+          "To calculate CGPA, you can either manually enter the number of subjects for each grade ('S', 'A', 'B', etc.), or log your grades for each course in the 'My Courses' section of the Learning Zone for an automatic calculation."
         ]
     },
     {
@@ -863,13 +3371,13 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
           "attendance percentage"
         ],
         "responses": [
-          "Enter total classes and attended classes. The system calculates your attendance percentage instantly."
+          "Enter the total number of classes conducted and the number of classes you attended for a subject. The system will instantly show you the attendance percentage and tell you how many classes you can afford to miss or need to attend to meet the requirement."
         ]
     },
     {
         "tag": "study_materials",
-        "patterns": ["notes", "study materials", "files", "pdf", "question paper"],
-        "responses": ["You can find notes, PDFs and question papers here 👉 https://app.saveethahub.tech/file-manager"]
+        "patterns": ["notes", "pdf", "question paper", "study materials"],
+        "responses": ["You can find notes, PDFs and other resources in the Concept Map library on the main dashboard, or by navigating to a specific course in the Learning Zone."]
     },
     {
       "tag": "login",
@@ -887,13 +3395,13 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
           "account issue"
         ],
         "responses": [
-          "If you're facing login issues, please double-check your credentials or contact support via the Contact page."
+          "If you're facing login issues with your Google account, ensure you are using the correct @saveetha.com email. For other problems, please use the 'Report Issue' button on the login page."
         ]
     },
     {
         "tag": "events",
         "patterns": ["events", "upcoming events", "workshops", "hackathon"],
-        "responses": ["Check upcoming events here 👉 https://app.saveethahub.tech/events"]
+        "responses": ["You can check for upcoming university events and hackathons in the 'Resources' section in the main navigation menu."]
     },
     {
         "tag": "faq_general",
@@ -908,7 +3416,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
           "Yes ✅ SaveethaHub is completely free for students.",
           "No payment is required to use the tools.",
           "This is a student-support platform, not an official college website.",
-          "Your data is handled securely and never shared."
+          "Your data is handled securely and never shared. We do not store any passwords."
         ]
     },
     {
@@ -919,7 +3427,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
           "exam eligibility"
         ],
         "responses": [
-          "Students usually require 75% attendance to be eligible for exams. Please confirm with your department."
+          "Students usually require 75% attendance to be eligible for exams. However, this can vary, so please confirm with your department for the official requirement."
         ]
     },
     {
@@ -975,4 +3483,5 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     }
   ];
+
 
