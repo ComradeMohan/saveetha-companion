@@ -39,7 +39,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
         } else {
             // User is not logged in
             if (!isPublicPath && !isAdminOrLearnPath) {
-                router.push('/');
+                router.push('/login');
             }
         }
     }, [user, loading, pathname, router]);
