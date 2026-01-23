@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, where, getCountFromServer, getDocs, doc, getDoc, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
 import { startOfDay, differenceInDays } from 'date-fns';
@@ -31,6 +31,9 @@ interface DashboardData {
     updates: Update[];
 }
 
+const CACHE_KEY_PREFIX = 'dashboardData-';
+
+
 export default function useDashboardData() {
     const { user } = useAuth();
     const [data, setData] = useState<DashboardData>({
@@ -41,10 +44,9 @@ export default function useDashboardData() {
     });
     const [loading, setLoading] = useState(true);
 
-    const fetchDashboardData = useCallback(async (userId: string) => {
-        setLoading(true);
+    const fetchAndCacheData = useCallback(async (userId: string) => {
         try {
-            // Fetch CGPA, next event, and updates in parallel
+            // Fetch all data in parallel
             const [cgpaSnap, eventsSnap, updatesSnap] = await Promise.all([
                 getDoc(doc(db, 'students_cgpa', userId)),
                 getDocs(query(
@@ -56,10 +58,8 @@ export default function useDashboardData() {
                 getDocs(query(collection(db, 'updates'), orderBy('createdAt', 'desc'), limit(5)))
             ]);
 
-            // Process CGPA data
+            // Process data
             const cgpaData = cgpaSnap.exists() ? (cgpaSnap.data() as CgpaData) : null;
-
-            // Process event data
             let nextEventData: Event | null = null;
             let daysUntil = 0;
             if (!eventsSnap.empty) {
@@ -67,20 +67,20 @@ export default function useDashboardData() {
                 nextEventData = { id: eventDoc.id, ...eventDoc.data() } as Event;
                 daysUntil = differenceInDays(new Date(nextEventData.startDate), new Date());
             }
-
-            // Process updates data
             const updatesData: Update[] = updatesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Update));
-
-            setData({
+            
+            const freshData: DashboardData = {
                 cgpa: cgpaData,
                 nextEvent: nextEventData,
                 daysUntilNextEvent: daysUntil,
                 updates: updatesData
-            });
-
+            };
+            
+            // Set state and update cache
+            setData(freshData);
+            localStorage.setItem(`${CACHE_KEY_PREFIX}${userId}`, JSON.stringify(freshData));
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
-            // We remove the toast from here to prevent loops. The error is logged.
         } finally {
             setLoading(false);
         }
@@ -88,11 +88,29 @@ export default function useDashboardData() {
 
     useEffect(() => {
         if (user) {
-            fetchDashboardData(user.uid);
+            const cacheKey = `${CACHE_KEY_PREFIX}${user.uid}`;
+            const cachedDataJSON = localStorage.getItem(cacheKey);
+
+            if (cachedDataJSON) {
+                try {
+                    const cachedData = JSON.parse(cachedDataJSON);
+                    setData(cachedData);
+                    setLoading(false); // Show cached data immediately
+                } catch (e) {
+                    console.error("Failed to parse cached dashboard data:", e);
+                    setLoading(true);
+                }
+            } else {
+                 setLoading(true);
+            }
+
+            // Always fetch fresh data in the background
+            fetchAndCacheData(user.uid);
+            
         } else {
             setLoading(false);
         }
-    }, [user, fetchDashboardData]);
+    }, [user, fetchAndCacheData]);
 
     return { data, loading };
 }

@@ -3483,5 +3483,3 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       ]
     }
   ];
-
-
