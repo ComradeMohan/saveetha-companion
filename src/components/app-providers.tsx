@@ -32,10 +32,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
         const isPublicPath = publicPaths.includes(pathname) || pathname === '/' || pathname.startsWith('/projects') || pathname.startsWith('/pdd-projects');
 
         if (user) {
-            // User is logged in
-            if (pathname === '/') {
-                router.push('/dashboard');
-            }
+            // User is logged in. The root page now handles the dashboard view.
         } else {
             // User is not logged in
             if (!isPublicPath && !isAdminOrLearnPath) {

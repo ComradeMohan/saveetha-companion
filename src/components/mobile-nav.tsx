@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -21,7 +22,7 @@ export default function MobileNav() {
   const navLinks = React.useMemo(() => {
     if (user) {
        return [
-            { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { href: '/', label: 'Home', icon: LayoutDashboard },
             { href: '/ai-chat', label: 'AI Chat', icon: Bot },
             { href: '/learn', label: 'Learn', icon: Book },
             { href: '/profile', label: 'Profile', icon: User },
@@ -40,7 +41,11 @@ export default function MobileNav() {
     if (exactMatchIndex !== -1) return exactMatchIndex;
 
     if (pathname.startsWith('/admin')) return -1;
-    if (pathname === '/') return 0;
+    
+    // For logged-in users, highlight 'Home' when they are on the root/dashboard.
+    if (user && pathname === '/') {
+        return navLinks.findIndex(link => link.href === '/');
+    }
     
     const sortedLinks = [...navLinks].sort((a,b) => b.href.length - a.href.length);
     const prefixMatch = sortedLinks.find(link => link.href !== '/' && pathname.startsWith(link.href));
@@ -60,7 +65,7 @@ export default function MobileNav() {
     }
 
     return -1; 
-  }, [pathname, navLinks]);
+  }, [pathname, navLinks, user]);
 
 
   const handleNavLinkClick = () => {
