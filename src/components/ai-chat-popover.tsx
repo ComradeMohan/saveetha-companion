@@ -24,6 +24,7 @@ interface Message {
   role: 'user' | 'bot';
   content: string;
   sources?: TutorOutput['sources'];
+  actions?: { text: string; query: string }[];
 }
 
 interface LocationData {
@@ -86,7 +87,7 @@ const linkify = (text: string) => {
           rel="noopener noreferrer"
           className="text-primary underline hover:text-primary/80"
         >
-          View Link
+          {part}
         </a>
       );
     }
@@ -175,7 +176,7 @@ export function AiChatPopover() {
       addDoc(collection(db, 'chat-logs'), {
         userId: userIdToSave,
         userName: userNameToSave,
-        messages: messagesRef.current,
+        messages: messagesRef.current.map(({ sources, actions, ...rest }) => rest),
         createdAt: serverTimestamp(),
         source: 'popover'
       }).catch(error => {
@@ -253,24 +254,39 @@ export function AiChatPopover() {
     forceScroll();
   }, [messages, forceScroll]);
   
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
+  const handleSendMessage = async (e: React.FormEvent | string) => {
+    let currentInput: string;
+    const isActionClick = typeof e === 'string';
 
-    const userMessage: Message = { role: 'user', content: input };
+    if (isActionClick) {
+        currentInput = e;
+        setMessages(prev => prev.map(m => m.role === 'bot' ? { ...m, actions: undefined } : m));
+    } else {
+        e.preventDefault();
+        currentInput = input;
+    }
+    
+    if (!currentInput.trim() || loading) return;
+
+    const userMessage: Message = { role: 'user', content: currentInput };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    
+    if (!isActionClick) {
+        setInput('');
+    }
     setLoading(true);
 
     try {
-      const result = await askTutor({ question: input });
+      const history = messagesRef.current.map(m => ({role: m.role, content: m.content}));
+      const result = await askTutor({ question: currentInput, history });
       const botMessage: Message = { role: 'bot', content: result.answer, sources: result.sources };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error asking tutor:', error);
       const errorMessage: Message = { role: 'bot', content: 'Sorry, I encountered an error. Please ensure knowledge has been fed in the admin panel and try again.' };
       setMessages(prev => [...prev, errorMessage]);
-      setLoading(false);
+    } finally {
+        // The StreamingText component will set loading to false via onStreamEnd
     }
   };
 
@@ -282,18 +298,40 @@ export function AiChatPopover() {
     }
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
-        let welcomeMessage = `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`;
+        let welcomeMessage: Message;
         if (location && weather) {
-          welcomeMessage = `
+          welcomeMessage = {
+            role: 'bot',
+            content: `
 It's currently ${Math.round(weather.temperature)}°C and ${getWeatherDescription(weather.weathercode).toLowerCase()} in ${location.city}.
 Wind: ${weather.windspeed.toFixed(1)} m/s, Humidity: ${weather.relativehumidity}%.
 How can I help you today?
-          `.trim();
+          `.trim(),
+            actions: [
+                { text: "Computer Science Courses", query: "List all CSE courses" },
+                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+                { text: "Explain Java", query: "Explain Java" },
+            ]
+          };
+        } else {
+           welcomeMessage = {
+             role: 'bot',
+             content: `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`,
+             actions: [
+                { text: "Computer Science Courses", query: "List all CSE courses" },
+                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+                { text: "Explain Java", query: "Explain Java" },
+            ]
+           }
         }
-        setMessages([{ role: 'bot', content: welcomeMessage }]);
+        setMessages([welcomeMessage]);
       }, 200);
     }
   }
+  
+  const handleActionClick = (query: string) => {
+    handleSendMessage(query);
+  };
 
   const renderChatUI = ({ expanded = false }) => (
     <div className={cn("flex flex-col", expanded ? "h-full" : "h-[60vh]")}>
@@ -344,6 +382,15 @@ How can I help you today?
                                     <StreamingText text={message.content} onStreamEnd={handleStreamEnd} onUpdate={forceScroll} />
                                 ) : (
                                     <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
+                                )}
+                                {message.actions && !loading && (
+                                    <div className="mt-2.5 border-t pt-2 space-y-2">
+                                        {message.actions.map((action, i) => (
+                                            <Button key={i} size="sm" variant="outline" className="w-full justify-start h-auto py-1.5 text-left" onClick={() => handleActionClick(action.query)}>
+                                                {action.text}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 )}
                                 {message.sources && message.sources.length > 0 && (
                                     <div className="mt-2.5 border-t pt-2">

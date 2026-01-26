@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An intent-based chatbot that answers questions based on a predefined knowledge base.
@@ -15,6 +14,10 @@ import { intents, courses } from '@/lib/knowledge-base';
 // Define Zod schemas for input and output
 const TutorInputSchema = z.object({
   question: z.string().describe('The question from the user.'),
+  history: z.array(z.object({
+      role: z.enum(['user', 'bot']),
+      content: z.string()
+  })).optional().describe('The conversation history.')
 });
 export type TutorInput = z.infer<typeof TutorInputSchema>;
 
@@ -46,6 +49,7 @@ const tutorFlow = ai.defineFlow(
   },
   async (input) => {
     const userQuestion = input.question.toLowerCase().trim();
+    const history = input.history || [];
     
     // 1. Specific Course Lookup
     for (const course of courses) {
@@ -68,7 +72,7 @@ const tutorFlow = ai.defineFlow(
                     answer += "\n\n**Available Resources:**\n";
                     resources.forEach(([name, url]) => {
                          const resourceName = name.replace(/_url/g, '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                         answer += `• ${resourceName}: ${url}\n`;
+                         answer += `• [${resourceName}](${url})\n`;
                     });
                 } else {
                     answer += "\n\nThis topic is under preparation. We’ll notify once available."
@@ -78,32 +82,31 @@ const tutorFlow = ai.defineFlow(
         }
     }
 
-    // 2. General Intent Matching
-    let matchedIntentResponse: string | null = null;
-    for (const intent of intents) {
-        for (const pattern of intent.patterns) {
-            if (userQuestion.includes(pattern.toLowerCase())) {
-                if (Array.isArray(intent.responses)) {
-                   matchedIntentResponse = intent.responses[Math.floor(Math.random() * intent.responses.length)];
-                }
-                break;
-            }
-        }
-        if (matchedIntentResponse) break;
-    }
-
-    if (matchedIntentResponse) {
-        const cleanAnswer = matchedIntentResponse.replace(/:contentReference\[.*?\]\{.*?\}/g, '').trim();
-        return { answer: cleanAnswer, sources: [] };
-    }
+    // 2. Fallback to Generative AI
+    const historyForAI = history.map(h => ({
+        role: h.role === 'bot' ? 'model' : 'user',
+        parts: [{text: h.content}]
+    }));
     
-    // 3. Fallback
-    const fallbackIntent = intents.find(i => i.tag === 'fallback');
-    if (fallbackIntent) {
-        const response = fallbackIntent.responses[Math.floor(Math.random() * fallbackIntent.responses.length)];
-        return { answer: response, sources: [] };
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.0-flash',
+      prompt: `You are Comrade, a friendly and helpful academic assistant for Saveetha Engineering College students. Your primary role is to answer questions about courses and academic life.
+      
+      - If the user asks about a specific course, provide information about it.
+      - If the user asks a general knowledge question (e.g., "what is java?"), provide a helpful and accurate response.
+      - Keep responses concise and easy to understand.
+      - If you don't know the answer, say "I'm not sure how to help with that. Could you try rephrasing?".
+
+      User's question: "${input.question}"
+      `,
+      history: historyForAI,
+      output: { schema: TutorOutputSchema },
+    });
+    
+    if (!output) {
+      return { answer: "I'm not sure how to help with that. Could you try rephrasing?", sources: [] };
     }
 
-    return { answer: "I'm not sure how to help with that. Could you try rephrasing?", sources: [] };
+    return output;
   }
 );

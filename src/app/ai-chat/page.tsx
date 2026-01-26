@@ -16,11 +16,12 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { v4 as uuidv4 } from 'uuid';
 
-// Interfaces and helper components from ai-chat-popover
+// Interfaces and helper components
 interface Message {
   role: 'user' | 'bot';
   content: string;
   sources?: TutorOutput['sources'];
+  actions?: { text: string; query: string }[];
 }
 
 interface LocationData {
@@ -60,7 +61,7 @@ const linkify = (text: string) => {
           rel="noopener noreferrer"
           className="text-primary underline hover:text-primary/80"
         >
-          View Link
+          {part}
         </a>
       );
     }
@@ -140,15 +141,31 @@ function AIChatPageContent() {
         setLocation(data.location);
         setWeather(data.weather);
         
-        const welcomeMessage = `
+        const welcomeMessage: Message = { 
+            role: 'bot', 
+            content: `
 It's currently ${Math.round(data.weather.temperature)}°C and ${getWeatherDescription(data.weather.weathercode).toLowerCase()} in ${data.location.city}.
 How can I help you today?
-        `.trim();
-        setMessages([{ role: 'bot', content: welcomeMessage }]);
+        `.trim(),
+            actions: [
+                { text: "Computer Science Courses", query: "List all CSE courses" },
+                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+                { text: "Explain Java", query: "Explain Java" },
+            ]
+        };
+        setMessages([welcomeMessage]);
 
       } catch (error) {
         console.error("Weather/Location fetch error on chat page:", error);
-        setMessages([{ role: 'bot', content: `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?` }]);
+        setMessages([{
+            role: 'bot',
+            content: `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`,
+            actions: [
+                { text: "Computer Science Courses", query: "List all CSE courses" },
+                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+                { text: "Explain Java", query: "Explain Java" },
+            ]
+        }]);
       }
     };
     fetchWeatherAndLocation();
@@ -176,7 +193,7 @@ How can I help you today?
     addDoc(collection(db, 'chat-logs'), {
       userId: userIdToSave,
       userName: userNameToSave,
-      messages: messagesRef.current,
+      messages: messagesRef.current.map(({ sources, actions, ...rest }) => rest),
       createdAt: serverTimestamp(),
       source: 'page'
     }).catch(error => {
@@ -196,17 +213,31 @@ How can I help you today?
     };
   }, [saveChatLog]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
+  const handleSendMessage = async (e: React.FormEvent | string) => {
+    let currentInput: string;
+    const isActionClick = typeof e === 'string';
 
-    const userMessage: Message = { role: 'user', content: input };
+    if (isActionClick) {
+        currentInput = e;
+        setMessages(prev => prev.map(m => m.role === 'bot' ? { ...m, actions: undefined } : m));
+    } else {
+        e.preventDefault();
+        currentInput = input;
+    }
+    
+    if (!currentInput.trim() || loading) return;
+
+    const userMessage: Message = { role: 'user', content: currentInput };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    
+    if (!isActionClick) {
+        setInput('');
+    }
     setLoading(true);
 
     try {
-      const result = await askTutor({ question: input });
+      const history = messagesRef.current.map(m => ({role: m.role, content: m.content}));
+      const result = await askTutor({ question: currentInput, history });
       const botMessage: Message = { role: 'bot', content: result.answer, sources: result.sources };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
@@ -215,6 +246,10 @@ How can I help you today?
       setMessages(prev => [...prev, errorMessage]);
       setLoading(false);
     }
+  };
+  
+  const handleActionClick = (query: string) => {
+    handleSendMessage(query);
   };
 
   return (
@@ -250,6 +285,15 @@ How can I help you today?
                                         <StreamingText text={message.content} onStreamEnd={handleStreamEnd} onUpdate={forceScroll} />
                                     ) : (
                                         <p className="whitespace-pre-wrap">{linkify(message.content)}</p>
+                                    )}
+                                     {message.actions && !loading && (
+                                        <div className="mt-2.5 border-t pt-2 space-y-2">
+                                            {message.actions.map((action, i) => (
+                                                <Button key={i} size="sm" variant="outline" className="w-full justify-start h-auto py-1.5 text-left" onClick={() => handleActionClick(action.query)}>
+                                                    {action.text}
+                                                </Button>
+                                            ))}
+                                        </div>
                                     )}
                                     {message.sources && message.sources.length > 0 && (
                                         <div className="mt-2.5 border-t pt-2">
