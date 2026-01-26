@@ -158,7 +158,7 @@ export function AiChatPopover() {
         return;
       }
       
-      let userIdToSave: string | undefined;
+      let userIdToSave: string;
       let userNameToSave: string;
 
       if (user) {
@@ -182,18 +182,15 @@ export function AiChatPopover() {
         console.error("Error saving chat log:", error);
       });
 
-      // Reset for next session
       messagesRef.current = [];
-      setMessages([]);
-      if (!user) { // only reset session for anon users
+      if (!user) {
         sessionIdRef.current = null;
       }
   }, [user, profile]);
 
   useEffect(() => {
+    // This will run when the entire app is being unmounted/closed,
     return () => {
-      // This will run when the entire app is being unmounted/closed,
-      // acting as a final failsafe to save the chat.
       saveChatLog();
     };
   }, [saveChatLog]);
@@ -281,6 +278,7 @@ export function AiChatPopover() {
     setOpen(isOpen);
     if (!isOpen) {
         saveChatLog(); // Save when the popover is closed.
+        setMessages([]); // Clear messages for next session
     }
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
@@ -305,7 +303,7 @@ How can I help you today?
                     <AvatarFallback><Bot className="h-4 w-4"/></AvatarFallback>
                 </Avatar>
                 <div>
-                    <p className="text-sm font-semibold">AI Assistant</p>
+                    <p className="text-sm font-semibold">Comrade</p>
                     <p className="text-xs text-muted-foreground">{location ? `${location.city}, ${location.country_name}` : "Online"}</p>
                 </div>
             </div>
@@ -318,6 +316,7 @@ How can I help you today?
                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => {
                     if (expanded) {
                        saveChatLog();
+                       setMessages([]);
                        setIsExpanded(false);
                     }
                     else setOpen(false); // This will trigger save via onOpenChange
@@ -455,7 +454,7 @@ How can I help you today?
     {isExpanded && (
         <div 
             className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm animate-in fade-in-0 duration-300"
-            onClick={() => { saveChatLog(); setIsExpanded(false); }}
+            onClick={() => { saveChatLog(); setMessages([]); setIsExpanded(false); }}
         >
             <div 
                 className="fixed inset-4 sm:inset-8 z-[101]"

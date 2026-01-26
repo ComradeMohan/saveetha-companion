@@ -41,7 +41,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
         }
     }, [user, loading, pathname, router]);
 
-    const showHeaderAndFooter = !isAdminOrLearnPath;
+    const showHeaderAndFooter = !isAdminOrLearnPath && pathname !== '/ai-chat';
 
 
     return (

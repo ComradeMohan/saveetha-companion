@@ -154,35 +154,47 @@ How can I help you today?
     fetchWeatherAndLocation();
   }, [user]);
 
-  useEffect(() => {
-    // This function will be called when the component unmounts (e.g., page navigation)
-    return () => {
-      if (messagesRef.current.length > 1) { // Only save non-trivial chats
-        let userIdToSave: string | undefined;
-        let userNameToSave: string;
+  const saveChatLog = useCallback(() => {
+    if (messagesRef.current.length <= 1) {
+      return;
+    }
+    
+    let userIdToSave: string;
+    let userNameToSave: string;
 
-        if (user) {
-          userIdToSave = user.uid;
-          userNameToSave = profile?.name || user.displayName || 'Unknown';
-        } else {
-          // For anonymous users, create a session ID
-          if (!sessionIdRef.current) {
-            sessionIdRef.current = `anon_${uuidv4()}`;
-          }
-          userIdToSave = sessionIdRef.current;
-          userNameToSave = 'Anonymous';
-        }
-
-        addDoc(collection(db, 'chat-logs'), {
-          userId: userIdToSave,
-          userName: userNameToSave,
-          messages: messagesRef.current,
-          createdAt: serverTimestamp(),
-          source: 'page'
-        }).catch(error => console.error("Error saving chat log on page unload:", error));
+    if (user) {
+      userIdToSave = user.uid;
+      userNameToSave = profile?.name || user.displayName || 'Unknown';
+    } else {
+      if (!sessionIdRef.current) {
+        sessionIdRef.current = `anon_${uuidv4()}`;
       }
-    };
+      userIdToSave = sessionIdRef.current;
+      userNameToSave = 'Anonymous';
+    }
+    
+    addDoc(collection(db, 'chat-logs'), {
+      userId: userIdToSave,
+      userName: userNameToSave,
+      messages: messagesRef.current,
+      createdAt: serverTimestamp(),
+      source: 'page'
+    }).catch(error => {
+      console.error("Error saving chat log:", error);
+    });
+
+    messagesRef.current = [];
+    if (!user) {
+      sessionIdRef.current = null;
+    }
   }, [user, profile]);
+
+  useEffect(() => {
+    // This function will be called when the component unmounts
+    return () => {
+      saveChatLog();
+    };
+  }, [saveChatLog]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,14 +218,14 @@ How can I help you today?
   };
 
   return (
-    <Card className="w-full h-full flex flex-col shadow-lg">
+    <Card className="w-full h-full flex flex-col shadow-lg border-0 rounded-none">
         <CardHeader className="border-b">
             <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border-2 border-primary">
                     <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
                 </Avatar>
                 <div>
-                    <CardTitle>AI Assistant</CardTitle>
+                    <CardTitle>Comrade</CardTitle>
                     <CardDescription>{location ? `${location.city}, ${location.country_name}` : "Your personal guide"}</CardDescription>
                 </div>
             </div>
@@ -298,10 +310,8 @@ How can I help you today?
 
 export default function AIChatPage() {
     return (
-        <div className="h-screen w-screen flex flex-col">
-            <main className="flex-1 flex flex-col p-4 pt-20 md:pt-24 h-full">
-                <AIChatPageContent />
-            </main>
-        </div>
-    )
+        <main className="h-screen w-screen flex flex-col">
+            <AIChatPageContent />
+        </main>
+    );
 }
