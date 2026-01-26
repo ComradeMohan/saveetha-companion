@@ -51,6 +51,21 @@ const tutorFlow = ai.defineFlow(
   async (input) => {
     const userQuestion = input.question.toLowerCase().trim();
     
+    // Check for "list all cse courses" command
+    if (userQuestion.includes("list all cse courses")) {
+        const cseCourses = courses
+            .filter(c => c.category === 'Computer Science')
+            .map(c => `• ${c.course_code} - ${c.course_name}`)
+            .join('\n');
+        
+        if (cseCourses) {
+            const answer = `Here are the Computer Science (CSE) courses I know about:\n\n${cseCourses}`;
+            return { answer, sources: [] };
+        } else {
+             return { answer: "I couldn't find any CSE courses in my knowledge base.", sources: [] };
+        }
+    }
+
     // 1. Specific Course Lookup
     for (const course of courses) {
         const courseKeywords = [
@@ -95,7 +110,7 @@ const tutorFlow = ai.defineFlow(
 
     // 3. Final Fallback if no intent matches
     const fallbackIntent = intents.find(i => i.tag === 'fallback');
-    const fallbackResponse = fallbackIntent ? fallbackIntent.responses[0] : "I'm not sure how to help with that. Could you try rephrasing?";
+    const fallbackResponse = fallbackIntent ? fallbackIntent.responses[0] : "I can provide resources for specific courses. Please ask me about a course using its name or code (e.g., 'tell me about CSA09' or 'show me resources for Programming in Java'). How can I help you today?";
     
     return { answer: fallbackResponse, sources: [] };
   }
