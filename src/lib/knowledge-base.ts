@@ -1023,6 +1023,25 @@ export const courses = [
       "topics": []
     },
     {
+      "course_id": "DSA03",
+      "course_code": "DSA03",
+      "course_name": "Natural Language Processing",
+      "category": "Data Science",
+      "keywords": ["natural language processing", "nlp", "dsa03"],
+      "resources": {
+        "syllabus_url": "",
+        "concept_map_url": "",
+        "notes_url": "",
+        "lab_manual_url": "",
+        "textbook_url": "",
+        "tutorial_url": "",
+        "additional_resources": []
+      },
+      "views": 0,
+      "description": "This is a university course. Resources are being curated and will be available soon.",
+      "topics": []
+    },
+    {
       "course_id": "ECA02",
       "course_code": "ECA02",
       "course_name": "Digital Circuits",
@@ -1092,11 +1111,8 @@ export const courses = [
       "course_id": "DSA04",
       "course_code": "DSA04",
       "course_name": "Fundamentals of Data Science",
-      "category": "General",
-      "keywords": [
-        "fundamentals of data science",
-        "dsa04"
-      ],
+      "category": "Data Science",
+      "keywords": ["data science", "dsa04"],
       "resources": {
         "syllabus_url": "",
         "concept_map_url": "",
@@ -1180,11 +1196,8 @@ export const courses = [
       "course_id": "DSA06",
       "course_code": "DSA06",
       "course_name": "Data Handling and Visualization",
-      "category": "General",
-      "keywords": [
-        "data handling and visualization",
-        "dsa06"
-      ],
+      "category": "Data Science",
+      "keywords": ["data visualization", "dsa06", "data handling"],
       "resources": {
         "syllabus_url": "",
         "concept_map_url": "",
@@ -1375,28 +1388,6 @@ export const courses = [
       "topics": []
     },
     {
-      "course_id": "CSA15",
-      "course_code": "CSA15",
-      "course_name": "Cloud Computing and Big Data Analytics",
-      "category": "General",
-      "keywords": [
-        "cloud computing and big data analytics",
-        "csa15"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
       "course_id": "EEA09",
       "course_code": "EEA09",
       "course_name": "Power Systems",
@@ -1470,50 +1461,6 @@ export const courses = [
       "keywords": [
         "medical biotechnology",
         "bta24"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "DSA01",
-      "course_code": "DSA01",
-      "course_name": "Object Oriented Programming with C++",
-      "category": "General",
-      "keywords": [
-        "object oriented programming with c++",
-        "dsa01"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "CSA11",
-      "course_code": "CSA11",
-      "course_name": "Object Oriented Analysis and Design",
-      "category": "General",
-      "keywords": [
-        "object oriented analysis and design",
-        "csa11"
       ],
       "resources": {
         "syllabus_url": "",
@@ -1668,50 +1615,6 @@ export const courses = [
       "keywords": [
         "introduction to rehabilitation engineering",
         "bma12"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "ECA10",
-      "course_code": "ECA10",
-      "course_name": "Microprocessors and Microcontrollers",
-      "category": "General",
-      "keywords": [
-        "microprocessors and microcontrollers",
-        "eca10"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "ECA12",
-      "course_code": "ECA12",
-      "course_name": "Antennas and Wave Propagation",
-      "category": "General",
-      "keywords": [
-        "antennas and wave propagation",
-        "eca12"
       ],
       "resources": {
         "syllabus_url": "",
@@ -1888,50 +1791,6 @@ export const courses = [
       "keywords": [
         "web technology",
         "ita02"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "ITA04",
-      "course_code": "ITA04",
-      "course_name": "Statistics with R Programming",
-      "category": "General",
-      "keywords": [
-        "statistics with r programming",
-        "ita04"
-      ],
-      "resources": {
-        "syllabus_url": "",
-        "concept_map_url": "",
-        "notes_url": "",
-        "lab_manual_url": "",
-        "textbook_url": "",
-        "tutorial_url": "",
-        "additional_resources": []
-      },
-      "views": 0,
-      "description": "This is a university course. Resources are being curated and will be available soon.",
-      "topics": []
-    },
-    {
-      "course_id": "CSA03",
-      "course_code": "CSA03",
-      "course_name": "Data Structures",
-      "category": "General",
-      "keywords": [
-        "data structures",
-        "csa03"
       ],
       "resources": {
         "syllabus_url": "",
@@ -3477,9 +3336,7 @@ export const intents: { tag: string; patterns: string[]; responses: string[] }[]
       "tag": "fallback",
       "patterns": [],
       "responses": [
-        "Sorry, I didn't understand that. Can you rephrase?",
-        "I’m not sure about that. Try asking something else!",
-        "I can help with questions about SaveethaHub features, like calculators, events, and contact info."
+        "I can provide resources for specific courses. Please ask me about a course using its name or code (e.g., 'tell me about CSA09' or 'show me resources for Programming in Java')."
       ]
     }
   ];
