@@ -49,24 +49,42 @@ const getWeatherDescription = (code: number): string => {
     }
 };
 
-const linkify = (text: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.split(urlRegex).map((part, i) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={i}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary underline hover:text-primary/80"
-        >
-          {part}
-        </a>
-      );
+const linkify = (text: string): React.ReactNode[] => {
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    const combinedRegex = /(\[([^\]]+?)\]\((https?:\/\/[^\s)]+?)\))|(https?:\/\/[^\s]+)/g;
+    let match;
+
+    while ((match = combinedRegex.exec(text)) !== null) {
+        const [fullMatch, markdownMatch, linkText, linkUrl, rawUrl] = match;
+        const matchIndex = match.index;
+
+        if (matchIndex > lastIndex) {
+            parts.push(text.substring(lastIndex, matchIndex));
+        }
+
+        if (markdownMatch) {
+            parts.push(
+                <a key={matchIndex} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                    {linkText}
+                </a>
+            );
+        } else if (rawUrl) {
+            parts.push(
+                <a key={matchIndex} href={rawUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                    {rawUrl}
+                </a>
+            );
+        }
+
+        lastIndex = matchIndex + fullMatch.length;
     }
-    return part;
-  });
+
+    if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
+    }
+
+    return parts;
 };
 
 const StreamingText = ({ text, onStreamEnd, onUpdate }: { text: string; onStreamEnd: () => void; onUpdate: () => void; }) => {
