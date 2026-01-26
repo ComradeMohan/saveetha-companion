@@ -1,8 +1,7 @@
-
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Bot, FileText, Loader2, Send, User, Sun, Cloud, CloudRain, CloudSnow, Zap, Droplets, Thermometer, Wind } from 'lucide-react';
+import { Bot, FileText, Loader2, Send, User, Sun, Cloud, CloudRain, CloudSnow, Zap, Droplets, Thermometer, Wind, FilePlus2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -38,6 +37,8 @@ interface WeatherData {
   windspeed: number;
   relativehumidity: number;
 }
+
+const CHAT_HISTORY_STORAGE_KEY = 'ai-chat-history-page';
 
 const getWeatherDescription = (code: number): string => {
     switch (code) {
@@ -151,6 +152,20 @@ function AIChatPageContent() {
   }, [forceScroll]);
 
   useEffect(() => {
+    const savedHistory = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY);
+    if (savedHistory) {
+      try {
+        const parsedHistory = JSON.parse(savedHistory);
+        if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
+          setMessages(parsedHistory);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse chat history from storage", e);
+        localStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);
+      }
+    }
+
     const fetchWeatherAndLocation = async () => {
       try {
         const response = await fetch('/api/location-weather');
@@ -189,6 +204,12 @@ How can I help you today?
     fetchWeatherAndLocation();
   }, [user]);
 
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(messages));
+    }
+  }, [messages]);
+
   const saveChatLog = useCallback(() => {
     if (messagesRef.current.length <= 1) {
       return;
@@ -225,11 +246,26 @@ How can I help you today?
   }, [user, profile]);
 
   useEffect(() => {
-    // This function will be called when the component unmounts
     return () => {
       saveChatLog();
     };
   }, [saveChatLog]);
+
+  const handleNewChat = () => {
+    saveChatLog();
+    setMessages([]);
+    localStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);
+    const welcomeMessage: Message = {
+      role: 'bot',
+      content: 'New chat started. How can I help you?',
+      actions: [
+        { text: "Computer Science Courses", query: "List all CSE courses" },
+        { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+        { text: "Explain Java", query: "Explain Java" },
+      ]
+    };
+    setMessages([welcomeMessage]);
+  };
 
   const handleSendMessage = async (e: React.FormEvent | string) => {
     let currentInput: string;
@@ -273,14 +309,20 @@ How can I help you today?
   return (
     <Card className="w-full h-full flex flex-col shadow-lg border-0 rounded-none">
         <CardHeader className="border-b">
-            <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 border-2 border-primary">
-                    <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
-                </Avatar>
-                <div>
-                    <CardTitle>Comrade</CardTitle>
-                    <CardDescription>{location ? `${location.city}, ${location.country_name}` : "Your personal guide"}</CardDescription>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10 border-2 border-primary">
+                        <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <CardTitle>Comrade</CardTitle>
+                        <CardDescription>{location ? `${location.city}, ${location.country_name}` : "Your personal guide"}</CardDescription>
+                    </div>
                 </div>
+                <Button variant="outline" size="sm" onClick={handleNewChat}>
+                    <FilePlus2 className="h-4 w-4 mr-2" />
+                    New Chat
+                </Button>
             </div>
         </CardHeader>
         <CardContent className="flex-1 p-0 overflow-hidden">

@@ -1,10 +1,9 @@
-
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bot, FileText, Loader2, Send, User, X, Sun, Cloud, CloudRain, CloudSnow, Zap, Droplets, Thermometer, Wind, Expand } from 'lucide-react';
+import { Bot, FileText, Loader2, Send, User, X, Sun, Cloud, CloudRain, CloudSnow, Zap, Droplets, Thermometer, Wind, Expand, FilePlus2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -41,6 +40,8 @@ interface WeatherData {
   windspeed: number;
   relativehumidity: number;
 }
+
+const CHAT_HISTORY_STORAGE_KEY = 'ai-chat-history-popover';
 
 const weatherIcons: { [key: number]: React.ElementType } = {
   0: Sun, 1: Sun, 2: Cloud, 3: Cloud, 45: Cloud, 48: Cloud,
@@ -185,7 +186,7 @@ export function AiChatPopover() {
         userNameToSave = profile?.name || user.displayName || 'Unknown';
       } else {
         if (!sessionIdRef.current) {
-          sessionIdRef.current = `anon_${'uuidv4'}()`;
+          sessionIdRef.current = `anon_${uuidv4()}`;
         }
         userIdToSave = sessionIdRef.current;
         userNameToSave = 'Anonymous';
@@ -208,11 +209,16 @@ export function AiChatPopover() {
   }, [user, profile]);
 
   useEffect(() => {
-    // This will run when the entire app is being unmounted/closed,
     return () => {
       saveChatLog();
     };
   }, [saveChatLog]);
+
+  useEffect(() => {
+    if (open && messages.length > 0) {
+      localStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(messages));
+    }
+  }, [messages, open]);
 
 
   useEffect(() => {
@@ -311,10 +317,22 @@ export function AiChatPopover() {
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
-        saveChatLog(); // Save when the popover is closed.
-        setMessages([]); // Clear messages for next session
+        saveChatLog(); 
     }
-    if (isOpen && messages.length === 0) {
+    if (isOpen) {
+      const savedHistory = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY);
+      if (savedHistory) {
+        try {
+            const parsedHistory = JSON.parse(savedHistory);
+            if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
+              setMessages(parsedHistory);
+              return;
+            }
+        } catch (e) {
+          localStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);
+        }
+      }
+
       setTimeout(() => {
         let welcomeMessage: Message;
         const actions = [
@@ -347,6 +365,22 @@ How can I help you today?
   const handleActionClick = (query: string) => {
     handleSendMessage(query);
   };
+  
+  const handleNewChat = () => {
+    saveChatLog(); // Save current chat
+    setMessages([]);
+    localStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);
+    const welcomeMessage: Message = {
+      role: 'bot',
+      content: 'New chat started. How can I help?',
+      actions: [
+        { text: "Computer Science Courses", query: "List all CSE courses" },
+        { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+        { text: "Explain Java", query: "Explain Java" },
+      ]
+    };
+    setMessages([welcomeMessage]);
+  };
 
   const renderChatUI = ({ expanded = false }) => (
     <div className={cn("flex flex-col", expanded ? "h-full" : "h-[60vh]")}>
@@ -361,8 +395,11 @@ How can I help you today?
                 </div>
             </div>
             <div className="flex items-center">
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleNewChat} title="New Chat">
+                    <FilePlus2 className="h-4 w-4"/>
+                </Button>
                 {!expanded && (
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setIsExpanded(true); setOpen(false); }}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setIsExpanded(true); setOpen(false); }} title="Expand Chat">
                         <Expand className="h-4 w-4"/>
                     </Button>
                 )}
@@ -372,8 +409,8 @@ How can I help you today?
                        setMessages([]);
                        setIsExpanded(false);
                     }
-                    else setOpen(false); // This will trigger save via onOpenChange
-                }}>
+                    else setOpen(false);
+                }} title="Close Chat">
                     <X className="h-4 w-4"/>
                 </Button>
             </div>
