@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An intent-based chatbot that answers questions based on a predefined knowledge base.
@@ -49,7 +50,6 @@ const tutorFlow = ai.defineFlow(
   },
   async (input) => {
     const userQuestion = input.question.toLowerCase().trim();
-    const history = input.history || [];
     
     // 1. Specific Course Lookup
     for (const course of courses) {
@@ -82,31 +82,21 @@ const tutorFlow = ai.defineFlow(
         }
     }
 
-    // 2. Fallback to Generative AI
-    const historyForAI = history.map(h => ({
-        role: h.role === 'bot' ? 'model' : 'user',
-        parts: [{text: h.content}]
-    }));
-    
-    const { output } = await ai.generate({
-      model: 'googleai/gemini-2.0-flash',
-      prompt: `You are Comrade, a friendly and helpful academic assistant for Saveetha Engineering College students. Your primary role is to answer questions about courses and academic life.
-      
-      - If the user asks about a specific course, provide information about it.
-      - If the user asks a general knowledge question (e.g., "what is java?"), provide a helpful and accurate response.
-      - Keep responses concise and easy to understand.
-      - If you don't know the answer, say "I'm not sure how to help with that. Could you try rephrasing?".
-
-      User's question: "${input.question}"
-      `,
-      history: historyForAI,
-      output: { schema: TutorOutputSchema },
-    });
-    
-    if (!output) {
-      return { answer: "I'm not sure how to help with that. Could you try rephrasing?", sources: [] };
+    // 2. Intent-based fallback
+    for (const intent of intents) {
+      for (const pattern of intent.patterns) {
+        const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+        if (regex.test(userQuestion)) {
+          const response = intent.responses[Math.floor(Math.random() * intent.responses.length)];
+          return { answer: response, sources: [] };
+        }
+      }
     }
 
-    return output;
+    // 3. Final Fallback if no intent matches
+    const fallbackIntent = intents.find(i => i.tag === 'fallback');
+    const fallbackResponse = fallbackIntent ? fallbackIntent.responses[0] : "I'm not sure how to help with that. Could you try rephrasing?";
+    
+    return { answer: fallbackResponse, sources: [] };
   }
 );

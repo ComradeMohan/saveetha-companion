@@ -167,7 +167,7 @@ export function AiChatPopover() {
         userNameToSave = profile?.name || user.displayName || 'Unknown';
       } else {
         if (!sessionIdRef.current) {
-          sessionIdRef.current = `anon_${uuidv4()}`;
+          sessionIdRef.current = `anon_${'uuidv4'}()`;
         }
         userIdToSave = sessionIdRef.current;
         userNameToSave = 'Anonymous';
@@ -299,29 +299,26 @@ export function AiChatPopover() {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
         let welcomeMessage: Message;
+        const actions = [
+            { text: "Computer Science Courses", query: "List all CSE courses" },
+            { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
+            { text: "Explain Java", query: "Explain Java" },
+        ];
+
         if (location && weather) {
           welcomeMessage = {
             role: 'bot',
             content: `
 It's currently ${Math.round(weather.temperature)}°C and ${getWeatherDescription(weather.weathercode).toLowerCase()} in ${location.city}.
-Wind: ${weather.windspeed.toFixed(1)} m/s, Humidity: ${weather.relativehumidity}%.
 How can I help you today?
           `.trim(),
-            actions: [
-                { text: "Computer Science Courses", query: "List all CSE courses" },
-                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
-                { text: "Explain Java", query: "Explain Java" },
-            ]
+            actions,
           };
         } else {
            welcomeMessage = {
              role: 'bot',
              content: `Hi ${user?.displayName?.split(' ')[0] || 'there'}! How can I help you today?`,
-             actions: [
-                { text: "Computer Science Courses", query: "List all CSE courses" },
-                { text: "About CSA17 (AI)", query: "Tell me about CSA17" },
-                { text: "Explain Java", query: "Explain Java" },
-            ]
+             actions,
            }
         }
         setMessages([welcomeMessage]);
