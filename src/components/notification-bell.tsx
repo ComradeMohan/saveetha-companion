@@ -132,6 +132,7 @@ export function NotificationBell() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
+          <span className="sr-only">Open notifications</span>
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 flex h-4 w-4">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>

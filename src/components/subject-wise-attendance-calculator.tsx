@@ -120,7 +120,7 @@ export default function SubjectWiseAttendanceCalculator() {
                                     className="h-8 font-semibold"
                                 />
                            </div>
-                           <Button variant="ghost" size="icon" className="h-8 w-8 mt-5 text-destructive hover:bg-destructive/10" onClick={() => removeSubject(subject.id)}>
+                           <Button variant="ghost" size="icon" className="h-8 w-8 mt-5 text-destructive hover:bg-destructive/10" onClick={() => removeSubject(subject.id)} aria-label="Remove subject">
                                 <Trash2 className="h-4 w-4" />
                            </Button>
                         </div>

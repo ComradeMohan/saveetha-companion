@@ -52,7 +52,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
             <PromotionalDialog />
             <SeasonalEffects />
             <GlobalToastManager /> 
-            <main key="main-content" className="flex-1">
+            <main id="main" key="main-content" className="flex-1">
               {children}
             </main>
             {showHeaderAndFooter && (

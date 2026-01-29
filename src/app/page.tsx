@@ -44,6 +44,16 @@ export default function HomePage() {
   if (user) {
     return (
         <>
+            <section id="dashboard-hero" className="relative flex min-h-[calc(50vh-4rem)] items-center justify-center py-16 animate-fade-in md:mt-0 mt-16">
+                <div className="container mx-auto px-4 text-center">
+                    <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
+                        Welcome, {user.displayName?.split(' ')[0] || 'Student'}!
+                    </h1>
+                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
+                        Here's your personal academic dashboard. Everything you need, all in one place.
+                    </p>
+                </div>
+            </section>
             <section id="calculators" className="py-12 md:py-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>

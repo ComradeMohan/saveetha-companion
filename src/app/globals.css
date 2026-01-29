@@ -62,6 +62,15 @@
     @apply bg-background text-foreground;
   }
 
+  .skip-link {
+    @apply absolute -top-10 left-0 bg-background text-foreground p-2 z-50 transition-all;
+  }
+  
+  .skip-link:focus {
+    @apply top-0;
+  }
+
+
   /* Themed scrollbar for desktop devices */
   @media (min-width: 768px) {
     ::-webkit-scrollbar {
@@ -425,5 +434,3 @@
 .tree-children > .tree-node:first-child:last-child::after {
   @apply hidden;
 }
-
-

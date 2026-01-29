@@ -79,6 +79,7 @@ export function LabAIChatAssistant({
           </CardTitle>
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onToggle}>
             <X className="h-4 w-4" />
+            <span className="sr-only">Close AI Assistant</span>
           </Button>
         </CardHeader>
         <CardContent className="p-0 flex-1 flex flex-col overflow-hidden">

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | Saveetha Companion',
     default: 'Saveetha Companion: Your Academic System Interface',
   },
-  description: 'The ultimate tool for Saveetha Engineering College students. Instantly calculate your Saveetha CGPA and attendance percentage. Find faculty info, concept maps, and important university updates all in one place.',
+  description: 'Your all-in-one tool for Saveetha Engineering College. Calculate CGPA, track attendance, find concept maps, and get university updates.',
   keywords: ['Saveetha CGPA', 'Saveetha attendance calculator', 'Saveetha Calculator', 'Saveetha attendance', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
   authors: [{ name: 'comrademohan', url: 'https://github.com' }],
   creator: 'comrademohan',
@@ -107,8 +107,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("scroll-smooth", quantico.variable, inter.variable)} suppressHydrationWarning>
       <head>
+          <link rel="canonical" href="https://saveethahub.tech/" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "Saveetha Companion",
+                "url": "https://saveethahub.tech",
+              }),
+            }}
+          />
       </head>
       <body>
+        <a href="#main" className="skip-link">Skip to Content</a>
         <ScrollProgress />
         <MouseSpotlight />
         <Suspense fallback={<RootLayoutSkeleton />}>
@@ -121,13 +134,13 @@ export default function RootLayout({
         {/* Google Analytics Scripts */}
         <Script
           key="gtag-js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src="https://www.googletagmanager.com/gtag/js?id=G-LCXQ8TNCNP"
         />
         <Script
           key="gtag-init"
           id="gtag-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
