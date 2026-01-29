@@ -3,12 +3,13 @@
   "style": "default",
   "rsc": true,
   "tsx": true,
+  "componentDir": "src/components/ui",
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "src/app/globals.css",
     "baseColor": "neutral",
     "cssVariables": true,
-    "prefix": ""
+    "prefix": "ui-"
   },
   "aliases": {
     "components": "@/components",
