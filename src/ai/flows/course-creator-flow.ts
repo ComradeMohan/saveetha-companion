@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview An AI flow to generate a complete course structure.
- * - generateCourseContent: Creates a structured course with units and topics.
+ * - generateCourseContent: Creates a structured course with units and topics .
  */
 
 import { ai } from '@/ai/genkit';

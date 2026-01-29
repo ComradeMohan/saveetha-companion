@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview An AI flow to generate academic citations based on a block of text.
- * - findCitations: Takes a block of text and a style, and returns a list of formatted citations.
+ * - findCitations: Takes a block of text and a style, and returns a list of formatted citations .
  */
 
 import { ai } from '@/ai/genkit';
