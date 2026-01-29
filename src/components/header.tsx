@@ -201,10 +201,10 @@ export default function Header() {
   };
   
   const loggedOutFeaturesLinks = [
-      { href: '/#features', label: 'Key Features' },
-      { href: '/#calculators', label: 'Calculators' },
-      { href: '/#concepts', label: 'Concept Maps' },
-      { href: '/#stats', label: 'Site Stats' },
+      { href: '/#features', label: 'Key Features', icon: LayoutGrid },
+      { href: '/#calculators', label: 'Calculators', icon: Calculator },
+      { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
+      { href: '/#stats', label: 'Site Stats', icon: BarChart3 },
   ];
   
   const academicsLinks = [
