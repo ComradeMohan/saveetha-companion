@@ -57,7 +57,6 @@ import { NotificationBell } from './notification-bell';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollArea } from './ui/scroll-area';
 import { Skeleton } from './ui/skeleton';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -180,9 +179,14 @@ export default function Header() {
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const [isClient, setIsClient] = React.useState(false);
+  const [showStarPrompt, setShowStarPrompt] = React.useState(true);
 
   React.useEffect(() => {
     setIsClient(true);
+    const timer = setTimeout(() => {
+        setShowStarPrompt(false);
+    }, 5000); // Hide after 5 seconds
+    return () => clearTimeout(timer);
   }, []);
 
   React.useEffect(() => {
@@ -364,28 +368,28 @@ export default function Header() {
                         Contact Us
                     </NavLink>
                 </nav>
-                <div className="flex items-center">
+                <div 
+                    className="relative flex items-center"
+                    onMouseEnter={() => setShowStarPrompt(false)}
+                >
+                    <div className={cn(
+                        "absolute bottom-full right-0 mb-2 w-max rounded-md bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity duration-300",
+                        showStarPrompt && "opacity-100"
+                    )}>
+                        Star this project on GitHub!
+                    </div>
                     {isClient ? (
-                       <TooltipProvider>
-                           <Tooltip>
-                               <TooltipTrigger asChild>
-                                   <div className="h-8 flex items-center rounded-md border border-input bg-background px-2">
-                                       <a className="github-button"
-                                           href="https://github.com/ComradeMohan/saveetha-companion"
-                                           data-icon="octicon-star"
-                                           data-size="large"
-                                           data-show-count="true"
-                                           data-color-scheme="no-preference: light; light: light; dark: dark;"
-                                           aria-label="Star ComradeMohan/saveetha-companion on GitHub">
-                                           Star
-                                       </a>
-                                   </div>
-                               </TooltipTrigger>
-                               <TooltipContent>
-                                   <p>Star this project on GitHub!</p>
-                               </TooltipContent>
-                           </Tooltip>
-                       </TooltipProvider>
+                       <div className="h-8 flex items-center rounded-md border border-input bg-background px-2">
+                           <a className="github-button"
+                               href="https://github.com/ComradeMohan/saveetha-companion"
+                               data-icon="octicon-star"
+                               data-size="large"
+                               data-show-count="true"
+                               data-color-scheme="no-preference: light; light: light; dark: dark;"
+                               aria-label="Star ComradeMohan/saveetha-companion on GitHub">
+                               Star
+                           </a>
+                       </div>
                     ) : (
                         <Skeleton className="h-8 w-24" />
                     )}
