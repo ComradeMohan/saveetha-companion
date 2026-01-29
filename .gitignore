@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -10,7 +8,7 @@
 
 # next.js
 /.next/
-/out/
+ /out/
 
 # production
 /build
@@ -25,8 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
 .env
+.env*.local
 
 # vercel
 .vercel
@@ -35,6 +33,22 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local infra / editor / tooling
+.idx/
+.modified
+
+# local-only firebase / hosting configs
+firebase.json
+firestore.rules
+apphosting.yaml
+netlify.toml
+
+# optional local docs & patches
+docs/
+patches/
+
 # workspace files
 /workspace/
+
+# dev-only routes
 /src/app/dev-login/

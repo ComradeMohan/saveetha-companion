@@ -1,5 +1,0 @@
-[[redirects]]
-  from = "https://saveetha-companion.netlify.app/*"
-  to = "https://saveethahub.tech/:splat"
-  status = 301
-  force = true
