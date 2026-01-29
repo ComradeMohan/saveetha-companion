@@ -34,6 +34,7 @@ import {
   Users2,
   ListTree,
   FolderKanban,
+  Github,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -235,20 +236,26 @@ export default function Header() {
   ]
 
   const handleMobileLinkClick = (href: string) => {
-    setIsNavigating(true);
-    router.push(href);
+    if (!href.startsWith('http')) {
+        setIsNavigating(true);
+    }
     setMobileMenuOpen(false);
   }
   
-  const allMobileLinks = user ? [
+  const loggedInMobileLinks = [
+      { href: '/learn', label: 'Learn', icon: Book },
       ...academicsLinks,
       ...resourcesLinks,
       ...toolsDropdownLinks,
-      { href: '/learn', label: 'Learn', icon: Book }
-  ] : [
-      ...loggedOutFeaturesLinks,
-      { href: '/contact', label: 'Contact', icon: User}
+      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Github }
   ];
+  const loggedOutMobileLinks = [
+      ...loggedOutFeaturesLinks,
+      { href: '/contact', label: 'Contact', icon: User},
+      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Github }
+  ];
+  const allMobileLinks = user ? loggedInMobileLinks : loggedOutMobileLinks;
+
 
   if (pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin') || pathname.startsWith('/dev-login')) {
     return null; // Don't render this header in the admin or learning zones
@@ -351,6 +358,11 @@ export default function Header() {
                         Contact Us
                     </NavLink>
                 </nav>
+                <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex" aria-label="Star repository on GitHub">
+                    <Link href="https://github.com/ComradeMohan/saveetha-companion" target="_blank" rel="noopener noreferrer">
+                        <Github className="h-5 w-5" />
+                    </Link>
+                </Button>
                 {user && <NotificationBell />}
                 <ThemeToggle />
                 <UserNav />
@@ -410,6 +422,8 @@ export default function Header() {
                               <Link 
                                   href={link.href} 
                                   onClick={() => handleMobileLinkClick(link.href)} 
+                                  target={link.href.startsWith('http') ? '_blank' : '_self'}
+                                  rel={link.href.startsWith('http') ? 'noopener noreferrer' : ''}
                                   className="flex items-center gap-4 py-3 text-xl font-semibold text-muted-foreground transition-colors hover:text-primary"
                               >
                                   <link.icon className="h-6 w-6"/>
