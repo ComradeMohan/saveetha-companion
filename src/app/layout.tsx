@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | Saveetha Companion',
     default: 'Saveetha Companion: Your Academic System Interface',
   },
-  description: 'Your all-in-one tool for Saveetha Engineering College. Calculate CGPA, track attendance, find concept maps, and get university updates.',
+  description: 'The ultimate tool for students at Saveetha Engineering College. Simplify your academic life by calculating CGPA, tracking attendance, and finding resources.',
   keywords: ['Saveetha CGPA', 'Saveetha attendance calculator', 'Saveetha Calculator', 'Saveetha attendance', 'Saveetha', 'SEC', 'Saveetha Engineering College', 'Student Companion', 'Faculty Directory'],
   authors: [{ name: 'comrademohan', url: 'https://github.com' }],
   creator: 'comrademohan',
@@ -150,7 +150,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
       </body>
     </html>
   );

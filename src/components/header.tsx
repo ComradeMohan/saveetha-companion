@@ -182,6 +182,13 @@ export default function Header() {
 
   React.useEffect(() => {
     setIsClient(true);
+    // Dynamically load the GitHub buttons script
+    if (!document.querySelector('script[src="https://buttons.github.io/buttons.js"]')) {
+      const script = document.createElement('script');
+      script.src = "https://buttons.github.io/buttons.js";
+      script.async = true;
+      document.head.appendChild(script);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -365,16 +372,19 @@ export default function Header() {
                 </nav>
                 <div className="flex items-center">
                     {isClient ? (
-                        <a className="github-button"
-                            href="https://github.com/ComradeMohan/saveetha-companion"
-                            data-icon="octicon-star"
-                            data-size="large"
-                            data-show-count="true"
-                            aria-label="Star ComradeMohan/saveetha-companion on GitHub">
-                            Star
-                        </a>
+                       <div className="h-8 flex items-center rounded-md border border-input bg-background px-2">
+                           <a className="github-button"
+                                href="https://github.com/ComradeMohan/saveetha-companion"
+                                data-icon="octicon-star"
+                                data-size="large"
+                                data-show-count="true"
+                                data-color-scheme="no-preference: light; light: light; dark: dark;"
+                                aria-label="Star ComradeMohan/saveetha-companion on GitHub">
+                                Star
+                           </a>
+                       </div>
                     ) : (
-                        <Skeleton className="h-7 w-24" />
+                        <Skeleton className="h-8 w-24" />
                     )}
                 </div>
                 {user && <NotificationBell />}
