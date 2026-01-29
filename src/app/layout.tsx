@@ -150,6 +150,10 @@ export default function RootLayout({
             `,
           }}
         />
+         <Script
+            src="https://buttons.github.io/buttons.js"
+            strategy="lazyOnload"
+        />
       </body>
     </html>
   );
