@@ -35,6 +35,7 @@ import {
   ListTree,
   FolderKanban,
   Github,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -247,12 +248,12 @@ export default function Header() {
       ...academicsLinks,
       ...resourcesLinks,
       ...toolsDropdownLinks,
-      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Github }
+      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Star }
   ];
   const loggedOutMobileLinks = [
       ...loggedOutFeaturesLinks,
       { href: '/contact', label: 'Contact', icon: User},
-      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Github }
+      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Star }
   ];
   const allMobileLinks = user ? loggedInMobileLinks : loggedOutMobileLinks;
 
@@ -358,9 +359,10 @@ export default function Header() {
                         Contact Us
                     </NavLink>
                 </nav>
-                <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex" aria-label="Star repository on GitHub">
+                <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
                     <Link href="https://github.com/ComradeMohan/saveetha-companion" target="_blank" rel="noopener noreferrer">
-                        <Github className="h-5 w-5" />
+                        <Star className="mr-2 h-4 w-4" />
+                        Star on GitHub
                     </Link>
                 </Button>
                 {user && <NotificationBell />}
