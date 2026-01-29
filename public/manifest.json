@@ -1,26 +1,16 @@
 {
   "name": "Saveetha Companion",
-  "short_name": "Saveetha",
-  "description": "Your All-in-One Academic Hub for Saveetha School of Engineering College",
+  "short_name": "Saveetha Companion",
+  "description": "Your all-in-one tool for Saveetha Engineering College. Calculate CGPA, track attendance, find concept maps, and get university updates.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b0f14",
-  "theme_color": "#6B46C1",
+  "background_color": "#FFFCFA",
+  "theme_color": "#F57C1F",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "src": "favicon.ico",
+      "sizes": "any",
       "type": "image/x-icon"
-    },
-    {
-      "src": "/logo.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "/logo.png",
-      "type": "image/png",
-      "sizes": "512x512"
     }
   ]
 }
