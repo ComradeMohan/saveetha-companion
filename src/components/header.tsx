@@ -56,6 +56,7 @@ import { UpdateProfileDialog } from './update-profile-dialog'; // Import the new
 import { NotificationBell } from './notification-bell';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollArea } from './ui/scroll-area';
+import { Skeleton } from './ui/skeleton';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -177,6 +178,11 @@ export default function Header() {
   const [isProfileDialogOpen, setProfileDialogOpen] = React.useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -358,14 +364,18 @@ export default function Header() {
                     </NavLink>
                 </nav>
                 <div className="flex items-center">
-                    <a className="github-button"
-                        href="https://github.com/ComradeMohan/saveetha-companion"
-                        data-icon="octicon-star"
-                        data-size="large"
-                        data-show-count="true"
-                        aria-label="Star ComradeMohan/saveetha-companion on GitHub">
-                        Star
-                    </a>
+                    {isClient ? (
+                        <a className="github-button"
+                            href="https://github.com/ComradeMohan/saveetha-companion"
+                            data-icon="octicon-star"
+                            data-size="large"
+                            data-show-count="true"
+                            aria-label="Star ComradeMohan/saveetha-companion on GitHub">
+                            Star
+                        </a>
+                    ) : (
+                        <Skeleton className="h-7 w-24" />
+                    )}
                 </div>
                 {user && <NotificationBell />}
                 <ThemeToggle />
