@@ -1,0 +1,158 @@
+{
+  "course_name": "Cloud Computing and Big Data Analytics",
+  "course_code": "CSA15",
+  "units": [
+    {
+      "unit_title": "Introduction to Cloud Computing",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Cloud Computing",
+          "notes_md": "Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software, analytics, and intelligence—over the Internet (“the cloud”) to offer faster innovation, flexible resources, and economies of scale.  Instead of owning their own computing infrastructure or data centers, companies can rent access to anything from applications to storage from a cloud service provider. Common cloud deployment models include public, private, and hybrid clouds. Key characteristics of cloud computing are on-demand self-service, broad network access, resource pooling, rapid elasticity, and measured service. Understand the difference between IaaS, PaaS, and SaaS.",
+          "video_url": "https://www.youtube.com/watch?v=2LaAJvPb80U",
+          "practice_questions": [
+            "What are the key characteristics of cloud computing?",
+            "Explain the difference between IaaS, PaaS, and SaaS.",
+            "Describe the different cloud deployment models.",
+            "What are the benefits of using cloud computing?"
+          ]
+        },
+        {
+          "topic_title": "Cloud Service Models: IaaS, PaaS, SaaS",
+          "notes_md": "**IaaS (Infrastructure as a Service)** provides you with the computing infrastructure – servers, storage, and networking – over the internet.  You manage the operating system, storage, deployed applications, and potentially some networking components. **PaaS (Platform as a Service)** provides a platform allowing customers to develop, run, and manage applications without the complexity of building and maintaining the infrastructure typically associated with developing and launching an app.  You manage the applications and data. **SaaS (Software as a Service)** delivers applications over the Internet—on demand and typically on a subscription basis. You access the software through a web browser or mobile app. Examples include Salesforce, Google Workspace, and Microsoft 365.",
+          "video_url": "https://www.youtube.com/watch?v=W9zK90I08kQ",
+          "practice_questions": [
+            "Compare and contrast IaaS, PaaS, and SaaS.",
+            "Give examples of services offered under each cloud service model.",
+            "What are the responsibilities of the cloud provider and the customer in each model?",
+            "Explain the advantages and disadvantages of each model."
+          ]
+        },
+        {
+          "topic_title": "Cloud Deployment Models: Public, Private, Hybrid",
+          "notes_md": "A **Public cloud** is owned and operated by a third-party cloud service provider, which delivers its computing resources like servers and storage over the Internet.  **Private cloud** refers to cloud computing resources used exclusively by a single business or organization. A **Hybrid cloud** is a combination of public and private clouds, bound together by technology that allows data and applications to be shared between them.  Each deployment model offers different levels of security, control, and flexibility.  The choice of deployment model depends on specific business requirements and regulatory constraints.",
+          "video_url": "https://www.youtube.com/watch?v=HY5-0n4Mtq4",
+          "practice_questions": [
+            "Describe the characteristics of public, private, and hybrid clouds.",
+            "What are the advantages and disadvantages of each deployment model?",
+            "Give examples of when each deployment model would be most appropriate.",
+            "Explain how a hybrid cloud can benefit an organization."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Big Data Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Introduction to Big Data",
+          "notes_md": "Big data refers to extremely large and complex datasets that are difficult to process using traditional data processing application software. The term \"big data\" often involves 5Vs: Volume (the quantity of data), Velocity (the speed at which the data is generated and processed), Variety (the different types of data), Veracity (the accuracy and reliability of the data), and Value (the insights gained from the data). Big data can be structured, semi-structured, or unstructured.  Applications include analyzing customer behavior, improving healthcare, optimizing supply chains, and predicting financial trends.",
+          "video_url": "https://www.youtube.com/watch?v=wNOysu-H5cw",
+          "practice_questions": [
+            "What are the 5 Vs of big data?",
+            "Explain the difference between structured, semi-structured, and unstructured data.",
+            "Give examples of how big data is used in different industries.",
+            "What are the challenges associated with processing big data?"
+          ]
+        },
+        {
+          "topic_title": "Big Data Technologies: Hadoop and Spark",
+          "notes_md": "**Hadoop** is an open-source framework for distributed storage and processing of large datasets on clusters of commodity hardware. It uses the MapReduce programming model. **Spark** is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala, Python, and R, and an optimized engine that supports general execution graphs. Spark is faster than Hadoop MapReduce for many applications, especially iterative algorithms.  Both are widely used for big data processing, but Spark is often preferred for its speed and real-time processing capabilities.",
+          "video_url": "https://www.youtube.com/watch?v=BT2Q2E9K6sI",
+          "practice_questions": [
+            "Compare and contrast Hadoop and Spark.",
+            "Explain the MapReduce programming model.",
+            "What are the advantages of using Spark over Hadoop MapReduce?",
+            "Describe the architecture of Hadoop and Spark."
+          ]
+        },
+        {
+          "topic_title": "Data Storage and Management in Big Data",
+          "notes_md": "Big data storage solutions need to handle large volumes of data, high velocity of data ingestion, and different data types.  Distributed file systems like HDFS (Hadoop Distributed File System) are commonly used.  NoSQL databases (e.g., Cassandra, MongoDB) are also popular for storing unstructured and semi-structured data. Data management involves data ingestion, data cleaning, data transformation, and data governance.  Effective data management ensures data quality and accessibility for analysis and decision-making.",
+          "video_url": "https://www.youtube.com/watch?v=Qkp5wL6-n1U",
+          "practice_questions": [
+            "What are the requirements for big data storage solutions?",
+            "Explain the architecture of HDFS.",
+            "What are NoSQL databases and why are they used in big data?",
+            "Describe the key aspects of data management in big data environments."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Cloud-Based Big Data Solutions",
+      "topics": [
+        {
+          "topic_title": "Cloud Data Warehousing",
+          "notes_md": "Cloud data warehousing refers to data warehousing services offered on cloud platforms.  Cloud data warehouses like Amazon Redshift, Google BigQuery, and Snowflake provide scalable and cost-effective solutions for storing and analyzing large datasets.  They offer features like columnar storage, massively parallel processing (MPP), and automatic scaling. Cloud data warehousing simplifies data warehousing infrastructure management and allows organizations to focus on data analysis and insights.",
+          "video_url": "https://www.youtube.com/watch?v=t0gV6R20i4A",
+          "practice_questions": [
+            "What are the benefits of using cloud data warehousing?",
+            "Compare and contrast Amazon Redshift, Google BigQuery, and Snowflake.",
+            "Explain the concept of columnar storage and MPP.",
+            "How does cloud data warehousing simplify data warehousing management?"
+          ]
+        },
+        {
+          "topic_title": "Cloud-Based Data Processing",
+          "notes_md": "Cloud platforms offer various data processing services for big data analytics.  Amazon EMR (Elastic MapReduce) provides a managed Hadoop and Spark environment.  Google Cloud Dataproc is a similar service.  Azure HDInsight is Microsoft's cloud Hadoop service. These services simplify the deployment and management of big data processing frameworks.  They also offer integration with other cloud services like storage and databases. Serverless computing options like AWS Lambda and Azure Functions can be used for event-driven data processing.",
+          "video_url": "https://www.youtube.com/watch?v=2_f9_16wh4Y",
+          "practice_questions": [
+            "Explain the use of Amazon EMR, Google Cloud Dataproc, and Azure HDInsight.",
+            "What are the advantages of using cloud-based data processing services?",
+            "How can serverless computing be used for data processing?",
+            "Describe the integration of data processing services with other cloud services."
+          ]
+        },
+        {
+          "topic_title": "Real-Time Data Streaming in the Cloud",
+          "notes_md": "Real-time data streaming involves processing data as it is generated. Cloud platforms provide services for ingesting, processing, and analyzing streaming data.  Amazon Kinesis, Google Cloud Dataflow, and Azure Stream Analytics are examples of cloud-based streaming services.  These services can handle high-velocity data streams from various sources like sensors, social media, and web logs.  They support real-time analytics, anomaly detection, and alerting.",
+          "video_url": "https://www.youtube.com/watch?v=xWv4Xj5J7hI",
+          "practice_questions": [
+            "What are the applications of real-time data streaming?",
+            "Compare and contrast Amazon Kinesis, Google Cloud Dataflow, and Azure Stream Analytics.",
+            "How can real-time data streaming be used for anomaly detection?",
+            "Describe the architecture of a real-time data streaming pipeline."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Big Data Analytics Techniques",
+      "topics": [
+        {
+          "topic_title": "Data Mining and Machine Learning",
+          "notes_md": "Data mining involves discovering patterns and insights from large datasets. Machine learning algorithms are used to build predictive models and automate decision-making. Common data mining techniques include classification, clustering, regression, and association rule mining. Cloud platforms offer machine learning services like Amazon SageMaker, Google Cloud AI Platform, and Azure Machine Learning. These services provide tools for building, training, and deploying machine learning models at scale. \n\n```python\n# Example using scikit-learn for classification\nfrom sklearn.linear_model import LogisticRegression\nmodel = LogisticRegression()\nmodel.fit(X_train, y_train)\npredictions = model.predict(X_test)\n```",
+          "video_url": "https://www.youtube.com/watch?v=GwIo3gDZCVQ",
+          "practice_questions": [
+            "What are the key data mining techniques?",
+            "Explain the difference between supervised and unsupervised learning.",
+            "How can machine learning be used for predictive modeling?",
+            "Describe the process of building and deploying a machine learning model on a cloud platform."
+          ]
+        },
+        {
+          "topic_title": "Statistical Analysis and Visualization",
+          "notes_md": "Statistical analysis involves using statistical methods to analyze data and draw inferences. Descriptive statistics (e.g., mean, median, standard deviation) are used to summarize data. Inferential statistics are used to make inferences about a population based on a sample. Data visualization techniques (e.g., histograms, scatter plots, box plots) are used to present data in a clear and understandable format. Tools like Tableau, Power BI, and Python libraries like Matplotlib and Seaborn are used for data visualization.\n\n```python\n# Example using matplotlib for creating a histogram\nimport matplotlib.pyplot as plt\nplt.hist(data, bins=10)\nplt.xlabel('Value')\nplt.ylabel('Frequency')\nplt.title('Histogram of Data')\nplt.show()\n```",
+          "video_url": "https://www.youtube.com/watch?v=Qqj_V53Karc",
+          "practice_questions": [
+            "What are the different types of statistical analysis?",
+            "Explain the difference between descriptive and inferential statistics.",
+            "What are the common data visualization techniques?",
+            "How can data visualization be used to gain insights from data?"
+          ]
+        },
+        {
+          "topic_title": "Big Data Analytics Applications",
+          "notes_md": "Big data analytics has a wide range of applications across various industries. In healthcare, it can be used to improve patient care, predict disease outbreaks, and optimize hospital operations. In finance, it can be used for fraud detection, risk management, and algorithmic trading. In retail, it can be used to personalize customer experiences, optimize inventory management, and predict sales trends. Other applications include supply chain optimization, smart cities, and environmental monitoring.",
+          "video_url": "https://www.youtube.com/watch?v=u8lX5i8X8qE",
+          "practice_questions": [
+            "Give examples of big data analytics applications in healthcare, finance, and retail.",
+            "How can big data analytics be used to improve patient care?",
+            "What are the challenges associated with implementing big data analytics applications?",
+            "Describe the future trends in big data analytics."
+          ]
+        }
+      ]
+    }
+  ]
+}

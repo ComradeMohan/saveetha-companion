@@ -1,0 +1,170 @@
+{
+  "course_name": "C Programming",
+  "course_code": "CSA02",
+  "units": [
+    {
+      "unit_title": "Introduction to C Programming",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of C",
+          "notes_md": "C is a powerful and versatile programming language widely used for system programming, embedded systems, and application development. It's a compiled language, meaning the source code is translated into machine code before execution.\n\nKey features include: procedural programming, static typing, and direct memory access through pointers. C provides low-level control, making it efficient but requiring careful memory management.\n\nA simple C program to print 'Hello, World!':\n\n```c\n#include <stdio.h>\n\nint main() {\n  printf(\"Hello, World!\\n\");\n  return 0;\n}\n```\n\nThe `#include <stdio.h>` line includes the standard input/output library, providing functions like `printf` for printing to the console. The `main` function is the entry point of the program. `return 0;` indicates successful execution.",
+          "video_url": "https://www.youtube.com/watch?v=KJgsSFOSQv0",
+          "practice_questions": [
+            "What are the key features of the C programming language?",
+            "Explain the difference between compilation and interpretation.",
+            "What is the purpose of the `stdio.h` header file?",
+            "Write a C program to print your name.",
+            "What is the entry point of a C program?"
+          ]
+        },
+        {
+          "topic_title": "Data Types, Variables, and Operators",
+          "notes_md": "C supports various data types, including `int` (integers), `float` (floating-point numbers), `char` (characters), and `double` (double-precision floating-point numbers). Variables are used to store data.  Each variable must be declared with a specific data type before it can be used.\n\nOperators perform operations on variables and values. Common operators include arithmetic operators (+, -, *, /, %), assignment operators (=, +=, -=), comparison operators (==, !=, >, <, >=, <=), and logical operators (&&, ||, !).\n\nExample:\n```c\nint age = 30;\nfloat price = 99.99;\nchar grade = 'A';\n```\n\nUnderstanding data types and operators is crucial for writing effective C programs.  Type casting allows you to convert a value from one data type to another.",
+          "video_url": "https://www.youtube.com/watch?v=irqbmMNspsI",
+          "practice_questions": [
+            "What are the different data types available in C?",
+            "Explain the purpose of variables and how to declare them.",
+            "What are the different types of operators in C?",
+            "Write a C program to calculate the area of a rectangle.",
+            "Explain the concept of type casting."
+          ]
+        },
+        {
+          "topic_title": "Input and Output",
+          "notes_md": "C provides functions for taking input from the user and displaying output to the console. The `scanf` function is used for input, and the `printf` function is used for output.\n\n`printf` uses format specifiers to indicate the data type of the value being printed. For example, `%d` is used for integers, `%f` for floating-point numbers, and `%c` for characters.\n\n`scanf` requires the address of the variable where the input value will be stored, using the `&` operator.\n\nExample:\n```c\nint num;\nprintf(\"Enter an integer: \");\nscanf(\"%d\", &num);\nprintf(\"You entered: %d\\n\", num);\n```\nError handling with `scanf` is important to avoid unexpected behavior.",
+          "video_url": "https://www.youtube.com/watch?v=eWLWnO-zgzU",
+          "practice_questions": [
+            "Explain the purpose of the `printf` and `scanf` functions.",
+            "What are format specifiers and how are they used in `printf`?",
+            "Why is the `&` operator used with `scanf`?",
+            "Write a C program to take two numbers as input and print their sum.",
+            "What are some potential issues with using `scanf`?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Control Flow",
+      "topics": [
+        {
+          "topic_title": "Conditional Statements (if, else, switch)",
+          "notes_md": "Conditional statements allow you to execute different blocks of code based on certain conditions. The `if` statement executes a block of code if a condition is true. The `else` statement provides an alternative block of code to execute if the condition is false. The `else if` statement allows you to check multiple conditions.\n\nThe `switch` statement provides a more efficient way to handle multiple conditions based on the value of a single variable. Each `case` represents a different value, and the `break` statement is used to exit the `switch` statement after a matching `case` is found.\n\nExample:\n```c\nint num = 10;\nif (num > 0) {\n  printf(\"Positive\\n\");\n} else if (num < 0) {\n  printf(\"Negative\\n\");\n} else {\n  printf(\"Zero\\n\");\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=13_j9jG4JuI",
+          "practice_questions": [
+            "Explain the purpose of `if`, `else`, and `else if` statements.",
+            "What is the difference between an `if` statement and a `switch` statement?",
+            "Write a C program to determine if a number is even or odd.",
+            "Write a C program to find the largest of three numbers.",
+            "What is the purpose of the `break` statement in a `switch` statement?"
+          ]
+        },
+        {
+          "topic_title": "Loops (for, while, do-while)",
+          "notes_md": "Loops allow you to execute a block of code repeatedly. The `for` loop is used when you know the number of iterations in advance. The `while` loop is used when you want to repeat a block of code as long as a condition is true. The `do-while` loop is similar to the `while` loop, but it executes the block of code at least once before checking the condition.\n\nExample:\n```c\nfor (int i = 0; i < 10; i++) {\n  printf(\"%d\\n\", i);\n}\n```\n\nIt's important to avoid infinite loops by ensuring that the loop condition eventually becomes false.",
+          "video_url": "https://www.youtube.com/watch?v=OrY1NaAuOzI",
+          "practice_questions": [
+            "Explain the purpose of `for`, `while`, and `do-while` loops.",
+            "What is the difference between a `while` loop and a `do-while` loop?",
+            "Write a C program to print the numbers from 1 to 10 using a `for` loop.",
+            "Write a C program to calculate the sum of numbers from 1 to n using a `while` loop.",
+            "What is an infinite loop and how can you avoid it?"
+          ]
+        },
+        {
+          "topic_title": "Break and Continue Statements",
+          "notes_md": "The `break` statement is used to exit a loop prematurely. When `break` is encountered inside a loop, the loop terminates immediately, and the program control transfers to the next statement after the loop.\n\nThe `continue` statement is used to skip the current iteration of a loop and proceed to the next iteration. When `continue` is encountered inside a loop, the remaining statements in the current iteration are skipped, and the loop continues with the next iteration.\n\nExample:\n```c\nfor (int i = 0; i < 10; i++) {\n  if (i == 5) {\n    break; // Exit the loop when i is 5\n  }\n  printf(\"%d\\n\", i);\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=cQy_r9W-B7M",
+          "practice_questions": [
+            "Explain the purpose of the `break` and `continue` statements.",
+            "How does the `break` statement affect the execution of a loop?",
+            "How does the `continue` statement affect the execution of a loop?",
+            "Write a C program to print numbers from 1 to 10, skipping the number 5 using the `continue` statement.",
+            "Write a C program to find the first even number in a series and then exit the loop using the `break` statement."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Functions",
+      "topics": [
+        {
+          "topic_title": "Function Definition and Declaration",
+          "notes_md": "A function is a block of code that performs a specific task. Functions help to organize code, make it reusable, and improve readability. A function must be defined before it can be called. The function definition includes the function's return type, name, parameters, and body.\n\nA function declaration (or prototype) specifies the function's return type, name, and parameters, but not the function body. Declarations are used to inform the compiler about the existence of a function before it is defined. This is especially important when functions are defined in a different order than they are called.\n\nExample:\n```c\nint add(int a, int b) { // Function definition\n  return a + b;\n}\n\nint add(int a, int b); // Function declaration\n```",
+          "video_url": "https://www.youtube.com/watch?v=aJzH3Bj6E1k",
+          "practice_questions": [
+            "What is a function and why are functions used in programming?",
+            "Explain the difference between a function definition and a function declaration.",
+            "What are the components of a function definition?",
+            "Write a C program to define a function that calculates the factorial of a number.",
+            "Explain the importance of function declarations."
+          ]
+        },
+        {
+          "topic_title": "Function Arguments and Return Values",
+          "notes_md": "Functions can accept arguments (input values) and return values (output values). Arguments are passed to a function when it is called. The data type of each argument must match the corresponding parameter in the function definition. Return values are sent back to the caller using the `return` statement. The data type of the return value must match the function's return type.\n\nArguments can be passed by value or by reference. When an argument is passed by value, a copy of the argument is passed to the function. When an argument is passed by reference, the address of the argument is passed to the function, allowing the function to modify the original value.\n\nExample:\n```c\nint square(int num) { // Pass by value\n  return num * num;\n}\n\nvoid increment(int *num) { // Pass by reference\n  *num = *num + 1;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=9G6_u5m1j_M",
+          "practice_questions": [
+            "What are function arguments and return values?",
+            "Explain the difference between pass by value and pass by reference.",
+            "How do you specify the return type of a function?",
+            "Write a C program to define a function that swaps the values of two variables using pass by reference.",
+            "What happens if the data type of an argument does not match the corresponding parameter in the function definition?"
+          ]
+        },
+        {
+          "topic_title": "Recursion",
+          "notes_md": "Recursion is a programming technique where a function calls itself. Recursive functions must have a base case, which is a condition that stops the recursion. Without a base case, the function will call itself infinitely, leading to a stack overflow error.\n\nRecursion can be used to solve problems that can be broken down into smaller, self-similar subproblems. Examples of problems that are well-suited for recursion include calculating factorials, traversing tree structures, and searching algorithms.\n\nExample:\n```c\nint factorial(int n) {\n  if (n == 0) { // Base case\n    return 1;\n  } else {\n    return n * factorial(n - 1); // Recursive call\n  }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=Mv9NEXX1VHc",
+          "practice_questions": [
+            "What is recursion and how does it work?",
+            "What is a base case and why is it important in recursive functions?",
+            "What happens if a recursive function does not have a base case?",
+            "Write a C program to calculate the Fibonacci sequence using recursion.",
+            "What are the advantages and disadvantages of using recursion?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Arrays and Pointers",
+      "topics": [
+        {
+          "topic_title": "Arrays: Declaration, Initialization, and Access",
+          "notes_md": "An array is a collection of elements of the same data type, stored in contiguous memory locations. Arrays are used to store and manipulate a sequence of values.  To declare an array, you specify the data type of the elements, the array name, and the number of elements in the array.\n\nArrays can be initialized when they are declared, or later using assignment statements. Array elements are accessed using their index, starting from 0.  It's important to avoid accessing elements outside the bounds of the array, as this can lead to undefined behavior.\n\nExample:\n```c\nint numbers[5]; // Array declaration\nnumbers[0] = 10; // Accessing elements\nint values[] = {1, 2, 3, 4, 5}; // Array initialization\n```",
+          "video_url": "https://www.youtube.com/watch?v=1SzoiSYhP8Q",
+          "practice_questions": [
+            "What is an array and how is it declared in C?",
+            "How are array elements accessed?",
+            "What is the index of the first element in an array?",
+            "Write a C program to calculate the average of the elements in an array.",
+            "What happens if you try to access an element outside the bounds of an array?"
+          ]
+        },
+        {
+          "topic_title": "Pointers: Declaration, Initialization, and Dereferencing",
+          "notes_md": "A pointer is a variable that stores the memory address of another variable. Pointers are used to access and manipulate data indirectly. To declare a pointer, you specify the data type of the variable it points to, the `*` operator, and the pointer name.\n\nPointers can be initialized with the address of a variable using the `&` operator. The `*` operator is used to dereference a pointer, which means accessing the value stored at the memory address pointed to by the pointer.\n\nExample:\n```c\nint num = 10;\nint *ptr = &num; // Pointer initialization\nprintf(\"%d\\n\", *ptr); // Dereferencing the pointer\n```\n\nPointer arithmetic allows you to perform arithmetic operations on pointers, such as incrementing or decrementing them to point to different memory locations.",
+          "video_url": "https://www.youtube.com/watch?v=iU9tO-vJ-WI",
+          "practice_questions": [
+            "What is a pointer and how is it declared in C?",
+            "What is the `&` operator used for?",
+            "What is the `*` operator used for?",
+            "Write a C program to swap the values of two variables using pointers.",
+            "Explain the concept of pointer arithmetic."
+          ]
+        },
+        {
+          "topic_title": "Arrays and Pointers Relationship",
+          "notes_md": "Arrays and pointers are closely related in C. The name of an array is actually a pointer to the first element of the array. This means that you can use pointer arithmetic to access the elements of an array.\n\nFor example, `*(arr + i)` is equivalent to `arr[i]`, where `arr` is the name of the array and `i` is the index of the element. This relationship allows you to use pointers to efficiently iterate over arrays and perform operations on their elements.\n\nExample:\n```c\nint numbers[] = {1, 2, 3, 4, 5};\nint *ptr = numbers; // ptr points to the first element of the array\nprintf(\"%d\\n\", *(ptr + 2)); // Accessing the third element using pointer arithmetic\n```",
+          "video_url": "https://www.youtube.com/watch?v=3B6yhm-7S-I",
+          "practice_questions": [
+            "Explain the relationship between arrays and pointers in C.",
+            "How can you access array elements using pointer arithmetic?",
+            "Write a C program to print the elements of an array using pointers.",
+            "What are the advantages of using pointers to access array elements?",
+            "Differentiate between an array name and a pointer to the array."
+          ]
+        }
+      ]
+    }
+  ]
+}

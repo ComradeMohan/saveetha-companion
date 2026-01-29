@@ -1,0 +1,168 @@
+{
+  "course_name": "Design and Analysis of Algorithms",
+  "course_code": "CSA06",
+  "units": [
+    {
+      "unit_title": "Introduction to Algorithms and Asymptotic Analysis",
+      "topics": [
+        {
+          "topic_title": "Algorithm Definition and Characteristics",
+          "notes_md": "An algorithm is a well-defined computational procedure that takes some value or set of values as input and produces some value or set of values as output.  Algorithms must be unambiguous and have a finite number of steps. Key characteristics include: Input, Output, Definiteness, Finiteness, and Effectiveness. Algorithm analysis involves predicting the resources (e.g., time, space) that the algorithm requires. Time complexity measures the amount of time taken by an algorithm as a function of the input size. Space complexity measures the amount of memory space required by an algorithm. The choice of algorithm depends on the specific problem and the available resources.",
+          "video_url": "https://www.youtube.com/watch?v=0oA9daYUQ_c",
+          "practice_questions": [
+            "Define an algorithm and list its key characteristics.",
+            "Explain the difference between time and space complexity.",
+            "Why is algorithm analysis important?",
+            "Give an example of a real-world problem where algorithm design plays a crucial role."
+          ]
+        },
+        {
+          "topic_title": "Asymptotic Notations: Big-O, Omega, Theta",
+          "notes_md": "Asymptotic notations are used to describe the limiting behavior of a function as the input size approaches infinity. Big-O notation (O) represents the upper bound of an algorithm's running time.  It describes the worst-case scenario. Omega notation (Ω) represents the lower bound of an algorithm's running time. It describes the best-case scenario. Theta notation (Θ) represents the tight bound of an algorithm's running time. It describes the average-case scenario when best and worst cases have the same bounds. Understanding these notations is essential for comparing the efficiency of different algorithms. For example, O(n) means the algorithm's runtime grows linearly with the input size n. O(log n) signifies a logarithmic growth.",
+          "video_url": "https://www.youtube.com/watch?v=iO9oZMA8K4E",
+          "practice_questions": [
+            "Explain the meaning of Big-O notation with an example.",
+            "What is the difference between Omega and Theta notation?",
+            "How do you determine the Big-O complexity of a given code snippet?",
+            "Explain the practical significance of asymptotic notations in algorithm design."
+          ]
+        },
+        {
+          "topic_title": "Recurrence Relations: Solving using substitution and Master Theorem",
+          "notes_md": "Recurrence relations define a sequence recursively.  They are used to analyze the time complexity of recursive algorithms. The substitution method involves guessing the form of the solution and then using mathematical induction to prove that the guess is correct. The Master Theorem provides a cookbook solution for recurrence relations of the form T(n) = aT(n/b) + f(n), where a >= 1, b > 1, and f(n) is an asymptotically positive function. The Master Theorem has three cases, depending on the relationship between f(n) and n^(log_b a). These methods help to determine the time complexity of recursive algorithms efficiently.",
+          "video_url": "https://www.youtube.com/watch?v=1nhnZ93vKGo",
+          "practice_questions": [
+            "What is a recurrence relation? Give an example.",
+            "Explain the substitution method for solving recurrence relations.",
+            "State the Master Theorem and its three cases.",
+            "Solve the recurrence T(n) = 2T(n/2) + n using the Master Theorem.",
+            "Solve the recurrence T(n) = T(n/2) + 1 using the substitution method."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Divide and Conquer",
+      "topics": [
+        {
+          "topic_title": "Merge Sort Algorithm",
+          "notes_md": "Merge Sort is a divide-and-conquer sorting algorithm. It divides the input array into two halves, recursively sorts each half, and then merges the sorted halves. The merge operation combines two sorted arrays into a single sorted array. Merge Sort has a time complexity of O(n log n) in all cases (best, average, and worst). It is a stable sorting algorithm, meaning that elements with equal values maintain their relative order in the sorted output.  Merge Sort requires additional space for the merging operation, making it not in-place. Example in Python:\n```python\ndef merge_sort(arr):\n if len(arr) > 1:\n mid = len(arr) // 2\n left_half = arr[:mid]\n right_half = arr[mid:]\n merge_sort(left_half)\n merge_sort(right_half)\n i = j = k = 0\n while i < len(left_half) and j < len(right_half):\n if left_half[i] < right_half[j]:\n arr[k] = left_half[i]\n i += 1\n else:\n arr[k] = right_half[j]\n j += 1\n k += 1\n while i < len(left_half):\n arr[k] = left_half[i]\n i += 1\n k += 1\n while j < len(right_half):\n arr[k] = right_half[j]\n j += 1\n k += 1\n```",
+          "video_url": "https://www.youtube.com/watch?v=KF2j-9i8W0Y",
+          "practice_questions": [
+            "Explain the divide-and-conquer strategy used in Merge Sort.",
+            "What is the time complexity of Merge Sort?",
+            "Is Merge Sort a stable sorting algorithm? Why or why not?",
+            "Write a Python function to implement Merge Sort.",
+            "Compare and contrast Merge Sort with Insertion Sort."
+          ]
+        },
+        {
+          "topic_title": "Quick Sort Algorithm",
+          "notes_md": "Quick Sort is another divide-and-conquer sorting algorithm. It selects a 'pivot' element from the array and partitions the other elements into two sub-arrays, according to whether they are less than or greater than the pivot. The sub-arrays are then recursively sorted. The choice of pivot significantly impacts Quick Sort's performance. A good pivot results in balanced partitions. In the best and average cases, Quick Sort has a time complexity of O(n log n). In the worst case (e.g., when the pivot is always the smallest or largest element), it has a time complexity of O(n^2). Quick Sort is an in-place sorting algorithm, meaning it requires minimal additional space. Example in Python:\n```python\ndef quick_sort(arr):\n if len(arr) <= 1:\n return arr\n pivot = arr[len(arr) // 2]\n left = [x for x in arr if x < pivot]\n middle = [x for x in arr if x == pivot]\n right = [x for x in arr if x > pivot]\n return quick_sort(left) + middle + quick_sort(right)\n```",
+          "video_url": "https://www.youtube.com/watch?v=Y_k26E81T1g",
+          "practice_questions": [
+            "Explain the partitioning step in Quick Sort.",
+            "How does the choice of pivot affect Quick Sort's performance?",
+            "What is the time complexity of Quick Sort in the best, average, and worst cases?",
+            "Is Quick Sort an in-place sorting algorithm? Why or why not?",
+            "Write a Python function to implement Quick Sort."
+          ]
+        },
+        {
+          "topic_title": "Binary Search Algorithm",
+          "notes_md": "Binary Search is an efficient algorithm for finding a target value within a sorted array. It repeatedly divides the search interval in half. If the middle element is the target value, the search is successful. If the target value is less than the middle element, the search continues in the left half. If the target value is greater than the middle element, the search continues in the right half. Binary Search has a time complexity of O(log n). It requires the input array to be sorted. Example in Python:\n```python\ndef binary_search(arr, target):\n low = 0\n high = len(arr) - 1\n while low <= high:\n mid = (low + high) // 2\n if arr[mid] == target:\n return mid\n elif arr[mid] < target:\n low = mid + 1\n else:\n high = mid - 1\n return -1\n```",
+          "video_url": "https://www.youtube.com/watch?v=P3YID7liBug",
+          "practice_questions": [
+            "Explain how Binary Search works.",
+            "What is the time complexity of Binary Search?",
+            "What is a pre-requisite for using Binary Search?",
+            "Write a Python function to implement Binary Search.",
+            "Compare and contrast Binary Search with Linear Search."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Greedy Algorithms",
+      "topics": [
+        {
+          "topic_title": "Activity Selection Problem",
+          "notes_md": "The Activity Selection Problem involves selecting a maximum-size set of mutually compatible activities from a set of activities with start and finish times. A greedy approach is to sort the activities by their finish times and then iteratively select the activity with the earliest finish time that is compatible with the previously selected activities. This approach guarantees an optimal solution. The time complexity is dominated by the sorting step, which is O(n log n). The algorithm then iterates through the sorted activities once, which takes O(n) time.  Therefore, the overall time complexity is O(n log n).",
+          "video_url": "https://www.youtube.com/watch?v=II1OmtVj2EE",
+          "practice_questions": [
+            "Describe the Activity Selection Problem.",
+            "Explain the greedy approach for solving the Activity Selection Problem.",
+            "What is the time complexity of the greedy algorithm for the Activity Selection Problem?",
+            "Give an example of a scenario where the Activity Selection Problem is applicable.",
+            "Prove the correctness of the greedy algorithm for the Activity Selection Problem."
+          ]
+        },
+        {
+          "topic_title": "Fractional Knapsack Problem",
+          "notes_md": "The Fractional Knapsack Problem involves selecting items with different weights and values to maximize the total value that can be placed in a knapsack with a given capacity. Items can be taken in fractions. A greedy approach is to calculate the value-to-weight ratio for each item, sort the items in descending order of their value-to-weight ratios, and then iteratively add items to the knapsack until it is full. If an item cannot be fully added, a fraction of it is added. The time complexity is dominated by the sorting step, which is O(n log n). The algorithm then iterates through the sorted items once, which takes O(n) time. Therefore, the overall time complexity is O(n log n).",
+          "video_url": "https://www.youtube.com/watch?v=F_9RH84nKPY",
+          "practice_questions": [
+            "Describe the Fractional Knapsack Problem.",
+            "Explain the greedy approach for solving the Fractional Knapsack Problem.",
+            "What is the time complexity of the greedy algorithm for the Fractional Knapsack Problem?",
+            "How does the Fractional Knapsack Problem differ from the 0-1 Knapsack Problem?",
+            "Give an example of a scenario where the Fractional Knapsack Problem is applicable."
+          ]
+        },
+        {
+          "topic_title": "Huffman Coding",
+          "notes_md": "Huffman Coding is a lossless data compression algorithm. It assigns variable-length codes to input characters based on their frequencies. The most frequent characters get shorter codes, and the least frequent characters get longer codes. A Huffman tree is constructed based on the frequencies of the characters. The algorithm starts by creating a leaf node for each character. Then, it repeatedly merges the two nodes with the lowest frequencies until a single root node is formed. The path from the root to each leaf node represents the Huffman code for the corresponding character. The time complexity of Huffman Coding is O(n log n), where n is the number of characters. This is primarily due to the use of a priority queue (e.g., min-heap) to efficiently find the two nodes with the lowest frequencies.",
+          "video_url": "https://www.youtube.com/watch?v=dtlmpQo-KEQ",
+          "practice_questions": [
+            "Explain the concept of Huffman Coding.",
+            "How does Huffman Coding achieve data compression?",
+            "Describe the steps involved in constructing a Huffman tree.",
+            "What is the time complexity of Huffman Coding?",
+            "Give an example of how Huffman Coding can be used to compress text data."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Dynamic Programming",
+      "topics": [
+        {
+          "topic_title": "Fibonacci Sequence",
+          "notes_md": "The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, usually starting with 0 and 1. A dynamic programming approach can be used to efficiently calculate Fibonacci numbers by storing the results of subproblems and reusing them when needed. This avoids redundant calculations. The time complexity of the dynamic programming approach is O(n), where n is the desired Fibonacci number. The space complexity is also O(n) due to the storage of the calculated Fibonacci numbers. Example in Python:\n```python\ndef fibonacci_dp(n):\n fib = [0] * (n + 1)\n fib[0] = 0\n if n > 0:\n fib[1] = 1\n for i in range(2, n + 1):\n fib[i] = fib[i - 1] + fib[i - 2]\n return fib[n]\n```",
+          "video_url": "https://www.youtube.com/watch?v=vYquumQM-nM",
+          "practice_questions": [
+            "Define the Fibonacci sequence.",
+            "Explain how dynamic programming can be used to calculate Fibonacci numbers efficiently.",
+            "What is the time complexity of the dynamic programming approach for the Fibonacci sequence?",
+            "Write a Python function to implement the dynamic programming approach for the Fibonacci sequence.",
+            "Compare and contrast the dynamic programming approach with the recursive approach for the Fibonacci sequence."
+          ]
+        },
+        {
+          "topic_title": "0-1 Knapsack Problem",
+          "notes_md": "The 0-1 Knapsack Problem involves selecting items with different weights and values to maximize the total value that can be placed in a knapsack with a given capacity. Each item can either be taken entirely or not taken at all (no fractions allowed). A dynamic programming approach can be used to solve the 0-1 Knapsack Problem by building a table that stores the maximum value that can be obtained for different knapsack capacities and subsets of items. The time complexity of the dynamic programming approach is O(nW), where n is the number of items and W is the knapsack capacity. The space complexity is also O(nW).",
+          "video_url": "https://www.youtube.com/watch?v=nLmhmByssG8",
+          "practice_questions": [
+            "Describe the 0-1 Knapsack Problem.",
+            "Explain how dynamic programming can be used to solve the 0-1 Knapsack Problem.",
+            "What is the time complexity of the dynamic programming approach for the 0-1 Knapsack Problem?",
+            "How does the 0-1 Knapsack Problem differ from the Fractional Knapsack Problem?",
+            "Give an example of a scenario where the 0-1 Knapsack Problem is applicable."
+          ]
+        },
+        {
+          "topic_title": "Longest Common Subsequence (LCS)",
+          "notes_md": "The Longest Common Subsequence (LCS) problem involves finding the longest subsequence common to two given sequences. A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements. A dynamic programming approach can be used to solve the LCS problem by building a table that stores the lengths of the LCS for different prefixes of the two sequences. The time complexity of the dynamic programming approach is O(mn), where m and n are the lengths of the two sequences. The space complexity is also O(mn).",
+          "video_url": "https://www.youtube.com/watch?v=NnD96BjUjNw",
+          "practice_questions": [
+            "Describe the Longest Common Subsequence (LCS) problem.",
+            "Explain how dynamic programming can be used to solve the LCS problem.",
+            "What is the time complexity of the dynamic programming approach for the LCS problem?",
+            "Give an example of how the LCS problem can be applied in real-world scenarios.",
+            "Write a Python function to implement the dynamic programming approach for the LCS problem."
+          ]
+        }
+      ]
+    }
+  ]
+}

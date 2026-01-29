@@ -1,0 +1,170 @@
+{
+  "course_name": "Product Design and Development",
+  "course_code": "SPIC7",
+  "units": [
+    {
+      "unit_title": "Introduction to Product Design",
+      "topics": [
+        {
+          "topic_title": "Understanding Product Design",
+          "notes_md": "Product design is the process of defining, creating, and iterating on products that solve user problems or address market needs. It involves understanding the target audience, defining the product's purpose and functionality, and creating a tangible or intangible solution. Key aspects include user research, ideation, prototyping, testing, and iteration. Effective product design balances user needs, business goals, and technological feasibility. It's an interdisciplinary field drawing from engineering, marketing, and design principles.\n\nProduct design differs from industrial design; product design focuses on the overall user experience, while industrial design deals with the physical form and aesthetics.\n\nConsiderations include:\n*   **Functionality:** What does the product do?\n*   **Usability:** How easy is it to use?\n*   **Aesthetics:** How does it look and feel?\n*   **Cost:** How much will it cost to produce?\n*   **Sustainability:** What is its environmental impact?",
+          "video_url": "https://www.youtube.com/watch?v=M66ZU2PCIcM",
+          "practice_questions": [
+            "What are the key elements of product design?",
+            "How does product design differ from industrial design?",
+            "Explain the importance of user research in product design.",
+            "Describe the role of prototyping in the product development process.",
+            "How does sustainability factor into modern product design?"
+          ]
+        },
+        {
+          "topic_title": "The Product Design Process",
+          "notes_md": "The product design process typically involves several stages:\n\n1.  **Ideation:** Generating ideas for new products or improvements to existing ones.\n2.  **Research:** Understanding user needs, market trends, and competitive landscape.\n3.  **Concept Development:** Refining ideas into concrete concepts, including features and functionality.\n4.  **Prototyping:** Creating preliminary versions of the product for testing and feedback.\n5.  **Testing:** Gathering feedback from users and stakeholders to identify areas for improvement.\n6.  **Iteration:** Refining the product based on feedback and testing results.\n7.  **Implementation:** Finalizing the design and preparing for production.\n\nThis process is often iterative, with designers revisiting earlier stages as needed. Agile methodologies are commonly used, allowing for flexibility and responsiveness to changing requirements. Tools like design thinking workshops and user journey mapping are frequently employed to facilitate the process.",
+          "video_url": "https://www.youtube.com/watch?v=mB0jR4xBBpI",
+          "practice_questions": [
+            "List and describe the typical stages of the product design process.",
+            "What is the role of iteration in product design?",
+            "Explain the importance of testing in the product design process.",
+            "How do agile methodologies apply to product design?",
+            "What are some tools and techniques used in product design?"
+          ]
+        },
+        {
+          "topic_title": "User-Centered Design Principles",
+          "notes_md": "User-centered design (UCD) places the user at the heart of the design process. It emphasizes understanding the user's needs, goals, and behaviors, and designing products that are intuitive, usable, and satisfying. Key principles include:\n\n*   **Empathy:** Understanding the user's perspective and needs.\n*   **User Research:** Gathering insights through interviews, surveys, and observations.\n*   **Usability Testing:** Evaluating the product's ease of use with real users.\n*   **Accessibility:** Designing products that are usable by people with disabilities.\n*   **Iteration:** Continuously improving the product based on user feedback.\n\nUCD aims to create products that are not only functional but also enjoyable and meaningful for the user. It involves considering the user's context, motivations, and limitations.",
+          "video_url": "https://www.youtube.com/watch?v=FNFj7m-e09I",
+          "practice_questions": [
+            "What is user-centered design (UCD)?",
+            "Explain the key principles of UCD.",
+            "How does user research contribute to UCD?",
+            "Why is accessibility important in product design?",
+            "Describe the benefits of using a UCD approach."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Ideation and Concept Generation",
+      "topics": [
+        {
+          "topic_title": "Brainstorming Techniques",
+          "notes_md": "Brainstorming is a group creativity technique designed to generate a large number of ideas in a short period. Effective brainstorming sessions encourage participants to think freely, defer judgment, and build on each other's ideas. Common techniques include:\n\n*   **Free Association:** Generating ideas based on related words or concepts.\n*   **Mind Mapping:** Visually organizing ideas around a central theme.\n*   **SCAMPER:** Using a checklist of prompts (Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Reverse) to generate new ideas.\n*   **Reverse Brainstorming:** Identifying problems and challenges with existing products or processes.\n*   **Worst Possible Idea:** Intentionally generating bad ideas to spark creative thinking.\n\nSuccessful brainstorming requires a facilitator to guide the session, a clear objective, and a diverse group of participants.",
+          "video_url": "https://www.youtube.com/watch?v=bW-49K_g10o",
+          "practice_questions": [
+            "What is brainstorming and why is it important?",
+            "Describe different brainstorming techniques.",
+            "How can you facilitate a successful brainstorming session?",
+            "What are the benefits of using mind mapping in ideation?",
+            "Explain the SCAMPER technique and provide examples."
+          ]
+        },
+        {
+          "topic_title": "Concept Selection and Evaluation",
+          "notes_md": "Once a range of concepts has been generated, it's crucial to select and evaluate the most promising ones. This involves assessing each concept based on criteria such as feasibility, desirability, and viability. Common evaluation methods include:\n\n*   **Concept Screening:** A quick and informal assessment to eliminate weak concepts.\n*   **Concept Testing:** Gathering feedback from potential users on different concepts.\n*   **Prototype Testing:** Evaluating the performance and usability of prototype versions.\n*   **Cost Analysis:** Estimating the cost of developing and manufacturing each concept.\n*   **Risk Assessment:** Identifying potential risks and challenges associated with each concept.\n\nThe selection process typically involves a cross-functional team, including designers, engineers, and marketers. A weighted scoring matrix can be used to objectively compare and rank the concepts.",
+          "video_url": "https://www.youtube.com/watch?v=95vU-R5sD8Q",
+          "practice_questions": [
+            "Why is concept selection and evaluation important?",
+            "Describe different methods for evaluating product concepts.",
+            "What criteria should be considered when selecting a product concept?",
+            "Explain the role of a cross-functional team in the selection process.",
+            "How can a weighted scoring matrix be used to compare concepts?"
+          ]
+        },
+        {
+          "topic_title": "Design Thinking",
+          "notes_md": "Design thinking is a human-centered, iterative problem-solving approach. It emphasizes empathy, experimentation, and collaboration to create innovative solutions. The design thinking process typically involves five stages:\n\n1.  **Empathize:** Understanding the user's needs and perspectives.\n2.  **Define:** Clearly articulating the problem to be solved.\n3.  **Ideate:** Generating a wide range of potential solutions.\n4.  **Prototype:** Creating tangible versions of the solutions for testing.\n5.  **Test:** Gathering feedback from users and refining the solutions.\n\nDesign thinking encourages a bias towards action and experimentation, allowing designers to quickly iterate and learn from their mistakes. It's a powerful approach for tackling complex, ill-defined problems.",
+          "video_url": "https://www.youtube.com/watch?v=lF6veX8Hq4E",
+          "practice_questions": [
+            "What is design thinking?",
+            "Describe the five stages of the design thinking process.",
+            "How does design thinking differ from traditional problem-solving approaches?",
+            "Why is empathy important in design thinking?",
+            "Explain the benefits of using design thinking."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Prototyping and Testing",
+      "topics": [
+        {
+          "topic_title": "Types of Prototypes",
+          "notes_md": "Prototypes are preliminary versions of a product used to test and refine its design. Different types of prototypes serve different purposes:\n\n*   **Low-Fidelity Prototypes:** Simple, inexpensive prototypes used to explore basic concepts and functionality (e.g., paper prototypes, wireframes).\n*   **High-Fidelity Prototypes:** More detailed prototypes that closely resemble the final product (e.g., interactive mockups, functional prototypes).\n*   **Functional Prototypes:** Prototypes that demonstrate the core functionality of the product.\n*   **Visual Prototypes:** Prototypes that focus on the appearance and aesthetics of the product.\n*   **Proof-of-Concept Prototypes:** Prototypes used to validate the feasibility of a particular technology or design approach.\n\nThe choice of prototype depends on the stage of the design process and the specific goals of the testing.",
+          "video_url": "https://www.youtube.com/watch?v=J_Q5AmjuYRQ",
+          "practice_questions": [
+            "What is a prototype?",
+            "Describe different types of prototypes and their purposes.",
+            "What are the advantages of using low-fidelity prototypes?",
+            "When would you use a high-fidelity prototype?",
+            "Explain the difference between a functional prototype and a visual prototype."
+          ]
+        },
+        {
+          "topic_title": "Usability Testing Methods",
+          "notes_md": "Usability testing involves observing users interacting with a product to identify usability issues and areas for improvement. Common methods include:\n\n*   **Think-Aloud Protocol:** Users verbalize their thoughts and actions as they interact with the product.\n*   **Eye Tracking:** Monitoring users' eye movements to understand their attention patterns.\n*   **A/B Testing:** Comparing two versions of a product to see which performs better.\n*   **Heuristic Evaluation:** Experts evaluate the product based on established usability principles.\n*   **Remote Usability Testing:** Conducting usability tests remotely using online tools.\n\nEffective usability testing requires a clear set of tasks, a representative sample of users, and a systematic approach to data collection and analysis.",
+          "video_url": "https://www.youtube.com/watch?v=Ufg-iI085dI",
+          "practice_questions": [
+            "What is usability testing?",
+            "Describe different usability testing methods.",
+            "What are the benefits of using the think-aloud protocol?",
+            "How can eye tracking be used in usability testing?",
+            "Explain the process of conducting a remote usability test."
+          ]
+        },
+        {
+          "topic_title": "Feedback and Iteration",
+          "notes_md": "Feedback is essential for improving product designs. Gathering feedback from users, stakeholders, and experts helps identify areas for improvement and validate design decisions. The iterative design process involves:\n\n1.  **Gathering Feedback:** Collecting feedback through usability testing, surveys, and interviews.\n2.  **Analyzing Feedback:** Identifying patterns and trends in the feedback data.\n3.  **Prioritizing Issues:** Determining which issues to address based on their severity and impact.\n4.  **Implementing Changes:** Modifying the design to address the identified issues.\n5.  **Re-testing:** Evaluating the effectiveness of the changes through further testing.\n\nThis iterative process continues until the product meets the desired usability and performance goals. It's important to document all feedback and design changes to maintain a clear record of the design evolution.",
+          "video_url": "https://www.youtube.com/watch?v=o1_j0eX8w1A",
+          "practice_questions": [
+            "Why is feedback important in product design?",
+            "Describe the iterative design process.",
+            "How can you gather feedback on a product design?",
+            "How do you prioritize issues identified through feedback?",
+            "Explain the importance of documenting feedback and design changes."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Product Development and Launch",
+      "topics": [
+        {
+          "topic_title": "Engineering Design and Manufacturing",
+          "notes_md": "Engineering design translates product concepts into detailed specifications for manufacturing. This involves selecting materials, defining dimensions, and specifying manufacturing processes. Key considerations include:\n\n*   **Material Selection:** Choosing materials that meet the required performance, cost, and sustainability criteria.\n*   **Design for Manufacturing (DFM):** Designing the product to be easily and efficiently manufactured.\n*   **Tolerance Analysis:** Determining the allowable variations in dimensions and specifications.\n*   **Quality Control:** Implementing measures to ensure the product meets the required quality standards.\n\nModern manufacturing techniques, such as 3D printing and CNC machining, allow for rapid prototyping and customized production.",
+          "video_url": "https://www.youtube.com/watch?v=GfK_Ggq7-0A",
+          "practice_questions": [
+            "What is engineering design?",
+            "What are the key considerations in engineering design for manufacturing?",
+            "Explain the importance of material selection.",
+            "What is design for manufacturing (DFM)?",
+            "How does quality control ensure product quality?"
+          ]
+        },
+        {
+          "topic_title": "Marketing and Product Launch",
+          "notes_md": "Marketing plays a crucial role in the success of a product launch. It involves creating awareness, generating demand, and positioning the product in the market. Key marketing activities include:\n\n*   **Market Research:** Understanding the target audience and competitive landscape.\n*   **Branding:** Creating a unique identity and image for the product.\n*   **Pricing Strategy:** Determining the optimal price point for the product.\n*   **Promotion:** Communicating the product's value proposition to potential customers.\n*   **Distribution:** Making the product available to customers through appropriate channels.\n\nA successful product launch requires a well-defined marketing plan and effective execution.",
+          "video_url": "https://www.youtube.com/watch?v=g96HlWfR6wI",
+          "practice_questions": [
+            "What is the role of marketing in product launch?",
+            "Describe key marketing activities.",
+            "Why is market research important?",
+            "What factors should be considered when developing a pricing strategy?",
+            "How can you effectively promote a new product?"
+          ]
+        },
+        {
+          "topic_title": "Post-Launch Evaluation and Iteration",
+          "notes_md": "Even after a product is launched, it's important to continue monitoring its performance and gathering feedback. Post-launch evaluation involves:\n\n*   **Sales Analysis:** Tracking sales data to understand product demand.\n*   **Customer Feedback:** Gathering feedback from customers through surveys and reviews.\n*   **Performance Monitoring:** Monitoring the product's performance and identifying any issues.\n*   **Competitive Analysis:** Tracking the performance of competing products.\n\nBased on this evaluation, the product can be iteratively improved through updates, new features, or even a redesigned version. This continuous improvement process ensures the product remains competitive and meets evolving customer needs.",
+          "video_url": "https://www.youtube.com/watch?v=w89tFFmN7t4",
+          "practice_questions": [
+            "Why is post-launch evaluation important?",
+            "Describe the key activities involved in post-launch evaluation.",
+            "How can you gather customer feedback after a product launch?",
+            "What is the purpose of competitive analysis?",
+            "How can post-launch evaluation lead to product improvements?"
+          ]
+        }
+      ]
+    }
+  ]
+}

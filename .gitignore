@@ -1,0 +1,54 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+ /out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local infra / editor / tooling
+.idx/
+.modified
+
+# local-only firebase / hosting configs
+firebase.json
+firestore.rules
+apphosting.yaml
+netlify.toml
+
+# optional local docs & patches
+docs/
+patches/
+
+# workspace files
+/workspace/
+
+# dev-only routes
+/src/app/dev-login/

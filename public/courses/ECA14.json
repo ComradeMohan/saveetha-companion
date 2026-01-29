@@ -1,0 +1,170 @@
+{
+  "course_name": "Embedded Systems",
+  "course_code": "ECA14",
+  "units": [
+    {
+      "unit_title": "Introduction to Embedded Systems",
+      "topics": [
+        {
+          "topic_title": "Definition and Characteristics",
+          "notes_md": "Embedded systems are specialized computer systems designed to perform dedicated tasks within a larger device or system. Unlike general-purpose computers, they are typically resource-constrained, real-time, and application-specific. Key characteristics include: \n\n*   **Real-time operation:** Must respond to events within strict timing constraints.\n*   **Dedicated function:** Designed for a specific purpose, such as controlling a machine or appliance.\n*   **Resource constraints:** Limited memory, processing power, and energy.\n*   **Reactive:** Continuously interacts with its environment through sensors and actuators.\n*   **Reliability:** Often required to operate reliably for extended periods without failure.\n\nExamples include microcontrollers in appliances, automotive control systems, and industrial automation equipment. Understanding these characteristics is fundamental to designing and developing effective embedded systems.",
+          "video_url": "https://www.youtube.com/watch?v=Uf-ktn1s4To",
+          "practice_questions": [
+            "What are the key differences between an embedded system and a general-purpose computer?",
+            "Explain the concept of 'real-time operation' in the context of embedded systems.",
+            "Give three examples of embedded systems and their specific applications.",
+            "What are the typical resource constraints faced by embedded system designers?",
+            "Why is reliability a critical factor in embedded system design?"
+          ]
+        },
+        {
+          "topic_title": "Hardware Components",
+          "notes_md": "The core hardware components of an embedded system typically include a microcontroller or microprocessor, memory (RAM, ROM, Flash), input/output (I/O) interfaces, and peripherals. The microcontroller/microprocessor serves as the central processing unit, executing instructions and controlling the system's operation. Memory stores program code and data. I/O interfaces allow the system to interact with the external environment through sensors, actuators, and communication channels. Common peripherals include timers, analog-to-digital converters (ADCs), digital-to-analog converters (DACs), and communication interfaces (UART, SPI, I2C).\n\nChoosing the appropriate hardware components is crucial for meeting the system's performance, power consumption, and cost requirements.",
+          "video_url": "https://www.youtube.com/watch?v=K_1bI0Spxhw",
+          "practice_questions": [
+            "Describe the role of the microcontroller in an embedded system.",
+            "What are the different types of memory used in embedded systems and their purposes?",
+            "Explain the function of I/O interfaces in connecting an embedded system to the external world.",
+            "Give examples of common peripherals used in embedded systems and their applications.",
+            "What factors should be considered when selecting hardware components for an embedded system?"
+          ]
+        },
+        {
+          "topic_title": "Software Components",
+          "notes_md": "Embedded software consists of the program code that runs on the microcontroller/microprocessor and controls the system's behavior. This typically includes an operating system (OS) or real-time operating system (RTOS), device drivers, application software, and firmware. The OS/RTOS manages system resources, schedules tasks, and provides a platform for running applications. Device drivers provide an interface between the application software and the hardware peripherals. Application software implements the specific functionality of the embedded system. Firmware is the low-level software that initializes and controls the hardware.\n\nThe choice of software components depends on the complexity of the system and its real-time requirements.",
+          "video_url": "https://www.youtube.com/watch?v=K_1bI0Spxhw",
+          "practice_questions": [
+            "What is the role of an operating system (OS) or real-time operating system (RTOS) in an embedded system?",
+            "Explain the purpose of device drivers in embedded software.",
+            "What is the difference between application software and firmware in an embedded system?",
+            "How does the complexity of the system influence the choice of software components?",
+            "What are the key considerations when selecting an RTOS for an embedded system?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Microcontrollers and Microprocessors",
+      "topics": [
+        {
+          "topic_title": "Architecture of Microcontrollers",
+          "notes_md": "Microcontrollers are integrated circuits that combine a microprocessor core with peripherals such as memory, timers, and I/O ports on a single chip. Common architectures include ARM, AVR, and PIC. Key architectural features include: \n\n*   **Harvard architecture:** Separate memory spaces for program code and data, allowing for simultaneous fetching of instructions and data.\n*   **RISC (Reduced Instruction Set Computing):** Simple instructions that execute in a single clock cycle, leading to faster performance.\n*   **On-chip peripherals:** Integrated timers, ADCs, DACs, and communication interfaces.\n*   **Interrupt handling:** Mechanism for responding to external events in real-time.\n*   **Low power consumption:** Designed for battery-powered applications.\n\nUnderstanding the microcontroller's architecture is essential for efficient programming and optimization.",
+          "video_url": "https://www.youtube.com/watch?v=qGEummrX31o",
+          "practice_questions": [
+            "What is the difference between Harvard and von Neumann architectures?",
+            "Explain the advantages of RISC architecture in microcontrollers.",
+            "Give examples of on-chip peripherals commonly found in microcontrollers.",
+            "Describe the interrupt handling mechanism in a microcontroller.",
+            "Why is low power consumption an important consideration in microcontroller design?"
+          ]
+        },
+        {
+          "topic_title": "Microprocessor vs. Microcontroller",
+          "notes_md": "Microprocessors and microcontrollers are both central processing units (CPUs), but they differ in their intended applications and features. Microprocessors are general-purpose CPUs designed for use in computers and other complex systems. They typically require external memory and peripherals to function. Microcontrollers, on the other hand, are self-contained systems-on-a-chip that integrate the CPU, memory, and peripherals on a single chip. Microcontrollers are well-suited for embedded systems where size, cost, and power consumption are critical factors.\n\n| Feature        | Microprocessor              | Microcontroller                  |\n|----------------|-----------------------------|----------------------------------|\n| Application    | General-purpose computing   | Embedded systems                 |\n| Memory         | External                    | Internal                         |\n| Peripherals    | External                    | Integrated                       |\n| Size           | Larger                      | Smaller                          |\n| Cost           | Higher                      | Lower                            |\n| Power Consumption| Higher                      | Lower                            |",
+          "video_url": "https://www.youtube.com/watch?v=wJ0_Mh36T1c",
+          "practice_questions": [
+            "What are the key differences between a microprocessor and a microcontroller?",
+            "Give examples of applications where a microprocessor is more suitable than a microcontroller.",
+            "Give examples of applications where a microcontroller is more suitable than a microprocessor.",
+            "Compare the memory and peripheral integration of microprocessors and microcontrollers.",
+            "Discuss the trade-offs between using a microprocessor and a microcontroller in an embedded system design."
+          ]
+        },
+        {
+          "topic_title": "Memory Organization",
+          "notes_md": "Microcontrollers use various types of memory for storing program code and data. ROM (Read-Only Memory) is used for storing non-volatile program code that does not need to be changed. RAM (Random Access Memory) is used for storing volatile data that can be read and written during program execution. Flash memory is a type of non-volatile memory that can be erased and reprogrammed electronically. EEPROM (Electrically Erasable Programmable Read-Only Memory) is another type of non-volatile memory that can be erased and reprogrammed byte-by-byte.\n\nUnderstanding memory organization is crucial for efficient memory management and data storage in embedded systems.",
+          "video_url": "https://www.youtube.com/watch?v=D6RkY-h9GmM",
+          "practice_questions": [
+            "What are the different types of memory used in microcontrollers?",
+            "Explain the difference between ROM and RAM.",
+            "What is Flash memory and how is it used in embedded systems?",
+            "What is EEPROM and how does it differ from Flash memory?",
+            "Why is understanding memory organization important for embedded system developers?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Programming Embedded Systems",
+      "topics": [
+        {
+          "topic_title": "Embedded C Programming",
+          "notes_md": "C is the most widely used programming language for embedded systems due to its efficiency, portability, and low-level access to hardware. Embedded C often requires careful memory management and optimization to meet resource constraints. Key considerations include: \n\n*   **Memory allocation:** Using `malloc` and `free` carefully to avoid memory leaks.\n*   **Bit manipulation:** Using bitwise operators to control individual bits in registers.\n*   **Interrupt handling:** Writing interrupt service routines (ISRs) to respond to external events.\n*   **Volatile variables:** Declaring variables as `volatile` to prevent compiler optimizations that could interfere with real-time behavior.\n*   **Compiler optimization:** Using compiler flags to optimize code for size or speed.\n\n```c\n#include <stdio.h>\n\nint main() {\n  volatile int count = 0;\n  // Code that interacts with hardware\n  count++;\n  printf(\"Count: %d\\n\", count);\n  return 0;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=05K-2XkyriQ",
+          "practice_questions": [
+            "Why is C the most popular programming language for embedded systems?",
+            "Explain the importance of memory management in embedded C programming.",
+            "What are bitwise operators and how are they used in embedded systems?",
+            "What is an interrupt service routine (ISR) and how is it implemented in C?",
+            "Why is the `volatile` keyword important in embedded C programming?"
+          ]
+        },
+        {
+          "topic_title": "Interrupts and Timers",
+          "notes_md": "Interrupts are hardware signals that cause the microcontroller to suspend its current execution and execute a special function called an interrupt service routine (ISR). Timers are hardware peripherals that generate interrupts at regular intervals. Interrupts and timers are essential for real-time operation and event-driven programming. Key concepts include: \n\n*   **Interrupt vector table:** A table that maps interrupt numbers to ISR addresses.\n*   **Interrupt priority:** Assigning priorities to different interrupts to ensure that critical events are handled first.\n*   **Timer configuration:** Setting the timer's prescaler, period, and mode of operation.\n*   **Debouncing:** Filtering out spurious signals from mechanical switches.\n\n```c\nvoid timer_isr() {\n  // Code to be executed when the timer expires\n}\n\nvoid enable_timer_interrupt() {\n  // Code to enable the timer interrupt\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=eYl6lH3tq5I",
+          "practice_questions": [
+            "What is an interrupt and how does it work?",
+            "What is an interrupt service routine (ISR)?",
+            "What is an interrupt vector table?",
+            "Why is interrupt priority important?",
+            "How are timers used in embedded systems?"
+          ]
+        },
+        {
+          "topic_title": "Debugging Embedded Systems",
+          "notes_md": "Debugging embedded systems can be challenging due to the limited resources and real-time constraints. Common debugging techniques include: \n\n*   **Printf debugging:** Inserting print statements to track program execution.\n*   **Logic analyzers:** Capturing digital signals to analyze hardware behavior.\n*   **In-circuit emulators (ICE):** Emulating the microcontroller's behavior in real-time.\n*   **Debuggers:** Using a debugger to step through code, set breakpoints, and inspect variables.\n*   **Unit testing:** Testing individual components of the system in isolation.\n\nEffective debugging requires a combination of hardware and software tools and a systematic approach.",
+          "video_url": "https://www.youtube.com/watch?v=Wk5wA68M6lU",
+          "practice_questions": [
+            "Why is debugging embedded systems more challenging than debugging desktop applications?",
+            "What is printf debugging and what are its limitations?",
+            "What is a logic analyzer and how is it used for debugging embedded systems?",
+            "What is an in-circuit emulator (ICE) and how does it work?",
+            "What are the benefits of unit testing in embedded system development?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Communication Protocols",
+      "topics": [
+        {
+          "topic_title": "UART Communication",
+          "notes_md": "UART (Universal Asynchronous Receiver/Transmitter) is a simple serial communication protocol commonly used in embedded systems. It allows for asynchronous data transfer between two devices. Key features include: \n\n*   **Two wires:** Transmit (TX) and Receive (RX).\n*   **Asynchronous:** No clock signal is required.\n*   **Start and stop bits:** Used for framing data.\n*   **Parity bit:** Used for error detection.\n*   **Baud rate:** The rate at which data is transmitted (bits per second).\n\nUART is often used for communication with sensors, actuators, and other peripherals.",
+          "video_url": "https://www.youtube.com/watch?v=mdsO1F0pWkQ",
+          "practice_questions": [
+            "What does UART stand for?",
+            "How does UART communication work?",
+            "What are the key features of UART?",
+            "What is the baud rate and how does it affect communication?",
+            "What are some common applications of UART in embedded systems?"
+          ]
+        },
+        {
+          "topic_title": "SPI Communication",
+          "notes_md": "SPI (Serial Peripheral Interface) is a synchronous serial communication protocol used for short-distance communication between microcontrollers and peripherals. It uses a master-slave architecture with a single master and multiple slaves. Key features include: \n\n*   **Four wires:** Master Out Slave In (MOSI), Master In Slave Out (MISO), Serial Clock (SCK), and Slave Select (SS).\n*   **Synchronous:** Requires a clock signal.\n*   **Full-duplex:** Allows for simultaneous transmission and reception.\n*   **High speed:** Can achieve higher data rates than UART.\n\nSPI is often used for communication with sensors, memory devices, and displays.",
+          "video_url": "https://www.youtube.com/watch?v=EE7mu76qTEU",
+          "practice_questions": [
+            "What does SPI stand for?",
+            "How does SPI communication work?",
+            "What are the key features of SPI?",
+            "What are the roles of the MOSI, MISO, SCK, and SS lines?",
+            "What are some common applications of SPI in embedded systems?"
+          ]
+        },
+        {
+          "topic_title": "I2C Communication",
+          "notes_md": "I2C (Inter-Integrated Circuit) is a synchronous serial communication protocol used for short-distance communication between multiple devices on a single bus. It uses a master-slave architecture with multiple masters and slaves. Key features include: \n\n*   **Two wires:** Serial Data (SDA) and Serial Clock (SCL).\n*   **Synchronous:** Requires a clock signal.\n*   **Addressable:** Each device has a unique address.\n*   **Multi-master:** Allows for multiple masters on the bus.\n*   **Low speed:** Typically slower than SPI.\n\nI2C is often used for communication with sensors, real-time clocks (RTCs), and EEPROMs.",
+          "video_url": "https://www.youtube.com/watch?v=8hZXGohFk2U",
+          "practice_questions": [
+            "What does I2C stand for?",
+            "How does I2C communication work?",
+            "What are the key features of I2C?",
+            "What are the roles of the SDA and SCL lines?",
+            "What are some common applications of I2C in embedded systems?"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "course_name": "Principles of Management",
+  "course_code": "UBA33",
+  "units": [
+    {
+      "unit_title": "Introduction to Management",
+      "topics": [
+        {
+          "topic_title": "Defining Management and its Functions",
+          "notes_md": "Management is the process of planning, organizing, leading, and controlling resources to achieve specific goals effectively and efficiently. The core functions are:\n\n*   **Planning:** Setting organizational goals and determining the best course of action to achieve them.\n*   **Organizing:** Structuring the organization and allocating resources.\n*   **Leading:** Motivating and directing employees to work towards organizational goals.\n*   **Controlling:** Monitoring performance, comparing it to goals, and taking corrective action as needed.\n\nEffective management is crucial for organizational success, ensuring resources are used optimally and objectives are met. Different levels of management (top, middle, and lower) have varying responsibilities relating to these functions. Understanding these functions is the cornerstone of effective organizational management.",
+          "video_url": "https://www.youtube.com/watch?v=6OQq6rnK35Q",
+          "practice_questions": [
+            "Define management and explain its importance.",
+            "Describe the four main functions of management.",
+            "How do the responsibilities of managers differ at different organizational levels?",
+            "Explain the relationship between efficiency and effectiveness in management."
+          ]
+        },
+        {
+          "topic_title": "Evolution of Management Theories",
+          "notes_md": "Management theory has evolved significantly over time. Key schools of thought include:\n\n*   **Classical Management:** Focused on efficiency and productivity (Taylor's scientific management, Weber's bureaucracy).\n*   **Behavioral Management:** Emphasized human relations and employee motivation (Hawthorne studies, Maslow's hierarchy of needs).\n*   **Quantitative Management:** Used mathematical and statistical techniques for decision-making.\n*   **Systems Theory:** Viewed organizations as interconnected systems.\n*   **Contingency Theory:** Argued that the best management approach depends on the specific situation.\n\nUnderstanding these historical perspectives provides a foundation for contemporary management practices and allows managers to adapt their approaches to various organizational contexts.",
+          "video_url": "https://www.youtube.com/watch?v=E_Zl5wF-s4k",
+          "practice_questions": [
+            "Summarize the key principles of scientific management.",
+            "Explain the impact of the Hawthorne studies on management theory.",
+            "What are the main differences between classical and behavioral management approaches?",
+            "Describe the key concepts of systems theory in management."
+          ]
+        },
+        {
+          "topic_title": "Managerial Roles and Skills",
+          "notes_md": "Managers play various roles in organizations, broadly categorized as:\n\n*   **Interpersonal Roles:** Figurehead, leader, liaison.\n*   **Informational Roles:** Monitor, disseminator, spokesperson.\n*   **Decisional Roles:** Entrepreneur, disturbance handler, resource allocator, negotiator.\n\nEffective managers require a combination of skills:\n\n*   **Technical Skills:** Knowledge and proficiency in a specific field.\n*   **Human Skills:** Ability to work effectively with people.\n*   **Conceptual Skills:** Ability to understand the big picture and think strategically.\n\nThe relative importance of these skills varies depending on the management level.",
+          "video_url": "https://www.youtube.com/watch?v=Qp67rS3rVw8",
+          "practice_questions": [
+            "Describe Mintzberg's managerial roles and provide examples of each.",
+            "What are the three main categories of managerial skills?",
+            "How do the required skills differ for top-level and lower-level managers?",
+            "Why are human skills important for all managers?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Planning and Decision Making",
+      "topics": [
+        {
+          "topic_title": "The Planning Process",
+          "notes_md": "Planning involves defining organizational goals and developing strategies to achieve them. The typical planning process includes:\n\n1.  **Defining Objectives:** Setting clear and measurable goals.\n2.  **Analyzing the Environment:** Identifying opportunities and threats.\n3.  **Developing Alternatives:** Generating different courses of action.\n4.  **Evaluating Alternatives:** Assessing the pros and cons of each option.\n5.  **Selecting the Best Alternative:** Choosing the most appropriate strategy.\n6.  **Implementing the Plan:** Putting the plan into action.\n7.  **Monitoring and Controlling:** Tracking progress and making adjustments as needed.\n\nEffective planning provides direction, reduces uncertainty, and facilitates coordination.",
+          "video_url": "https://www.youtube.com/watch?v=eWFYRk9w0vE",
+          "practice_questions": [
+            "Outline the steps involved in the planning process.",
+            "Why is environmental analysis important in planning?",
+            "What are the benefits of developing alternative plans?",
+            "Explain the importance of monitoring and controlling in the planning process."
+          ]
+        },
+        {
+          "topic_title": "Types of Plans",
+          "notes_md": "Plans can be categorized based on several factors:\n\n*   **Strategic Plans:** Long-term, broad goals set by top management.\n*   **Tactical Plans:** Medium-term plans to implement strategic goals.\n*   **Operational Plans:** Short-term plans for day-to-day activities.\n*   **Standing Plans:** Used repeatedly (policies, procedures, rules).\n*   **Single-Use Plans:** Developed for a specific purpose (projects, programs).\n\nDifferent types of plans require different levels of detail and involvement from various organizational levels. The selection of appropriate plans depends on the nature of the organization and its goals.",
+          "video_url": "https://www.youtube.com/watch?v=9XyHh6m8U4w",
+          "practice_questions": [
+            "What are the key differences between strategic, tactical, and operational plans?",
+            "Give examples of standing plans and single-use plans.",
+            "How do plans help organizations achieve their goals?",
+            "Explain the relationship between strategic and tactical planning."
+          ]
+        },
+        {
+          "topic_title": "Decision-Making Process",
+          "notes_md": "Decision-making is a critical management function. The process typically involves:\n\n1.  **Identifying the Problem:** Recognizing a gap between the desired and actual state.\n2.  **Developing Alternatives:** Generating potential solutions.\n3.  **Evaluating Alternatives:** Assessing the pros and cons of each option.\n4.  **Choosing the Best Alternative:** Selecting the most appropriate solution.\n5.  **Implementing the Decision:** Putting the chosen solution into action.\n6.  **Evaluating the Decision:** Assessing the effectiveness of the solution.\n\nRational decision-making aims to select the optimal solution based on available information. However, in reality, decisions are often influenced by biases and constraints.",
+          "video_url": "https://www.youtube.com/watch?v=J_Yn-lEXK8E",
+          "practice_questions": [
+            "Outline the steps in the decision-making process.",
+            "Why is it important to identify the problem accurately?",
+            "What are some common biases that can affect decision-making?",
+            "Explain the importance of evaluating the decision after implementation."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Organizing",
+      "topics": [
+        {
+          "topic_title": "Organizational Structure",
+          "notes_md": "Organizational structure defines how tasks are divided, grouped, and coordinated. Common organizational structures include:\n\n*   **Functional Structure:** Groups employees based on their expertise (e.g., marketing, finance, operations).\n*   **Divisional Structure:** Organizes around products, services, or geographic regions.\n*   **Matrix Structure:** Combines functional and divisional structures.\n*   **Network Structure:** Relies on external partnerships and alliances.\n\nThe choice of organizational structure depends on factors such as organizational size, strategy, and environment. A well-designed structure facilitates communication, coordination, and control.",
+          "video_url": "https://www.youtube.com/watch?v=fR-X4i6Fj30",
+          "practice_questions": [
+            "Describe the characteristics of a functional organizational structure.",
+            "What are the advantages and disadvantages of a divisional structure?",
+            "Explain how a matrix structure works.",
+            "Under what circumstances is a network structure appropriate?"
+          ]
+        },
+        {
+          "topic_title": "Authority, Responsibility, and Delegation",
+          "notes_md": "Authority is the right to give commands and make decisions. Responsibility is the obligation to perform assigned tasks. Delegation involves assigning authority and responsibility to subordinates.\n\nEffective delegation empowers employees, improves decision-making, and frees up managers to focus on strategic issues. However, delegation requires trust, clear communication, and accountability. Managers must also monitor performance and provide support to subordinates.",
+          "video_url": "https://www.youtube.com/watch?v=I_3QnB8uE2Y",
+          "practice_questions": [
+            "Define authority and responsibility.",
+            "Explain the benefits of delegation.",
+            "What are the challenges of delegation?",
+            "How can managers ensure effective delegation?"
+          ]
+        },
+        {
+          "topic_title": "Span of Control and Departmentalization",
+          "notes_md": "Span of control refers to the number of subordinates a manager can effectively supervise. Departmentalization is the process of grouping jobs into departments. A wide span of control results in a flatter organization with fewer management levels, while a narrow span of control leads to a taller organization with more levels.\n\nThe optimal span of control depends on factors such as the complexity of the tasks, the skills of the employees, and the manager's capabilities. Departmentalization can be based on function, product, geography, or customer.",
+          "video_url": "https://www.youtube.com/watch?v=u4v0u-47x5o",
+          "practice_questions": [
+            "What is span of control?",
+            "How does span of control affect organizational structure?",
+            "What are the different types of departmentalization?",
+            "What factors influence the optimal span of control?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Leading",
+      "topics": [
+        {
+          "topic_title": "Leadership Theories",
+          "notes_md": "Various theories attempt to explain effective leadership. Some prominent theories include:\n\n*   **Trait Theory:** Focuses on identifying personality traits associated with leadership success.\n*   **Behavioral Theory:** Examines the behaviors of effective leaders (e.g., task-oriented vs. relationship-oriented).\n*   **Contingency Theory:** Argues that the best leadership style depends on the situation (e.g., Fiedler's contingency model, Hersey-Blanchard situational leadership).\n*   **Transformational Leadership:** Focuses on inspiring and motivating followers to achieve extraordinary outcomes.\n\nEach theory provides valuable insights into leadership, but no single theory provides a complete explanation.",
+          "video_url": "https://www.youtube.com/watch?v=M-m18QeO2v0",
+          "practice_questions": [
+            "What are the key assumptions of trait theory?",
+            "Explain the difference between task-oriented and relationship-oriented leadership.",
+            "Describe Fiedler's contingency model.",
+            "What are the characteristics of transformational leadership?"
+          ]
+        },
+        {
+          "topic_title": "Motivation",
+          "notes_md": "Motivation is the process that accounts for an individual's intensity, direction, and persistence of effort toward attaining a goal. Key theories of motivation include:\n\n*   **Maslow's Hierarchy of Needs:** Suggests that individuals are motivated by a hierarchy of needs, starting with physiological needs and progressing to self-actualization.\n*   **Herzberg's Two-Factor Theory:** Distinguishes between hygiene factors (e.g., salary, working conditions) and motivators (e.g., achievement, recognition).\n*   **Expectancy Theory:** Argues that motivation depends on the individual's belief that effort will lead to performance, performance will lead to rewards, and the rewards are valued.\n\nUnderstanding motivation is crucial for managers to create a work environment that encourages high performance.",
+          "video_url": "https://www.youtube.com/watch?v=4h82kdpJ-wM",
+          "practice_questions": [
+            "Describe Maslow's hierarchy of needs.",
+            "What are the hygiene factors and motivators in Herzberg's Two-Factor Theory?",
+            "Explain the key components of Expectancy Theory.",
+            "How can managers use motivation theories to improve employee performance?"
+          ]
+        },
+        {
+          "topic_title": "Communication",
+          "notes_md": "Effective communication is essential for successful management. The communication process involves:\n\n1.  **Sender:** Encodes the message.\n2.  **Message:** The information being conveyed.\n3.  **Channel:** The medium used to transmit the message.\n4.  **Receiver:** Decodes the message.\n5.  **Feedback:** The receiver's response to the message.\n\nBarriers to effective communication include noise, filtering, and selective perception. Managers can improve communication by using clear language, actively listening, and providing feedback.",
+          "video_url": "https://www.youtube.com/watch?v=J-sbJgJvP9Q",
+          "practice_questions": [
+            "Describe the communication process.",
+            "What are some common barriers to effective communication?",
+            "How can managers improve their communication skills?",
+            "Why is feedback important in the communication process?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Controlling",
+      "topics": [
+        {
+          "topic_title": "The Control Process",
+          "notes_md": "The control process involves:\n\n1.  **Establishing Standards:** Setting performance goals.\n2.  **Measuring Performance:** Tracking actual performance.\n3.  **Comparing Performance to Standards:** Identifying deviations.\n4.  **Taking Corrective Action:** Implementing measures to address deviations.\n\nEffective control ensures that organizational activities are aligned with goals and that resources are used efficiently. Control can be exercised at different levels of the organization and can focus on different aspects of performance (e.g., financial, operational, strategic).",
+          "video_url": "https://www.youtube.com/watch?v=c1n4Qy1Yl6Q",
+          "practice_questions": [
+            "Outline the steps in the control process.",
+            "Why is it important to establish clear standards?",
+            "What are some common methods for measuring performance?",
+            "How can managers take corrective action when performance deviates from standards?"
+          ]
+        },
+        {
+          "topic_title": "Types of Control",
+          "notes_md": "Control can be categorized based on timing:\n\n*   **Feedforward Control:** Takes place before activities begin to prevent problems.\n*   **Concurrent Control:** Takes place during activities to monitor performance and make adjustments.\n*   **Feedback Control:** Takes place after activities are completed to evaluate performance and identify areas for improvement.\n\nDifferent types of control are appropriate for different situations. Feedforward control is proactive, while feedback control is reactive. Concurrent control allows for real-time adjustments.",
+          "video_url": "https://www.youtube.com/watch?v=4j-p15jFq74",
+          "practice_questions": [
+            "What are the key differences between feedforward, concurrent, and feedback control?",
+            "Give examples of each type of control.",
+            "When is each type of control most appropriate?",
+            "How do different types of control contribute to organizational effectiveness?"
+          ]
+        },
+        {
+          "topic_title": "Financial Controls",
+          "notes_md": "Financial controls are essential for monitoring and managing an organization's financial resources. Key financial controls include:\n\n*   **Budgeting:** Planning and controlling revenues and expenses.\n*   **Financial Statements:** Providing information about an organization's financial performance (e.g., income statement, balance sheet, cash flow statement).\n*   **Ratio Analysis:** Evaluating financial performance using key ratios (e.g., profitability ratios, liquidity ratios).\n\nEffective financial controls help organizations to make informed decisions, manage risk, and ensure financial stability.",
+          "video_url": "https://www.youtube.com/watch?v=bWqjK-XoU0g",
+          "practice_questions": [
+            "What is budgeting?",
+            "Describe the purpose of the income statement, balance sheet, and cash flow statement.",
+            "What are some common financial ratios?",
+            "How can financial controls help organizations to improve their financial performance?"
+          ]
+        }
+      ]
+    }
+  ]
+}

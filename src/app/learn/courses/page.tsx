@@ -1,0 +1,401 @@
+
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Loader2, Save, Check, BookOpen, Search, ArrowUpDown } from 'lucide-react';
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
+import { Label } from '@/components/ui/label';
+import { getCourses } from '@/app/actions/manage-courses';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { BulkGradeEntry } from '@/components/learn/bulk-grade-entry';
+import { SuggestCourseDialog } from '@/components/learn/suggest-course-dialog';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+
+type Course = {
+  id: string;
+  name: string;
+};
+
+const grades = ['S', 'A', 'B', 'C', 'D', 'E'];
+
+const gradePoints: { [key: string]: number } = { S: 10, A: 9, B: 8, C: 7, D: 6, E: 5 };
+
+const gradeColorClasses: Record<string, string> = {
+    S: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700',
+    A: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700',
+    B: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/50 dark:text-indigo-300 dark:border-indigo-700',
+    C: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-700',
+    D: 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700',
+    E: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700',
+};
+
+
+type StudentGrades = {
+  [courseCode: string]: string | { name: string; grade: string }; 
+};
+
+type SortKey = 'id' | 'name' | 'grade';
+type SortDirection = 'asc' | 'desc';
+
+export default function CoursesPage() {
+    const { user, profile, loading: authLoading } = useAuth();
+    const [allCourses, setAllCourses] = useState<Course[]>([]);
+    const [studentGrades, setStudentGrades] = useState<StudentGrades>({});
+    const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({ key: 'id', direction: 'asc' });
+    
+    const [selectedCourse, setSelectedCourse] = useState<string>("");
+    const [selectedGrade, setSelectedGrade] = useState<string>("");
+    const [electiveName, setElectiveName] = useState("");
+    
+    const { toast } = useToast();
+    
+    const isElectiveSelected = selectedCourse.startsWith("ELECTIVE");
+
+    useEffect(() => {
+        const fetchCourseList = async () => {
+             if (!authLoading && profile?.college && profile?.department) {
+                 try {
+                     const courses = await getCourses(profile.college, profile.department) as Course[];
+                     const electives = Array.from({ length: 8 }, (_, i) => ({
+                         id: `ELECTIVE_${i + 1}`,
+                         name: `Elective ${i + 1}`
+                     }));
+                     setAllCourses([...courses, ...electives]);
+                 } catch (error) {
+                     console.error("Error fetching courses for dropdown:", error);
+                 }
+             }
+        };
+        fetchCourseList();
+    }, [profile, authLoading]);
+
+    useEffect(() => {
+        if (authLoading || !user) return;
+
+        setLoading(true);
+        const docRef = doc(db, 'student_grades', user.uid);
+        
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setStudentGrades(docSnap.data());
+            } else {
+                setStudentGrades({});
+            }
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching grades:", error);
+            toast({ title: "Error", description: "Could not fetch your grades.", variant: "destructive" });
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [user, authLoading, toast]);
+
+    useEffect(() => {
+        if (selectedCourse && studentGrades[selectedCourse]) {
+            const gradeData = studentGrades[selectedCourse];
+            if (typeof gradeData === 'object') {
+                setSelectedGrade(gradeData.grade);
+                setElectiveName(gradeData.name);
+            } else {
+                setSelectedGrade(gradeData);
+                setElectiveName("");
+            }
+        } else {
+            setSelectedGrade("");
+            setElectiveName("");
+        }
+    }, [selectedCourse, studentGrades]);
+
+    const handleSaveGrade = async () => {
+        if (!user) {
+            toast({ title: "Error", description: "You are not logged in.", variant: "destructive"});
+            return;
+        }
+        if (!selectedCourse || !selectedGrade) {
+            toast({ title: "Error", description: "Please select a course and a grade.", variant: "destructive"});
+            return;
+        }
+        if (isElectiveSelected && !electiveName.trim()) {
+            toast({ title: "Error", description: "Please enter a name for your elective.", variant: "destructive"});
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const docRef = doc(db, 'student_grades', user.uid);
+            
+            const newGrades = { ...studentGrades };
+
+            if (selectedGrade !== 'none') {
+                 if(isElectiveSelected) {
+                    newGrades[selectedCourse] = { name: electiveName, grade: selectedGrade };
+                 } else {
+                    newGrades[selectedCourse] = selectedGrade;
+                 }
+            } else {
+                delete newGrades[selectedCourse];
+            }
+            
+            await setDoc(docRef, newGrades, { merge: true });
+
+            toast({ title: "Success", description: "Your grade has been saved." });
+            setSelectedCourse("");
+            setSelectedGrade("");
+            setElectiveName("");
+        } catch (error) {
+            console.error("Error saving grade:", error);
+            toast({ title: "Error", description: "Could not save your grade.", variant: "destructive"});
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
+    const handleSort = (key: SortKey) => {
+        let direction: SortDirection = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: SortKey) => {
+      if (sortConfig.key !== key) {
+        return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />;
+      }
+      return sortConfig.direction === 'asc' ? '▲' : '▼';
+    }
+
+
+    const comboboxOptions = useMemo(() => {
+        const gradedCourseCodes = new Set(Object.keys(studentGrades));
+        return allCourses
+            .filter(course => !gradedCourseCodes.has(course.id))
+            .map(course => ({
+                value: course.id,
+                label: `${course.id} - ${course.name}`
+            }));
+    }, [allCourses, studentGrades]);
+
+    const filteredAndSortedCourses = useMemo(() => {
+        let completedCourses = Object.entries(studentGrades).map(([courseCode, gradeData]) => {
+            const isElective = typeof gradeData === 'object';
+            const grade = isElective ? gradeData.grade : gradeData;
+            const defaultCourse = allCourses.find(c => c.id === courseCode);
+            const name = isElective ? gradeData.name : defaultCourse?.name || 'Unknown Course';
+            
+            return { id: courseCode, name, grade };
+        });
+
+        if (searchTerm) {
+            const lowercasedFilter = searchTerm.toLowerCase();
+            completedCourses = completedCourses.filter(course =>
+                course.name.toLowerCase().includes(lowercasedFilter) ||
+                course.id.toLowerCase().includes(lowercasedFilter)
+            );
+        }
+        
+        return completedCourses.sort((a, b) => {
+            let aValue, bValue;
+            switch(sortConfig.key) {
+                case 'grade':
+                    aValue = gradePoints[a.grade] ?? 0;
+                    bValue = gradePoints[b.grade] ?? 0;
+                    break;
+                case 'name':
+                    aValue = a.name;
+                    bValue = b.name;
+                    break;
+                default: // id
+                    aValue = a.id;
+                    bValue = b.id;
+            }
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+    }, [studentGrades, allCourses, searchTerm, sortConfig]);
+
+
+    if (loading || authLoading) {
+        return (
+             <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
+                <Loader2 className="h-10 w-10 animate-spin text-primary"/>
+            </div>
+        )
+    }
+    
+    if (!profile?.college || !profile?.department) {
+        return (
+            <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
+                <div>
+                  <h3 className="text-xl font-semibold">Profile Incomplete</h3>
+                  <p className="text-muted-foreground mt-2">Please complete your profile from the main site to log your grades.</p>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <div className="flex items-center justify-between">
+                <h1 className="text-lg font-semibold md:text-2xl">Log Course Grades</h1>
+                <SuggestCourseDialog />
+            </div>
+
+            <BulkGradeEntry 
+                allCourses={allCourses}
+                existingGrades={studentGrades}
+                onSave={(newGrades) => setStudentGrades(prev => ({...prev, ...newGrades}))}
+            />
+
+            <div className="flex flex-1 items-start justify-center rounded-lg border border-dashed shadow-sm mt-4">
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle>Single Grade Entry</CardTitle>
+                        <CardDescription>
+                           Use this form to add or update a single grade.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                         <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4 items-end space-y-4 md:space-y-0">
+                            <div className="md:col-span-2 space-y-2">
+                               <Label>Course</Label>
+                               <Combobox
+                                    options={comboboxOptions}
+                                    value={selectedCourse}
+                                    onChange={setSelectedCourse}
+                                    placeholder="Search for a course..."
+                                    searchPlaceholder="Search course code or name..."
+                                    notFoundMessage="No course found."
+                               />
+                            </div>
+                            <div className="space-y-2">
+                                 <Label>Grade</Label>
+                                 <Select 
+                                    value={selectedGrade} 
+                                    onValueChange={setSelectedGrade}
+                                    disabled={!selectedCourse}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Grade" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {grades.map(grade => (
+                                            <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                         {isElectiveSelected && (
+                            <div className="space-y-2 animate-in fade-in-50 duration-300">
+                                <Label htmlFor="elective-name">Elective Course Name</Label>
+                                <Input 
+                                    id="elective-name"
+                                    placeholder="e.g., Artificial Intelligence"
+                                    value={electiveName}
+                                    onChange={e => setElectiveName(e.target.value)}
+                                />
+                            </div>
+                        )}
+                    </CardContent>
+                    <CardFooter>
+                         <Button onClick={handleSaveGrade} disabled={isSaving || !selectedCourse || !selectedGrade}>
+                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+                            Save Grade
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+            
+            <Card className="mt-6">
+                <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <Check className="h-5 w-5 text-green-500" />
+                                Completed Courses
+                            </CardTitle>
+                            <CardDescription className="mt-1">A list of all the grades you have logged so far.</CardDescription>
+                        </div>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Filter courses..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10 w-full sm:w-64"
+                            />
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {Object.keys(studentGrades).length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[80px]">S.No.</TableHead>
+                                    <TableHead>
+                                        <Button variant="ghost" className="px-0" onClick={() => handleSort('id')}>
+                                            Course Code {getSortIcon('id')}
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                        <Button variant="ghost" className="px-0" onClick={() => handleSort('name')}>
+                                            Course Name {getSortIcon('name')}
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                         <Button variant="ghost" className="px-0" onClick={() => handleSort('grade')}>
+                                            Grade {getSortIcon('grade')}
+                                        </Button>
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredAndSortedCourses.length > 0 ? filteredAndSortedCourses.map((course, index) => (
+                                    <TableRow key={course.id}>
+                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell className="font-mono">{course.id}</TableCell>
+                                        <TableCell>{course.name}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Badge variant="outline" className={cn("text-base font-bold", gradeColorClasses[course.grade])}>
+                                                {course.grade}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={4} className="h-24 text-center">
+                                            No courses match your search.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                         <div className="text-center text-muted-foreground py-10">
+                            <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/50"/>
+                            <p className="mt-4">You haven't logged any grades yet.</p>
+                         </div>
+                    )}
+                </CardContent>
+            </Card>
+        </>
+    )
+}

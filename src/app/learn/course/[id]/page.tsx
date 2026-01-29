@@ -1,0 +1,248 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BookOpen, Loader2, FileText, Youtube, HelpCircle, Trash2, FileQuestion } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import TopicContent from '@/components/learn/topic-content';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { McqQuiz } from '@/components/learn/mcq-quiz';
+
+// Define types based on the new JSON structure
+interface Topic {
+  topic_title: string;
+  notes_md?: string;
+  video_url?: string;
+  practice_questions?: string[];
+}
+
+interface Unit {
+  unit_title: string;
+  topics: Topic[];
+}
+
+interface CourseData {
+  course_name: string;
+  course_code: string;
+  units: Unit[];
+}
+
+interface Mcq {
+  questionNumber: number;
+  question: string;
+  options: { key: 'a' | 'b' | 'c' | 'd'; text: string }[];
+  correctAnswer: 'a' | 'b' | 'c' | 'd';
+}
+
+export default function CoursePage() {
+  const params = useParams();
+  const { id: courseId } = params;
+  const { loading: authLoading } = useAuth();
+  const [courseData, setCourseData] = useState<CourseData | null>(null);
+  const [mcqs, setMcqs] = useState<Mcq[] | null>(null); // Keep MCQ logic if it's separate
+  const [loading, setLoading] = useState(true);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const { toast } = useToast();
+
+  const fetchCourseData = useCallback(async () => {
+    if (authLoading || typeof courseId !== 'string') return;
+    
+    setLoading(true);
+    try {
+      // Fetch course content from the JSON file
+      const res = await fetch(`/courses/${courseId}.json`);
+      if (!res.ok) {
+        throw new Error(`Course content for ${courseId} not found.`);
+      }
+      const data: CourseData = await res.json();
+      setCourseData(data);
+
+      localStorage.setItem('lastViewedCourse', JSON.stringify({ id: data.course_code, name: data.course_name }));
+      
+    } catch (error) {
+      console.error("Error fetching course data:", error);
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      setCourseData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [authLoading, courseId, toast]);
+
+
+  useEffect(() => {
+    fetchCourseData();
+  }, [fetchCourseData]);
+  
+  const handleClearAnnotations = () => {
+    if (typeof window !== 'undefined' && typeof courseId === 'string') {
+      let keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(`annotations-${courseId}-`)) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      toast({
+        title: "Annotations Cleared",
+        description: "All your highlights and notes for this course have been removed."
+      });
+      
+      window.location.reload();
+    }
+  };
+
+
+  if (loading || authLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-7 w-3/4" />
+                <Skeleton className="h-5 w-1/2" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 <Skeleton className="h-20 w-full" />
+                 <Skeleton className="h-20 w-full" />
+                 <Skeleton className="h-20 w-full" />
+            </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  if (!courseData) {
+    return (
+        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8 text-center">
+            <div>
+              <h3 className="text-xl font-semibold">Course Content Not Found</h3>
+              <p className="text-muted-foreground mt-2">The materials for this course have not been uploaded yet.</p>
+            </div>
+        </div>
+    )
+  }
+
+  return (
+    <>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-lg font-semibold md:text-2xl">Course Content</h1>
+        <div className="flex items-center gap-2">
+            {mcqs && mcqs.length > 0 && (
+                <AlertDialog open={isQuizOpen} onOpenChange={setIsQuizOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button>
+                            <FileQuestion className="mr-2 h-4 w-4" />
+                            Take the Quiz
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-4xl w-full h-[90vh]">
+                         <AlertDialogHeader className="sr-only">
+                            <AlertDialogTitle>Quiz: {courseData.course_name}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Complete the multiple-choice quiz for this course.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <McqQuiz mcqs={mcqs} courseName={courseData.course_name} />
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear Annotations
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete all highlights, underlines, and notes you've made in this course. This action cannot be undone.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleClearAnnotations}>Confirm</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
+      </div>
+      <Card>
+        <CardHeader>
+            <div className='flex items-center gap-4'>
+                <div className="p-3 bg-primary/10 rounded-lg">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                    <CardTitle>{courseData.course_name}</CardTitle>
+                    <CardDescription>Review the learning materials for this course ({courseData.course_code}).</CardDescription>
+                </div>
+            </div>
+        </CardHeader>
+        <CardContent>
+            {courseData.units.length > 0 ? (
+                <Accordion type="single" collapsible className="w-full" defaultValue={courseData.units[0]?.unit_title}>
+                    {courseData.units.map(unit => (
+                        <AccordionItem key={unit.unit_title} value={unit.unit_title}>
+                            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+                                {unit.unit_title}
+                            </AccordionTrigger>
+                            <AccordionContent className="space-y-4 pt-2">
+                               {unit.topics.length > 0 ? unit.topics.map((topic, index) => (
+                                   <div key={index} className="p-4 rounded-md border bg-secondary/40">
+                                       <h4 className="font-semibold mb-3">{topic.topic_title}</h4>
+                                       <div className="space-y-3">
+                                           {topic.notes_md && (
+                                                <div>
+                                                    <h5 className="flex items-center gap-2 text-sm font-semibold mb-2"><FileText className="h-4 w-4"/> Notes</h5>
+                                                    <TopicContent htmlContent={topic.notes_md} courseId={courseId as string} topicId={`topic-${index}`} />
+                                                </div>
+                                           )}
+                                           {topic.video_url && (
+                                               <div>
+                                                   <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><Youtube className="h-4 w-4 text-red-500"/> Video</h5>
+                                                    <Button asChild variant="link" className="p-0 h-auto">
+                                                        <a href={topic.video_url} target="_blank" rel="noopener noreferrer">{topic.video_url}</a>
+                                                    </Button>
+                                               </div>
+                                           )}
+                                           {topic.practice_questions && topic.practice_questions.length > 0 && (
+                                                <div>
+                                                   <h5 className="flex items-center gap-2 text-sm font-semibold mb-1"><HelpCircle className="h-4 w-4 text-blue-500"/> Questions</h5>
+                                                    <div className="text-sm whitespace-pre-wrap font-mono bg-muted p-3 rounded-md">
+                                                        {topic.practice_questions.join('\n')}
+                                                    </div>
+                                               </div>
+                                           )}
+                                       </div>
+                                   </div>
+                               )) : (
+                                   <p className="text-sm text-muted-foreground pl-4">No topics have been added to this unit yet.</p>
+                               )}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            ) : (
+                 <div className="text-center text-muted-foreground py-10">
+                    <p>No learning content has been added for this course yet.</p>
+                </div>
+            )}
+        </CardContent>
+      </Card>
+    </>
+  );
+}

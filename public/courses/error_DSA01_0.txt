@@ -1,0 +1,170 @@
+{
+  "course_name": "Object Oriented Programming with C++",
+  "course_code": "DSA01",
+  "units": [
+    {
+      "unit_title": "Introduction to OOP and C++",
+      "topics": [
+        {
+          "topic_title": "Principles of Object-Oriented Programming",
+          "notes_md": "Object-oriented programming (OOP) is a programming paradigm based on the concept of \"objects\", which contain data in the form of fields (attributes or properties) and code in the form of procedures (methods). Key principles include:\n\n*   **Encapsulation:** Bundling data and methods that operate on that data within a class, hiding internal implementation details.\n*   **Abstraction:** Presenting only essential information to the user, hiding complex implementation details.\n*   **Inheritance:** Creating new classes (derived classes) from existing classes (base classes), inheriting their properties and behaviors. This promotes code reusability.\n*   **Polymorphism:** The ability of an object to take on many forms. Achieved through method overloading and overriding.\n\nOOP promotes modularity, reusability, and maintainability, making it suitable for large and complex software projects.",
+          "video_url": "https://www.youtube.com/watch?v=pTB0EiLXUC8",
+          "practice_questions": [
+            "Explain the difference between procedural and object-oriented programming.",
+            "Describe the four main principles of OOP.",
+            "Give an example of encapsulation in a real-world scenario.",
+            "How does inheritance promote code reusability?",
+            "What is polymorphism, and how is it achieved in C++?"
+          ]
+        },
+        {
+          "topic_title": "Introduction to C++ and Basic Syntax",
+          "notes_md": "C++ is a powerful, general-purpose programming language. It supports both procedural and object-oriented programming paradigms.\n\nBasic syntax includes:\n\n*   **Headers:** `#include <iostream>` (for input/output operations).\n*   **Main function:** `int main() { ... return 0; }` is the entry point of the program.\n*   **Variables:** Declared with a data type (e.g., `int x = 10;`, `float y = 3.14;`, `string name = \"John\";`).\n*   **Input/Output:** `std::cout << \"Hello, world!\" << std::endl;` (output), `std::cin >> x;` (input).\n*   **Comments:** `// Single-line comment`, `/* Multi-line comment */`.\n\nExample:\n\n```cpp\n#include <iostream>\nint main() {\n  std::cout << \"Hello, C++!\" << std::endl;\n  return 0;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=Rub-JsjMfcg",
+          "practice_questions": [
+            "Write a C++ program that prints \"Hello, world!\" to the console.",
+            "Declare an integer variable named 'age' and assign it the value 25.",
+            "Explain the purpose of the 'iostream' header file.",
+            "What is the return type of the main function in C++?",
+            "Write a C++ program that takes two numbers as input and prints their sum."
+          ]
+        },
+        {
+          "topic_title": "Data Types, Variables, and Operators",
+          "notes_md": "C++ provides various data types, including:\n\n*   **int:** Integer numbers (e.g., 10, -5, 0).\n*   **float:** Floating-point numbers (e.g., 3.14, -2.5).\n*   **double:** Double-precision floating-point numbers (higher precision than float).\n*   **char:** Single characters (e.g., 'A', 'b', '5').\n*   **bool:** Boolean values (true or false).\n*   **string:** Sequence of characters (e.g., \"Hello\").\n\nOperators include:\n\n*   **Arithmetic operators:** +, -, \*, /, % (modulus).\n*   **Assignment operators:** =, +=, -=, \*=, /=.\n*   **Comparison operators:** ==, !=, >, <, >=, <=.\n*   **Logical operators:** && (AND), || (OR), ! (NOT).\n\nExample:\n```cpp\nint a = 10;\nint b = 5;\nint sum = a + b; // sum is 15\nbool isEqual = (a == b); // isEqual is false\n```",
+          "video_url": "https://www.youtube.com/watch?v=irqbmMNspsI",
+          "practice_questions": [
+            "Declare a float variable named 'price' and assign it the value 99.99.",
+            "Write a C++ expression that calculates the remainder when 17 is divided by 5.",
+            "Explain the difference between '==' and '=' operators.",
+            "What is the result of the expression 'true && false'?",
+            "Write a C++ program that checks if a number is even or odd."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Classes and Objects",
+      "topics": [
+        {
+          "topic_title": "Defining Classes and Creating Objects",
+          "notes_md": "A class is a blueprint for creating objects. It defines the data (attributes) and methods (functions) that an object of that class will have.\n\nSyntax:\n```cpp\nclass MyClass {\npublic:\n  int x; // Attribute\n  void myFunction() { // Method\n    std::cout << \"Hello!\" << std::endl;\n  }\n};\n```\nTo create an object of a class:\n```cpp\nMyClass obj;\nobj.x = 10;\nobj.myFunction();\n```\nAccess specifiers (public, private, protected) control the visibility and accessibility of class members.",
+          "video_url": "https://www.youtube.com/watch?v=wN0x9eZLix4",
+          "practice_questions": [
+            "Define a class named 'Dog' with attributes 'name' and 'breed'.",
+            "Create an object of the 'Dog' class and set its 'name' to \"Buddy\" and 'breed' to \"Golden Retriever\".",
+            "Explain the difference between a class and an object.",
+            "What are access specifiers, and why are they important?",
+            "Write a C++ program that defines a class 'Rectangle' with attributes 'width' and 'height', and a method to calculate its area."
+          ]
+        },
+        {
+          "topic_title": "Constructors and Destructors",
+          "notes_md": "A constructor is a special method that is automatically called when an object of a class is created. It is used to initialize the object's attributes.\n\nA destructor is a special method that is automatically called when an object is destroyed. It is used to release any resources allocated by the object.\n\nSyntax:\n```cpp\nclass MyClass {\npublic:\n  MyClass() { // Constructor\n    x = 0;\n  }\n  ~MyClass() { // Destructor\n    // Release resources\n  }\nprivate:\n  int x;\n};\n```\nConstructors can be overloaded to provide different ways to initialize objects.",
+          "video_url": "https://www.youtube.com/watch?v=95XqJHvK4lE",
+          "practice_questions": [
+            "Define a constructor for the 'Dog' class that takes 'name' and 'breed' as parameters and initializes the object's attributes.",
+            "What is the purpose of a destructor?",
+            "Explain the difference between a default constructor and a parameterized constructor.",
+            "When is a destructor called?",
+            "Write a C++ program that defines a class with a constructor and a destructor, and demonstrates their usage."
+          ]
+        },
+        {
+          "topic_title": "Encapsulation and Data Hiding",
+          "notes_md": "Encapsulation is the bundling of data (attributes) and methods that operate on that data within a class. Data hiding is the practice of making the attributes of a class private, so they cannot be accessed directly from outside the class.  Access to the data is provided through public methods (getters and setters).\n\nThis protects the data from being modified in unintended ways and promotes data integrity.\n\nExample:\n```cpp\nclass MyClass {\nprivate:\n  int x;\npublic:\n  int getX() { return x; }\n  void setX(int value) { x = value; }\n};\n```",
+          "video_url": "https://www.youtube.com/watch?v=jj0yfR3n-wE",
+          "practice_questions": [
+            "Explain the benefits of encapsulation and data hiding.",
+            "Why are getter and setter methods used?",
+            "How can you prevent direct access to a class's attributes?",
+            "Give an example of a situation where data hiding is crucial.",
+            "Write a C++ program that demonstrates encapsulation by defining a class with private attributes and public getter/setter methods."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Inheritance and Polymorphism",
+      "topics": [
+        {
+          "topic_title": "Single and Multiple Inheritance",
+          "notes_md": "Inheritance allows you to create new classes (derived classes) from existing classes (base classes). The derived class inherits the attributes and methods of the base class.\n\n*   **Single Inheritance:** A derived class inherits from only one base class.\n*   **Multiple Inheritance:** A derived class inherits from multiple base classes (C++ supports multiple inheritance).\n\nSyntax:\n```cpp\nclass BaseClass {\npublic:\n  void myFunction() { std::cout << \"Base class\" << std::endl; }\n};\nclass DerivedClass : public BaseClass {};\n```\nAccess specifiers (public, private, protected) also affect inheritance.",
+          "video_url": "https://www.youtube.com/watch?v=RjvJvYh5uY0",
+          "practice_questions": [
+            "Explain the concept of inheritance.",
+            "What is the difference between single and multiple inheritance?",
+            "Define a base class 'Animal' with a method 'makeSound()'. Create a derived class 'Dog' that inherits from 'Animal' and overrides the 'makeSound()' method to print \"Woof!\".",
+            "What are the advantages of using inheritance?",
+            "Write a C++ program that demonstrates single inheritance."
+          ]
+        },
+        {
+          "topic_title": "Polymorphism: Function Overloading and Overriding",
+          "notes_md": "Polymorphism means \"many forms\". In C++, polymorphism is achieved through function overloading and function overriding.\n\n*   **Function Overloading:** Defining multiple functions with the same name but different parameters within the same class.\n*   **Function Overriding:** Redefining a virtual function in a derived class to provide a specific implementation for that class.\n\n```cpp\nclass MyClass {\npublic:\n  void myFunction(int x) { std::cout << \"Integer\" << std::endl; }\n  void myFunction(double y) { std::cout << \"Double\" << std::endl; }\n};\n```\nVirtual functions are essential for achieving runtime polymorphism.",
+          "video_url": "https://www.youtube.com/watch?v=jTSnV9r-T0A",
+          "practice_questions": [
+            "Explain the concept of polymorphism.",
+            "What is the difference between function overloading and function overriding?",
+            "Define a class 'Shape' with a virtual function 'area()'. Create derived classes 'Rectangle' and 'Circle' that override the 'area()' method to calculate the area of each shape.",
+            "What is a virtual function, and why is it important for polymorphism?",
+            "Write a C++ program that demonstrates function overloading."
+          ]
+        },
+        {
+          "topic_title": "Abstract Classes and Pure Virtual Functions",
+          "notes_md": "An abstract class is a class that cannot be instantiated. It serves as a blueprint for other classes. An abstract class contains at least one pure virtual function.\n\nA pure virtual function is a virtual function that has no implementation in the base class. It is declared using the `= 0` syntax.\n\nDerived classes must provide an implementation for all pure virtual functions in the base class.\n\n```cpp\nclass Shape {\npublic:\n  virtual double area() = 0; // Pure virtual function\n};\n```",
+          "video_url": "https://www.youtube.com/watch?v=Ve99YwS8h3I",
+          "practice_questions": [
+            "What is an abstract class, and why is it useful?",
+            "What is a pure virtual function?",
+            "Explain the relationship between abstract classes and inheritance.",
+            "Can you create an object of an abstract class?",
+            "Write a C++ program that defines an abstract class 'Animal' with a pure virtual function 'makeSound()'. Create derived classes 'Dog' and 'Cat' that implement the 'makeSound()' method."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced C++ Concepts",
+      "topics": [
+        {
+          "topic_title": "Pointers and Dynamic Memory Allocation",
+          "notes_md": "A pointer is a variable that stores the memory address of another variable. Dynamic memory allocation allows you to allocate memory during runtime using `new` and deallocate it using `delete`.\n\n```cpp\nint *ptr = new int; // Allocate memory for an integer\n*ptr = 10; // Assign a value to the allocated memory\nstd::cout << *ptr << std::endl; // Access the value\ndelete ptr; // Deallocate the memory\nptr = nullptr; // Set the pointer to null to avoid dangling pointers\n```\nMemory leaks can occur if dynamically allocated memory is not properly deallocated.",
+          "video_url": "https://www.youtube.com/watch?v=ysE9dmj6D9A",
+          "practice_questions": [
+            "What is a pointer?",
+            "Explain the difference between static and dynamic memory allocation.",
+            "What is a memory leak, and how can you prevent it?",
+            "Write a C++ program that uses pointers to dynamically allocate an array of integers.",
+            "What is a dangling pointer?"
+          ]
+        },
+        {
+          "topic_title": "Templates and Generic Programming",
+          "notes_md": "Templates allow you to write generic code that can work with different data types without having to write separate code for each type.  Templates can be used for functions and classes.\n\n```cpp\ntemplate <typename T>\nT add(T a, T b) {\n  return a + b;\n}\n\nint main() {\n  std::cout << add(10, 20) << std::endl; // Adds integers\n  std::cout << add(3.14, 2.71) << std::endl; // Adds doubles\n}\n```\nThis promotes code reusability and reduces code duplication.",
+          "video_url": "https://www.youtube.com/watch?v=B3wuDxie9ik",
+          "practice_questions": [
+            "What is a template?",
+            "Explain the benefits of using templates.",
+            "Write a C++ program that uses a template function to find the maximum of two values of any data type.",
+            "How are templates different from function overloading?",
+            "What are template classes?"
+          ]
+        },
+        {
+          "topic_title": "Exception Handling",
+          "notes_md": "Exception handling is a mechanism for dealing with errors and unexpected events that occur during program execution. It involves using `try`, `catch`, and `throw` blocks.\n\n```cpp\ntry {\n  // Code that might throw an exception\n  if (x == 0) {\n    throw \"Division by zero!\";\n  }\n  result = y / x;\n}\ncatch (const char* msg) {\n  // Handle the exception\n  std::cerr << msg << std::endl;\n}\n```\nThis allows you to gracefully handle errors and prevent program crashes.",
+          "video_url": "https://www.youtube.com/watch?v=FuaZ9bH-Z0w",
+          "practice_questions": [
+            "What is an exception?",
+            "Explain the purpose of exception handling.",
+            "Write a C++ program that uses exception handling to catch a division by zero error.",
+            "What are the advantages of using exception handling?",
+            "What is the difference between try, catch, and throw?"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "course_name": "Numerical Methods",
+  "course_code": "UBA10",
+  "units": [
+    {
+      "unit_title": "Introduction to Numerical Methods and Errors",
+      "topics": [
+        {
+          "topic_title": "Introduction to Numerical Methods",
+          "notes_md": "Numerical methods are essential tools for solving mathematical problems that cannot be solved analytically. They provide approximate solutions using algorithms and iterative processes. This introduction covers the basic concepts, including the importance of numerical methods in various fields like engineering, physics, and computer science. We'll explore the different types of numerical methods, such as root-finding, interpolation, integration, and differentiation. Understanding the limitations and potential errors associated with these methods is crucial for accurate and reliable results. Numerical methods often involve trade-offs between accuracy, computational cost, and stability. For example, consider solving a differential equation numerically, we approximate the continuous solution with discrete steps, introducing error at each step. This error accumulation needs to be carefully managed to ensure the final result is within acceptable bounds. \n\n```python\n# Example: Approximating a derivative using a finite difference\ndef approximate_derivative(f, x, h):\n return (f(x + h) - f(x)) / h\n```",
+          "video_url": "https://www.youtube.com/watch?v=WdlGIXq6X-Y",
+          "practice_questions": [
+            "What are the main advantages of using numerical methods?",
+            "Describe the difference between analytical and numerical solutions.",
+            "Give examples of real-world problems where numerical methods are necessary.",
+            "Explain the concept of convergence in numerical methods."
+          ]
+        },
+        {
+          "topic_title": "Types of Errors in Numerical Computation",
+          "notes_md": "Errors are inherent in numerical computations. Understanding different types of errors is vital for evaluating the accuracy and reliability of numerical solutions. Common error types include round-off errors, truncation errors, and inherent errors. Round-off errors arise from representing real numbers with a finite number of digits in computers. Truncation errors occur when approximating infinite processes with finite ones, such as truncating a Taylor series. Inherent errors are present in the initial data or model. The total error is the combination of these errors. Error propagation describes how errors accumulate and affect the final result. Analyzing error propagation helps in choosing appropriate numerical methods and estimating the accuracy of the solution. Consider the Taylor series expansion of $e^x$: $e^x = 1 + x + \\frac{x^2}{2!} + \\frac{x^3}{3!} + ...$. If we truncate this series after a certain number of terms, we introduce a truncation error. The magnitude of this error depends on the value of $x$ and the number of terms used.",
+          "video_url": "https://www.youtube.com/watch?v=X3G35s3jZtI",
+          "practice_questions": [
+            "Define round-off error and explain its causes.",
+            "What is truncation error, and how does it arise?",
+            "Explain the concept of error propagation.",
+            "How can you minimize the impact of errors in numerical computations?",
+            "Differentiate between absolute error and relative error."
+          ]
+        },
+        {
+          "topic_title": "Floating-Point Representation",
+          "notes_md": "Computers represent real numbers using floating-point representation, which involves storing a mantissa (or significand) and an exponent. This representation allows for a wide range of numbers to be represented, but it also introduces limitations in precision. The IEEE 754 standard defines the common formats for floating-point numbers, including single-precision (32-bit) and double-precision (64-bit) formats. Understanding floating-point representation is crucial for understanding round-off errors and potential inaccuracies in numerical computations. The limited precision leads to rounding errors when a number cannot be represented exactly. This can affect the accuracy of calculations, especially in iterative processes where errors can accumulate. For example, consider a 32-bit floating-point number. It has a finite number of bits to represent the mantissa and exponent. Any real number that requires more bits than available will be rounded, leading to a loss of precision. Special values like NaN (Not a Number) and infinity are also represented in floating-point format.",
+          "video_url": "https://www.youtube.com/watch?v=PZRI1IfStY0",
+          "practice_questions": [
+            "Explain how floating-point numbers are represented in computers.",
+            "What is the IEEE 754 standard, and why is it important?",
+            "Describe the limitations of floating-point representation.",
+            "What are NaN and infinity in floating-point arithmetic?",
+            "How does floating-point representation contribute to round-off errors?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Root Finding Methods",
+      "topics": [
+        {
+          "topic_title": "Bisection Method",
+          "notes_md": "The bisection method is a simple and robust root-finding algorithm. It works by repeatedly dividing an interval in half and selecting the subinterval that contains a root. The method requires an initial interval [a, b] where f(a) and f(b) have opposite signs, ensuring a root exists within the interval (by the Intermediate Value Theorem). The midpoint c = (a + b) / 2 is calculated, and the function f(c) is evaluated. If f(c) has the same sign as f(a), the root lies in the interval [c, b]; otherwise, it lies in [a, c]. The process is repeated until the interval becomes sufficiently small or the function value at the midpoint is close enough to zero. The bisection method guarantees convergence but is relatively slow compared to other root-finding methods. Its simplicity and reliability make it a good choice for initial root approximations. \n\n```python\n# Example: Bisection method\ndef bisection(f, a, b, tol):\n if f(a) * f(b) >= 0:\n print(\"Function values at a and b have the same sign. Bisection method cannot be applied.\")\n return None\n while (b - a) / 2 > tol:\n c = (a + b) / 2\n if f(c) == 0:\n return c\n elif f(c) * f(a) < 0:\n b = c\n else:\n a = c\n return (a + b) / 2\n```",
+          "video_url": "https://www.youtube.com/watch?v=bGCxqt4vJio",
+          "practice_questions": [
+            "Explain the working principle of the bisection method.",
+            "What are the advantages and disadvantages of the bisection method?",
+            "What is the Intermediate Value Theorem and its role in the bisection method?",
+            "Write a Python function to implement the bisection method.",
+            "What are the conditions for applying the bisection method?"
+          ]
+        },
+        {
+          "topic_title": "Newton-Raphson Method",
+          "notes_md": "The Newton-Raphson method is an iterative root-finding algorithm that uses the derivative of the function to approximate the root. It starts with an initial guess $x_0$ and iteratively refines the guess using the formula: $x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$. The method converges quickly when the initial guess is close to the root and the function is well-behaved. However, it may diverge if the initial guess is far from the root or if the derivative is close to zero. The Newton-Raphson method requires the function to be differentiable. It is more efficient than the bisection method but less robust. The convergence rate is quadratic, meaning the number of correct digits approximately doubles with each iteration. The method can also be used to find roots of complex-valued functions. A major disadvantage is the need to calculate the derivative, which may not always be feasible or easy. \n\n```python\n# Example: Newton-Raphson method\ndef newton_raphson(f, df, x0, tol):\n x = x0\n while True:\n fx = f(x)\n dfx = df(x)\n if dfx == 0:\n print(\"Derivative is zero. Method may fail.\")\n return None\n x_next = x - fx / dfx\n if abs(x_next - x) < tol:\n return x_next\n x = x_next\n```",
+          "video_url": "https://www.youtube.com/watch?v=QZm3Bz0K8E0",
+          "practice_questions": [
+            "Explain the working principle of the Newton-Raphson method.",
+            "What are the advantages and disadvantages of the Newton-Raphson method?",
+            "What is the role of the derivative in the Newton-Raphson method?",
+            "Write a Python function to implement the Newton-Raphson method.",
+            "What are the conditions for convergence of the Newton-Raphson method?"
+          ]
+        },
+        {
+          "topic_title": "Secant Method",
+          "notes_md": "The secant method is a root-finding algorithm that approximates the derivative using a finite difference. It uses two initial guesses, $x_0$ and $x_1$, and iteratively refines the guess using the formula: $x_{n+1} = x_n - f(x_n) \\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}$. The method does not require the derivative of the function, making it useful when the derivative is difficult or impossible to calculate. The secant method converges faster than the bisection method but slower than the Newton-Raphson method. It may not converge if the initial guesses are far from the root or if the function is not well-behaved. The convergence rate is superlinear. The secant method can be seen as a finite-difference approximation of the Newton-Raphson method. It avoids the need to explicitly calculate the derivative, but at the cost of a slightly slower convergence rate and the need for two initial guesses. It is a good compromise between the robustness of the bisection method and the speed of the Newton-Raphson method.",
+          "video_url": "https://www.youtube.com/watch?v=w2jK6zF7J2g",
+          "practice_questions": [
+            "Explain the working principle of the secant method.",
+            "What are the advantages and disadvantages of the secant method?",
+            "How does the secant method approximate the derivative?",
+            "Write a Python function to implement the secant method.",
+            "Compare and contrast the secant method with the Newton-Raphson method."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Interpolation and Curve Fitting",
+      "topics": [
+        {
+          "topic_title": "Polynomial Interpolation",
+          "notes_md": "Polynomial interpolation involves finding a polynomial that passes through a given set of data points. This is a fundamental technique in numerical analysis for approximating functions and estimating values between known data points. The most common methods include Lagrange interpolation and Newton's divided difference interpolation. Lagrange interpolation constructs a polynomial as a weighted sum of the data points, where the weights are Lagrange basis polynomials. Newton's divided difference interpolation constructs a polynomial using divided differences, which are recursive calculations based on the data points. The degree of the interpolating polynomial is typically one less than the number of data points. Polynomial interpolation can be used for approximating functions, estimating derivatives, and integrating functions. However, high-degree polynomials can exhibit oscillations and instability, known as Runge's phenomenon. \n\n```python\n# Example: Lagrange Interpolation\ndef lagrange_interpolation(x, x_vals, y_vals):\n y = 0\n for i in range(len(x_vals)):\n term = y_vals[i]\n for j in range(len(x_vals)):\n if i != j:\n term = term * (x - x_vals[j]) / (x_vals[i] - x_vals[j])\n y += term\n return y\n```",
+          "video_url": "https://www.youtube.com/watch?v=njnMEvJbF4k",
+          "practice_questions": [
+            "Explain the concept of polynomial interpolation.",
+            "Describe Lagrange interpolation and its advantages.",
+            "Describe Newton's divided difference interpolation.",
+            "What is Runge's phenomenon, and how can it be avoided?",
+            "Write a Python function to implement Lagrange interpolation."
+          ]
+        },
+        {
+          "topic_title": "Spline Interpolation",
+          "notes_md": "Spline interpolation involves constructing a piecewise polynomial function that passes through a given set of data points. Splines are smoother and more stable than high-degree polynomials, making them suitable for approximating functions with complex behavior. The most common type of spline is the cubic spline, which consists of piecewise cubic polynomials. Cubic splines are typically constructed with continuity conditions on the first and second derivatives at the data points, ensuring a smooth transition between the polynomial pieces. Spline interpolation can be used for data smoothing, curve fitting, and computer graphics. Different types of boundary conditions can be applied to splines, such as natural boundary conditions (zero second derivatives at the endpoints) and clamped boundary conditions (specified first derivatives at the endpoints). Splines provide a good balance between accuracy and smoothness, making them a popular choice for interpolation. \n\n```python\n# Example: Simple linear spline (conceptual)\ndef linear_spline(x, x_vals, y_vals):\n # Simplified example, assumes x_vals is sorted\n for i in range(len(x_vals) - 1):\n if x_vals[i] <= x <= x_vals[i+1]:\n return y_vals[i] + (y_vals[i+1] - y_vals[i]) * (x - x_vals[i]) / (x_vals[i+1] - x_vals[i])\n return None\n```",
+          "video_url": "https://www.youtube.com/watch?v=O5w_E9J-K3Y",
+          "practice_questions": [
+            "Explain the concept of spline interpolation.",
+            "Describe the advantages of spline interpolation over polynomial interpolation.",
+            "What is a cubic spline, and how is it constructed?",
+            "What are the different types of boundary conditions for splines?",
+            "How can spline interpolation be used for data smoothing?"
+          ]
+        },
+        {
+          "topic_title": "Least Squares Regression",
+          "notes_md": "Least squares regression is a method for finding the best-fitting curve to a set of data points by minimizing the sum of the squares of the residuals (the differences between the observed and predicted values). This technique is widely used for curve fitting, statistical modeling, and data analysis. The simplest form of least squares regression is linear regression, where the best-fitting curve is a straight line. The coefficients of the line are determined by solving a system of linear equations. More complex models can be fitted using polynomial regression or other types of functions. Least squares regression provides a measure of the goodness of fit, such as the coefficient of determination ($R^2$). The method is sensitive to outliers, which can significantly affect the results. Regularization techniques can be used to prevent overfitting, especially when dealing with high-dimensional data. The normal equations are often used to find the coefficients of the best-fit line. \n\n```python\n# Example: Simple Linear Regression using least squares\nimport numpy as np\n\ndef linear_regression(x, y):\n n = len(x)\n x_mean = np.mean(x)\n y_mean = np.mean(y)\n numerator = np.sum((x - x_mean) * (y - y_mean))\n denominator = np.sum((x - x_mean)**2)\n b1 = numerator / denominator\n b0 = y_mean - b1 * x_mean\n return b0, b1\n```",
+          "video_url": "https://www.youtube.com/watch?v=E5RjzSK0stc",
+          "practice_questions": [
+            "Explain the concept of least squares regression.",
+            "Describe the method of linear regression.",
+            "What is the coefficient of determination ($R^2$), and how is it interpreted?",
+            "How can outliers affect least squares regression?",
+            "Write a Python function to implement linear regression."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Numerical Integration and Differentiation",
+      "topics": [
+        {
+          "topic_title": "Trapezoidal Rule",
+          "notes_md": "The trapezoidal rule is a numerical integration technique that approximates the definite integral of a function by dividing the interval of integration into subintervals and approximating the area under the curve in each subinterval as a trapezoid. The area of each trapezoid is calculated and summed to obtain an approximation of the integral. The trapezoidal rule is a simple and widely used method for numerical integration. The accuracy of the trapezoidal rule increases as the number of subintervals increases. The error in the trapezoidal rule is proportional to the square of the subinterval width. The composite trapezoidal rule is used to improve accuracy by dividing the interval into smaller subintervals. The trapezoidal rule is exact for linear functions. \n\n```python\n# Example: Trapezoidal Rule\ndef trapezoidal_rule(f, a, b, n):\n h = (b - a) / n\n integral = 0.5 * (f(a) + f(b))\n for i in range(1, n):\n integral += f(a + i * h)\n integral *= h\n return integral\n```",
+          "video_url": "https://www.youtube.com/watch?v=vIKC-DYK_oQ",
+          "practice_questions": [
+            "Explain the working principle of the trapezoidal rule.",
+            "How does the accuracy of the trapezoidal rule depend on the number of subintervals?",
+            "What is the composite trapezoidal rule?",
+            "Write a Python function to implement the trapezoidal rule.",
+            "For what types of functions is the trapezoidal rule exact?"
+          ]
+        },
+        {
+          "topic_title": "Simpson's Rule",
+          "notes_md": "Simpson's rule is a numerical integration technique that approximates the definite integral of a function by dividing the interval of integration into an even number of subintervals and approximating the area under the curve in each pair of subintervals as a parabola. The area under each parabola is calculated and summed to obtain an approximation of the integral. Simpson's rule is more accurate than the trapezoidal rule for smooth functions. The accuracy of Simpson's rule increases as the number of subintervals increases. The error in Simpson's rule is proportional to the fourth power of the subinterval width. The composite Simpson's rule is used to improve accuracy by dividing the interval into smaller subintervals. Simpson's rule is exact for polynomials of degree up to 3. It requires an even number of subintervals. \n\n```python\n# Example: Simpson's Rule\ndef simpsons_rule(f, a, b, n):\n if n % 2 != 0:\n raise ValueError(\"n must be even\")\n h = (b - a) / n\n integral = f(a) + f(b)\n for i in range(1, n, 2):\n integral += 4 * f(a + i * h)\n for i in range(2, n - 1, 2):\n integral += 2 * f(a + i * h)\n integral *= h / 3\n return integral\n```",
+          "video_url": "https://www.youtube.com/watch?v=QNfK-J_zrow",
+          "practice_questions": [
+            "Explain the working principle of Simpson's rule.",
+            "How does the accuracy of Simpson's rule compare to the trapezoidal rule?",
+            "What is the composite Simpson's rule?",
+            "Write a Python function to implement Simpson's rule.",
+            "For what types of functions is Simpson's rule exact?"
+          ]
+        },
+        {
+          "topic_title": "Numerical Differentiation",
+          "notes_md": "Numerical differentiation involves approximating the derivative of a function using finite difference approximations. The most common methods include forward difference, backward difference, and central difference approximations. The forward difference approximation uses the formula: $f'(x) \\approx \\frac{f(x + h) - f(x)}{h}$. The backward difference approximation uses the formula: $f'(x) \\approx \\frac{f(x) - f(x - h)}{h}$. The central difference approximation uses the formula: $f'(x) \\approx \\frac{f(x + h) - f(x - h)}{2h}$. The central difference approximation is generally more accurate than the forward and backward difference approximations. The accuracy of numerical differentiation increases as the step size $h$ decreases, but small values of $h$ can lead to round-off errors. Higher-order derivatives can be approximated using higher-order finite difference formulas. \n\n```python\n# Example: Central Difference Approximation\ndef central_difference(f, x, h):\n return (f(x + h) - f(x - h)) / (2 * h)\n```",
+          "video_url": "https://www.youtube.com/watch?v=ihNiwl9vN6A",
+          "practice_questions": [
+            "Explain the concept of numerical differentiation.",
+            "Describe the forward difference, backward difference, and central difference approximations.",
+            "How does the accuracy of numerical differentiation depend on the step size?",
+            "Write a Python function to implement the central difference approximation.",
+            "Compare and contrast the different finite difference approximations."
+          ]
+        }
+      ]
+    }
+  ]
+}

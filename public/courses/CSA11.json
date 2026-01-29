@@ -1,0 +1,170 @@
+{
+  "course_name": "Object Oriented Analysis and Design",
+  "course_code": "CSA11",
+  "units": [
+    {
+      "unit_title": "Introduction to Object Orientation",
+      "topics": [
+        {
+          "topic_title": "Principles of Object Orientation",
+          "notes_md": "Object-oriented programming (OOP) is a programming paradigm based on the concept of \"objects\", which contain data, in the form of fields (often known as attributes or properties), and code, in the form of procedures (often known as methods).  The core principles include encapsulation, inheritance, and polymorphism. Encapsulation binds data and methods together, hiding internal implementation details. Inheritance allows new objects to take on the properties of existing objects. Polymorphism enables objects to take on many forms. These principles promote code reusability, maintainability, and scalability.  By using objects, we can create modular, reusable, and well-organized code. Consider a `Car` object with attributes like `color`, `model`, and methods like `startEngine()` and `accelerate()`.",
+          "video_url": "https://www.youtube.com/watch?v=59XcgWk3-6E",
+          "practice_questions": [
+            "Explain the difference between procedural and object-oriented programming.",
+            "What are the advantages of using object-oriented programming?",
+            "Describe the concept of encapsulation and provide an example.",
+            "How does inheritance promote code reusability?",
+            "What is polymorphism and how is it achieved in OOP?"
+          ]
+        },
+        {
+          "topic_title": "Objects and Classes",
+          "notes_md": "A class is a blueprint or template for creating objects. It defines the attributes (data) and methods (behavior) that objects of that class will have. An object is an instance of a class.  For example, the class `Dog` might have attributes like `breed`, `age`, and `name`, and methods like `bark()` and `eat()`. When you create an object `myDog` of the class `Dog`, `myDog` will have its own specific values for these attributes (e.g., `breed` = \"Labrador\", `age` = 3, `name` = \"Buddy\") and can perform the methods defined in the `Dog` class.  Classes provide a way to structure and organize code, making it easier to manage and understand.  Consider a class `Rectangle` with attributes `width` and `height` and a method `calculateArea()`.",
+          "video_url": "https://www.youtube.com/watch?v=ZzaPdXTrSbY",
+          "practice_questions": [
+            "What is the difference between a class and an object?",
+            "How do you create an object from a class?",
+            "Explain the purpose of attributes and methods in a class.",
+            "Give an example of a real-world object and how it can be represented as a class.",
+            "What is the role of a constructor in a class?"
+          ]
+        },
+        {
+          "topic_title": "Unified Modeling Language (UML) Basics",
+          "notes_md": "UML is a standardized general-purpose modeling language in the field of software engineering. It is used to visualize, specify, construct, and document the artifacts of a software system. UML provides a set of diagrams for different aspects of the system, such as use case diagrams, class diagrams, sequence diagrams, and state diagrams. Class diagrams are used to represent the structure of a system, showing classes, their attributes, methods, and relationships. Use case diagrams capture the functional requirements of the system from the user's perspective. Sequence diagrams illustrate the interactions between objects over time. State diagrams model the behavior of an object in response to events.  Understanding UML is crucial for effective communication and collaboration in software development projects.",
+          "video_url": "https://www.youtube.com/watch?v=OkC7HKtiZC0",
+          "practice_questions": [
+            "What is the purpose of UML?",
+            "Name three types of UML diagrams and describe their uses.",
+            "What elements are typically included in a class diagram?",
+            "How does a use case diagram help in understanding system requirements?",
+            "Explain the purpose of a sequence diagram."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Object-Oriented Analysis",
+      "topics": [
+        {
+          "topic_title": "Requirements Elicitation",
+          "notes_md": "Requirements elicitation is the process of discovering, gathering, and documenting the needs and constraints of stakeholders for a software system.  Techniques include interviews, questionnaires, brainstorming sessions, use case workshops, and document analysis.  Effective requirements elicitation is crucial for ensuring that the system meets the needs of its users and stakeholders.  Ambiguous or incomplete requirements can lead to costly rework and project delays.  It's important to involve all relevant stakeholders in the elicitation process and to validate the requirements to ensure their accuracy and completeness.  Consider using techniques like MoSCoW (Must have, Should have, Could have, Won't have) to prioritize requirements.",
+          "video_url": "https://www.youtube.com/watch?v=l9s63s9vQ-0",
+          "practice_questions": [
+            "What is the purpose of requirements elicitation?",
+            "Describe three techniques for gathering requirements.",
+            "Why is it important to involve stakeholders in the requirements elicitation process?",
+            "What are the potential consequences of poor requirements elicitation?",
+            "Explain the MoSCoW prioritization technique."
+          ]
+        },
+        {
+          "topic_title": "Use Case Modeling",
+          "notes_md": "Use case modeling is a technique for capturing the functional requirements of a system from the user's perspective. A use case describes a sequence of actions that a user performs to achieve a specific goal. Use cases are typically represented in a use case diagram, which shows the actors (users or external systems) and the use cases they interact with.  Each use case is described in detail in a use case specification, which outlines the steps involved, preconditions, postconditions, and alternative flows.  Use case modeling helps to understand the system's functionality and to validate the requirements with stakeholders.  Use cases can also be used to drive testing and development efforts.",
+          "video_url": "https://www.youtube.com/watch?v=zid-MVoCz4U",
+          "practice_questions": [
+            "What is a use case?",
+            "What are the main components of a use case diagram?",
+            "How does use case modeling help in understanding system requirements?",
+            "Explain the difference between an actor and a use case.",
+            "What information is typically included in a use case specification?"
+          ]
+        },
+        {
+          "topic_title": "Identifying Classes and Objects",
+          "notes_md": "Identifying classes and objects is a key step in object-oriented analysis. This involves analyzing the requirements and identifying the key entities that the system will need to model.  Classes represent categories of objects, while objects are specific instances of those classes.  Techniques for identifying classes include noun-phrase analysis (identifying nouns in the requirements that represent potential classes) and CRC (Class-Responsibility-Collaborator) cards.  CRC cards are used to brainstorm the responsibilities and collaborators of each class.  The goal is to identify a set of classes that accurately model the problem domain and that can be used to build a well-structured and maintainable system.",
+          "video_url": "https://www.youtube.com/watch?v=Gk7G-oJtJ0c",
+          "practice_questions": [
+            "What is the difference between a class and an object?",
+            "Describe the noun-phrase analysis technique for identifying classes.",
+            "What are CRC cards and how are they used?",
+            "Give an example of a real-world object and the class it belongs to.",
+            "What are some criteria for evaluating the quality of a class model?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Object-Oriented Design",
+      "topics": [
+        {
+          "topic_title": "Class Diagrams and Relationships",
+          "notes_md": "Class diagrams are a type of UML diagram that represent the static structure of a system. They show the classes, their attributes, methods, and the relationships between them.  Relationships include association (a general relationship between classes), aggregation (a \"has-a\" relationship), composition (a strong \"owns-a\" relationship), and inheritance (an \"is-a\" relationship).  Class diagrams are used to communicate the design of the system to developers and stakeholders.  They also serve as a blueprint for implementation.  Properly designed class diagrams are essential for creating a well-structured and maintainable system.  For example, a `Car` class might be associated with an `Engine` class, aggregated with a `Wheel` class, and inherit from a `Vehicle` class.",
+          "video_url": "https://www.youtube.com/watch?v=WfPj9-wV3WU",
+          "practice_questions": [
+            "What is the purpose of a class diagram?",
+            "Describe the different types of relationships between classes.",
+            "What is the difference between aggregation and composition?",
+            "How is inheritance represented in a class diagram?",
+            "Give an example of a class diagram for a simple system."
+          ]
+        },
+        {
+          "topic_title": "Interaction Diagrams (Sequence and Collaboration)",
+          "notes_md": "Interaction diagrams are UML diagrams that illustrate the interactions between objects over time.  Sequence diagrams show the interactions in a chronological order, with objects represented as vertical lines and messages passed between them as arrows. Collaboration diagrams show the interactions as a network of objects, with messages labeled with sequence numbers.  Interaction diagrams are used to understand the dynamic behavior of the system and to identify potential design flaws.  They are particularly useful for designing complex interactions and for validating the design against the requirements.  Sequence diagrams are often preferred for their clarity in showing the order of events.",
+          "video_url": "https://www.youtube.com/watch?v=Q6Yk6t6jL1I",
+          "practice_questions": [
+            "What is the purpose of an interaction diagram?",
+            "What is the difference between a sequence diagram and a collaboration diagram?",
+            "How are objects and messages represented in a sequence diagram?",
+            "How can interaction diagrams help in identifying design flaws?",
+            "Give an example of a scenario where a sequence diagram would be useful."
+          ]
+        },
+        {
+          "topic_title": "Design Patterns (Creational, Structural, Behavioral)",
+          "notes_md": "Design patterns are reusable solutions to commonly occurring problems in software design. They represent best practices and provide a template for solving specific design challenges. Design patterns are categorized into creational (concerned with object creation), structural (concerned with object composition), and behavioral (concerned with object interaction).  Examples include the Singleton (creational), Factory (creational), Adapter (structural), Decorator (structural), Observer (behavioral), and Strategy (behavioral) patterns.  Using design patterns can improve code reusability, maintainability, and flexibility. Understanding design patterns is essential for becoming a proficient software designer. They provide a common vocabulary for discussing design issues and help to avoid reinventing the wheel.",
+          "video_url": "https://www.youtube.com/watch?v=j9WZyLZCBzs",
+          "practice_questions": [
+            "What is a design pattern?",
+            "Name three categories of design patterns and give an example of each.",
+            "What are the benefits of using design patterns?",
+            "Describe the Singleton pattern and its purpose.",
+            "Explain the difference between the Adapter and Decorator patterns."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced Object-Oriented Concepts",
+      "topics": [
+        {
+          "topic_title": "Object Persistence",
+          "notes_md": "Object persistence refers to the ability of an object to outlive the process that created it. This is typically achieved by storing the object's state in a persistent storage medium, such as a database or a file.  Techniques for object persistence include object serialization (converting an object to a stream of bytes that can be stored and later reconstructed), object-relational mapping (ORM) (mapping objects to relational database tables), and object databases (databases that store objects directly).  Object persistence is essential for building applications that need to maintain data across sessions or to share data between different applications.  ORM frameworks like Hibernate and Entity Framework simplify the process of object persistence.",
+          "video_url": "https://www.youtube.com/watch?v=Y9U7lWJjL9c",
+          "practice_questions": [
+            "What is object persistence?",
+            "Describe three techniques for achieving object persistence.",
+            "What is object serialization and how does it work?",
+            "What is an ORM framework and how does it simplify object persistence?",
+            "What are the advantages of using an object database?"
+          ]
+        },
+        {
+          "topic_title": "Object-Oriented Testing",
+          "notes_md": "Object-oriented testing involves testing individual classes and their interactions.  Unit testing focuses on testing individual methods and classes in isolation. Integration testing focuses on testing the interactions between different classes and modules. System testing focuses on testing the entire system to ensure that it meets the requirements.  Testing techniques include black-box testing (testing based on the requirements) and white-box testing (testing based on the code).  Test-driven development (TDD) is a development approach where tests are written before the code.  Proper testing is crucial for ensuring the quality and reliability of object-oriented software.",
+          "video_url": "https://www.youtube.com/watch?v=w9_E31gP87Q",
+          "practice_questions": [
+            "What is object-oriented testing?",
+            "Describe the different levels of testing in object-oriented software development.",
+            "What is the difference between black-box testing and white-box testing?",
+            "What is test-driven development (TDD)?",
+            "Why is testing important in object-oriented software development?"
+          ]
+        },
+        {
+          "topic_title": "Refactoring",
+          "notes_md": "Refactoring is the process of improving the internal structure of existing code without changing its external behavior.  The goal of refactoring is to make the code more readable, maintainable, and extensible.  Refactoring techniques include extracting methods, renaming variables, simplifying conditional expressions, and moving methods to other classes.  Refactoring should be done incrementally and with automated tests to ensure that the code's behavior is not changed.  Refactoring is an essential part of agile software development and helps to keep the code base healthy over time.  Common refactoring tools can automatically perform many of these tasks.",
+          "video_url": "https://www.youtube.com/watch?v=OaGm-OsZu4Y",
+          "practice_questions": [
+            "What is refactoring?",
+            "What are the goals of refactoring?",
+            "Describe three refactoring techniques.",
+            "Why is it important to have automated tests when refactoring?",
+            "How does refactoring contribute to the maintainability of code?"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "course_name": "Discrete Mathematics",
+  "course_code": "UBA04",
+  "units": [
+    {
+      "unit_title": "Logic and Proofs",
+      "topics": [
+        {
+          "topic_title": "Propositional Logic",
+          "notes_md": "Propositional logic deals with propositions, which are declarative statements that are either true or false. We use logical connectives like AND (∧), OR (∨), NOT (¬), implication (→), and biconditional (↔) to form compound propositions. Truth tables are used to evaluate the truth values of these compound propositions.\n\nFor example, if P is \"It is raining\" and Q is \"I will stay home\", then P → Q means \"If it is raining, then I will stay home.\" The truth table for implication shows that P → Q is only false when P is true and Q is false.\n\nUnderstanding propositional logic is fundamental for reasoning about computer programs and designing digital circuits. It allows us to formally express and analyze logical arguments.\n\n```\n// Example in Python\nP = True\nQ = False\nresult = (P and Q) or (not Q)\nprint(result) # Output: True\n```",
+          "video_url": "https://www.youtube.com/watch?v=aa0n8Lg9H4I",
+          "practice_questions": [
+            "Construct the truth table for (P ∧ Q) → ¬R.",
+            "Determine if the following statement is a tautology: (P → Q) ∨ (Q → P).",
+            "Express the statement 'If it is sunny tomorrow, I will go to the park, unless I have to work' using propositional logic.",
+            "Simplify the expression: ¬(P ∨ ¬Q)."
+          ]
+        },
+        {
+          "topic_title": "Predicate Logic",
+          "notes_md": "Predicate logic extends propositional logic by introducing predicates, variables, quantifiers (∀ for all, ∃ there exists), and functions. Predicates are statements that depend on variables. For example, P(x) could mean \"x is an even number\".\n\nQuantifiers allow us to make statements about collections of objects. ∀x P(x) means \"For all x, P(x) is true\", while ∃x P(x) means \"There exists an x such that P(x) is true.\"\n\nPredicate logic is essential for formalizing mathematical statements and reasoning about databases and knowledge representation.\n\n```\n// Example:\n// ∀x (Even(x) → Even(x+2))\n// Means: For all x, if x is even, then x+2 is even.\n```",
+          "video_url": "https://www.youtube.com/watch?v=l0izmZfqg0A",
+          "practice_questions": [
+            "Translate the statement 'Every student in the class has a computer' into predicate logic.",
+            "Negate the statement: ∀x (P(x) → Q(x)).",
+            "Determine if the following argument is valid: ∀x (P(x) → Q(x)), P(a) ⊢ Q(a).",
+            "Express 'There exists a prime number greater than 10' using predicate logic."
+          ]
+        },
+        {
+          "topic_title": "Methods of Proof",
+          "notes_md": "Several methods are used to prove mathematical statements, including direct proof, proof by contraposition, proof by contradiction, and proof by induction.\n\n*   **Direct Proof:** Assume the hypothesis is true and show that the conclusion follows.\n*   **Proof by Contraposition:** Prove the equivalent statement ¬Q → ¬P instead of P → Q.\n*   **Proof by Contradiction:** Assume the statement is false and derive a contradiction.\n*   **Proof by Induction:** Prove a base case and then show that if the statement holds for n, it also holds for n+1.\n\nChoosing the right proof technique is crucial for constructing a clear and concise argument. Proof by induction is particularly useful for proving statements about sequences and recursively defined structures.",
+          "video_url": "https://www.youtube.com/watch?v=bWpD2E2_3f8",
+          "practice_questions": [
+            "Prove that the sum of two even numbers is even using a direct proof.",
+            "Prove that if n^2 is even, then n is even using proof by contraposition.",
+            "Prove that √2 is irrational using proof by contradiction.",
+            "Prove that the sum of the first n positive integers is n(n+1)/2 using proof by induction.",
+            "Prove that for all integers n >= 0, n^3 + 2n is divisible by 3."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Set Theory and Relations",
+      "topics": [
+        {
+          "topic_title": "Basic Set Theory",
+          "notes_md": "Set theory is a fundamental branch of mathematics that deals with collections of objects called sets. Basic concepts include set membership (∈), subsets (⊆), unions (∪), intersections (∩), complements (Ac), and power sets (P(A)).\n\nThe cardinality of a set is the number of elements it contains. Venn diagrams are useful for visualizing set operations and relationships between sets.\n\nUnderstanding set theory is crucial for defining mathematical structures and reasoning about data structures in computer science.\n\n```\n// Example in Python\nA = {1, 2, 3}\nB = {3, 4, 5}\nunion = A.union(B) # {1, 2, 3, 4, 5}\nintersection = A.intersection(B) # {3}\n```",
+          "video_url": "https://www.youtube.com/watch?v=3fLtgutK88w",
+          "practice_questions": [
+            "If A = {1, 2, 3, 4} and B = {3, 4, 5, 6}, find A ∪ B and A ∩ B.",
+            "What is the power set of {a, b, c}?",
+            "Prove that A ⊆ B if and only if A ∪ B = B.",
+            "If |A| = 5 and |B| = 3, and |A ∪ B| = 7, find |A ∩ B|.",
+            "Prove DeMorgan's Law: (A ∪ B)^c = A^c ∩ B^c."
+          ]
+        },
+        {
+          "topic_title": "Relations and Functions",
+          "notes_md": "A relation is a set of ordered pairs. A function is a special type of relation where each element in the domain is mapped to exactly one element in the codomain. Important properties of relations include reflexivity, symmetry, antisymmetry, and transitivity.\n\nIf a relation is reflexive, symmetric, and transitive, it is an equivalence relation. Equivalence relations partition a set into equivalence classes. Functions can be injective (one-to-one), surjective (onto), or bijective (both injective and surjective).\n\nUnderstanding relations and functions is essential for modeling relationships between data and defining mappings between sets.\n\nLet A = {1, 2, 3}. The relation R = {(1,1), (2,2), (3,3), (1,2), (2,1)} is an equivalence relation.",
+          "video_url": "https://www.youtube.com/watch?v=Nq0r_V8N7c4",
+          "practice_questions": [
+            "Determine if the relation R = {(1, 1), (2, 2), (3, 3), (1, 2)} on the set {1, 2, 3} is reflexive, symmetric, or transitive.",
+            "Determine if the function f(x) = x^2 is injective, surjective, or bijective from R to R.",
+            "Define an equivalence relation on the set of integers modulo 5.",
+            "Prove that the composition of two injective functions is injective.",
+            "Give an example of a relation that is reflexive and symmetric but not transitive."
+          ]
+        },
+        {
+          "topic_title": "Partial Orders and Lattices",
+          "notes_md": "A partial order is a relation that is reflexive, antisymmetric, and transitive. A partially ordered set (poset) is a set with a partial order defined on it. A lattice is a poset in which every pair of elements has a least upper bound (join) and a greatest lower bound (meet).\n\nHasse diagrams are used to visually represent posets. Lattices are important in various areas of computer science, including data analysis and formal methods. Boolean algebra is a specific type of lattice that is fundamental to digital circuit design.\n\nExample: The power set of a set, ordered by inclusion, forms a lattice.",
+          "video_url": "https://www.youtube.com/watch?v=acjJjJ11K64",
+          "practice_questions": [
+            "Draw the Hasse diagram for the poset (P({a, b, c}), ⊆).",
+            "Determine if the relation 'divides' is a partial order on the set of positive integers.",
+            "Give an example of a lattice that is not a Boolean algebra.",
+            "Find the least upper bound and greatest lower bound of {2, 3} in the poset of positive integers ordered by 'divides'.",
+            "Prove that the intersection of two partial orders is a partial order."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Combinatorics",
+      "topics": [
+        {
+          "topic_title": "Basic Counting Principles",
+          "notes_md": "Combinatorics deals with counting the number of ways to arrange or select objects. Basic counting principles include the product rule, the sum rule, and the inclusion-exclusion principle.\n\nThe product rule states that if there are n ways to do one task and m ways to do another, then there are n * m ways to do both. The sum rule states that if there are n ways to do one task and m ways to do another, and the tasks cannot be done simultaneously, then there are n + m ways to do one of the tasks.\n\nThe inclusion-exclusion principle is used to count the number of elements in the union of sets, accounting for overlaps.\n\nExample: How many ways can you choose one topping from 3 types of cheese and one sauce from 4 types of sauce? Answer: 3 * 4 = 12.",
+          "video_url": "https://www.youtube.com/watch?v=VAa-W-zQoYQ",
+          "practice_questions": [
+            "How many different license plates can be made if each license plate consists of 3 letters followed by 4 digits?",
+            "How many ways can you choose one appetizer from 5 options, one main course from 7 options, and one dessert from 4 options?",
+            "How many integers between 1 and 1000 are divisible by 3 or 5?",
+            "A committee of 5 people is to be formed from 6 men and 4 women. How many ways can this be done if the committee must contain at least 2 women?",
+            "In how many ways can 5 distinct books be arranged on a shelf?"
+          ]
+        },
+        {
+          "topic_title": "Permutations and Combinations",
+          "notes_md": "Permutations are arrangements of objects where order matters. Combinations are selections of objects where order does not matter. The number of permutations of n objects taken r at a time is denoted by P(n, r) = n! / (n-r)!. The number of combinations of n objects taken r at a time is denoted by C(n, r) = n! / (r! * (n-r)!).\n\nUnderstanding permutations and combinations is crucial for solving problems involving arrangements and selections of objects.\n\nExample: How many ways can you choose 3 students from a class of 20 to form a committee? Answer: C(20, 3) = 20! / (3! * 17!) = 1140.",
+          "video_url": "https://www.youtube.com/watch?v=7z9te7WBVjY",
+          "practice_questions": [
+            "How many different ways can the letters of the word 'MISSISSIPPI' be arranged?",
+            "How many ways can you choose 5 cards from a standard deck of 52 cards?",
+            "In how many ways can 7 people be seated in a row if two particular people must sit next to each other?",
+            "A box contains 8 red balls and 5 blue balls. How many ways can 4 balls be selected such that 2 are red and 2 are blue?",
+            "How many ways can a team of 11 be selected from 15 players?"
+          ]
+        },
+        {
+          "topic_title": "Generating Functions",
+          "notes_md": "A generating function is a power series that represents a sequence. Generating functions can be used to solve combinatorial problems, such as counting the number of solutions to equations.\n\nFor example, the generating function for the sequence 1, 1, 1, ... is 1 / (1 - x). Generating functions can be manipulated algebraically to obtain information about the sequence they represent.\n\nGenerating functions are a powerful tool for solving recurrence relations and counting problems.\n\nExample: Find the generating function for the number of ways to make change for n cents using only pennies, nickels, dimes, and quarters.",
+          "video_url": "https://www.youtube.com/watch?v=xECeI-y2ef4",
+          "practice_questions": [
+            "Find the generating function for the sequence 1, 2, 3, 4, ...",
+            "Use generating functions to solve the recurrence relation a_n = a_{n-1} + a_{n-2} with initial conditions a_0 = 0 and a_1 = 1.",
+            "Find the number of ways to distribute 10 identical balls into 3 distinct boxes.",
+            "Determine the generating function for the number of ways to select n objects from a collection of 5 identical objects.",
+            "Use generating functions to determine the coefficient of x^5 in (1 + x + x^2 + x^3 + ...)^3."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Graph Theory",
+      "topics": [
+        {
+          "topic_title": "Basic Graph Concepts",
+          "notes_md": "A graph consists of a set of vertices (nodes) and a set of edges that connect pairs of vertices. Graphs can be directed or undirected. Basic graph concepts include degree, path, cycle, connectivity, and graph representation (adjacency matrix, adjacency list).\n\nTrees are a special type of graph that are connected and acyclic. Graph theory has numerous applications in computer science, including network analysis, algorithm design, and data representation.\n\nExample: A social network can be modeled as a graph, where vertices represent people and edges represent friendships.",
+          "video_url": "https://www.youtube.com/watch?v=n4pW-52wL0g",
+          "practice_questions": [
+            "Define the terms: vertex, edge, path, cycle, and degree of a vertex.",
+            "Represent the following graph using an adjacency matrix and an adjacency list: A connected graph with 4 vertices and 5 edges.",
+            "Determine if the following graph is connected: A graph with two connected components.",
+            "What is the difference between a directed and an undirected graph?",
+            "Prove that the sum of the degrees of all vertices in a graph is equal to twice the number of edges."
+          ]
+        },
+        {
+          "topic_title": "Graph Traversal Algorithms",
+          "notes_md": "Graph traversal algorithms are used to systematically visit all vertices in a graph. Two common graph traversal algorithms are Breadth-First Search (BFS) and Depth-First Search (DFS). BFS explores the graph level by level, while DFS explores the graph along each branch as far as possible before backtracking.\n\nBFS is typically implemented using a queue, while DFS is typically implemented using a stack (or recursion). Graph traversal algorithms are used in various applications, including finding shortest paths, detecting cycles, and topological sorting.\n\n```python\n# Example: DFS in Python\ndef dfs(graph, node, visited):\n    if node not in visited:\n        visited.add(node)\n        for neighbor in graph[node]:\n            dfs(graph, neighbor, visited)\n```",
+          "video_url": "https://www.youtube.com/watch?v=7 ട്രെൻഡ്\n",
+          "practice_questions": [
+            "Explain the difference between BFS and DFS.",
+            "Write a Python code to implement BFS on a given graph.",
+            "Write a Python code to implement DFS on a given graph.",
+            "Use BFS to find the shortest path between two vertices in a graph.",
+            "Use DFS to detect cycles in a graph."
+          ]
+        },
+        {
+          "topic_title": "Spanning Trees and Shortest Paths",
+          "notes_md": "A spanning tree of a graph is a subgraph that is a tree and includes all vertices of the graph. A minimum spanning tree (MST) is a spanning tree with the minimum possible total edge weight. Common algorithms for finding MSTs include Kruskal's algorithm and Prim's algorithm.\n\nShortest path algorithms are used to find the shortest path between two vertices in a graph. Dijkstra's algorithm is a common algorithm for finding shortest paths in graphs with non-negative edge weights.\n\nThese algorithms have applications in network routing, transportation planning, and resource allocation.",
+          "video_url": "https://www.youtube.com/watch?v=msttfhIhh7s",
+          "practice_questions": [
+            "Explain the difference between a spanning tree and a minimum spanning tree.",
+            "Describe Kruskal's algorithm for finding a minimum spanning tree.",
+            "Describe Prim's algorithm for finding a minimum spanning tree.",
+            "Explain Dijkstra's algorithm for finding the shortest path between two vertices in a graph.",
+            "Find the minimum spanning tree of a given graph using Kruskal's algorithm."
+          ]
+        }
+      ]
+    }
+  ]
+}

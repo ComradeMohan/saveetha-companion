@@ -1,0 +1,210 @@
+{
+  "course_name": "Programming in Java",
+  "course_code": "CSA09",
+  "units": [
+    {
+      "unit_title": "Introduction to Java",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Java",
+          "notes_md": "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let application developers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture. The syntax of Java is largely influenced by C and C++, but it has fewer low-level facilities than either of them.\n\nKey features include:\n\n*   Object-Oriented: Java is built around objects and classes.\n*   Platform Independent: WORA principle.\n*   Robust: Strong memory management and exception handling.\n*   Secure: Built-in security features.\n\n```java\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=eIrMbAQSUko",
+          "practice_questions": [
+            "What is the difference between JDK, JRE, and JVM?",
+            "Explain the concept of WORA in Java.",
+            "What are the main features of Java?",
+            "Write a simple Java program to print your name."
+          ]
+        },
+        {
+          "topic_title": "Data Types and Variables",
+          "notes_md": "In Java, data types specify the different sizes and values that can be stored in the variable. There are mainly two types of data types in Java:\n\n*   Primitive Data Types: `byte`, `short`, `int`, `long`, `float`, `double`, `boolean`, and `char`.\n*   Non-Primitive Data Types: `String`, `Arrays`, `Classes`, and `Interfaces`.\n\nVariables are containers that store data values.  Each variable must have a data type.  For example:\n\n```java\nint age = 30; // Integer variable\ndouble salary = 50000.0; // Double variable\nString name = \"John Doe\"; // String variable\nboolean isEmployed = true; // Boolean variable\n```\n\nUnderstanding data types and variables is crucial for writing effective Java programs.",
+          "video_url": "https://www.youtube.com/watch?v=5w-y4tN_ycI",
+          "practice_questions": [
+            "What are the different primitive data types in Java?",
+            "Explain the difference between `int` and `double`.",
+            "How do you declare a variable in Java?",
+            "What is the purpose of the `String` data type?",
+            "Write a program to declare variables of different data types and print their values."
+          ]
+        },
+        {
+          "topic_title": "Operators and Expressions",
+          "notes_md": "Operators are symbols that perform operations on variables and values. Java supports various types of operators, including:\n\n*   Arithmetic Operators: `+`, `-`, `*`, `/`, `%`\n*   Assignment Operators: `=`, `+=`, `-=`, `*=`, `/=`, `%=`\n*   Comparison Operators: `==`, `!=`, `>`, `<`, `>=`, `<=`\n*   Logical Operators: `&&` (AND), `||` (OR), `!` (NOT)\n*   Bitwise Operators: `&`, `|`, `^`, `~`, `<<`, `>>`, `>>>`\n\nExpressions are combinations of variables, operators, and method calls that evaluate to a single value.  For example:\n\n```java\nint x = 10;\nint y = 5;\nint sum = x + y; // Arithmetic expression\nboolean isEqual = (x == y); // Comparison expression\n```\n\nUnderstanding operators and expressions is essential for performing calculations and making decisions in Java programs.",
+          "video_url": "https://www.youtube.com/watch?v=Kj1r5s8Vn8g",
+          "practice_questions": [
+            "Explain the difference between `==` and `=` operators.",
+            "What are the different types of operators in Java?",
+            "Write a Java expression to calculate the average of three numbers.",
+            "What is the order of precedence of operators in Java?",
+            "Explain the use of logical operators with examples."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Control Flow Statements",
+      "topics": [
+        {
+          "topic_title": "Conditional Statements (if, else, switch)",
+          "notes_md": "Conditional statements allow you to execute different blocks of code based on certain conditions. The `if` statement executes a block of code if a condition is true. The `else` statement executes a block of code if the condition is false. The `switch` statement allows you to select one of several code blocks to execute based on the value of a variable.\n\n```java\nint age = 20;\nif (age >= 18) {\n    System.out.println(\"You are an adult.\");\n} else {\n    System.out.println(\"You are a minor.\");\n}\n\nint day = 3;\nswitch (day) {\n    case 1: System.out.println(\"Monday\"); break;\n    case 2: System.out.println(\"Tuesday\"); break;\n    default: System.out.println(\"Other day\");\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=apoyjGypKys",
+          "practice_questions": [
+            "Write an `if-else` statement to check if a number is positive or negative.",
+            "Explain the difference between `if-else` and `switch` statements.",
+            "Write a `switch` statement to print the name of the month based on the month number.",
+            "What happens if you don't include a `break` statement in a `switch` case?",
+            "Write a program using nested `if-else` statements to find the largest of three numbers."
+          ]
+        },
+        {
+          "topic_title": "Looping Statements (for, while, do-while)",
+          "notes_md": "Looping statements allow you to execute a block of code repeatedly. The `for` loop is used when you know the number of iterations in advance. The `while` loop is used when you want to execute a block of code as long as a condition is true. The `do-while` loop is similar to the `while` loop, but it executes the block of code at least once.\n\n```java\nfor (int i = 0; i < 5; i++) {\n    System.out.println(i);\n}\n\nint i = 0;\nwhile (i < 5) {\n    System.out.println(i);\n    i++;\n}\n\nint j = 0;\ndo {\n    System.out.println(j);\n    j++;\n} while (j < 5);\n```",
+          "video_url": "https://www.youtube.com/watch?v=9G69Kzw-2cI",
+          "practice_questions": [
+            "Write a `for` loop to print the numbers from 1 to 10.",
+            "Explain the difference between `while` and `do-while` loops.",
+            "Write a `while` loop to calculate the sum of the first `n` natural numbers.",
+            "What is an infinite loop? How can you avoid it?",
+            "Write a program to print a multiplication table using nested loops."
+          ]
+        },
+        {
+          "topic_title": "Break and Continue Statements",
+          "notes_md": "The `break` statement is used to terminate a loop or a `switch` statement. When a `break` statement is encountered inside a loop, the loop is immediately terminated, and the program control resumes at the next statement after the loop. The `continue` statement is used to skip the current iteration of a loop. When a `continue` statement is encountered inside a loop, the current iteration is skipped, and the program control moves to the next iteration.\n\n```java\nfor (int i = 0; i < 10; i++) {\n    if (i == 5) {\n        break; // Terminate the loop when i is 5\n    }\n    System.out.println(i);\n}\n\nfor (int i = 0; i < 10; i++) {\n    if (i % 2 == 0) {\n        continue; // Skip even numbers\n    }\n    System.out.println(i);\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=v4qB-c-1tJ4",
+          "practice_questions": [
+            "Explain the purpose of the `break` statement in Java.",
+            "Explain the purpose of the `continue` statement in Java.",
+            "Write a program to print numbers from 1 to 10, skipping the number 5 using the `continue` statement.",
+            "Write a program to find the first even number in an array and terminate the loop using the `break` statement.",
+            "What is the difference between `break` and `continue` statements?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Object-Oriented Programming",
+      "topics": [
+        {
+          "topic_title": "Classes and Objects",
+          "notes_md": "In Java, a class is a blueprint for creating objects. It defines the data (fields) and behavior (methods) that objects of that class will have. An object is an instance of a class.  You can create multiple objects from a single class.\n\n```java\nclass Dog {\n    String name;\n    String breed;\n\n    void bark() {\n        System.out.println(\"Woof!\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Dog myDog = new Dog();\n        myDog.name = \"Buddy\";\n        myDog.breed = \"Golden Retriever\";\n        myDog.bark();\n    }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=BSvc8o9w-fQ",
+          "practice_questions": [
+            "What is a class in Java?",
+            "What is an object in Java?",
+            "How do you create an object of a class?",
+            "What are the fields and methods of a class?",
+            "Create a class called `Rectangle` with fields `length` and `width` and a method to calculate the area."
+          ]
+        },
+        {
+          "topic_title": "Encapsulation, Inheritance, and Polymorphism",
+          "notes_md": "These are the three pillars of object-oriented programming.\n\n*   Encapsulation: Bundling of data (fields) and methods that operate on that data within a class. It helps in hiding the internal implementation details of a class and exposing only the necessary interface to the outside world.\n*   Inheritance:  A mechanism where a new class (subclass or derived class) inherits properties and behaviors from an existing class (superclass or base class). It promotes code reusability and establishes a relationship between classes.\n*   Polymorphism:  The ability of an object to take on many forms. It allows you to write code that can work with objects of different classes in a uniform way. Polymorphism can be achieved through method overloading and method overriding.\n\n```java\n// Example of Inheritance\nclass Animal {\n    void eat() {\n        System.out.println(\"Eating\");\n    }\n}\n\nclass Dog extends Animal {\n    void bark() {\n        System.out.println(\"Barking\");\n    }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=GhQdlIFyQI0",
+          "practice_questions": [
+            "Explain the concept of encapsulation in Java.",
+            "Explain the concept of inheritance in Java.",
+            "Explain the concept of polymorphism in Java.",
+            "What is the difference between method overloading and method overriding?",
+            "Give an example of how inheritance can be used to promote code reusability."
+          ]
+        },
+        {
+          "topic_title": "Abstraction",
+          "notes_md": "Abstraction is the process of hiding complex implementation details and showing only essential information to the user. It helps in managing complexity by focusing on the relevant aspects of an object. In Java, abstraction can be achieved through abstract classes and interfaces.\n\n*   Abstract Class: A class that cannot be instantiated. It can contain abstract methods (methods without implementation) and concrete methods (methods with implementation). Subclasses of an abstract class must provide implementation for all abstract methods.\n*   Interface: A completely abstract class. It contains only abstract methods and constant variables. A class can implement multiple interfaces.\n\n```java\nabstract class Shape {\n    abstract double area();\n}\n\ninterface Drawable {\n    void draw();\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=gJ9-n-hUq1Q",
+          "practice_questions": [
+            "What is abstraction in Java?",
+            "What is an abstract class?",
+            "What is an interface?",
+            "What is the difference between an abstract class and an interface?",
+            "Give an example of how abstraction can be used to simplify complex systems."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Arrays and Strings",
+      "topics": [
+        {
+          "topic_title": "Arrays",
+          "notes_md": "An array is a collection of elements of the same data type. Arrays are used to store multiple values in a single variable. In Java, arrays are objects. Arrays can be one-dimensional or multi-dimensional.\n\n```java\nint[] numbers = new int[5]; // Declaring an array of integers\nnumbers[0] = 10;\nnumbers[1] = 20;\n\nint[] numbers2 = {1, 2, 3, 4, 5}; // Initializing an array\n\nfor (int i = 0; i < numbers2.length; i++) {\n    System.out.println(numbers2[i]);\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=nN6OU8v9w9I",
+          "practice_questions": [
+            "What is an array in Java?",
+            "How do you declare an array in Java?",
+            "How do you initialize an array in Java?",
+            "How do you access elements of an array?",
+            "Write a program to find the sum of elements in an array."
+          ]
+        },
+        {
+          "topic_title": "Strings",
+          "notes_md": "In Java, a string is a sequence of characters. Strings are immutable, meaning that once a string is created, its value cannot be changed. Java provides the `String` class to represent strings. The `String` class provides various methods for manipulating strings, such as `length()`, `substring()`, `concat()`, `equals()`, etc.\n\n```java\nString message = \"Hello, World!\";\nSystem.out.println(message.length()); // Prints the length of the string\nSystem.out.println(message.substring(0, 5)); // Prints a substring\nSystem.out.println(message.concat(\" Welcome!\")); // Concatenates strings\nSystem.out.println(message.equals(\"Hello, World!\")); // Compares strings\n```",
+          "video_url": "https://www.youtube.com/watch?v=sJ-Euh2-cZA",
+          "practice_questions": [
+            "What is a string in Java?",
+            "What does it mean for a string to be immutable?",
+            "How do you find the length of a string?",
+            "How do you concatenate two strings?",
+            "Write a program to reverse a string."
+          ]
+        },
+        {
+          "topic_title": "String Buffer and String Builder",
+          "notes_md": "Since Strings are immutable, Java provides `StringBuffer` and `StringBuilder` classes for creating mutable strings. `StringBuffer` is thread-safe, while `StringBuilder` is not.  `StringBuilder` is generally faster than `StringBuffer` because it doesn't have the overhead of synchronization. Use `StringBuilder` when thread safety is not a concern.\n\n```java\nStringBuilder sb = new StringBuilder(\"Hello\");\nsb.append(\", World!\"); // Appends to the string\nSystem.out.println(sb.toString()); // Prints the string\n\nStringBuffer sbuf = new StringBuffer(\"Java\");\nsbuf.insert(2, \"is\");\nSystem.out.println(sbuf.toString());\n```",
+          "video_url": "https://www.youtube.com/watch?v=9mE9-QW0V4A",
+          "practice_questions": [
+            "What is the difference between `String`, `StringBuffer`, and `StringBuilder`?",
+            "When should you use `StringBuffer` over `StringBuilder`?",
+            "How do you append a string to a `StringBuilder`?",
+            "How do you insert a string into a `StringBuffer`?",
+            "Write a program to create a mutable string and perform various operations on it."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Exception Handling",
+      "topics": [
+        {
+          "topic_title": "Introduction to Exceptions",
+          "notes_md": "An exception is an event, which occurs during the execution of a program, that disrupts the normal flow of the program's instructions. When an error occurs within a method, the method creates an exception object and hands it off to the runtime system. The runtime system then tries to find something to handle the exception. If it can't find an appropriate exception handler, the program terminates.\n\nCommon types of exceptions:\n\n*   `ArithmeticException`: Occurs when dividing by zero.\n*   `NullPointerException`: Occurs when trying to access a member of a null object.\n*   `ArrayIndexOutOfBoundsException`: Occurs when trying to access an invalid index in an array.\n*   `IOException`: Occurs when an I/O operation fails.\n",
+          "video_url": "https://www.youtube.com/watch?v=ijX2zKk5v5c",
+          "practice_questions": [
+            "What is an exception in Java?",
+            "Why is exception handling important?",
+            "List some common types of exceptions in Java.",
+            "What happens if an exception is not handled?",
+            "Explain the difference between checked and unchecked exceptions."
+          ]
+        },
+        {
+          "topic_title": "Try-Catch Blocks",
+          "notes_md": "The `try-catch` block is used to handle exceptions. The `try` block contains the code that might throw an exception. The `catch` block contains the code that handles the exception. You can have multiple `catch` blocks to handle different types of exceptions. The `finally` block contains code that is always executed, regardless of whether an exception is thrown or not. This is often used to close resources.\n\n```java\ntry {\n    int result = 10 / 0; // This will throw an ArithmeticException\n} catch (ArithmeticException e) {\n    System.out.println(\"Cannot divide by zero.\");\n} finally {\n    System.out.println(\"This will always be executed.\");\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=wWdK29iJ-9c",
+          "practice_questions": [
+            "Explain the purpose of the `try-catch` block.",
+            "What is the purpose of the `finally` block?",
+            "How do you handle multiple types of exceptions?",
+            "Write a program that handles `ArithmeticException` and `ArrayIndexOutOfBoundsException`.",
+            "What happens if an exception is thrown outside of a `try` block?"
+          ]
+        },
+        {
+          "topic_title": "Throwing Exceptions",
+          "notes_md": "You can manually throw exceptions using the `throw` keyword. This is useful when you want to signal an error condition in your code. You can throw built-in exceptions or create your own custom exceptions by extending the `Exception` class.\n\n```java\npublic void withdraw(double amount) throws InsufficientFundsException {\n    if (amount > balance) {\n        throw new InsufficientFundsException(\"Insufficient funds\");\n    }\n    balance -= amount;\n}\n\nclass InsufficientFundsException extends Exception {\n    public InsufficientFundsException(String message) {\n        super(message);\n    }\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=9Cj_quq1_6M",
+          "practice_questions": [
+            "How do you throw an exception in Java?",
+            "How do you create a custom exception?",
+            "What is the purpose of the `throws` keyword?",
+            "Write a program that throws an exception if a user enters an invalid input.",
+            "Explain the difference between throwing and catching an exception."
+          ]
+        }
+      ]
+    }
+  ]
+}

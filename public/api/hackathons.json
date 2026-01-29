@@ -1,0 +1,41 @@
+
+[
+    {
+        "id": "ethglobal-brussels",
+        "title": "ETHGlobal Brussels",
+        "organization": "ETHGlobal",
+        "date": "July 12-14, 2024",
+        "mode": "In-Person",
+        "location": "Brussels, Belgium",
+        "description": "Join the Ethereum ecosystem in Brussels for a weekend of hacking and learning. Build the future of the decentralized web.",
+        "url": "https://ethglobal.com/events/brussels"
+    },
+    {
+        "id": "hackmit-2024",
+        "title": "HackMIT 2024",
+        "organization": "MIT",
+        "date": "September 21-22, 2024",
+        "mode": "In-Person",
+        "location": "Cambridge, MA, USA",
+        "description": "One of the largest and most prestigious student-run hackathons. Thousands of students from around the world gather to build amazing projects.",
+        "url": "https://hackmit.org/"
+    },
+    {
+        "id": "vercel-ai-hackathon",
+        "title": "Vercel AI Hackathon",
+        "organization": "Vercel & Google",
+        "date": "August 1-8, 2024",
+        "mode": "Online",
+        "description": "A week-long virtual hackathon focused on building innovative AI applications using the latest web technologies and AI models.",
+        "url": "https://vercel.com/blog/ai-hackathon"
+    },
+    {
+        "id": "hacktoberfest-2024",
+        "title": "Hacktoberfest 2024",
+        "organization": "DigitalOcean",
+        "date": "October 1-31, 2024",
+        "mode": "Online",
+        "description": "A month-long celebration of open source software. Contribute to open source projects and earn limited edition swag.",
+        "url": "https://hacktoberfest.digitalocean.com/"
+    }
+]

@@ -1,0 +1,436 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 100% 98%; /* Very light saffron/orange tint */
+    --foreground: 228 20% 5.1%;
+    --card: 30 100% 100%;
+    --card-foreground: 228 20% 5.1%;
+    --popover: 30 100% 100%;
+    --popover-foreground: 228 20% 5.1%;
+    --primary: 25 95% 53%; /* Saffron (Orange) */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 145 60% 96%; /* Light Green */
+    --secondary-foreground: 145 63% 22%;
+    --muted: 220 20% 93%;
+    --muted-foreground: 232 13% 41%;
+    --accent: 145 60% 96%;
+    --accent-foreground: 145 63% 22%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 226 50% 91%;
+    --input: 226 50% 91%;
+    --ring: 25 95% 53%;
+    --radius: 0.75rem;
+
+    --spotlight-color: hsl(var(--primary) / 0.1);
+  }
+ 
+  .dark {
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 25 95% 53%; /* Saffron (Orange) */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 145 63% 15%; /* Dark Green */
+    --secondary-foreground: 145 60% 90%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 145 63% 15%;
+    --accent-foreground: 145 60% 90%;
+    --destructive: 0 72.2% 50.6%; /* Brighter red for dark mode */
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 25 95% 53%;
+
+    --spotlight-color: hsl(var(--primary) / 0.08);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .skip-link {
+    @apply absolute -top-10 left-0 bg-background text-foreground p-2 z-50 transition-all;
+  }
+  
+  .skip-link:focus {
+    @apply top-0;
+  }
+
+
+  /* Themed scrollbar for desktop devices */
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: hsl(var(--background));
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: hsl(var(--primary) / 0.5);
+      border-radius: 6px;
+      border: 3px solid hsl(var(--background));
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(var(--primary) / 0.7);
+    }
+  }
+
+  .auth-panel-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-panel-bg .shape {
+    position: absolute;
+    background-color: hsl(var(--primary) / 0.1);
+    border-radius: 50%;
+    animation: float 15s infinite ease-in-out;
+  }
+  .dark .auth-panel-bg .shape {
+    background-color: hsl(var(--primary) / 0.2);
+  }
+
+  .auth-panel-bg .shape1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 15%;
+    animation-duration: 17s;
+  }
+  .auth-panel-bg .shape2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    left: 70%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+  }
+  .auth-panel-bg .shape3 {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    left: 80%;
+    animation-duration: 20s;
+    animation-delay: 4s;
+  }
+  .auth-panel-bg .shape4 {
+    width: 80px;
+    height: 80px;
+    top: 80%;
+    left: 10%;
+    animation-duration: 10s;
+  }
+
+  #spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      var(--spotlight-color) 0%,
+      transparent: 25%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: background 0.2s ease-out;
+  }
+
+  @keyframes text-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-text-gradient {
+    background: linear-gradient(-45deg, hsl(var(--primary)), hsl(var(--secondary-foreground)), hsl(var(--primary)), hsl(var(--secondary-foreground)));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-gradient 8s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px) translateX(10px) scale(1.1); }
+    100% { transform: translateY(0px); }
+  }
+  
+  @keyframes scroll-text {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-50%); }
+  }
+  
+  .animate-scroll-text {
+    animation: scroll-text 60s linear infinite;
+  }
+
+  .nav-link-hover {
+    position: relative;
+  }
+
+  .nav-link-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .nav-link-hover:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-5%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+}
+
+@keyframes menu-fan-out {
+  0% {
+    transform: scale(0.5) translateY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(-100%);
+    opacity: 1;
+  }
+}
+
+.animate-menu-fan-out {
+  animation: menu-fan-out 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes menu-button-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-90deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.animate-menu-button-fade-in {
+  animation: menu-button-fade 0.3s ease-out forwards;
+}
+
+.animate-menu-button-fade-out {
+  animation: menu-button-fade 0.3s ease-in-out reverse forwards;
+}
+
+/* Base styles for all transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* From light to dark */
+.light::view-transition-old(root) {
+  z-index: 1;
+}
+.light::view-transition-new(root) {
+  z-index: 999;
+}
+
+/* From dark to light */
+.dark::view-transition-old(root) {
+  z-index: 999;
+}
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+@keyframes liquid-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.liquid-glass-nav {
+  background: hsl(var(--background) / 0.3);
+  background-size: 200% 200%;
+  animation: liquid-gradient 10s ease infinite;
+}
+
+.dark .liquid-glass-nav {
+  background: hsl(var(--background) / 0.3);
+  background-size: 200% 200%;
+  animation: liquid-gradient 10s ease infinite;
+}
+
+/* Confetti Animation */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #00A5C6; /* Fallback color */
+  opacity: 0.7;
+  animation: fall 5s linear forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Ticker Animation */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 10s linear infinite;
+}
+
+@layer base {
+  .animate-slide-in-from-bottom {
+    animation: slide-in-from-bottom 0.4s ease-out forwards;
+  }
+  @keyframes slide-in-from-bottom {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Image fade-in animation */
+.fade-in {
+  opacity: 0;
+  transform: scale(0.98);
+  filter: blur(8px);
+  transition: opacity 0.4s ease-out, filter 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.fade-in.loaded {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+/* Dialog slide-up animation */
+.dialog-animate {
+  animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hierarchical Tree Diagram Styles */
+.tree-node {
+    @apply relative flex flex-col items-center;
+}
+.tree-node-content {
+    @apply relative z-10 w-64 cursor-pointer rounded-lg border-2 p-3 text-center shadow-md transition-all hover:shadow-xl hover:scale-105;
+}
+.tree-children {
+    @apply mt-12 flex items-start justify-center gap-8;
+    position: relative;
+}
+/* Vertical line from parent to the horizontal connector */
+.tree-node::after {
+    @apply content-[''] absolute left-1/2 top-full h-6 w-px -translate-x-1/2 bg-gray-400;
+}
+.tree-node:has(.tree-children)::after {
+  content: '';
+}
+.tree-children > .tree-node:only-child {
+  /* No horizontal line needed for a single child */
+}
+/* Horizontal line connecting all children */
+.tree-children::before {
+    @apply content-[''] absolute left-0 right-0 top-[-24px] h-px bg-gray-400;
+}
+/* Vertical lines from horizontal connector to each child */
+.tree-children > .tree-node::before {
+    @apply content-[''] absolute bottom-full left-1/2 h-6 w-px -translate-x-1/2 bg-gray-400;
+}
+/* Hide lines for nodes with no children */
+.tree-node:not(:has(.tree-children))::after {
+    @apply hidden;
+}
+/* Hide horizontal line for single child */
+.tree-children > .tree-node:first-child:last-child::before {
+    @apply content-[''] absolute bottom-full left-1/2 h-6 w-px -translate-x-1/2 bg-gray-400;
+}
+.tree-children:has(> .tree-node:only-child)::before {
+    @apply hidden;
+}
+/* Extend horizontal line to first and last child */
+.tree-children > .tree-node:first-child::after {
+    @apply content-[''] absolute bottom-full left-0 right-1/2 h-px bg-gray-400;
+}
+.tree-children > .tree-node:last-child::after {
+    @apply content-[''] absolute bottom-full left-1/2 right-0 h-px bg-gray-400;
+}
+.tree-children > .tree-node:first-child:last-child::after {
+  @apply hidden;
+}

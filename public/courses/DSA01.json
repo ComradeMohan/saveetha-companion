@@ -1,0 +1,170 @@
+{
+  "course_name": "Object Oriented Programming with C++",
+  "course_code": "DSA01",
+  "units": [
+    {
+      "unit_title": "Introduction to OOP and C++",
+      "topics": [
+        {
+          "topic_title": "Fundamentals of Object-Oriented Programming",
+          "notes_md": "Object-Oriented Programming (OOP) is a programming paradigm based on the concept of \"objects\", which can contain data, in the form of fields (often known as attributes), and code, in the form of procedures (often known as methods). A central feature of OOP is the concept of data encapsulation, which hides the internal representation of an object from the outside world and only exposes a set of methods for interacting with the object. Other core principles include inheritance (allowing new classes to inherit properties and behaviors from existing classes), and polymorphism (allowing objects of different classes to be treated as objects of a common type). OOP promotes code reusability, maintainability, and scalability.",
+          "video_url": "https://www.youtube.com/watch?v=pTB0EiLXUC8",
+          "practice_questions": [
+            "What are the four pillars of OOP?",
+            "Explain the concept of encapsulation.",
+            "What is the difference between a class and an object?",
+            "How does inheritance promote code reusability?",
+            "Describe the benefits of using OOP."
+          ]
+        },
+        {
+          "topic_title": "Introduction to C++",
+          "notes_md": "C++ is a general-purpose programming language. It is regarded as a middle-level language, as it comprises a combination of both high-level and low-level language features. It was developed by Bjarne Stroustrup starting in 1979 at Bell Labs as an enhancement to the C language. C++ is widely used for developing operating systems, game development, device drivers, servers, performance-critical applications, and entertainment software. C++ supports both procedural and object-oriented programming paradigms, providing flexibility in designing software solutions.  It also supports features like operator overloading and exception handling. C++ code is typically compiled into machine code for direct execution by the computer's processor.",
+          "video_url": "https://www.youtube.com/watch?v=Rub-JsjMfcg",
+          "practice_questions": [
+            "What are the key differences between C and C++?",
+            "What are some applications where C++ is commonly used?",
+            "Explain the compilation process in C++.",
+            "What are header files and why are they used?",
+            "Write a simple 'Hello, World!' program in C++."
+          ]
+        },
+        {
+          "topic_title": "Basic Syntax and Data Types in C++",
+          "notes_md": "C++ syntax is similar to C, but with added features for OOP. Key elements include: `int`, `float`, `double`, `char`, `bool` are fundamental data types. Variables are declared with a type and name (e.g., `int age;`). Operators perform operations on data (e.g., `+`, `-`, `*`, `/`, `=`). Control flow statements (`if`, `else`, `for`, `while`) control the execution of code based on conditions. Functions are blocks of code that perform specific tasks. Input/output operations are handled using `std::cin` (input) and `std::cout` (output). Comments are used to explain code (`// single-line`, `/* multi-line */`).\n\n```cpp\n#include <iostream>\n\nint main() {\n  int age = 30;\n  std::cout << \"Age: \" << age << std::endl;\n  return 0;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=1ZOX-o_eN-U",
+          "practice_questions": [
+            "Declare an integer variable and assign it a value.",
+            "Write a C++ program to add two numbers and print the result.",
+            "Explain the difference between `int` and `float` data types.",
+            "What are the different types of operators in C++?",
+            "Write a program that uses an `if` statement to check if a number is positive or negative."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Classes and Objects",
+      "topics": [
+        {
+          "topic_title": "Defining Classes and Creating Objects",
+          "notes_md": "A class is a blueprint for creating objects. It defines the attributes (data members) and behaviors (member functions) that objects of that class will have. An object is an instance of a class.  To define a class, use the `class` keyword. Member functions are defined within the class. Objects are created using the class name followed by the object name (e.g., `MyClass obj;`).  Access members of an object using the dot operator (`.`).\n\n```cpp\nclass Dog {\npublic:\n  std::string breed;\n  int age;\n  void bark() {\n    std::cout << \"Woof!\" << std::endl;\n  }\n};\n\nint main() {\n  Dog myDog;\n  myDog.breed = \"Labrador\";\n  myDog.age = 3;\n  myDog.bark();\n  return 0;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=wN0x9eD5xfQ",
+          "practice_questions": [
+            "Define a class called `Rectangle` with attributes `length` and `width`.",
+            "Create an object of the `Rectangle` class and set its attributes.",
+            "Write a member function to calculate the area of the rectangle.",
+            "Explain the difference between public and private members.",
+            "How do you create multiple objects of the same class?"
+          ]
+        },
+        {
+          "topic_title": "Constructors and Destructors",
+          "notes_md": "A constructor is a special member function that is automatically called when an object is created. It is used to initialize the object's attributes. A destructor is a special member function that is automatically called when an object is destroyed. It is used to release any resources held by the object. Constructors have the same name as the class. Destructors have the same name as the class, preceded by a tilde (`~`).  Constructors can be overloaded to provide different initialization options. Destructors have no parameters.",
+          "video_url": "https://www.youtube.com/watch?v=9mK0bnD4Vrw",
+          "practice_questions": [
+            "What is the purpose of a constructor?",
+            "How do you define a constructor in C++?",
+            "What is a default constructor?",
+            "What is the purpose of a destructor?",
+            "When is a destructor called?"
+          ]
+        },
+        {
+          "topic_title": "Access Modifiers: Public, Private, and Protected",
+          "notes_md": "Access modifiers control the visibility of class members. `public` members are accessible from anywhere. `private` members are only accessible from within the class. `protected` members are accessible from within the class and its derived classes. Encapsulation is achieved by making data members private and providing public member functions to access and modify them. This protects the data from direct manipulation and ensures data integrity. It allows for controlled access and modification of the object's internal state.",
+          "video_url": "https://www.youtube.com/watch?v=jj0jza_j2cQ",
+          "practice_questions": [
+            "Explain the difference between public, private, and protected access modifiers.",
+            "Why is encapsulation important in OOP?",
+            "How can you access private members of a class?",
+            "What are the benefits of using access modifiers?",
+            "Give an example of how to use access modifiers in a class definition."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Inheritance and Polymorphism",
+      "topics": [
+        {
+          "topic_title": "Inheritance: Single, Multiple, and Hierarchical",
+          "notes_md": "Inheritance allows a class (derived class) to inherit properties and behaviors from another class (base class). Single inheritance involves inheriting from one base class. Multiple inheritance involves inheriting from multiple base classes. Hierarchical inheritance involves multiple derived classes inheriting from a single base class. Inheritance promotes code reusability and reduces code duplication. It also allows for creating a hierarchy of classes with specialized functionalities. The syntax for inheritance is `class DerivedClass : access_modifier BaseClass`. `access_modifier` can be `public`, `private`, or `protected`.",
+          "video_url": "https://www.youtube.com/watch?v=Rqv6NCvOIy0",
+          "practice_questions": [
+            "What is inheritance in OOP?",
+            "Explain the different types of inheritance.",
+            "What are the benefits of using inheritance?",
+            "How do you inherit from a class in C++?",
+            "What is the difference between single and multiple inheritance?"
+          ]
+        },
+        {
+          "topic_title": "Polymorphism: Function Overloading and Overriding",
+          "notes_md": "Polymorphism means \"many forms\". It allows objects of different classes to be treated as objects of a common type. Function overloading allows multiple functions with the same name but different parameters. Function overriding allows a derived class to provide a specific implementation of a function that is already defined in its base class. Overriding is achieved using the `virtual` keyword in the base class and the `override` keyword in the derived class. Polymorphism enhances code flexibility and extensibility.",
+          "video_url": "https://www.youtube.com/watch?v=tD2kFqMvjL0",
+          "practice_questions": [
+            "What is polymorphism in OOP?",
+            "Explain the difference between function overloading and function overriding.",
+            "How do you achieve polymorphism in C++?",
+            "What is a virtual function?",
+            "Give an example of function overloading."
+          ]
+        },
+        {
+          "topic_title": "Virtual Functions and Abstract Classes",
+          "notes_md": "A virtual function is a member function that is declared with the `virtual` keyword. It allows derived classes to override the function's behavior. An abstract class is a class that contains at least one pure virtual function (a virtual function that is declared with `= 0`). Abstract classes cannot be instantiated. They serve as base classes for other classes. Abstract classes define a common interface for their derived classes. Virtual functions enable runtime polymorphism.",
+          "video_url": "https://www.youtube.com/watch?v=WPUZu99BYB4",
+          "practice_questions": [
+            "What is a virtual function?",
+            "What is an abstract class?",
+            "Why are abstract classes useful?",
+            "How do you declare a pure virtual function?",
+            "Can you create an object of an abstract class?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced C++ Concepts",
+      "topics": [
+        {
+          "topic_title": "Pointers and Dynamic Memory Allocation",
+          "notes_md": "A pointer is a variable that stores the memory address of another variable. Dynamic memory allocation allows you to allocate memory during runtime. `new` operator is used to allocate memory and `delete` operator is used to deallocate memory. Pointers are used to access and manipulate data stored in dynamically allocated memory. Proper memory management is crucial to prevent memory leaks. Memory leaks occur when dynamically allocated memory is not deallocated after it is no longer needed.\n\n```cpp\nint *ptr = new int;\n*ptr = 10;\nstd::cout << *ptr << std::endl;\ndelete ptr;\nptr = nullptr;\n```",
+          "video_url": "https://www.youtube.com/watch?v=iY9wB2-ey_o",
+          "practice_questions": [
+            "What is a pointer?",
+            "How do you declare a pointer in C++?",
+            "What is dynamic memory allocation?",
+            "What are the `new` and `delete` operators used for?",
+            "What is a memory leak and how can you prevent it?"
+          ]
+        },
+        {
+          "topic_title": "Templates",
+          "notes_md": "Templates allow you to write generic code that can work with different data types. Function templates define a generic function that can operate on different types. Class templates define a generic class that can hold different types. Templates promote code reusability and reduce code duplication. Template parameters are specified using the `template` keyword. Template instantiation occurs when the compiler generates code for a specific data type.",
+          "video_url": "https://www.youtube.com/watch?v=B9nFMafB2PA",
+          "practice_questions": [
+            "What are templates in C++?",
+            "What are the benefits of using templates?",
+            "How do you define a function template?",
+            "How do you define a class template?",
+            "Give an example of using a template to create a generic function."
+          ]
+        },
+        {
+          "topic_title": "Exception Handling",
+          "notes_md": "Exception handling is a mechanism for handling runtime errors. `try` block encloses code that might throw an exception. `catch` block handles exceptions that are thrown within the `try` block. `throw` keyword is used to throw an exception. Exception handling improves code robustness and prevents program crashes. Standard exception classes are defined in the `<stdexcept>` header. Custom exception classes can be defined to handle specific errors.",
+          "video_url": "https://www.youtube.com/watch?v=j9tlJAjx-J8",
+          "practice_questions": [
+            "What is exception handling?",
+            "Why is exception handling important?",
+            "How do you use `try`, `catch`, and `throw` in C++?",
+            "What is a standard exception class?",
+            "How do you create a custom exception class?"
+          ]
+        }
+      ]
+    }
+  ]
+}

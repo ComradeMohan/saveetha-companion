@@ -1,0 +1,169 @@
+{
+  "course_name": "Fundamentals of Computing",
+  "course_code": "CSA57",
+  "units": [
+    {
+      "unit_title": "Introduction to Computing and Number Systems",
+      "topics": [
+        {
+          "topic_title": "Basic Computer Architecture and Organization",
+          "notes_md": "A computer system consists of hardware and software components that work together to perform specific tasks. The basic architecture includes the Central Processing Unit (CPU), memory (RAM and ROM), input/output (I/O) devices, and storage. The CPU fetches instructions from memory, decodes them, and executes them. RAM provides temporary storage for data and instructions, while ROM stores permanent instructions. I/O devices allow users to interact with the computer, and storage devices provide long-term data storage. Understanding these components is fundamental to comprehending how computers operate.\n\nModern computers use a layered architecture. This includes the operating system, which manages hardware resources and provides a platform for applications. Applications interact with the OS, which in turn interacts with the hardware. This abstraction simplifies software development and allows for portability across different hardware platforms.\n\n```\n# Example: Simple CPU cycle\nfetch_instruction()\ndecode_instruction()\nexecute_instruction()\n```\n",
+          "video_url": "https://www.youtube.com/watch?v=cNN_tTXABFQ",
+          "practice_questions": [
+            "Describe the function of the CPU, RAM, and ROM.",
+            "Explain the difference between hardware and software.",
+            "What is the role of the operating system?",
+            "Outline the steps in a typical CPU instruction cycle."
+          ]
+        },
+        {
+          "topic_title": "Number Systems: Binary, Decimal, Hexadecimal",
+          "notes_md": "Computers use the binary number system (base-2), which represents all data as sequences of 0s and 1s. The decimal number system (base-10) is used by humans. The hexadecimal number system (base-16) is often used as a shorthand for binary, especially when representing memory addresses or color codes. Converting between these number systems is crucial for understanding how computers store and manipulate data.\n\nTo convert from decimal to binary, repeatedly divide the decimal number by 2 and record the remainders. To convert from binary to decimal, multiply each digit by 2 raised to the power of its position (starting from 0 on the right) and sum the results. Hexadecimal uses digits 0-9 and letters A-F to represent values 10-15.\n\n```\n# Example: Decimal to Binary (10)\n10 / 2 = 5 remainder 0\n5 / 2 = 2 remainder 1\n2 / 2 = 1 remainder 0\n1 / 2 = 0 remainder 1\nBinary: 1010\n```\n",
+          "video_url": "https://www.youtube.com/watch?v=Lgs9IXjRjpg",
+          "practice_questions": [
+            "Convert the decimal number 25 to binary.",
+            "Convert the binary number 110101 to decimal.",
+            "Convert the decimal number 42 to hexadecimal.",
+            "Convert the hexadecimal number 2A to decimal.",
+            "Explain why computers use the binary number system."
+          ]
+        },
+        {
+          "topic_title": "Data Representation: Integers, Floating-Point Numbers, Characters",
+          "notes_md": "Data is represented in computers using various formats. Integers are represented using binary numbers, with different schemes for signed and unsigned integers (e.g., two's complement). Floating-point numbers are used to represent real numbers and are typically stored using the IEEE 754 standard. Characters are represented using character encoding schemes like ASCII and Unicode. ASCII uses 7 bits to represent 128 characters, while Unicode uses variable-length encoding to represent a much larger set of characters.\n\nFloating point numbers are represented using scientific notation in binary. They are usually divided into three parts: sign, exponent, and mantissa (or significand). The sign bit indicates whether the number is positive or negative. The exponent determines the magnitude of the number, and the mantissa represents the precision.\n",
+          "video_url": "https://www.youtube.com/watch?v=f4oZAcE-f4c",
+          "practice_questions": [
+            "Explain the difference between signed and unsigned integers.",
+            "Describe the IEEE 754 standard for floating-point numbers.",
+            "What is the difference between ASCII and Unicode?",
+            "How are negative integers represented in two's complement form?",
+            "What are the advantages of using floating-point numbers?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Programming Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Introduction to Programming Languages and Paradigms",
+          "notes_md": "A programming language is a formal language used to instruct a computer to perform specific tasks. Different programming paradigms exist, including imperative (e.g., C, Java), object-oriented (e.g., Java, Python), functional (e.g., Haskell, Lisp), and declarative (e.g., Prolog). Imperative programming focuses on specifying how to achieve a result, while declarative programming focuses on specifying what result is desired.\n\nObject-oriented programming (OOP) is based on the concept of objects, which contain both data (attributes) and code (methods) to manipulate that data. OOP emphasizes concepts like encapsulation, inheritance, and polymorphism. Functional programming treats computation as the evaluation of mathematical functions and avoids changing state and mutable data.\n\nChoosing the right programming language depends on the specific problem domain and project requirements.",
+          "video_url": "https://www.youtube.com/watch?v=mJOfWUXVdZE",
+          "practice_questions": [
+            "What is a programming paradigm?",
+            "Explain the difference between imperative and declarative programming.",
+            "Describe the key concepts of object-oriented programming.",
+            "What are the advantages of functional programming?",
+            "Give examples of programming languages that belong to each paradigm."
+          ]
+        },
+        {
+          "topic_title": "Variables, Data Types, Operators, and Control Flow",
+          "notes_md": "Variables are named storage locations that hold data values. Data types define the type of data a variable can hold (e.g., integer, floating-point, string, boolean). Operators perform operations on data (e.g., arithmetic, relational, logical). Control flow statements (e.g., if-else, for, while) control the order in which statements are executed.\n\nUnderstanding these concepts is fundamental to writing any program. Variables must be declared with a specific data type. Operators combine variables and values to produce new values. Control flow statements allow programs to make decisions and repeat actions.\n\n```python\nx = 10  # integer variable\ny = 3.14  # floating-point variable\nz = \"Hello\"  # string variable\nif x > 5:\n    print(\"x is greater than 5\")\nfor i in range(5):\n    print(i)\n```",
+          "video_url": "https://www.youtube.com/watch?v=rfscVS0vtbw",
+          "practice_questions": [
+            "What is a variable and why is it important?",
+            "Explain the difference between primitive and composite data types.",
+            "Give examples of arithmetic, relational, and logical operators.",
+            "Describe the purpose of if-else statements, for loops, and while loops.",
+            "Write a program that calculates the sum of numbers from 1 to 10."
+          ]
+        },
+        {
+          "topic_title": "Functions and Modular Programming",
+          "notes_md": "Functions are reusable blocks of code that perform specific tasks. Modular programming involves breaking down a program into smaller, independent modules (functions). This improves code organization, reusability, and maintainability. Functions can accept input parameters and return output values.\n\nUsing functions promotes code reuse and reduces redundancy. Modules can be developed and tested independently, making it easier to debug and maintain large programs. Functions encapsulate specific functionalities, making the code more readable and understandable.\n\n```python\ndef add(x, y):\n    return x + y\n\nresult = add(5, 3)\nprint(result)  # Output: 8\n```",
+          "video_url": "https://www.youtube.com/watch?v=N4mEzFDjSKE",
+          "practice_questions": [
+            "What is a function and why is it useful?",
+            "Explain the concept of modular programming.",
+            "How do you define a function with parameters and a return value?",
+            "What are the advantages of using functions?",
+            "Write a function that calculates the factorial of a number."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Data Structures and Algorithms",
+      "topics": [
+        {
+          "topic_title": "Arrays and Linked Lists",
+          "notes_md": "Arrays and linked lists are fundamental data structures used to store collections of elements. An array is a contiguous block of memory locations, where each element can be accessed directly using its index. A linked list is a collection of nodes, where each node contains a data element and a pointer to the next node in the list. Arrays provide fast access to elements but require a fixed size. Linked lists can grow dynamically but accessing an element requires traversing the list from the beginning.\n\nArrays are suitable for scenarios where you need to access elements frequently and know the size of the data in advance. Linked lists are useful when you need to insert or delete elements frequently or when the size of the data is unknown.\n\n```python\n# Example: Array (Python list)\nmy_array = [1, 2, 3, 4, 5]\n\n# Example: Linked List (Conceptual)\nclass Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n```",
+          "video_url": "https://www.youtube.com/watch?v=WwfhLC16bis",
+          "practice_questions": [
+            "What is the difference between an array and a linked list?",
+            "What are the advantages and disadvantages of using arrays?",
+            "What are the advantages and disadvantages of using linked lists?",
+            "Describe how to insert an element into an array.",
+            "Describe how to insert an element into a linked list."
+          ]
+        },
+        {
+          "topic_title": "Stacks and Queues",
+          "notes_md": "Stacks and queues are linear data structures that follow specific rules for adding and removing elements. A stack follows the Last-In-First-Out (LIFO) principle, meaning the last element added to the stack is the first one removed. A queue follows the First-In-First-Out (FIFO) principle, meaning the first element added to the queue is the first one removed. Stacks are often used for function calls and expression evaluation. Queues are used for managing tasks and processing data in a specific order.\n\nStacks can be implemented using arrays or linked lists. Queues can also be implemented using arrays or linked lists, but circular arrays are often used for efficient queue implementation.\n\n```python\n# Example: Stack (using Python list)\nstack = []\nstack.append(1)\nstack.append(2)\nstack.pop()  # Returns 2\n\n# Example: Queue (using Python list)\nqueue = []\nqueue.append(1)\nqueue.append(2)\nqueue.pop(0)  # Returns 1\n```",
+          "video_url": "https://www.youtube.com/watch?v=wjI1WNcIntg",
+          "practice_questions": [
+            "What is the difference between a stack and a queue?",
+            "Explain the LIFO and FIFO principles.",
+            "Give examples of real-world applications of stacks.",
+            "Give examples of real-world applications of queues.",
+            "Implement a stack using an array."
+          ]
+        },
+        {
+          "topic_title": "Basic Sorting Algorithms: Bubble Sort, Insertion Sort",
+          "notes_md": "Sorting algorithms arrange elements in a specific order. Bubble sort and insertion sort are simple sorting algorithms that are easy to understand but less efficient for large datasets. Bubble sort repeatedly compares adjacent elements and swaps them if they are in the wrong order. Insertion sort builds a sorted sublist by repeatedly inserting elements from the unsorted portion into the correct position in the sorted sublist.\n\nBubble sort has a time complexity of O(n^2), while insertion sort has a time complexity of O(n^2) in the worst case but can be O(n) in the best case (when the data is already sorted). These algorithms are suitable for small datasets or educational purposes.\n\n```python\n# Example: Bubble Sort\ndef bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n-i-1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]\n\n# Example: Insertion Sort\ndef insertion_sort(arr):\n    for i in range(1, len(arr)):\n        key = arr[i]\n        j = i-1\n        while j >= 0 and key < arr[j] :\n                arr[j + 1] = arr[j]\n                j -= 1\n        arr[j + 1] = key\n```",
+          "video_url": "https://www.youtube.com/watch?v=nmhjrI-aW5o",
+          "practice_questions": [
+            "Explain how bubble sort works.",
+            "Explain how insertion sort works.",
+            "What is the time complexity of bubble sort?",
+            "What is the time complexity of insertion sort?",
+            "Compare and contrast bubble sort and insertion sort."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Operating Systems and Computer Networks",
+      "topics": [
+        {
+          "topic_title": "Introduction to Operating Systems",
+          "notes_md": "An operating system (OS) is a software that manages computer hardware and software resources and provides common services for computer programs. It acts as an interface between the hardware and the applications. Key functions of an OS include process management, memory management, file system management, I/O management, and security. Different types of operating systems exist, including batch, time-sharing, real-time, and distributed operating systems.\n\nThe OS manages processes by allocating resources, scheduling execution, and providing inter-process communication mechanisms. Memory management involves allocating and deallocating memory to processes, managing virtual memory, and providing memory protection. The file system organizes data into files and directories, providing mechanisms for storage, retrieval, and security.\n",
+          "video_url": "https://www.youtube.com/watch?v=26QPDLnE-Lk",
+          "practice_questions": [
+            "What is an operating system?",
+            "Describe the key functions of an operating system.",
+            "Explain the difference between batch, time-sharing, and real-time operating systems.",
+            "What is process management?",
+            "What is memory management?"
+          ]
+        },
+        {
+          "topic_title": "Basic Networking Concepts: TCP/IP Model, IP Addresses",
+          "notes_md": "A computer network is a collection of interconnected devices that can communicate with each other. The TCP/IP model is a layered architecture that defines how data is transmitted over a network. The model consists of four layers: application, transport, network, and link. IP addresses are unique identifiers assigned to each device on a network. IPv4 addresses are 32-bit numbers, while IPv6 addresses are 128-bit numbers.\n\nThe application layer provides network services to applications. The transport layer provides reliable or unreliable data transfer between applications. The network layer provides routing and addressing. The link layer provides access to the physical medium.\n\nIP addresses are used to identify devices on a network and to route data packets to the correct destination.\n",
+          "video_url": "https://www.youtube.com/watch?v=7e4jt3imkpY",
+          "practice_questions": [
+            "What is a computer network?",
+            "Describe the TCP/IP model.",
+            "What are the four layers of the TCP/IP model?",
+            "What is an IP address?",
+            "What is the difference between IPv4 and IPv6 addresses?"
+          ]
+        },
+        {
+          "topic_title": "Introduction to Cloud Computing",
+          "notes_md": "Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software, analytics, and intelligence—over the Internet (“the cloud”) to offer faster innovation, flexible resources, and economies of scale. You typically pay only for cloud services you use, helping you lower your operating costs, run your infrastructure more efficiently, and scale as your business needs change. There are three main types of cloud computing services: Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and Software as a Service (SaaS).\n\nIaaS provides access to fundamental computing resources like virtual machines, storage, and networks. PaaS provides a platform for developing, running, and managing applications. SaaS provides ready-to-use software applications over the Internet. Common cloud providers include Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP).\n",
+          "video_url": "https://www.youtube.com/watch?v=W9K9wipJjJw",
+          "practice_questions": [
+            "What is cloud computing?",
+            "What are the benefits of cloud computing?",
+            "Explain the difference between IaaS, PaaS, and SaaS.",
+            "Give examples of cloud providers.",
+            "What are the potential security risks associated with cloud computing?"
+          ]
+        }
+      ]
+    }
+  ]
+}

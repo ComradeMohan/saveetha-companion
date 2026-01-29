@@ -1,0 +1,170 @@
+{
+  "course_name": "Internet Programming",
+  "course_code": "CSA43",
+  "units": [
+    {
+      "unit_title": "Introduction to Web Technologies",
+      "topics": [
+        {
+          "topic_title": "HTML Fundamentals",
+          "notes_md": "HTML (HyperText Markup Language) is the standard markup language for creating web pages. It provides the structure and content of a webpage using elements, which are defined by tags.  Tags usually come in pairs: an opening tag `<tag>` and a closing tag `</tag>`. Common HTML elements include headings (`<h1>` to `<h6>`), paragraphs (`<p>`), links (`<a>`), images (`<img>`), and lists (`<ul>`, `<ol>`, `<li>`).\n\nAttributes provide additional information about HTML elements. For example, the `href` attribute in the `<a>` tag specifies the URL of the link, and the `src` attribute in the `<img>` tag specifies the image source. Proper nesting of elements is crucial for valid HTML. Use a DOCTYPE declaration at the beginning of your HTML document to specify the HTML version.\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n<title>My First Webpage</title>\n</head>\n<body>\n<h1>Hello, World!</h1>\n<p>This is a paragraph.</p>\n<a href=\"https://www.example.com\">Visit Example</a>\n</body>\n</html>\n```",
+          "video_url": "https://www.youtube.com/watch?v=pQN-pnXPaXc",
+          "practice_questions": [
+            "What is the purpose of the <!DOCTYPE html> declaration?",
+            "Explain the difference between <h1> and <p> tags.",
+            "How do you create a hyperlink in HTML?",
+            "What are HTML attributes and how are they used?",
+            "Create a simple HTML page with a heading, a paragraph, and an image."
+          ]
+        },
+        {
+          "topic_title": "CSS Fundamentals",
+          "notes_md": "CSS (Cascading Style Sheets) is used to control the presentation and styling of HTML elements. CSS rules consist of a selector and a declaration block. The selector specifies which HTML elements the style applies to, and the declaration block contains one or more declarations, each consisting of a property and a value. CSS can be applied inline (within HTML elements), internally (within the `<style>` tag in the `<head>`), or externally (in a separate `.css` file linked to the HTML document). External CSS is generally preferred for maintainability.\n\nCommon CSS properties include `color`, `font-size`, `margin`, `padding`, `background-color`, and `border`. Selectors can target elements by tag name, class, ID, or using more complex selectors like descendant selectors or pseudo-classes. The cascade determines which styles are applied when multiple styles conflict.\n\n```css\nh1 {\n  color: blue;\n  font-size: 2em;\n}\n\np {\n  margin-bottom: 10px;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=1Rs2NDtDBsQ",
+          "practice_questions": [
+            "What is the difference between inline, internal, and external CSS?",
+            "Explain the CSS box model.",
+            "How do you select an element by its ID in CSS?",
+            "What is CSS specificity and how does it affect styling?",
+            "Create a CSS rule to change the background color of all paragraphs to lightgray."
+          ]
+        },
+        {
+          "topic_title": "JavaScript Basics",
+          "notes_md": "JavaScript is a scripting language that enables dynamic behavior on web pages. It can be used to manipulate the DOM (Document Object Model), handle events, and make asynchronous requests to servers. JavaScript code can be embedded directly in HTML using the `<script>` tag or included from external `.js` files.\n\nVariables are declared using `var`, `let`, or `const`. Data types include numbers, strings, booleans, arrays, and objects. Control flow statements like `if`, `else`, `for`, and `while` allow you to control the execution of code. Functions are blocks of code that can be called and reused. The `document` object provides access to the HTML document, allowing you to modify its content and structure.\n\n```javascript\nvar message = \"Hello, World!\";\nconsole.log(message);\n\nfunction greet(name) {\n  alert(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"User\");\n```",
+          "video_url": "https://www.youtube.com/watch?v=W6NZfCO5SIk",
+          "practice_questions": [
+            "What is the difference between var, let, and const?",
+            "Explain the DOM and how JavaScript can manipulate it.",
+            "How do you write a function in JavaScript?",
+            "What are JavaScript events and how are they handled?",
+            "Write a JavaScript program to display an alert message when a button is clicked."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Server-Side Scripting with PHP",
+      "topics": [
+        {
+          "topic_title": "PHP Fundamentals",
+          "notes_md": "PHP (Hypertext Preprocessor) is a server-side scripting language designed for web development. PHP code is executed on the server, generating HTML that is sent to the client's browser. PHP files typically have the `.php` extension and can contain HTML, CSS, JavaScript, and PHP code. PHP code is enclosed within `<?php ?>` tags.\n\nVariables in PHP start with a `$` sign. Data types include integers, floats, strings, booleans, arrays, and objects. PHP supports various control structures like `if`, `else`, `for`, `while`, and `switch`. Superglobal variables like `$_GET`, `$_POST`, `$_SESSION`, and `$_COOKIE` are used to access data from HTTP requests and sessions.\n\n```php\n<?php\n$name = \"John\";\necho \"Hello, \" . $name . \"!\";\n?>\n```",
+          "video_url": "https://www.youtube.com/watch?v=7TF00hDIoYU",
+          "practice_questions": [
+            "What is the purpose of PHP?",
+            "How do you declare a variable in PHP?",
+            "Explain the difference between $_GET and $_POST.",
+            "What are PHP sessions and how are they used?",
+            "Write a PHP script to display the current date and time."
+          ]
+        },
+        {
+          "topic_title": "Working with Databases (MySQL)",
+          "notes_md": "PHP can be used to interact with databases like MySQL. The `mysqli` extension provides functions for connecting to, querying, and manipulating MySQL databases. First, you need to establish a connection to the database using `mysqli_connect()`. Then, you can execute SQL queries using `mysqli_query()`. It's important to sanitize user input to prevent SQL injection vulnerabilities.\n\nTo retrieve data from a database, you can use functions like `mysqli_fetch_assoc()` to fetch rows as associative arrays. Always close the database connection using `mysqli_close()` when you're done.\n\n```php\n<?php\n$conn = mysqli_connect(\"localhost\", \"username\", \"password\", \"database\");\n\n$sql = \"SELECT * FROM users\";\n$result = mysqli_query($conn, $sql);\n\nwhile ($row = mysqli_fetch_assoc($result)) {\n  echo $row[\"name\"] . \"<br>\";\n}\n\nmysqli_close($conn);\n?>\n```",
+          "video_url": "https://www.youtube.com/watch?v=a62y3tCg32Y",
+          "practice_questions": [
+            "How do you connect to a MySQL database using PHP?",
+            "What is SQL injection and how can you prevent it?",
+            "How do you execute a SQL query in PHP?",
+            "How do you retrieve data from a MySQL database using PHP?",
+            "Write a PHP script to insert a new record into a MySQL table."
+          ]
+        },
+        {
+          "topic_title": "Form Handling in PHP",
+          "notes_md": "PHP is commonly used to handle form data submitted by users. Form data is typically sent using the `GET` or `POST` method. The `$_GET` and `$_POST` superglobal arrays provide access to the form data. It's important to validate and sanitize form data to prevent security vulnerabilities and ensure data integrity.\n\nUse the `htmlspecialchars()` function to escape HTML entities in user input to prevent cross-site scripting (XSS) attacks. You can use regular expressions to validate the format of input fields like email addresses or phone numbers. Always redirect the user after processing the form to prevent accidental resubmission.\n\n```php\n<?php\nif ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") {\n  $name = htmlspecialchars($_POST[\"name\"]);\n  echo \"Hello, \" . $name . \"!\";\n}\n?>\n\n<form method=\"post\">\n  Name: <input type=\"text\" name=\"name\">\n  <input type=\"submit\">\n</form>\n```",
+          "video_url": "https://www.youtube.com/watch?v=17UdOU-o7vQ",
+          "practice_questions": [
+            "What is the difference between the GET and POST methods?",
+            "How do you access form data in PHP?",
+            "What is XSS and how can you prevent it?",
+            "How do you validate form data in PHP?",
+            "Create a PHP form to collect user feedback and display it on the page."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Client-Side Frameworks (React)",
+      "topics": [
+        {
+          "topic_title": "React Components and JSX",
+          "notes_md": "React is a JavaScript library for building user interfaces. It uses a component-based architecture, where UI elements are broken down into reusable components. Components are JavaScript functions or classes that return JSX, a syntax extension to JavaScript that allows you to write HTML-like code within JavaScript. JSX is transformed into standard JavaScript code by a build tool like Babel.\n\nReact components manage their own state and can receive data from parent components through props. The `render()` method is used to define the output of a component. Functional components are simpler and more concise than class components, especially when using React Hooks.\n\n```javascript\nfunction MyComponent(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\nReactDOM.render(<MyComponent name=\"World\" />, document.getElementById('root'));\n```",
+          "video_url": "https://www.youtube.com/watch?v=Ke90Tje7VS0",
+          "practice_questions": [
+            "What is a React component?",
+            "What is JSX and how is it used in React?",
+            "What are props and how are they passed to components?",
+            "What is the difference between functional and class components?",
+            "Create a simple React component that displays a greeting message."
+          ]
+        },
+        {
+          "topic_title": "State Management in React",
+          "notes_md": "State in React represents data that can change over time and affect the component's output. Class components use `this.state` to store state, and the `setState()` method to update it. Functional components use the `useState` hook to manage state. Updating state triggers a re-render of the component.\n\nState should be immutable, meaning you should not modify it directly. Instead, use `setState()` or the state updater function returned by `useState` to create a new state object. Proper state management is crucial for building dynamic and interactive user interfaces.\n\n```javascript\nimport React, { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=O6P86uwfdR0",
+          "practice_questions": [
+            "What is state in React?",
+            "How do you update state in a class component?",
+            "How do you use the useState hook in a functional component?",
+            "Why is immutability important for state management?",
+            "Create a React component with a button that increments a counter."
+          ]
+        },
+        {
+          "topic_title": "React Events and Handling",
+          "notes_md": "React provides a consistent way to handle events in the browser. Event handlers are attached to JSX elements using attributes like `onClick`, `onChange`, and `onSubmit`. Event handlers receive an event object as an argument, which contains information about the event.\n\nIn class components, event handlers are typically bound to the component instance in the constructor to ensure that `this` refers to the component. In functional components, event handlers can be defined directly within the component function. Prevent the default behavior of an event using `event.preventDefault()`.\n\n```javascript\nfunction MyButton() {\n  function handleClick(event) {\n    alert('Button clicked!');\n  }\n\n  return <button onClick={handleClick}>Click me</button>;\n}\n```",
+          "video_url": "https://www.youtube.com/watch?v=j942mvO0VBM",
+          "practice_questions": [
+            "How do you attach an event handler to a React element?",
+            "What is the event object and what information does it contain?",
+            "How do you bind event handlers in class components?",
+            "How do you prevent the default behavior of an event?",
+            "Create a React component with a form that handles the onSubmit event."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Web Security Fundamentals",
+      "topics": [
+        {
+          "topic_title": "Cross-Site Scripting (XSS)",
+          "notes_md": "Cross-Site Scripting (XSS) is a type of security vulnerability that allows attackers to inject malicious scripts into web pages viewed by other users. This can be used to steal sensitive information, such as cookies or login credentials, or to deface websites. XSS vulnerabilities typically occur when user input is not properly sanitized before being displayed on a web page.\n\nThere are three main types of XSS: Stored XSS (where the malicious script is stored on the server), Reflected XSS (where the malicious script is injected into the URL or form data), and DOM-based XSS (where the malicious script manipulates the DOM directly). To prevent XSS, always sanitize user input, use output encoding, and implement a Content Security Policy (CSP).\n\n```javascript\n// Example of unsanitized user input\nconst userInput = '<script>alert(\"XSS\");</script>';\ndocument.getElementById('output').innerHTML = userInput; // Vulnerable\n```",
+          "video_url": "https://www.youtube.com/watch?v=4KShl1t02iI",
+          "practice_questions": [
+            "What is Cross-Site Scripting (XSS)?",
+            "What are the different types of XSS vulnerabilities?",
+            "How can you prevent XSS attacks?",
+            "What is output encoding and how does it help prevent XSS?",
+            "Explain the concept of Content Security Policy (CSP)."
+          ]
+        },
+        {
+          "topic_title": "SQL Injection",
+          "notes_md": "SQL Injection is a security vulnerability that allows attackers to inject malicious SQL code into database queries. This can be used to bypass authentication, access sensitive data, or even modify or delete data in the database. SQL injection vulnerabilities typically occur when user input is not properly sanitized before being used in SQL queries.\n\nTo prevent SQL injection, always use parameterized queries or prepared statements, which separate the SQL code from the data. This ensures that user input is treated as data, not as executable code. Avoid concatenating user input directly into SQL queries. Use an ORM (Object-Relational Mapper) to abstract away the database interaction and provide built-in protection against SQL injection.\n\n```php\n// Example of vulnerable SQL query\n$username = $_POST['username'];\n$query = \"SELECT * FROM users WHERE username = '$username'\"; // Vulnerable\n```",
+          "video_url": "https://www.youtube.com/watch?v=ciNHyUX-Qy0",
+          "practice_questions": [
+            "What is SQL Injection?",
+            "How can SQL Injection attacks be prevented?",
+            "What are parameterized queries and prepared statements?",
+            "Why is it important to sanitize user input before using it in SQL queries?",
+            "Explain the role of an ORM in preventing SQL Injection."
+          ]
+        },
+        {
+          "topic_title": "Cross-Site Request Forgery (CSRF)",
+          "notes_md": "Cross-Site Request Forgery (CSRF) is a type of security vulnerability that allows an attacker to trick a user into performing an action on a web application without their knowledge or consent. This can be used to change the user's password, make purchases, or perform other sensitive actions.\n\nCSRF attacks typically work by embedding malicious code in a website or email that sends a request to the target web application on behalf of the user. To prevent CSRF, use anti-CSRF tokens, which are unique, unpredictable values that are included in each request. The server verifies that the token matches the user's session before processing the request. Use the SameSite cookie attribute to restrict cookies to the same site.\n\n```html\n<form action=\"/transfer\" method=\"post\">\n  <input type=\"hidden\" name=\"csrf_token\" value=\"UNIQUE_TOKEN\">\n  <input type=\"text\" name=\"amount\">\n  <input type=\"submit\" value=\"Transfer\">\n</form>\n```",
+          "video_url": "https://www.youtube.com/watch?v=bjQVoL-jW0o",
+          "practice_questions": [
+            "What is Cross-Site Request Forgery (CSRF)?",
+            "How do CSRF attacks work?",
+            "How can you prevent CSRF attacks?",
+            "What are anti-CSRF tokens and how do they work?",
+            "Explain the SameSite cookie attribute and its role in preventing CSRF."
+          ]
+        }
+      ]
+    }
+  ]
+}

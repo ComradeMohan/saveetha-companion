@@ -1,0 +1,170 @@
+{
+  "course_name": "Database Management Systems",
+  "course_code": "CSA05",
+  "units": [
+    {
+      "unit_title": "Introduction to Database Systems",
+      "topics": [
+        {
+          "topic_title": "Database Concepts and Architecture",
+          "notes_md": "A database is an organized collection of structured information, or data, typically stored electronically in a computer system. Database Management Systems (DBMS) are software systems used to manage these databases. Key concepts include data models (relational, NoSQL), schemas, instances, data independence, and the three-schema architecture (external, conceptual, internal). The three-schema architecture allows users to view data in a way that makes sense to them, while the DBMS handles the physical storage and organization of the data. This abstraction provides data independence, meaning that changes to the physical storage of the data do not affect the way users view the data. \n\nDBMS provide features such as data definition language (DDL) to define the schema, data manipulation language (DML) to insert, update, and delete data, and data control language (DCL) to manage access control and security.",
+          "video_url": "https://www.youtube.com/watch?v=4t2WzgjJatw",
+          "practice_questions": [
+            "What is a database and why is it important?",
+            "Explain the difference between a schema and an instance.",
+            "Describe the three-schema architecture and its benefits.",
+            "What are the main functions of a DBMS?",
+            "Differentiate between DDL, DML and DCL."
+          ]
+        },
+        {
+          "topic_title": "Data Models: Relational, ER Model",
+          "notes_md": "A data model defines how data is structured and organized within a database. The Relational Model, based on first-order predicate logic, represents data as relations (tables) with rows (tuples) and columns (attributes). Each tuple represents a real-world entity, and each attribute describes a characteristic of that entity. The Entity-Relationship (ER) Model is a high-level conceptual data model used for database design. It represents entities, attributes, and relationships between entities. \n\nER diagrams are used to visually represent the ER model, facilitating communication between database designers and stakeholders. Key concepts in the ER model include entities, attributes (key, composite, multi-valued), relationships (one-to-one, one-to-many, many-to-many), and cardinality constraints.  ER diagrams are translated into relational schemas during the database design process.",
+          "video_url": "https://www.youtube.com/watch?v=QpdhF-YRykk",
+          "practice_questions": [
+            "What is a data model?",
+            "Explain the key concepts of the Relational Model.",
+            "Describe the purpose of the ER Model.",
+            "Draw an ER diagram for a library management system.",
+            "What are cardinality constraints in ER diagrams?"
+          ]
+        },
+        {
+          "topic_title": "Database Languages: SQL",
+          "notes_md": "SQL (Structured Query Language) is the standard language for interacting with relational databases. It is used to define, manipulate, and control data. SQL commands can be categorized into DDL (Data Definition Language), DML (Data Manipulation Language), DCL (Data Control Language), and TCL (Transaction Control Language). \n\nCommon SQL commands include `CREATE TABLE` (DDL), `INSERT` (DML), `SELECT` (DML), `UPDATE` (DML), `DELETE` (DML), `GRANT` (DCL), and `COMMIT` (TCL).  SQL queries are used to retrieve data from the database based on specified criteria. SQL provides various operators and functions for filtering, sorting, and aggregating data. Understanding SQL is essential for database administrators and developers.",
+          "video_url": "https://www.youtube.com/watch?v=HXV3zeQKqGY",
+          "practice_questions": [
+            "What is SQL?",
+            "Explain the different categories of SQL commands.",
+            "Write an SQL query to retrieve all students from a table named 'Students'.",
+            "Write an SQL query to update the salary of an employee with ID 123.",
+            "Explain the purpose of the `GRANT` command in SQL."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Relational Database Design",
+      "topics": [
+        {
+          "topic_title": "Functional Dependencies",
+          "notes_md": "Functional dependency is a constraint between two sets of attributes in a relation. Attribute B is functionally dependent on attribute A if each value of A determines exactly one value of B. This is denoted as A -> B. Functional dependencies are used to identify redundancy and anomalies in database schemas. \n\nTrivial functional dependencies are dependencies where the right-hand side attributes are a subset of the left-hand side attributes (e.g., A, B -> A).  Full functional dependency occurs when removing any attribute from the left-hand side violates the dependency. Understanding functional dependencies is crucial for database normalization.",
+          "video_url": "https://www.youtube.com/watch?v=o1Cw0-qFq0w",
+          "practice_questions": [
+            "What is a functional dependency?",
+            "Explain the concept of trivial functional dependency.",
+            "What is a full functional dependency?",
+            "Given a relation R(A, B, C, D) and functional dependencies A -> B and B -> C, is A -> C a valid functional dependency?",
+            "How are functional dependencies used in database normalization?"
+          ]
+        },
+        {
+          "topic_title": "Normalization: 1NF, 2NF, 3NF, BCNF",
+          "notes_md": "Normalization is the process of organizing data in a database to reduce redundancy and improve data integrity. It involves decomposing tables into smaller, more manageable tables and defining relationships between them. Normal forms (1NF, 2NF, 3NF, BCNF) represent different levels of normalization. \n\n1NF (First Normal Form) requires that all attributes be atomic (single-valued). 2NF (Second Normal Form) requires that the table be in 1NF and that all non-key attributes be fully functionally dependent on the primary key. 3NF (Third Normal Form) requires that the table be in 2NF and that no non-key attribute be transitively dependent on the primary key. BCNF (Boyce-Codd Normal Form) is a stricter form of 3NF that addresses certain anomalies not handled by 3NF. Normalization helps to minimize data redundancy and improve the consistency and integrity of the database.",
+          "video_url": "https://www.youtube.com/watch?v=jSe-JxtlE9s",
+          "practice_questions": [
+            "What is database normalization?",
+            "Explain the requirements for 1NF, 2NF, 3NF, and BCNF.",
+            "Why is normalization important?",
+            "What is the difference between 3NF and BCNF?",
+            "Normalize a given table to 3NF."
+          ]
+        },
+        {
+          "topic_title": "Lossless Decomposition",
+          "notes_md": "Decomposition is the process of breaking a table into smaller tables to achieve normalization. Lossless decomposition ensures that no data is lost during the decomposition process. It guarantees that the original table can be reconstructed from the decomposed tables using a join operation. \n\nDependency-preserving decomposition ensures that all functional dependencies are preserved after decomposition, meaning that the dependencies can still be enforced in the decomposed tables. However, it is not always possible to achieve both lossless and dependency-preserving decomposition simultaneously.  The goal is to choose a decomposition that minimizes data loss and dependency loss.",
+          "video_url": "https://www.youtube.com/watch?v=4jWQ6kF731A",
+          "practice_questions": [
+            "What is decomposition in database design?",
+            "Explain the concept of lossless decomposition.",
+            "What is dependency-preserving decomposition?",
+            "Why is lossless decomposition important?",
+            "How can you determine if a decomposition is lossless?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Transaction Management",
+      "topics": [
+        {
+          "topic_title": "Transactions: ACID Properties",
+          "notes_md": "A transaction is a logical unit of work that accesses and possibly modifies the contents of a database. Transactions must adhere to the ACID properties: Atomicity, Consistency, Isolation, and Durability. Atomicity ensures that a transaction is treated as a single, indivisible unit of work; either all changes are applied, or none are. Consistency ensures that a transaction maintains the integrity of the database by enforcing constraints and rules. Isolation ensures that concurrent transactions do not interfere with each other. Durability ensures that once a transaction is committed, its changes are permanent, even in the event of system failures. \n\nUnderstanding the ACID properties is crucial for ensuring the reliability and integrity of database systems.",
+          "video_url": "https://www.youtube.com/watch?v=B-kVkYsR-Qo",
+          "practice_questions": [
+            "What is a transaction?",
+            "Explain the ACID properties.",
+            "Why are the ACID properties important?",
+            "Give an example of a transaction that violates atomicity.",
+            "How does isolation ensure data integrity?"
+          ]
+        },
+        {
+          "topic_title": "Concurrency Control",
+          "notes_md": "Concurrency control is the process of managing simultaneous access to a database by multiple transactions to prevent conflicts and ensure data integrity. Techniques include locking, timestamping, and optimistic concurrency control. Locking involves acquiring locks on data items before accessing them, preventing other transactions from modifying the data until the lock is released. Timestamping assigns timestamps to transactions and uses these timestamps to order operations and detect conflicts. Optimistic concurrency control assumes that conflicts are rare and allows transactions to proceed without locking, but checks for conflicts before committing the changes. \n\nThese techniques aim to provide isolation between concurrent transactions and maintain the consistency of the database.",
+          "video_url": "https://www.youtube.com/watch?v=yv84m4-Q-8I",
+          "practice_questions": [
+            "What is concurrency control?",
+            "Explain different concurrency control techniques.",
+            "What are the advantages and disadvantages of locking?",
+            "How does timestamping work?",
+            "When is optimistic concurrency control appropriate?"
+          ]
+        },
+        {
+          "topic_title": "Recovery Techniques",
+          "notes_md": "Recovery techniques are mechanisms used to restore a database to a consistent state after a system failure. These techniques include logging, checkpointing, and shadow paging. Logging involves recording all database changes in a log file, which can be used to undo or redo transactions during recovery. Checkpointing involves periodically writing the current state of the database to disk, reducing the amount of log data that needs to be processed during recovery. Shadow paging involves maintaining two copies of each page in the database: a current page and a shadow page. During a transaction, changes are made to the shadow page, and the current page is only updated when the transaction commits. \n\nRecovery techniques ensure that the database can be restored to a consistent state even after failures.",
+          "video_url": "https://www.youtube.com/watch?v=1_6g0-2Y9F4",
+          "practice_questions": [
+            "What are recovery techniques?",
+            "Explain the purpose of logging in database recovery.",
+            "What is checkpointing and how does it improve recovery?",
+            "Describe the shadow paging technique.",
+            "Why are recovery techniques important?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Advanced Database Concepts",
+      "topics": [
+        {
+          "topic_title": "Indexing Techniques",
+          "notes_md": "Indexing techniques are used to speed up data retrieval in databases. An index is a data structure that allows the database system to quickly locate specific rows in a table without scanning the entire table. Common indexing techniques include B-trees, B+ trees, and hash indexes. B-trees and B+ trees are tree-based indexes that provide efficient search, insertion, and deletion operations. Hash indexes use a hash function to map keys to their corresponding data locations. \n\nThe choice of indexing technique depends on the specific workload and data characteristics. Indexes can significantly improve query performance, but they also add overhead to data modification operations.",
+          "video_url": "https://www.youtube.com/watch?v=WbtqkHlcGNw",
+          "practice_questions": [
+            "What is an index in a database?",
+            "Explain the purpose of indexing.",
+            "Describe different indexing techniques.",
+            "What are the advantages and disadvantages of using indexes?",
+            "How does a B-tree index work?"
+          ]
+        },
+        {
+          "topic_title": "Query Processing and Optimization",
+          "notes_md": "Query processing is the process of transforming a SQL query into an efficient execution plan. Query optimization involves finding the best execution plan for a given query, minimizing the cost of execution. Query optimizers use various techniques, such as rule-based optimization and cost-based optimization, to generate and evaluate different execution plans. Rule-based optimization applies predefined rules to transform the query into a more efficient form. Cost-based optimization estimates the cost of each execution plan and selects the plan with the lowest cost. \n\nFactors that affect query optimization include the size of the data, the complexity of the query, and the available indexes.",
+          "video_url": "https://www.youtube.com/watch?v=XAfO0X-fW28",
+          "practice_questions": [
+            "What is query processing?",
+            "Explain the purpose of query optimization.",
+            "Describe different query optimization techniques.",
+            "What factors affect query optimization?",
+            "How does a query optimizer estimate the cost of an execution plan?"
+          ]
+        },
+        {
+          "topic_title": "NoSQL Databases",
+          "notes_md": "NoSQL (Not Only SQL) databases are non-relational databases that provide a flexible and scalable alternative to traditional relational databases. NoSQL databases are designed to handle large volumes of unstructured or semi-structured data. Common types of NoSQL databases include document databases (e.g., MongoDB), key-value stores (e.g., Redis), column-family stores (e.g., Cassandra), and graph databases (e.g., Neo4j). \n\nNoSQL databases offer advantages such as high scalability, flexible data models, and support for distributed architectures. However, they may not provide the same level of consistency and transaction support as relational databases. The choice between NoSQL and relational databases depends on the specific application requirements.",
+          "video_url": "https://www.youtube.com/watch?v=WwciuYAzE4I",
+          "practice_questions": [
+            "What is a NoSQL database?",
+            "Explain the advantages of NoSQL databases.",
+            "Describe different types of NoSQL databases.",
+            "What are the trade-offs between NoSQL and relational databases?",
+            "Give an example of when you would use a NoSQL database."
+          ]
+        }
+      ]
+    }
+  ]
+}

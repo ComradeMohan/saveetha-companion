@@ -1,0 +1,16 @@
+{
+  "name": "Saveetha Companion",
+  "short_name": "Saveetha Companion",
+  "description": "Your all-in-one tool for Saveetha Engineering College. Calculate CGPA, track attendance, find concept maps, and get university updates.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFCFA",
+  "theme_color": "#F57C1F",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

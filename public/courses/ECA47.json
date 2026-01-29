@@ -1,0 +1,170 @@
+{
+  "course_name": "Principles of Digital System Design",
+  "course_code": "ECA47",
+  "units": [
+    {
+      "unit_title": "Introduction to Digital Systems",
+      "topics": [
+        {
+          "topic_title": "Number Systems and Codes",
+          "notes_md": "Digital systems use binary numbers (0s and 1s) to represent information. Understanding different number systems like decimal, binary, octal, and hexadecimal is crucial. We also need to learn about binary codes such as BCD (Binary Coded Decimal), Gray code, and ASCII. These codes are used for specific purposes like representing decimal digits or characters. Conversion between number systems is a fundamental skill. For example, converting the decimal number 10 to binary gives 1010. Different codes have different properties; Gray code, for example, minimizes errors during transitions. Understanding these systems allows for efficient data representation and manipulation in digital circuits. Errors in conversion can lead to incorrect system operation. Knowing how to convert between these number systems, and the advantages and disadvantages of each code, is essential.\n\nFor example, the decimal number 25 can be represented in binary as 11001.\n",
+          "video_url": "https://www.youtube.com/watch?v=Lla2lbG9E7I",
+          "practice_questions": [
+            "Convert the decimal number 42 to binary.",
+            "Convert the binary number 110110 to decimal.",
+            "What is the Gray code representation of the decimal number 5?",
+            "Explain the difference between BCD and binary representation.",
+            "Convert the hexadecimal number 2A to decimal."
+          ]
+        },
+        {
+          "topic_title": "Boolean Algebra and Logic Gates",
+          "notes_md": "Boolean algebra is the mathematical foundation of digital logic. It defines operations like AND, OR, and NOT on binary variables. Logic gates are the physical implementations of these operations. Common logic gates include AND, OR, NOT, NAND, NOR, XOR, and XNOR. These gates can be combined to create more complex circuits. Boolean algebra provides tools for simplifying and analyzing logic circuits. DeMorgan's theorem is a key concept for simplifying expressions. For example, the complement of (A AND B) is (NOT A) OR (NOT B). Using Boolean algebra, we can minimize the number of gates required to implement a given function, leading to simpler and more efficient circuits. Understanding the truth tables of different gates is essential for analyzing circuit behavior. Correct application of DeMorgan's theorem is crucial for logic simplification.\n\nExample: A AND B can be represented as A * B, and A OR B can be represented as A + B. NOT A is represented as A'.\n",
+          "video_url": "https://www.youtube.com/watch?v=gnPWJO96IlY",
+          "practice_questions": [
+            "Simplify the Boolean expression: (A AND B) OR (A AND NOT B).",
+            "Draw the logic circuit for the expression: (A OR B) AND (NOT C).",
+            "State DeMorgan's theorem.",
+            "What is the output of an XOR gate when both inputs are 1?",
+            "Design a logic circuit that implements the function F = AB + C."
+          ]
+        },
+        {
+          "topic_title": "Combinational Logic Circuits",
+          "notes_md": "Combinational logic circuits produce outputs that depend only on the current inputs. Examples include adders, subtractors, multiplexers, demultiplexers, encoders, and decoders. Adders perform binary addition, while subtractors perform binary subtraction. Multiplexers select one of several inputs and route it to the output, while demultiplexers perform the reverse operation. Encoders convert a set of inputs into a binary code, while decoders convert a binary code into a set of outputs. Karnaugh maps (K-maps) are a graphical tool for simplifying Boolean expressions and designing combinational circuits. Understanding the function of each type of combinational circuit is essential for designing complex digital systems. Correct use of K-maps is crucial for minimizing circuit complexity. Proper selection of combinational circuits is essential for specific applications.\n\nExample: A half adder can be built using an XOR gate and an AND gate to produce the sum and carry bits, respectively.\n",
+          "video_url": "https://www.youtube.com/watch?v=Q0oP90kFn4Y",
+          "practice_questions": [
+            "Design a full adder using only NAND gates.",
+            "What is the difference between a multiplexer and a demultiplexer?",
+            "Explain how a decoder works.",
+            "Simplify the Boolean expression using a K-map: F(A, B, C) = Σ(0, 2, 4, 5, 6).",
+            "Design a 4-to-1 multiplexer."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Sequential Logic Circuits",
+      "topics": [
+        {
+          "topic_title": "Latches and Flip-Flops",
+          "notes_md": "Latches and flip-flops are fundamental building blocks of sequential logic circuits. They are bistable devices, meaning they can store one bit of information. Latches are level-sensitive, while flip-flops are edge-triggered. Common types of flip-flops include SR, D, JK, and T flip-flops. The characteristic equations of flip-flops describe their behavior. Timing diagrams are used to illustrate the operation of flip-flops. Flip-flops are used to build registers, counters, and other sequential circuits. Understanding the difference between latches and flip-flops is essential for avoiding race conditions. Correct use of flip-flops is crucial for reliable sequential circuit operation. Proper selection of flip-flop type depends on the application.\n\nFor example, a D flip-flop simply copies the input D to the output Q on the rising (or falling) edge of the clock signal.\n",
+          "video_url": "https://www.youtube.com/watch?v=gXjBA9tfVY4",
+          "practice_questions": [
+            "Explain the difference between a latch and a flip-flop.",
+            "Draw the state diagram for a JK flip-flop.",
+            "What is the characteristic equation of a D flip-flop?",
+            "Design a T flip-flop using a JK flip-flop.",
+            "What is the purpose of the clock signal in a flip-flop?"
+          ]
+        },
+        {
+          "topic_title": "Registers and Counters",
+          "notes_md": "Registers are used to store multiple bits of data. They are typically built using flip-flops. Counters are used to count events. Common types of counters include ripple counters, synchronous counters, and up/down counters. Shift registers are used to shift data bits. Registers and counters are essential components of digital systems. Understanding the operation of different types of registers and counters is crucial for designing digital systems. Correct implementation of registers and counters is essential for proper system operation. Proper selection of register and counter types depends on the application.\n\nExample: A 4-bit synchronous counter can count from 0 to 15 and then reset to 0.\n",
+          "video_url": "https://www.youtube.com/watch?v=C9E42cbBMT8",
+          "practice_questions": [
+            "Design a 4-bit synchronous up counter.",
+            "Explain the difference between a ripple counter and a synchronous counter.",
+            "What is the function of a shift register?",
+            "Design a register that can load data in parallel and shift it serially.",
+            "What is the maximum count of a 5-bit counter?"
+          ]
+        },
+        {
+          "topic_title": "Finite State Machines (FSMs)",
+          "notes_md": "Finite state machines (FSMs) are mathematical models of sequential logic circuits. They consist of states, inputs, outputs, and transitions. FSMs are used to design controllers, sequencers, and other complex digital systems. There are two main types of FSMs: Moore machines and Mealy machines. In a Moore machine, the output depends only on the current state. In a Mealy machine, the output depends on both the current state and the input. State diagrams and state tables are used to represent FSMs. Understanding the design process for FSMs is essential for designing complex digital systems. Correct design of FSMs is crucial for proper system operation. Proper selection of FSM type depends on the application.\n\nExample: A traffic light controller can be modeled as an FSM with states representing the different light combinations.\n",
+          "video_url": "https://www.youtube.com/watch?v=0F2dI-GCYuQ",
+          "practice_questions": [
+            "Design a Moore machine that detects the sequence '101'.",
+            "Explain the difference between a Moore machine and a Mealy machine.",
+            "Draw the state diagram for a vending machine controller.",
+            "What are the advantages and disadvantages of using FSMs?",
+            "Convert a given state table to a state diagram."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Memory Devices",
+      "topics": [
+        {
+          "topic_title": "RAM and ROM",
+          "notes_md": "RAM (Random Access Memory) and ROM (Read-Only Memory) are fundamental memory devices. RAM is volatile, meaning it loses its data when power is removed. ROM is non-volatile, meaning it retains its data even when power is removed. There are two main types of RAM: SRAM (Static RAM) and DRAM (Dynamic RAM). SRAM is faster but more expensive than DRAM. There are several types of ROM, including PROM, EPROM, and EEPROM. Understanding the characteristics of different types of RAM and ROM is essential for selecting the appropriate memory device for a given application. Correct use of memory devices is crucial for proper system operation. Proper selection of memory type depends on the application.\n\nExample: SRAM is often used for cache memory due to its speed, while DRAM is used for main memory due to its lower cost.\n",
+          "video_url": "https://www.youtube.com/watch?v=jPw_5TN7e0s",
+          "practice_questions": [
+            "Explain the difference between SRAM and DRAM.",
+            "What are the advantages and disadvantages of ROM?",
+            "What is the difference between PROM, EPROM, and EEPROM?",
+            "How does memory addressing work?",
+            "What are the different types of memory hierarchies?"
+          ]
+        },
+        {
+          "topic_title": "Memory Organization",
+          "notes_md": "Memory organization refers to how memory cells are arranged and accessed. Memory is typically organized into words, with each word having a unique address. Memory addressing schemes include linear addressing and hierarchical addressing. Memory controllers manage the flow of data between the CPU and memory. Cache memory is used to improve memory access time. Understanding memory organization is essential for designing efficient memory systems. Correct organization of memory is crucial for proper system operation. Proper selection of memory organization depends on the application.\n\nExample: A 32-bit memory system typically uses 32-bit words, and the address space is determined by the number of address lines.\n",
+          "video_url": "https://www.youtube.com/watch?v=mWhLZ0-iQkc",
+          "practice_questions": [
+            "Explain the concept of memory addressing.",
+            "What is the role of a memory controller?",
+            "How does cache memory improve performance?",
+            "What are the different types of cache mapping techniques?",
+            "Explain the concept of virtual memory."
+          ]
+        },
+        {
+          "topic_title": "Programmable Logic Devices (PLDs)",
+          "notes_md": "Programmable Logic Devices (PLDs) are integrated circuits that can be programmed to implement custom logic functions. Common types of PLDs include PALs, GALs, and FPGAs. PLDs offer flexibility and can be reprogrammed to implement different functions. FPGAs (Field-Programmable Gate Arrays) are more complex and offer greater flexibility than PALs and GALs. PLDs are used in a wide range of applications, including digital signal processing, embedded systems, and prototyping. Understanding the architecture and programming of PLDs is essential for designing custom digital circuits. Correct programming of PLDs is crucial for proper system operation. Proper selection of PLD type depends on the application.\n\nExample: An FPGA can be used to implement a custom processor or a complex digital filter.\n",
+          "video_url": "https://www.youtube.com/watch?v=cIGu5woeUfU",
+          "practice_questions": [
+            "Explain the difference between a PAL, a GAL, and an FPGA.",
+            "What are the advantages of using PLDs?",
+            "How are PLDs programmed?",
+            "Describe the architecture of an FPGA.",
+            "What are some common applications of PLDs?"
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Digital System Design and Implementation",
+      "topics": [
+        {
+          "topic_title": "Design Methodologies",
+          "notes_md": "Digital system design methodologies provide a structured approach to designing complex digital systems. Common methodologies include top-down design, bottom-up design, and mixed-mode design. Top-down design starts with a high-level specification and progressively refines it into lower-level details. Bottom-up design starts with individual components and integrates them into larger systems. Mixed-mode design combines top-down and bottom-up approaches. Design tools such as hardware description languages (HDLs) and simulation software are used to aid in the design process. Understanding design methodologies is essential for managing the complexity of digital system design. Correct application of design methodologies is crucial for successful system development. Proper selection of design methodology depends on the project requirements.\n\nExample: Using a top-down approach, one might start with a system-level block diagram and then decompose each block into smaller modules.\n",
+          "video_url": "https://www.youtube.com/watch?v=5fK4t8G5x74",
+          "practice_questions": [
+            "Explain the difference between top-down and bottom-up design.",
+            "What are the advantages of using a structured design methodology?",
+            "What is the role of HDLs in digital system design?",
+            "Describe the steps involved in the design of a digital system.",
+            "What are the different types of simulation used in digital system design?"
+          ]
+        },
+        {
+          "topic_title": "Hardware Description Languages (HDLs)",
+          "notes_md": "Hardware Description Languages (HDLs) are used to describe the structure and behavior of digital circuits. Common HDLs include VHDL and Verilog. HDLs allow designers to model and simulate digital circuits before implementing them in hardware. HDLs also support synthesis, which is the process of converting an HDL description into a physical implementation. HDLs are essential tools for modern digital system design. Understanding the syntax and semantics of HDLs is crucial for designing and verifying digital circuits. Correct use of HDLs is essential for successful system development. Proper selection of HDL depends on the project requirements.\n\nExample:\n```verilog\nmodule adder(input a, input b, output sum, output carry);\n  assign sum = a ^ b;\n  assign carry = a & b;\nendmodule\n```\n",
+          "video_url": "https://www.youtube.com/watch?v=r9wK0H86j3Q",
+          "practice_questions": [
+            "What are the advantages of using HDLs?",
+            "Explain the difference between VHDL and Verilog.",
+            "What is synthesis?",
+            "Write a Verilog module for a 4-bit adder.",
+            "What are the different levels of abstraction in HDLs?"
+          ]
+        },
+        {
+          "topic_title": "Testing and Verification",
+          "notes_md": "Testing and verification are essential steps in the digital system design process. Testing involves applying inputs to a circuit and verifying that the outputs are correct. Verification involves formally proving that a circuit meets its specifications. Simulation is used to test and verify digital circuits before they are implemented in hardware. Test benches are used to generate test inputs and verify the outputs. Understanding testing and verification techniques is crucial for ensuring the correctness and reliability of digital systems. Correct application of testing and verification techniques is essential for successful system development. Proper selection of testing and verification methods depends on the project requirements.\n\nExample: Simulation can be used to verify the timing behavior of a digital circuit and identify potential race conditions.\n",
+          "video_url": "https://www.youtube.com/watch?v=4S5oiE0_29w",
+          "practice_questions": [
+            "What are the different types of testing used in digital system design?",
+            "Explain the concept of formal verification.",
+            "What is a test bench?",
+            "How is simulation used for testing and verification?",
+            "What are some common techniques for generating test inputs?"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "course_name": "Engineering Physics",
+  "course_code": "UBA48",
+  "units": [
+    {
+      "unit_title": "Wave Optics",
+      "topics": [
+        {
+          "topic_title": "Interference of Light",
+          "notes_md": "Interference is the phenomenon where two or more waves superpose to form a resultant wave of greater, lower, or the same amplitude. For interference to be observable, the light sources must be coherent, meaning they emit waves with a constant phase difference. Young's double-slit experiment is a classic demonstration of interference, where light passing through two narrow slits creates an interference pattern of bright and dark fringes on a screen. The fringe width, denoted by β, is given by β = λD/d, where λ is the wavelength of light, D is the distance between the slits and the screen, and d is the separation between the slits. Constructive interference occurs when the path difference between the waves is an integer multiple of the wavelength (nλ), resulting in bright fringes. Destructive interference occurs when the path difference is a half-integer multiple of the wavelength ((n+1/2)λ), resulting in dark fringes. Understanding interference is crucial in applications such as holography and thin-film coatings.",
+          "video_url": "https://www.youtube.com/watch?v=I8YKRXw3BTQ",
+          "practice_questions": [
+            "What are the conditions for sustained interference?",
+            "Explain Young's double-slit experiment.",
+            "Derive the expression for fringe width in interference.",
+            "What is the effect on the fringe pattern if one of the slits is covered?",
+            "Two coherent sources have intensity ratio of 81:1. What is the ratio of maximum to minimum intensity in the interference pattern?"
+          ]
+        },
+        {
+          "topic_title": "Diffraction of Light",
+          "notes_md": "Diffraction is the bending of waves around obstacles or through apertures. Unlike interference, diffraction involves the interaction of a single wave with itself. Huygens' principle explains diffraction by considering each point on a wavefront as a source of secondary wavelets. Fraunhofer diffraction occurs when both the source and the screen are at infinite distances from the obstacle, while Fresnel diffraction occurs when either the source or the screen (or both) are at finite distances. A single-slit diffraction pattern consists of a central bright fringe surrounded by alternating dark and bright fringes of decreasing intensity. The angular position of the first minimum in a single-slit diffraction pattern is given by sinθ = λ/a, where λ is the wavelength of light and a is the width of the slit. Diffraction gratings, consisting of many equally spaced slits, produce sharper and more intense diffraction patterns, which are widely used in spectroscopy.",
+          "video_url": "https://www.youtube.com/watch?v=9Fxq6XQvV0Q",
+          "practice_questions": [
+            "What is the difference between interference and diffraction?",
+            "Explain Huygens' principle.",
+            "Derive the condition for minima in single-slit diffraction.",
+            "What is a diffraction grating, and how does it work?",
+            "How does the width of the slit affect the diffraction pattern?"
+          ]
+        },
+        {
+          "topic_title": "Polarization of Light",
+          "notes_md": "Polarization is the phenomenon where the electric field vector of a light wave is confined to a specific plane. Ordinary light is unpolarized, meaning the electric field vector oscillates in all directions perpendicular to the direction of propagation. Polarizing filters, such as Polaroid sheets, selectively transmit light with electric field vectors aligned along a specific direction (the transmission axis). Malus' law states that the intensity of polarized light transmitted through an analyzer is given by I = I₀cos²θ, where I₀ is the initial intensity and θ is the angle between the polarization direction of the light and the transmission axis of the analyzer. Polarization can occur through reflection, refraction, and scattering. Brewster's angle is the angle of incidence at which the reflected light is completely polarized parallel to the surface. Understanding polarization is essential in applications such as LCD displays, sunglasses, and stress analysis.",
+          "video_url": "https://www.youtube.com/watch?v=Q7J-l-2ihao",
+          "practice_questions": [
+            "What is polarized light?",
+            "Explain Malus' law.",
+            "How can light be polarized by reflection?",
+            "What is Brewster's angle?",
+            "Describe the applications of polarization."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Lasers and Fiber Optics",
+      "topics": [
+        {
+          "topic_title": "Laser Principles",
+          "notes_md": "LASER stands for Light Amplification by Stimulated Emission of Radiation. Lasers produce highly coherent, monochromatic, and directional beams of light. The key principles behind laser operation are stimulated emission, population inversion, and optical feedback. Stimulated emission occurs when an incident photon triggers an excited atom to emit an identical photon. Population inversion is the state where more atoms are in an excited state than in the ground state. Optical feedback is achieved using mirrors to reflect photons back and forth through the gain medium, amplifying the light. Common types of lasers include gas lasers (e.g., He-Ne laser), solid-state lasers (e.g., ruby laser, Nd:YAG laser), and semiconductor lasers (e.g., laser diodes). Lasers have numerous applications in medicine, industry, telecommunications, and scientific research.",
+          "video_url": "https://www.youtube.com/watch?v=ocYvQ2b5_s8",
+          "practice_questions": [
+            "What does LASER stand for?",
+            "Explain the principle of stimulated emission.",
+            "What is population inversion, and why is it important?",
+            "Describe the components of a laser.",
+            "List some applications of lasers."
+          ]
+        },
+        {
+          "topic_title": "Fiber Optics",
+          "notes_md": "Fiber optics involves the transmission of light through thin strands of glass or plastic called optical fibers. The principle behind fiber optic communication is total internal reflection (TIR). TIR occurs when light traveling from a denser medium to a rarer medium strikes the interface at an angle greater than the critical angle. Optical fibers consist of a core (the inner part through which light propagates) and a cladding (the outer layer with a lower refractive index). There are two main types of optical fibers: single-mode fibers (which support only one mode of light propagation) and multi-mode fibers (which support multiple modes). Fiber optic communication offers several advantages over traditional copper cables, including higher bandwidth, lower signal attenuation, immunity to electromagnetic interference, and greater security. Fiber optics are widely used in telecommunications, data networks, and medical imaging.",
+          "video_url": "https://www.youtube.com/watch?v=0MwNtq-sK7c",
+          "practice_questions": [
+            "What is total internal reflection (TIR)?",
+            "Describe the structure of an optical fiber.",
+            "What are the advantages of fiber optic communication?",
+            "Differentiate between single-mode and multi-mode fibers.",
+            "Explain the applications of optical fibers."
+          ]
+        },
+        {
+          "topic_title": "Applications of Lasers and Fiber Optics",
+          "notes_md": "Lasers and fiber optics have revolutionized various fields due to their unique properties. In medicine, lasers are used for surgical procedures (e.g., LASIK eye surgery), diagnostics (e.g., laser-induced fluorescence), and therapy (e.g., photodynamic therapy). In industry, lasers are employed for cutting, welding, marking, and drilling materials with high precision. Fiber optics are the backbone of modern telecommunication networks, enabling high-speed data transmission across long distances. They are also used in sensors for measuring temperature, pressure, and strain. In scientific research, lasers are used in spectroscopy, microscopy, and interferometry. The combination of lasers and fiber optics has led to the development of advanced technologies such as fiber optic gyroscopes and laser-induced breakdown spectroscopy (LIBS).",
+          "video_url": "https://www.youtube.com/watch?v=iB3cb6aQO_E",
+          "practice_questions": [
+            "Describe the applications of lasers in medicine.",
+            "How are lasers used in industrial processes?",
+            "Explain the role of fiber optics in telecommunications.",
+            "What are fiber optic sensors, and how do they work?",
+            "Give examples of advanced technologies that combine lasers and fiber optics."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Quantum Mechanics",
+      "topics": [
+        {
+          "topic_title": "Wave-Particle Duality",
+          "notes_md": "Wave-particle duality is a fundamental concept in quantum mechanics, stating that every particle or quantum entity may be described as both a particle and a wave. Experiments like the double-slit experiment with electrons demonstrate this duality. The de Broglie hypothesis postulates that every particle with momentum p has an associated wavelength λ, given by λ = h/p, where h is Planck's constant. This wavelength is known as the de Broglie wavelength. The Heisenberg uncertainty principle states that it is impossible to simultaneously know both the position and momentum of a particle with perfect accuracy. Mathematically, it is expressed as ΔxΔp ≥ ħ/2, where Δx is the uncertainty in position, Δp is the uncertainty in momentum, and ħ is the reduced Planck constant (h/2π). Understanding wave-particle duality is crucial for interpreting quantum phenomena.",
+          "video_url": "https://www.youtube.com/watch?v=A9nJEq-vD-c",
+          "practice_questions": [
+            "Explain the concept of wave-particle duality.",
+            "What is the de Broglie wavelength?",
+            "State the Heisenberg uncertainty principle.",
+            "How does the double-slit experiment demonstrate wave-particle duality?",
+            "Explain the implications of the uncertainty principle."
+          ]
+        },
+        {
+          "topic_title": "Schrödinger Equation",
+          "notes_md": "The Schrödinger equation is a fundamental equation in quantum mechanics that describes the time evolution of a quantum system. The time-dependent Schrödinger equation is given by iħ∂ψ/∂t = Hψ, where ψ is the wave function, t is time, and H is the Hamiltonian operator. The time-independent Schrödinger equation is given by Hψ = Eψ, where E is the energy of the system. The wave function ψ contains all the information about the state of the system. The square of the wave function's magnitude, |ψ|², gives the probability density of finding the particle at a given position. Solving the Schrödinger equation for different potentials allows us to determine the energy levels and wave functions of various quantum systems, such as the particle in a box and the hydrogen atom. Understanding the Schrödinger equation is essential for analyzing quantum phenomena.",
+          "video_url": "https://www.youtube.com/watch?v=q9EoPYk-xos",
+          "practice_questions": [
+            "Write down the time-dependent and time-independent Schrödinger equations.",
+            "What is the physical significance of the wave function?",
+            "What is the Hamiltonian operator?",
+            "How do you solve the Schrödinger equation for a particle in a box?",
+            "Explain the importance of the Schrödinger equation in quantum mechanics."
+          ]
+        },
+        {
+          "topic_title": "Quantum Tunneling",
+          "notes_md": "Quantum tunneling is a phenomenon where a particle can pass through a potential barrier, even if it does not have enough energy to overcome the barrier classically. The probability of tunneling depends on the height and width of the barrier, as well as the energy of the particle. The transmission coefficient T, which represents the probability of tunneling, decreases exponentially with the width of the barrier. Quantum tunneling has important applications in various fields, including nuclear fusion, scanning tunneling microscopy (STM), and flash memory. In STM, electrons tunnel through the gap between the tip and the sample surface, allowing for atomic-resolution imaging. Understanding quantum tunneling is crucial for explaining various quantum phenomena.",
+          "video_url": "https://www.youtube.com/watch?v=cQMmFfV_Vys",
+          "practice_questions": [
+            "What is quantum tunneling?",
+            "What factors affect the probability of tunneling?",
+            "Explain the applications of quantum tunneling in STM.",
+            "How does quantum tunneling explain nuclear fusion?",
+            "Explain the concept of the transmission coefficient in quantum tunneling."
+          ]
+        }
+      ]
+    },
+    {
+      "unit_title": "Solid State Physics",
+      "topics": [
+        {
+          "topic_title": "Crystal Structure",
+          "notes_md": "Crystal structure refers to the ordered arrangement of atoms, ions, or molecules in a crystalline solid. The basic building block of a crystal structure is the unit cell, which is a small repeating unit that, when translated in three dimensions, generates the entire crystal lattice. Common crystal structures include simple cubic (SC), body-centered cubic (BCC), and face-centered cubic (FCC). The lattice parameters (a, b, c) and angles (α, β, γ) define the shape and size of the unit cell. The packing fraction is the fraction of space occupied by atoms in the unit cell. X-ray diffraction is a powerful technique for determining crystal structures by analyzing the diffraction pattern produced when X-rays are scattered by the crystal lattice. Understanding crystal structure is essential for predicting the properties of materials.",
+          "video_url": "https://www.youtube.com/watch?v=Rm_59jnWN54",
+          "practice_questions": [
+            "What is a crystal structure?",
+            "Define the unit cell and lattice parameters.",
+            "Describe the simple cubic, body-centered cubic, and face-centered cubic structures.",
+            "What is the packing fraction, and how is it calculated?",
+            "Explain the use of X-ray diffraction in determining crystal structures."
+          ]
+        },
+        {
+          "topic_title": "Band Theory of Solids",
+          "notes_md": "The band theory of solids explains the electronic properties of materials based on the quantum mechanical behavior of electrons in a periodic potential created by the crystal lattice. In a solid, the atomic energy levels broaden into energy bands, separated by energy gaps called band gaps. The valence band is the highest occupied energy band, and the conduction band is the lowest unoccupied energy band. Materials are classified as conductors, insulators, or semiconductors based on the size of the band gap. In conductors, the valence and conduction bands overlap, allowing electrons to move freely. In insulators, the band gap is large, preventing electrons from easily moving to the conduction band. In semiconductors, the band gap is intermediate, allowing for controlled conductivity through doping or temperature changes. Understanding band theory is crucial for designing electronic devices.",
+          "video_url": "https://www.youtube.com/watch?v=rL71k4-Nq-k",
+          "practice_questions": [
+            "Explain the band theory of solids.",
+            "What are energy bands and band gaps?",
+            "How are materials classified as conductors, insulators, or semiconductors?",
+            "Describe the electronic structure of conductors, insulators, and semiconductors.",
+            "Explain the role of doping in semiconductors."
+          ]
+        },
+        {
+          "topic_title": "Semiconductors",
+          "notes_md": "Semiconductors are materials with electrical conductivity between that of conductors and insulators. Common semiconductor materials include silicon (Si) and germanium (Ge). The conductivity of semiconductors can be controlled by doping, which involves adding impurities to the crystal lattice. N-type semiconductors are created by doping with donor impurities (e.g., phosphorus), which contribute extra electrons to the conduction band. P-type semiconductors are created by doping with acceptor impurities (e.g., boron), which create holes (electron vacancies) in the valence band. The p-n junction is a fundamental building block of many semiconductor devices, such as diodes and transistors. The depletion region is a region near the junction with very few free charge carriers. Understanding semiconductors is essential for designing electronic devices.",
+          "video_url": "https://www.youtube.com/watch?v=JBtEckh3L9o",
+          "practice_questions": [
+            "What are semiconductors?",
+            "Explain the process of doping in semiconductors.",
+            "Differentiate between n-type and p-type semiconductors.",
+            "Describe the structure and function of a p-n junction.",
+            "What is the depletion region?"
+          ]
+        }
+      ]
+    }
+  ]
+}
