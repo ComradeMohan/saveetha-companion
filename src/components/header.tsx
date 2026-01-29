@@ -370,7 +370,6 @@ export default function Header() {
                 </nav>
                 <div 
                     className="relative flex items-center"
-                    onMouseEnter={() => setShowStarPrompt(false)}
                 >
                     <div className={cn(
                         "absolute bottom-full right-0 mb-2 w-max rounded-md bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity duration-300",
