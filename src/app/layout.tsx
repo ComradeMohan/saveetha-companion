@@ -72,8 +72,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FFFCFA" },
-    { media: "(prefers-color-scheme: dark)", color: "#03081F" },
+    { media: "(prefers-color-scheme: light)", color: "hsl(30 100% 98%)" },
+    { media: "(prefers-color-scheme: dark)", color: "hsl(222 84% 4.9%)" },
   ],
 };
 
@@ -150,6 +150,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
       </body>
     </html>
   );

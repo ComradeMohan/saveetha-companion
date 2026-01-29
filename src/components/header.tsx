@@ -248,12 +248,10 @@ export default function Header() {
       ...academicsLinks,
       ...resourcesLinks,
       ...toolsDropdownLinks,
-      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Star }
   ];
   const loggedOutMobileLinks = [
       ...loggedOutFeaturesLinks,
       { href: '/contact', label: 'Contact', icon: User},
-      { href: 'https://github.com/ComradeMohan/saveetha-companion', label: 'Star on GitHub', icon: Star }
   ];
   const allMobileLinks = user ? loggedInMobileLinks : loggedOutMobileLinks;
 
@@ -359,12 +357,16 @@ export default function Header() {
                         Contact Us
                     </NavLink>
                 </nav>
-                <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
-                    <Link href="https://github.com/ComradeMohan/saveetha-companion" target="_blank" rel="noopener noreferrer">
-                        <Star className="mr-2 h-4 w-4" />
-                        Star on GitHub
-                    </Link>
-                </Button>
+                <div className="flex items-center">
+                    <a className="github-button"
+                        href="https://github.com/ComradeMohan/saveetha-companion"
+                        data-icon="octicon-star"
+                        data-size="large"
+                        data-show-count="true"
+                        aria-label="Star ComradeMohan/saveetha-companion on GitHub">
+                        Star
+                    </a>
+                </div>
                 {user && <NotificationBell />}
                 <ThemeToggle />
                 <UserNav />
