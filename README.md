@@ -16,6 +16,23 @@
 
 ---
 
+## 🌟 Stargazers
+
+<div align="center">
+
+[![Stargazers for ComradeMohan/saveetha-companion](https://reporoster.com/stars/ComradeMohan/saveetha-companion)](https://github.com/ComradeMohan/saveetha-companion/stargazers)
+
+![GitHub stars](https://img.shields.io/github/stars/ComradeMohan/saveetha-companion?style=social)
+[![Contributors](https://contrib.rocks/image?repo=ComradeMohan/saveetha-companion)](https://github.com/ComradeMohan/saveetha-companion/graphs/contributors)
+![Repo size](https://img.shields.io/github/repo-size/ComradeMohan/saveetha-companion)
+![Last commit](https://img.shields.io/github/last-commit/ComradeMohan/saveetha-companion)
+![Issues](https://img.shields.io/github/issues/ComradeMohan/saveetha-companion)
+![PRs](https://img.shields.io/github/issues-pr/ComradeMohan/saveetha-companion)
+
+</div>
+
+---
+
 ## 📖 Project Overview
 
 **Saveetha Companion** is a comprehensive web application designed specifically for students at Saveetha Engineering College. It serves as a centralized platform that simplifies academic life by providing essential tools like CGPA and attendance calculators, AI-powered learning resources, concept map discovery, placement preparation tools, and much more.
@@ -341,6 +358,8 @@ This project is open source and available for educational purposes.
 <div align="center">
 
 **Made with ❤️ for Saveetha School of Engineering College Students**
+
+<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="700">
 
 [⬆ Back to Top](#-saveetha-companion)
 
