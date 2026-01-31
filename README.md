@@ -23,7 +23,6 @@
 [![Stargazers for ComradeMohan/saveetha-companion](https://reporoster.com/stars/ComradeMohan/saveetha-companion)](https://github.com/ComradeMohan/saveetha-companion/stargazers)
 
 ![GitHub stars](https://img.shields.io/github/stars/ComradeMohan/saveetha-companion?style=social)
-[![Contributors](https://contrib.rocks/image?repo=ComradeMohan/saveetha-companion)](https://github.com/ComradeMohan/saveetha-companion/graphs/contributors)
 ![Repo size](https://img.shields.io/github/repo-size/ComradeMohan/saveetha-companion)
 ![Last commit](https://img.shields.io/github/last-commit/ComradeMohan/saveetha-companion)
 ![Issues](https://img.shields.io/github/issues/ComradeMohan/saveetha-companion)
