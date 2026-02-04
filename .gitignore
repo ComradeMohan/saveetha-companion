@@ -41,7 +41,6 @@ next-env.d.ts
 firebase.json
 firestore.rules
 apphosting.yaml
-netlify.toml
 
 # optional local docs & patches
 docs/
@@ -52,3 +51,4 @@ patches/
 
 # dev-only routes
 /src/app/dev-login/
+/src/firestore.rules
