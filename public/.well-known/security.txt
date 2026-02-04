@@ -1,0 +1,4 @@
+Contact: mailto:security@saveethahub.tech
+Expires: 2026-01-01
+Preferred-Languages: en
+Acknowledgments: https://saveethahub.tech/

@@ -1,0 +1,94 @@
+# =================================================
+# Global rules for ALL crawlers (search + AI)
+# =================================================
+User-agent: *
+Disallow: /admin/
+Disallow: /batch-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-profile
+Disallow: /course-enrollment
+Disallow: /calendar
+Disallow: /updates
+Disallow: /view-pdf/
+Disallow: /ai-chat
+Disallow: /api/
+
+Allow: /
+
+# =================================================
+# Google AI crawlers (Gemini / AI training)
+# =================================================
+User-agent: Google-Extended
+Disallow: /admin/
+Disallow: /batch-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-profile
+Disallow: /course-enrollment
+Disallow: /calendar
+Disallow: /updates
+Disallow: /view-pdf/
+Disallow: /ai-chat
+Disallow: /api/
+
+Allow: /
+
+# =================================================
+# OpenAI (ChatGPT training crawler)
+# =================================================
+User-agent: GPTBot
+Disallow: /admin/
+Disallow: /batch-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-profile
+Disallow: /course-enrollment
+Disallow: /calendar
+Disallow: /updates
+Disallow: /view-pdf/
+Disallow: /ai-chat
+Disallow: /api/
+
+Allow: /
+
+# =================================================
+# Common Crawl (used by many AI models)
+# =================================================
+User-agent: CCBot
+Disallow: /admin/
+Disallow: /batch-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-profile
+Disallow: /course-enrollment
+Disallow: /calendar
+Disallow: /updates
+Disallow: /view-pdf/
+Disallow: /ai-chat
+Disallow: /api/
+
+Allow: /
+
+# =================================================
+# Anthropic / Claude AI
+# =================================================
+User-agent: ClaudeBot
+Disallow: /admin/
+Disallow: /batch-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-profile
+Disallow: /course-enrollment
+Disallow: /calendar
+Disallow: /updates
+Disallow: /view-pdf/
+Disallow: /ai-chat
+Disallow: /api/
+
+Allow: /
+
+# =================================================
+# Sitemap
+# =================================================
+Sitemap: https://saveethahub.tech/sitemap.xml
