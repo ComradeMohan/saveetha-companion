@@ -51,4 +51,4 @@ patches/
 
 # dev-only routes
 /src/app/dev-login/
-/src/firestore.rules
+src/firestore.rules

@@ -18,15 +18,15 @@ export async function GET(request: NextRequest) {
     }
     const weatherData = await weatherResponse.json();
     const currentWeatherData = {
-        temperature: weatherData.current.temperature_2m,
-        weathercode: weatherData.current.weather_code,
-        windspeed: weatherData.current.wind_speed_10m,
-        relativehumidity: weatherData.current.relative_humidity_2m,
+      temperature: weatherData.current.temperature_2m,
+      weathercode: weatherData.current.weather_code,
+      windspeed: weatherData.current.wind_speed_10m,
+      relativehumidity: weatherData.current.relative_humidity_2m,
     };
-    
+
     return NextResponse.json({
-        location: geoData,
-        weather: currentWeatherData
+      location: geoData,
+      weather: currentWeatherData
     });
 
   } catch (error: any) {
