@@ -26,7 +26,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
-const ADMIN_EMAIL = 'madiremohanreddy0400.sse@saveetha.com';
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 
 export interface UserProfileData {
@@ -51,8 +51,8 @@ interface CompleteUserProfile {
   phone: string;
 }
 interface AcademicProfile {
-    department: string;
-    college: 'SSE' | 'SEC';
+  department: string;
+  college: 'SSE' | 'SEC';
 }
 
 interface AuthContextType {
@@ -75,57 +75,72 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const handleAuthError = (error: any, toast: (options: any) => void): string => {
-    console.error("Firebase Auth Error:", error.code, error.message);
-    let title = 'Authentication Error';
-    let description = 'An unexpected error occurred. Please try again.';
+  console.error("Auth Error:", error.code, error.message);
+  let title = 'Authentication Error';
+  let description = 'An unexpected error occurred. Please try again.';
 
-    switch (error.code) {
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-        case 'auth/invalid-credential':
-             description = 'The email or password you entered is incorrect.';
-            break;
-        case 'auth/email-already-in-use':
-            description = 'An account with this email address already exists.';
-            break;
-        case 'auth/weak-password':
-            description = 'The password must be at least 6 characters long.';
-            break;
-        case 'auth/invalid-email':
-            description = 'Please enter a valid email address.';
-            break;
-        case 'auth/network-request-failed':
-            title = 'Network Error';
-            description = 'Could not connect to the server. Please check your internet connection.';
-            toast({ title, description, variant: 'destructive' });
-            break;
-        case 'auth/popup-closed-by-user':
-             description = "The sign-in window was closed before completing. Please try again.";
-            break;
-        case 'auth/operation-not-supported-in-this-environment':
-            title = "Login Error";
-            description = "Please use your @saveetha.com Google account to sign in.";
-            toast({ title, description, variant: 'destructive' });
-            break;
-        case 'auth/too-many-requests':
-            title = 'Too Many Attempts';
-            description = 'Access to this account is temporarily disabled due to many failed attempts.';
-            toast({ title, description, variant: 'destructive' });
-            break;
-         case 'auth/requires-recent-login':
-            title = 'Action Required';
-            description = 'This is a sensitive action. Please sign in again before deleting your account.';
-            toast({ title, description, variant: 'destructive' });
-            break;
-    }
-    
-    return description;
+  switch (error.code) {
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      description = 'The email or password you entered is incorrect.';
+      break;
+    case 'auth/email-already-in-use':
+      description = 'An account with this email address already exists.';
+      break;
+    case 'auth/weak-password':
+      description = 'The password must be at least 6 characters long.';
+      break;
+    case 'auth/invalid-email':
+      description = 'Please enter a valid email address.';
+      break;
+    case 'auth/network-request-failed':
+      title = 'Network Error';
+      description = 'Could not connect to the server. Please check your internet connection.';
+      toast({ title, description, variant: 'destructive' });
+      break;
+    case 'auth/popup-closed-by-user':
+      description = "The sign-in window was closed before completing. Please try again.";
+      break;
+    case 'auth/operation-not-supported-in-this-environment':
+      title = "Login Error";
+      description = "Please use your @saveetha.com Google account to sign in.";
+      toast({ title, description, variant: 'destructive' });
+      break;
+    case 'auth/too-many-requests':
+      title = 'Too Many Attempts';
+      description = 'Access to this account is temporarily disabled due to many failed attempts.';
+      toast({ title, description, variant: 'destructive' });
+      break;
+    case 'auth/requires-recent-login':
+      title = 'Action Required';
+      description = 'This is a sensitive action. Please sign in again before deleting your account.';
+      toast({ title, description, variant: 'destructive' });
+      break;
+  }
+
+  return description;
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const AUTH_CACHE_KEY = 'saveetha-auth-cache';
+
+  // Helper to safely get cached user
+  const getCachedUser = (): User | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const cached = localStorage.getItem(AUTH_CACHE_KEY);
+      if (cached) return JSON.parse(cached);
+    } catch (e) {
+      console.error('Error reading auth cache', e);
+    }
+    return null;
+  };
+
+  const [user, setUser] = useState<User | null>(() => getCachedUser());
   const [profile, setProfile] = useState<UserProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
+  // If we have a cached user, we can start as "not loading" to show UI immediately
+  const [loading, setLoading] = useState(() => !getCachedUser());
   const [profileLoading, setProfileLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -138,7 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setIsNavigating(false);
   }, [pathname, searchParams]);
-  
+
   const createNotification = useCallback(async (userId: string, message: string, type: 'credit' | 'default') => {
     const notifsRef = collection(db, 'user_notifications', userId, 'notifications');
     await addDoc(notifsRef, {
@@ -157,23 +172,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsBatchAdmin(false);
 
       if (user) {
+        // Update cache with fresh user data
+        const serializableUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+        };
+        localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(serializableUser));
+
         setUser(user);
         setIsAdmin(user.email === ADMIN_EMAIL);
-        
+
         const userDocRef = doc(db, 'users', user.uid);
         const batchAdminDocRef = doc(db, 'batchAdmins', user.uid);
 
         // Check for batch admin status
         const batchAdminSnap = await getDoc(batchAdminDocRef);
         setIsBatchAdmin(batchAdminSnap.exists());
-        
+
         const unsubscribeProfile = onSnapshot(userDocRef, (userDoc) => {
           if (userDoc.exists()) {
             const dbProfile = userDoc.data() as UserProfileData;
             setProfile(dbProfile);
             const isProfileIncomplete = !dbProfile.regNo || !dbProfile.phone;
             if (isProfileIncomplete && pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                router.push('/complete-profile');
+              router.push('/complete-profile');
             }
           } else {
             // New user scenario
@@ -189,28 +214,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             };
             setDoc(userDocRef, { ...newProfileData, createdAt: new Date().toISOString(), lastSignInTime: user.metadata.lastSignInTime })
               .then(async () => {
-                if(referralId) {
-                    const referrerAdminRef = doc(db, "batchAdmins", referralId);
-                    try {
-                        await runTransaction(db, async (transaction) => {
-                            const referrerDoc = await transaction.get(referrerAdminRef);
-                            if (referrerDoc.exists()) {
-                                transaction.update(referrerAdminRef, {
-                                    referralCount: increment(1)
-                                });
-                            }
+                if (referralId) {
+                  const referrerAdminRef = doc(db, "batchAdmins", referralId);
+                  try {
+                    await runTransaction(db, async (transaction) => {
+                      const referrerDoc = await transaction.get(referrerAdminRef);
+                      if (referrerDoc.exists()) {
+                        transaction.update(referrerAdminRef, {
+                          referralCount: increment(1)
                         });
-                    } catch (e) {
-                        console.error("Failed to increment referral count: ", e);
-                    }
+                      }
+                    });
+                  } catch (e) {
+                    console.error("Failed to increment referral count: ", e);
+                  }
                 }
                 setProfile(newProfileData);
                 createNotification(user.uid, "Welcome! You've received 100 credits.", "credit");
                 sendWelcomeEmail({ to: user.email!, name: user.displayName! });
                 if (pathname !== '/complete-profile' && pathname !== '/dev-login') {
-                    router.push('/complete-profile');
+                  router.push('/complete-profile');
                 }
-            });
+              });
           }
           setProfileLoading(false);
         });
@@ -219,6 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return () => unsubscribeProfile();
 
       } else {
+        localStorage.removeItem(AUTH_CACHE_KEY);
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
@@ -234,14 +260,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async (isSignUp = false) => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-        prompt: 'select_account',
-        'hd': 'saveetha.com' 
+      prompt: 'select_account',
+      'hd': 'saveetha.com'
     });
     try {
       await signInWithPopup(auth, provider);
     } catch (error: any) {
-        const message = handleAuthError(error, toast);
-        throw new Error(message);
+      const message = handleAuthError(error, toast);
+      throw new Error(message);
     }
   };
 
@@ -253,85 +279,86 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(message);
     }
   };
-  
-  const completeUserProfile = async (profileData: CompleteUserProfile) => {
-      if (!auth.currentUser) throw new Error("No user is signed in.");
-      setIsNavigating(true);
-      
-      const user = auth.currentUser;
-      const userDocRef = doc(db, 'users', user.uid);
-      
-      await setDoc(userDocRef, {
-        regNo: profileData.regNo,
-        phone: profileData.phone,
-      }, { merge: true });
-      
-      toast({
-        title: 'Profile Complete!',
-        description: "You're all set! Welcome to the Saveetha Companion.",
-      });
 
-      router.push('/');
+  const completeUserProfile = async (profileData: CompleteUserProfile) => {
+    if (!auth.currentUser) throw new Error("No user is signed in.");
+    setIsNavigating(true);
+
+    const user = auth.currentUser;
+    const userDocRef = doc(db, 'users', user.uid);
+
+    await setDoc(userDocRef, {
+      regNo: profileData.regNo,
+      phone: profileData.phone,
+    }, { merge: true });
+
+    toast({
+      title: 'Profile Complete!',
+      description: "You're all set! Welcome to the Saveetha Companion.",
+    });
+
+    router.push('/');
   }
 
   const updateUserAcademicProfile = async (data: AcademicProfile) => {
     if (!auth.currentUser) {
-        toast({ title: 'Error', description: 'You must be logged in.', variant: 'destructive' });
-        return;
+      toast({ title: 'Error', description: 'You must be logged in.', variant: 'destructive' });
+      return;
     }
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
     try {
-        await updateDoc(userDocRef, {
-            department: data.department,
-            college: data.college
-        });
-        toast({ title: 'Success!', description: 'Your profile has been updated.' });
+      await updateDoc(userDocRef, {
+        department: data.department,
+        college: data.college
+      });
+      toast({ title: 'Success!', description: 'Your profile has been updated.' });
     } catch (error) {
-        console.error("Error updating academic profile:", error);
-        toast({ title: 'Error', description: 'Could not update your profile.', variant: 'destructive' });
-        throw error;
+      console.error("Error updating academic profile:", error);
+      toast({ title: 'Error', description: 'Could not update your profile.', variant: 'destructive' });
+      throw error;
     }
   }
 
   const deleteUserAccount = async () => {
     const currentUser = auth.currentUser;
     if (!currentUser) {
-        throw new Error("No user is currently signed in.");
+      throw new Error("No user is currently signed in.");
     }
     try {
-        const collectionsToDelete = [
-            'students_cgpa',
-            'student_grades',
-            'user_notifications',
-        ];
-        const batch = writeBatch(db);
+      const collectionsToDelete = [
+        'students_cgpa',
+        'student_grades',
+        'user_notifications',
+      ];
+      const batch = writeBatch(db);
 
-        for (const collectionName of collectionsToDelete) {
-             batch.delete(doc(db, collectionName, currentUser.uid));
-        }
+      for (const collectionName of collectionsToDelete) {
+        batch.delete(doc(db, collectionName, currentUser.uid));
+      }
 
-        const programsRef = collection(db, 'users', currentUser.uid, 'savedPrograms');
-        const programsSnap = await getDocs(programsRef);
-        programsSnap.forEach(doc => batch.delete(doc.ref));
-        
-        batch.delete(doc(db, 'users', currentUser.uid));
-        
-        await batch.commit();
+      const programsRef = collection(db, 'users', currentUser.uid, 'savedPrograms');
+      const programsSnap = await getDocs(programsRef);
+      programsSnap.forEach(doc => batch.delete(doc.ref));
 
-        await deleteUser(currentUser);
-        
-        toast({
-            title: 'Account Deleted',
-            description: 'Your account and all associated data have been permanently deleted.',
-        });
+      batch.delete(doc(db, 'users', currentUser.uid));
+
+      await batch.commit();
+
+      await deleteUser(currentUser);
+
+      toast({
+        title: 'Account Deleted',
+        description: 'Your account and all associated data have been permanently deleted.',
+      });
     } catch (error: any) {
-         const message = handleAuthError(error, toast);
-         throw new Error(message);
+      const message = handleAuthError(error, toast);
+      throw new Error(message);
     }
   };
 
   const logout = async () => {
     setIsNavigating(true);
+    localStorage.removeItem(AUTH_CACHE_KEY);
     await signOut(auth);
     router.push('/login');
   };
@@ -355,9 +382,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function PageLoader() {
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
@@ -371,7 +398,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 // This is deprecated, useAuth instead for profile access.
 export function ProfileProvider({ children }: { children: ReactNode }) {
-    return <>{children}</>;
+  return <>{children}</>;
 }
 
 export const useAuth = (): AuthContextType => {

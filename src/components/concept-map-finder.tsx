@@ -13,7 +13,7 @@ import type { ConceptMap } from '@/lib/concept-map-data';
 import { trackConceptMapView } from '@/app/actions/track-concept-map-view';
 
 interface ConceptMapWithViews extends ConceptMap {
-    viewCount?: number;
+  viewCount?: number;
 }
 
 // In-memory cache for concept maps to avoid re-fetching on every search
@@ -33,34 +33,34 @@ export default function ConceptMapFinder() {
 
     setLoading(true);
     try {
-        const mapsQuery = query(collection(db, 'concept-maps'), orderBy('title'));
-        const viewsQuery = collection(db, 'concept-map-analytics');
+      const mapsQuery = query(collection(db, 'concept-maps'), orderBy('title'));
+      const viewsQuery = collection(db, 'concept-map-analytics');
 
-        const [mapsSnapshot, viewsSnapshot] = await Promise.all([
-            getDocs(mapsQuery),
-            getDocs(viewsQuery)
-        ]);
+      const [mapsSnapshot, viewsSnapshot] = await Promise.all([
+        getDocs(mapsQuery),
+        getDocs(viewsQuery)
+      ]);
 
-        const viewsMap = new Map<string, number>();
-        viewsSnapshot.forEach(doc => {
-            viewsMap.set(doc.id, doc.data().viewCount);
-        });
+      const viewsMap = new Map<string, number>();
+      viewsSnapshot.forEach(doc => {
+        viewsMap.set(doc.id, doc.data().viewCount);
+      });
 
-        const mapsData: ConceptMapWithViews[] = [];
-        mapsSnapshot.forEach((doc) => {
-            mapsData.push({ 
-                id: doc.id, 
-                ...doc.data(),
-                viewCount: viewsMap.get(doc.id) || 0,
-            } as ConceptMapWithViews);
-        });
+      const mapsData: ConceptMapWithViews[] = [];
+      mapsSnapshot.forEach((doc) => {
+        mapsData.push({
+          id: doc.id,
+          ...doc.data(),
+          viewCount: viewsMap.get(doc.id) || 0,
+        } as ConceptMapWithViews);
+      });
 
-        conceptMapsCache = mapsData; // Cache the results
-        setAllMaps(mapsData);
+      conceptMapsCache = mapsData; // Cache the results
+      setAllMaps(mapsData);
     } catch (error) {
-        console.error("Error fetching concept maps:", error);
+      console.error("Error fetching concept maps:", error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -80,7 +80,7 @@ export default function ConceptMapFinder() {
       setHasSearched(true);
     }
   };
-  
+
   const filteredMaps = useMemo(() => {
     if (!hasSearched) {
       return []; // Don't show any maps if no search has been performed
@@ -100,7 +100,7 @@ export default function ConceptMapFinder() {
         <p className="text-muted-foreground mt-2">
           Use the search below to find concept maps for your subjects and courses.
         </p>
-         <p className="text-sm text-muted-foreground mt-2">
+        <p className="text-sm text-muted-foreground mt-2">
           (Want to upload missing concept maps? Admins can add them in the dashboard.)
         </p>
       </div>
@@ -144,17 +144,17 @@ export default function ConceptMapFinder() {
                 )}
               >
                 <div className="flex flex-col justify-start items-start h-full">
-                   <div className="flex justify-between items-start w-full">
-                        <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
-                            <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
-                        </div>
-                        {map.viewCount && map.viewCount > 0 && (
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                <Eye className="h-4 w-4" />
-                                {map.viewCount}
-                            </div>
-                        )}
-                   </div>
+                  <div className="flex justify-between items-start w-full">
+                    <div className="p-2 bg-secondary rounded-lg mb-4 transition-colors duration-300 group-hover:bg-primary">
+                      <Icon className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
+                    </div>
+                    {map.viewCount && map.viewCount > 0 && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Eye className="h-4 w-4" />
+                        {map.viewCount}
+                      </div>
+                    )}
+                  </div>
                   <h3 className="font-semibold text-base leading-tight flex-grow">{map.title}</h3>
                 </div>
               </Link>
