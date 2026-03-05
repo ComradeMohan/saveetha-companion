@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -6,17 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Project } from '@/lib/supabase';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Download, File as FileIcon, Loader2, LogIn } from 'lucide-react';
+import { ArrowLeft, Download, File as FileIcon, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@/hooks/use-auth';
 
 function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -71,18 +67,11 @@ function ProjectDetailsSkeleton() {
 export default function ProjectDetailsPage() {
     const params = useParams();
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
     const { id } = params;
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (authLoading) return;
-        if (!user) {
-            setLoading(false);
-            return;
-        }
-
         const fetchProject = async () => {
             if (typeof id !== 'string') return;
             setLoading(true);
@@ -103,45 +92,31 @@ export default function ProjectDetailsPage() {
         };
 
         fetchProject();
-    }, [id, router, user, authLoading]);
+    }, [id, router]);
 
-    const renderContent = () => {
-        if (loading || authLoading) {
-            return <ProjectDetailsSkeleton />;
-        }
-
-        if (!user) {
-             return (
-                <Card className="max-w-md mx-auto text-center">
-                    <CardHeader>
-                        <CardTitle>Access Denied</CardTitle>
-                        <CardDescription>You must be logged in to view project details.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild>
-                            <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Log In to Continue</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
-            );
-        }
-
-        if (!project) {
-            return null;
-        }
-
+    if (loading) {
         return (
-             <div className="container mx-auto px-4">
-                    <Button asChild variant="outline" className="mb-6">
+            <main className="flex-1 pt-24 pb-12 md:py-32">
+                <ProjectDetailsSkeleton />
+            </main>
+        );
+    }
+
+    if (!project) return null;
+
+    return (
+        <main className="flex-1 pt-24 pb-12 md:py-32">
+            <div className="container mx-auto px-4">
+                <Button asChild variant="outline" className="mb-6">
                     <Link href="/projects">
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Ecommerce
+                        Back to Marketplace
                     </Link>
                 </Button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                            <Card>
+                        <Card>
                             <CardHeader className="p-0">
                                 <div className="relative w-full h-96">
                                     <Image
@@ -155,14 +130,14 @@ export default function ProjectDetailsPage() {
                             <CardContent className="p-6">
                                 <Badge variant="secondary" className="mb-2 self-start">{project.category}</Badge>
                                 <h1 className="text-3xl font-bold tracking-tight mb-2">{project.title}</h1>
-                                    <p className="text-sm text-muted-foreground mb-4">
+                                <p className="text-sm text-muted-foreground mb-4">
                                     Published on {format(new Date(project.createdAt), 'PPP')}
                                 </p>
                                 <div className="prose dark:prose-invert max-w-none">
                                     <p>{project.description}</p>
                                 </div>
                             </CardContent>
-                            </Card>
+                        </Card>
                     </div>
                     <div className="lg:col-span-1">
                         <Card>
@@ -172,7 +147,7 @@ export default function ProjectDetailsPage() {
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 {project.files.map((file, index) => (
-                                        <a 
+                                    <a 
                                         key={index}
                                         href={file.url} 
                                         target="_blank" 
@@ -193,17 +168,7 @@ export default function ProjectDetailsPage() {
                         </Card>
                     </div>
                 </div>
-             </div>
-        )
-    }
-
-    return (
-         <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 pt-20 pb-12 md:py-16">
-                {renderContent()}
-            </main>
-            <Footer />
-        </div>
+            </div>
+        </main>
     )
 }

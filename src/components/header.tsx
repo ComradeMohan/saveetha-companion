@@ -11,7 +11,7 @@ import {
   Lightbulb,
   Calendar,
   ClipboardList,
-  Star,
+  Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -79,6 +79,7 @@ export default function Header() {
   const academicsLinks = [
     { href: '/#calculators', label: 'Calculators', icon: Calculator },
     { href: '/#concepts', label: 'Concept Maps', icon: Lightbulb },
+    { href: '/projects', label: 'Projects', icon: Package },
     { href: '/course-enrollment', label: 'Enrollment Alert', icon: ClipboardList },
     { href: '/calendar', label: 'Calendar', icon: Calendar },
   ];

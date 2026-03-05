@@ -19,6 +19,9 @@ const SubjectWiseAttendanceCalculator = dynamic(() => import('@/components/subje
 const ConceptMapFinder = dynamic(() => import('@/components/concept-map-finder'), {
   loading: () => <Skeleton className="w-full h-[200px]" />,
 });
+const ProjectList = dynamic(() => import('@/components/project-list'), {
+  loading: () => <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-64 w-full" />)}</div>,
+});
 
 export default function HomePage() {
   return (
@@ -36,6 +39,12 @@ export default function HomePage() {
       <section id="concepts" className="py-20 bg-card/50 animate-fade-in">
         <div className="container mx-auto px-4">
           <ConceptMapFinder />
+        </div>
+      </section>
+
+      <section id="projects" className="py-20 bg-background animate-fade-in">
+        <div className="container mx-auto px-4">
+          <ProjectList />
         </div>
       </section>
 
