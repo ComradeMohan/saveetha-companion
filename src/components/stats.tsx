@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { Users, BookOpen, GraduationCap, BrainCircuit, TrendingUp, Calendar, Clock } from 'lucide-react';
+import { Users, BookOpen, BrainCircuit, TrendingUp, Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
@@ -10,7 +10,6 @@ import { Skeleton } from './ui/skeleton';
 import { updateAndGetAnalytics, getVisitAnalytics } from '@/app/actions/analytics';
 import { format, endOfToday, eachDayOfInterval, subDays } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Testimonials } from './testimonials';
 
 
 interface AnalyticsData {
@@ -90,19 +89,22 @@ function AnalyticsSkeleton() {
 
 export default function Stats() {
     const [isVisible, setIsVisible] = useState(false);
-    const [facultyCount, setFacultyCount] = useState(75);
-    const [conceptMapCount, setConceptMapCount] = useState(20);
     const [analyticsData, setAnalyticsData] = useState<Partial<AnalyticsData>>({});
-    const [analyticsLoading, setAnalyticsLoading] = useState(true);
+    const [analyticsLoading, setAnalyticsLoading] = useState(false);
     const statsRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile();
+    const hasFetched = useRef(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     setIsVisible(true);
-                    observer.unobserve(entry.target);
+                    
+                    if (!hasFetched.current) {
+                        fetchAnalytics();
+                        hasFetched.current = true;
+                    }
                 }
             });
         }, { threshold: 0.1 });
@@ -119,38 +121,32 @@ export default function Stats() {
         };
     }, []);
 
-    useEffect(() => {
+    const fetchAnalytics = async () => {
+        setAnalyticsLoading(true);
         const sessionKey = 'session_visited';
         const sessionVisited = sessionStorage.getItem(sessionKey);
 
-        const fetchAnalytics = async () => {
-            setAnalyticsLoading(true);
-            try {
-                let data;
-                if (!sessionVisited) {
-                    data = await updateAndGetAnalytics();
-                    sessionStorage.setItem(sessionKey, 'true');
-                } else {
-                    data = await getVisitAnalytics();
-                }
-                setAnalyticsData(data);
-            } catch (error) {
-                console.error("Failed to fetch analytics", error);
-                // Attempt to fetch non-incrementing data as a fallback
-                try {
-                    const fallbackData = await getVisitAnalytics();
-                    setAnalyticsData(fallbackData);
-                } catch (fallbackError) {
-                    console.error("Failed to fetch fallback analytics", fallbackError);
-                }
-            } finally {
-                setAnalyticsLoading(false);
+        try {
+            let data;
+            if (!sessionVisited) {
+                data = await updateAndGetAnalytics();
+                sessionStorage.setItem(sessionKey, 'true');
+            } else {
+                data = await getVisitAnalytics();
             }
-        };
-
-        // Fetch analytics client-side to avoid server timeouts
-        fetchAnalytics();
-    }, []);
+            setAnalyticsData(data);
+        } catch (error) {
+            console.error("Failed to fetch analytics", error);
+            try {
+                const fallbackData = await getVisitAnalytics();
+                setAnalyticsData(fallbackData);
+            } catch (fallbackError) {
+                console.error("Failed to fetch fallback analytics", fallbackError);
+            }
+        } finally {
+            setAnalyticsLoading(false);
+        }
+    };
 
     const chartData = useMemo(() => {
         const daysToShow = isMobile ? 15 : 30;
@@ -180,7 +176,7 @@ export default function Stats() {
 
     const stats = [
       { icon: Users, value: 1500, label: 'Students Using', suffix: '+' },
-      { icon: BrainCircuit, value: conceptMapCount, label: 'Concepts Mapped', suffix: '' },
+      { icon: BrainCircuit, value: 20, label: 'Concepts Mapped', suffix: '' },
       { icon: BookOpen, value: 30, label: 'Courses Covered', suffix: '+' },
     ];
 
@@ -209,7 +205,7 @@ export default function Stats() {
           ))}
         </div>
 
-        {analyticsLoading ? <AnalyticsSkeleton /> : (
+        {analyticsLoading ? <AnalyticsSkeleton /> : isVisible && (
              <div className="mt-20">
                 <Card>
                     <CardHeader>
