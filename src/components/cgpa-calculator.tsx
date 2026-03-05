@@ -1,18 +1,10 @@
-
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Calculator, CheckCircle, CloudOff, Info } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useToast } from '@/hooks/use-toast';
-import Link from 'next/link';
-import { debounce } from 'lodash';
+import { Calculator, Info } from 'lucide-react';
 import { Switch } from './ui/switch';
 import { Separator } from './ui/separator';
 
@@ -39,29 +31,9 @@ export default function CgpaCalculator() {
   const [previousCgpa, setPreviousCgpa] = useState('');
   const [previousSubjects, setPreviousSubjects] = useState('');
 
-  const [isOnline, setIsOnline] = useState(true);
-  const [isSaved, setIsSaved] = useState(false);
-  const { user } = useAuth();
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (typeof navigator !== 'undefined') {
-        setIsOnline(navigator.onLine);
-    }
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.removeEventListener('offline', handleOffline);
-    return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
   const handleCountChange = (grade: string, value: string) => {
     if (/^\d{0,2}$/.test(value)) {
       setGradeCounts(prev => ({ ...prev, [grade]: value }));
-      setIsSaved(false);
     }
   };
 
@@ -95,46 +67,6 @@ export default function CgpaCalculator() {
     return { cgpa: cgpaValue, totalSubjects: currentNewSubjects, newSubjects: currentNewSubjects };
 
   }, [gradeCounts, usePreviousCgpa, previousCgpa, previousSubjects]);
-  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(debounce(async (cgpaToSave, subjectsToSave, currentUser) => {
-    if (!currentUser || subjectsToSave === 0 || !isOnline) {
-      return;
-    }
-    try {
-      const cgpaDocRef = doc(db, 'students_cgpa', currentUser.uid);
-      await setDoc(cgpaDocRef, {
-        cgpa: cgpaToSave,
-        totalCredits: subjectsToSave * 4, // Keep totalCredits for backend consistency
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
-      setIsSaved(true);
-    } catch (error) {
-      console.error("Auto-save CGPA Error:", error);
-      toast({
-        title: "Auto-save failed",
-        description: "Could not sync your CGPA with the cloud.",
-        variant: "destructive"
-      });
-    }
-  }, 2000), [isOnline, toast]);
-
-  useEffect(() => {
-    if (user && totalSubjects > 0) {
-        debouncedSave(cgpa, totalSubjects, user);
-    }
-  }, [cgpa, totalSubjects, user, debouncedSave]);
-
-  const StatusIndicator = () => {
-    if (!user) return null;
-    if (!isOnline) {
-      return <div className="flex items-center gap-1 text-xs text-muted-foreground"><CloudOff className="h-3 w-3 text-destructive" /> Offline</div>;
-    }
-    if (isSaved) {
-      return <div className="flex items-center gap-1 text-xs text-green-600"><CheckCircle className="h-3 w-3" /> Saved</div>;
-    }
-    return <div className="flex items-center gap-1 text-xs text-muted-foreground"><div className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse"></div> Syncing...</div>;
-  };
 
   return (
     <Card className="w-full shadow-lg transition-all duration-300 hover:shadow-primary/10 hover:-translate-y-1">
@@ -144,7 +76,7 @@ export default function CgpaCalculator() {
           CGPA Calculator
         </CardTitle>
          <CardDescription>
-          Real-time CGPA is computed from subject-wise grades in <Link href="/learn/courses" className="text-primary underline">Learn → Courses</Link>.
+          Enter your grades to calculate your current semester or overall CGPA.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -209,9 +141,6 @@ export default function CgpaCalculator() {
                 </>
             )}
         </p>
-        <div className="pt-2 h-6">
-          <StatusIndicator />
-        </div>
       </CardFooter>
     </Card>
   );

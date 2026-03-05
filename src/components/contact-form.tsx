@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -19,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Loader2, Send } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
 import { sendMessage } from '@/app/actions/send-message';
 import { useFormStatus } from 'react-dom';
 
@@ -55,7 +53,6 @@ function SubmitButton() {
 export default function ContactForm() {
   const [state, formAction] = useActionState(sendMessage, initialState);
   const { toast } = useToast();
-  const { user } = useAuth();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -65,13 +62,6 @@ export default function ContactForm() {
       message: '',
     },
   });
-
-  useEffect(() => {
-    if (user) {
-        form.setValue('name', user.displayName || '');
-        form.setValue('email', user.email || '');
-    }
-  }, [user, form]);
   
   useEffect(() => {
     if (state.type) {
@@ -81,10 +71,10 @@ export default function ContactForm() {
             variant: state.type === 'error' ? 'destructive' : 'default',
         });
         if (state.type === 'success') {
-            form.reset({ name: user?.displayName || '', email: user?.email || '', message: '' });
+            form.reset();
         }
     }
-  }, [state, toast, form, user]);
+  }, [state, toast, form]);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -112,7 +102,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Doe" {...field} disabled={!!user?.displayName} />
+                                        <Input placeholder="John Doe" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -125,7 +115,7 @@ export default function ContactForm() {
                                     <FormItem>
                                     <FormLabel>Your Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="john.doe@example.com" {...field} disabled={!!user?.email} />
+                                        <Input placeholder="john.doe@example.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
