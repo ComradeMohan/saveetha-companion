@@ -5,7 +5,6 @@ import Stats from '@/components/stats';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Testimonials } from '@/components/testimonials';
-import Hero from '@/components/hero';
 import ContactForm from '@/components/contact-form';
 
 // Dynamic imports for core tools
@@ -24,9 +23,7 @@ const ConceptMapFinder = dynamic(() => import('@/components/concept-map-finder')
 export default function HomePage() {
   return (
     <>
-      <Hero />
-
-      <section id="calculators" className="py-12 md:py-16 bg-background animate-fade-in">
+      <section id="calculators" className="pt-24 pb-12 md:pt-32 md:pb-16 bg-background animate-fade-in">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Calculators</h2>
           <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
