@@ -4,30 +4,14 @@ import * as React from 'react';
 import Link from 'next/link';
 import {
   GraduationCap,
-  LayoutGrid,
-  BarChart3,
   Menu,
   X,
-  Package,
-  Award,
   ChevronDown,
-  ClipboardList,
-  Book,
-  QrCode,
-  Keyboard,
-  Eye,
   Calculator,
   Lightbulb,
   Calendar,
-  Bell,
-  PenSquare,
-  Trophy,
-  Briefcase,
-  BriefcaseBusiness,
-  Link as LinkIcon,
-  Code,
-  ListTree,
-  FolderKanban,
+  ClipboardList,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,7 +26,6 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollArea } from './ui/scroll-area';
 import { Skeleton } from './ui/skeleton';
-import Script from 'next/script';
 
 const NavLink = React.memo(function NavLink({
   href,
@@ -100,34 +83,6 @@ export default function Header() {
     { href: '/calendar', label: 'Calendar', icon: Calendar },
   ];
 
-  const resourcesLinks = [
-    { href: '/certifications', label: 'Certifications', icon: Award },
-    { href: '/projects', label: 'Project Marketplace', icon: Package },
-    { href: '/pdd-projects', label: 'PDD Projects', icon: FolderKanban },
-    { href: '/hackathons', label: 'Hackathons', icon: Trophy },
-    { href: '/internships', label: 'Internships', icon: Briefcase },
-    { href: '/jobs', label: 'Remote Jobs', icon: BriefcaseBusiness },
-    { href: '/simats-tree', label: 'SIMATS Tree', icon: ListTree },
-    { href: '/updates', label: 'Updates', icon: Bell },
-  ];
-
-  const toolsDropdownLinks = [
-    { href: '/tools/placement-prep', label: 'Placement Prep', icon: GraduationCap },
-    { href: '/tools/sandbox', label: 'Coding Sandbox', icon: Code },
-    { href: '/tools/form-link-generator', label: 'Link generator', icon: LinkIcon },
-    { href: '/tools/qr-generator', label: 'QR Code Generator', icon: QrCode },
-    { href: '/tools/typing-test', label: 'Typing Test', icon: Keyboard },
-    { href: '/tools/steganography', label: 'Steganography', icon: Eye },
-    { href: '/tools/reverse-dictionary', label: 'Reverse Dictionary', icon: Book },
-    { href: '/tools/citation-generator', label: 'Citation Generator', icon: PenSquare },
-  ];
-
-  const allMobileLinks = [
-    ...academicsLinks,
-    ...resourcesLinks,
-    ...toolsDropdownLinks,
-  ];
-
   if (pathname.startsWith('/admin') || pathname.startsWith('/learn') || pathname.startsWith('/batch-admin')) {
     return null;
   }
@@ -165,54 +120,24 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                    Resources <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {resourcesLinks.map(link => (
-                    <DropdownMenuItem key={link.href} asChild>
-                      <Link href={link.href}>
-                        <link.icon className="mr-2 h-4 w-4" />
-                        {link.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary px-0">
-                    Tools <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {toolsDropdownLinks.map(link => (
-                    <DropdownMenuItem key={link.href} asChild>
-                      <Link href={link.href}>
-                        <link.icon className="mr-2 h-4 w-4" />
-                        {link.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               <NavLink href="/contact" isActive={pathname === '/contact'}>
                 Contact Us
               </NavLink>
             </nav>
 
             <div className="relative flex items-center">
-              <div className={cn(
-                "absolute bottom-full right-0 mb-2 w-max rounded-md bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity duration-300",
-                showStarPrompt && "opacity-100"
-              )}>
-                Star this project on GitHub!
-              </div>
+              <AnimatePresence>
+                {showStarPrompt && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute bottom-full right-0 mb-2 w-max rounded-md bg-foreground px-3 py-1.5 text-sm text-background shadow-xl"
+                  >
+                    Star this project on GitHub!
+                  </motion.div>
+                )}
+              </AnimatePresence>
               {isClient ? (
                 <div className="h-8 flex items-center rounded-md border border-input bg-background px-2">
                   <a className="github-button"
@@ -277,7 +202,7 @@ export default function Header() {
                   }
                 }}
               >
-                {allMobileLinks.map(link => (
+                {academicsLinks.map(link => (
                   <motion.div
                     key={link.href}
                     variants={{
@@ -295,6 +220,21 @@ export default function Header() {
                     </Link>
                   </motion.div>
                 ))}
+                <motion.div
+                  variants={{
+                    open: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
+                    closed: { y: 20, opacity: 0, transition: { duration: 0.2 } }
+                  }}
+                >
+                  <Link
+                    href="/contact"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-4 py-3 text-xl font-semibold text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    <Calendar className="h-6 w-6" />
+                    Contact Us
+                  </Link>
+                </motion.div>
               </motion.nav>
             </ScrollArea>
           </motion.div>

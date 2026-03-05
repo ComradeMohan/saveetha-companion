@@ -1,15 +1,12 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
-import Header from './header';
-import FeatureAnnouncementBanner from './feature-announcement-banner';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 export default function DynamicHeader() {
-    const { user, loading } = useAuth();
+    const { loading } = useAuth();
     const [scrolled, setScrolled] = useState(false);
     const pathname = usePathname();
     const isHomePage = pathname === '/';
@@ -24,12 +21,6 @@ export default function DynamicHeader() {
     
     if (loading) return null;
 
-    const bannerMessage = user
-        ? "Backend is Down for few days"
-        : "Backend has been down for few days.";
-
-    const showBanner = isHomePage && !scrolled;
-
     return (
         <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
             {isHomePage && (
@@ -37,7 +28,7 @@ export default function DynamicHeader() {
                     "transition-transform duration-300",
                     scrolled ? "" : "translate-y-0"
                 )}>
-                  
+                  {/* Banner removed */}
                 </div>
             )}
         </header>

@@ -2,13 +2,11 @@
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider, ProfileProvider } from '@/hooks/use-auth';
-import VerificationBanner from '@/components/verification-banner';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import MobileNav from '@/components/mobile-nav';
 import NotificationHandler from './NotificationHandler';
 import { usePathname } from 'next/navigation';
-import PromotionalDialog from './PromotionalDialog';
 import SeasonalEffects from './SeasonalEffects';
 import GlobalToastManager from './GlobalToastManager';
 import { AiChatPopover } from './ai-chat-popover';
@@ -22,8 +20,6 @@ function MainContent({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex min-h-screen flex-col">
             {showHeaderAndFooter && <Header />}
-            {/*redirection logic removed to allow public access*/}
-            <PromotionalDialog />
             <SeasonalEffects />
             <GlobalToastManager /> 
             <main id="main" key="main-content" className="flex-1">
