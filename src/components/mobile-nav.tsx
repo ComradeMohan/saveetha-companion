@@ -5,36 +5,27 @@ import * as React from 'react';
 import Link from 'next/link';
 import {
   Home,
-  User,
   Book,
-  Bot,
-  Award,
-  LayoutDashboard
+  Calendar,
+  Package,
+  Award
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 export default function MobileNav() {
-  const { user, setIsNavigating } = useAuth();
+  const { setIsNavigating } = useAuth();
   const pathname = usePathname();
 
   const navLinks = React.useMemo(() => {
-    if (user) {
-       return [
-            { href: '/', label: 'Home', icon: LayoutDashboard },
-            { href: '/ai-chat', label: 'AI Chat', icon: Bot },
-            { href: '/learn', label: 'Learn', icon: Book },
-            { href: '/profile', label: 'Profile', icon: User },
-        ];
-    }
     return [
         { href: '/', label: 'Home', icon: Home },
+        { href: '/projects', label: 'Projects', icon: Package },
+        { href: '/calendar', label: 'Events', icon: Calendar },
         { href: '/certifications', label: 'Certs', icon: Award },
-        { href: '/ai-chat', label: 'AI Chat', icon: Bot },
-        { href: '/signup', label: 'Register', icon: User },
     ];
-  }, [user]);
+  }, []);
   
   const activeIndex = React.useMemo(() => {
     const exactMatchIndex = navLinks.findIndex(link => pathname === link.href);
@@ -42,8 +33,7 @@ export default function MobileNav() {
 
     if (pathname.startsWith('/admin')) return -1;
     
-    // For logged-in users, highlight 'Home' when they are on the root/dashboard.
-    if (user && pathname === '/') {
+    if (pathname === '/') {
         return navLinks.findIndex(link => link.href === '/');
     }
     
@@ -53,19 +43,9 @@ export default function MobileNav() {
     if (prefixMatch) {
       return navLinks.findIndex(link => link.href === prefixMatch.href);
     }
-    
-    // Special cases for sections not in the nav but should highlight a parent
-    if (pathname.startsWith('/learn')) {
-        const learnIndex = navLinks.findIndex(link => link.href === '/learn');
-        if (learnIndex !== -1) return learnIndex;
-    }
-     if (pathname.startsWith('/ai-chat')) {
-        const chatIndex = navLinks.findIndex(link => link.href === '/ai-chat');
-        if (chatIndex !== -1) return chatIndex;
-    }
 
     return -1; 
-  }, [pathname, navLinks, user]);
+  }, [pathname, navLinks]);
 
 
   const handleNavLinkClick = () => {

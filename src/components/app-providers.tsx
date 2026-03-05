@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -9,7 +10,6 @@ import NotificationHandler from './NotificationHandler';
 import { usePathname } from 'next/navigation';
 import SeasonalEffects from './SeasonalEffects';
 import GlobalToastManager from './GlobalToastManager';
-import { AiChatPopover } from './ai-chat-popover';
 
 function MainContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -25,11 +25,6 @@ function MainContent({ children }: { children: React.ReactNode }) {
             <main id="main" key="main-content" className="flex-1">
               {children}
             </main>
-            {showHeaderAndFooter && (
-              <div className="hidden md:block fixed bottom-6 right-6 z-50">
-                  <AiChatPopover />
-              </div>
-            )}
             {showHeaderAndFooter && <MobileNav />}
             {showHeaderAndFooter && <Footer />}
             <NotificationHandler />
