@@ -1,11 +1,11 @@
 'use client';
 
-import Features from '@/components/features';
 import Stats from '@/components/stats';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Testimonials } from '@/components/testimonials';
 import ContactForm from '@/components/contact-form';
+import { PromotionCard } from '@/components/promotion-card';
 
 // Dynamic imports for core tools
 const CgpaCalculator = dynamic(() => import('@/components/cgpa-calculator'), {
@@ -48,7 +48,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Features />
+      <PromotionCard />
       <Stats />
       
       <Testimonials />
