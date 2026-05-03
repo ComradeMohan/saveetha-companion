@@ -89,7 +89,7 @@ export default function SubjectWiseAttendanceCalculator() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Percent className="h-6 w-6 text-primary" />
-          Subject-Wise Attendance
+          Can I bunk Tomorrow
         </CardTitle>
         <CardDescription>
           Add your subjects to track attendance and see what it takes to reach 80%.
