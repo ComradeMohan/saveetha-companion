@@ -20,7 +20,11 @@
 
 <div align="center">
 
-[![Stargazers for ComradeMohan/saveetha-companion](https://reporoster.com/stars/ComradeMohan/saveetha-companion)](https://github.com/ComradeMohan/saveetha-companion/stargazers)
+<p align="center">
+  <a href="https://github.com/ComradeMohan/saveetha-companion/stargazers">
+    <img src="https://raw.githubusercontent.com/ComradeMohan/saveetha-companion/main/assests/starme.svg" alt="Star the Repository saveetha companion made by comrade mohan" width="850">
+  </a>
+</p>
 
 ![GitHub stars](https://img.shields.io/github/stars/ComradeMohan/saveetha-companion?style=social)
 ![Repo size](https://img.shields.io/github/repo-size/ComradeMohan/saveetha-companion)
